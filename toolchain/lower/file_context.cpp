@@ -473,12 +473,12 @@ static auto BuildTypeForInst(FileContext& context, SemIR::BuiltinInst inst)
     case SemIR::BuiltinInstKind::Invalid:
     case SemIR::BuiltinInstKind::AutoType:
       CARBON_FATAL("Unexpected builtin type in lowering: {0}", inst);
-    case SemIR::BuiltinInstKind::Error:
+    case SemIR::BuiltinInstKind::ErrorInst:
       // This is a complete type but uses of it should never be lowered.
       return nullptr;
     case SemIR::BuiltinInstKind::TypeType:
       return context.GetTypeType();
-    case SemIR::BuiltinInstKind::FloatType:
+    case SemIR::BuiltinInstKind::LegacyFloatType:
       return llvm::Type::getDoubleTy(context.llvm_context());
     case SemIR::BuiltinInstKind::BoolType:
       // TODO: We may want to have different representations for `bool`

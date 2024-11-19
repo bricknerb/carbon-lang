@@ -1075,7 +1075,8 @@ static auto MakeConstantForBuiltinCall(Context& context, SemIRLoc loc,
       if (!ValidateFloatBitWidth(context, loc, arg_ids[0])) {
         return SemIR::ConstantId::Error;
       }
-      return context.constant_values().Get(SemIR::InstId::BuiltinFloatType);
+      return context.constant_values().Get(
+          SemIR::InstId::BuiltinLegacyFloatType);
     }
 
     case SemIR::BuiltinFunctionKind::BoolMakeType: {
@@ -1716,7 +1717,8 @@ auto TryEvalBlockForSpecific(Context& context, SemIR::SpecificId specific_id,
     result[i] = context.constant_values().GetInstId(const_id);
 
     // TODO: If this becomes possible through monomorphization failure, produce
-    // a diagnostic and put `SemIR::InstId::BuiltinError` in the table entry.
+    // a diagnostic and put `SemIR::InstId::BuiltinErrorInst` in the table
+    // entry.
     CARBON_CHECK(result[i].is_valid());
   }
 
