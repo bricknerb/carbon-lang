@@ -176,8 +176,15 @@ the Code of Conduct.
     is used for all of our Google Docs, particularly proposal drafts.
 -   [Google Calendar](https://calendar.google.com/calendar/embed?src=c_07td7k4qjq0ssb4gdl6bmbnkik%40group.calendar.google.com)
     is used for meeting invites and project reminders. Contributors may add
-    calendar entries for meetings added to discuss details.
-
+    calendar entries for meetings added to discuss details. Standard entries
+    are kept in
+    [the Minutes folder](https://drive.google.com/drive/folders/1VssO6kn9-HeKfzPDqBDR0Sy5CUE0OnSs)
+    and include:
+    -   The weekly sync, where contributors are welcome.
+    -   Open discussions, which are unstructured meeting slots used for
+        discussing proposals, tooling, and other Carbon topics based on who
+        attends.
+    
 #### Getting access
 
 Our collaboration systems are all viewable publicly, and most can be joined
