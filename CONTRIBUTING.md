@@ -184,7 +184,6 @@ the Code of Conduct.
     -   Open discussions, which are unstructured meeting slots used for
         discussing proposals, tooling, and other Carbon topics based on who
         attends.
-    
 #### Getting access
 
 Our collaboration systems are all viewable publicly, and most can be joined
