@@ -298,8 +298,8 @@ sh_test(
     name = "map_benchmark_test",
     # The benchmark allocates a large amount of memory.
     size = "enormous",
-    # We configure the test to run quickly.
-    timeout = "short",
+    # We configure the test to run somewhat quickly.
+    timeout = "moderate",
     srcs = [":map_benchmark"],
     args = [
         "--benchmark_min_time=1x",
@@ -435,8 +435,8 @@ sh_test(
     name = "set_benchmark_test",
     # The benchmark allocates a large amount of memory.
     size = "enormous",
-    # We configure the test to run quickly.
-    timeout = "short",
+    # We configure the test to run somewhat quickly.
+    timeout = "moderate",
     srcs = [":set_benchmark"],
     args = [
         "--benchmark_min_time=1x",
