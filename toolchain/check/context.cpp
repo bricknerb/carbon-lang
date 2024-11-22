@@ -60,7 +60,7 @@ Context::Context(const Lex::TokenizedBuffer& tokens, DiagnosticEmitter& emitter,
   // Map the builtin `<error>` and `type` type constants to their corresponding
   // special `TypeId` values.
   type_ids_for_type_constants_.Insert(
-      SemIR::ConstantId::ForTemplateConstant(SemIR::InstId::BuiltinError),
+      SemIR::ConstantId::ForTemplateConstant(SemIR::InstId::BuiltinErrorInst),
       SemIR::TypeId::Error);
   type_ids_for_type_constants_.Insert(
       SemIR::ConstantId::ForTemplateConstant(SemIR::InstId::BuiltinTypeType),
@@ -345,7 +345,7 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
   }
 
   return {.specific_id = SemIR::SpecificId::Invalid,
-          .inst_id = SemIR::InstId::BuiltinError};
+          .inst_id = SemIR::InstId::BuiltinErrorInst};
 }
 
 auto Context::LookupNameInExactScope(SemIRLoc loc, SemIR::NameId name_id,
@@ -544,6 +544,7 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
         // Substitute into the constant describing the extended scope to
         // determine its corresponding specific.
         CARBON_CHECK(extended_id.is_valid());
+        LoadImportRef(*this, extended_id);
         SemIR::ConstantId const_id =
             GetConstantValueInSpecific(sem_ir(), specific_id, extended_id);
 
@@ -571,7 +572,7 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
       emitter_->Emit(loc, NameAmbiguousDueToExtend, name_id);
       // TODO: Add notes pointing to the scopes.
       return {.specific_id = SemIR::SpecificId::Invalid,
-              .inst_id = SemIR::InstId::BuiltinError};
+              .inst_id = SemIR::InstId::BuiltinErrorInst};
     }
 
     result.inst_id = scope_result_id;
@@ -597,7 +598,7 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
     }
 
     return {.specific_id = SemIR::SpecificId::Invalid,
-            .inst_id = SemIR::InstId::BuiltinError};
+            .inst_id = SemIR::InstId::BuiltinErrorInst};
   }
 
   return result;
@@ -639,7 +640,7 @@ auto Context::LookupNameInCore(SemIRLoc loc, llvm::StringRef name)
     -> SemIR::InstId {
   auto core_package_id = GetCorePackage(*this, loc);
   if (!core_package_id.is_valid()) {
-    return SemIR::InstId::BuiltinError;
+    return SemIR::InstId::BuiltinErrorInst;
   }
 
   auto name_id = SemIR::NameId::ForIdentifier(identifiers().Add(name));
@@ -651,7 +652,7 @@ auto Context::LookupNameInCore(SemIRLoc loc, llvm::StringRef name)
         "name `Core.{0}` implicitly referenced here, but not found",
         SemIR::NameId);
     emitter_->Emit(loc, CoreNameNotFound, name_id);
-    return SemIR::InstId::BuiltinError;
+    return SemIR::InstId::BuiltinErrorInst;
   }
 
   // Look through import_refs and aliases.
@@ -1000,31 +1001,24 @@ class TypeCompleter {
     return value_rep;
   }
 
-  auto BuildValueReprForInst(SemIR::TypeId type_id,
-                             SemIR::BuiltinInst builtin) const
+  template <typename InstT>
+    requires(InstT::Kind.template IsAnyOf<
+             SemIR::AutoType, SemIR::BoolType, SemIR::BoundMethodType,
+             SemIR::ErrorInst, SemIR::IntLiteralType, SemIR::LegacyFloatType,
+             SemIR::NamespaceType, SemIR::SpecificFunctionType, SemIR::TypeType,
+             SemIR::VtableType, SemIR::WitnessType>())
+  auto BuildValueReprForInst(SemIR::TypeId type_id, InstT /*inst*/) const
       -> SemIR::ValueRepr {
-    switch (builtin.builtin_inst_kind) {
-      case SemIR::BuiltinInstKind::TypeType:
-      case SemIR::BuiltinInstKind::AutoType:
-      case SemIR::BuiltinInstKind::Error:
-      case SemIR::BuiltinInstKind::Invalid:
-      case SemIR::BuiltinInstKind::BoolType:
-      case SemIR::BuiltinInstKind::IntLiteralType:
-      case SemIR::BuiltinInstKind::FloatType:
-      case SemIR::BuiltinInstKind::NamespaceType:
-      case SemIR::BuiltinInstKind::BoundMethodType:
-      case SemIR::BuiltinInstKind::WitnessType:
-      case SemIR::BuiltinInstKind::SpecificFunctionType:
-      case SemIR::BuiltinInstKind::VtableType:
-        return MakeCopyValueRepr(type_id);
+    return MakeCopyValueRepr(type_id);
+  }
 
-      case SemIR::BuiltinInstKind::StringType:
-        // TODO: Decide on string value semantics. This should probably be a
-        // custom value representation carrying a pointer and size or
-        // similar.
-        return MakePointerValueRepr(type_id);
-    }
-    llvm_unreachable("All builtin kinds were handled above");
+  auto BuildValueReprForInst(SemIR::TypeId type_id,
+                             SemIR::StringType /*inst*/) const
+      -> SemIR::ValueRepr {
+    // TODO: Decide on string value semantics. This should probably be a
+    // custom value representation carrying a pointer and size or
+    // similar.
+    return MakePointerValueRepr(type_id);
   }
 
   auto BuildStructOrTupleValueRepr(size_t num_elements,
@@ -1140,9 +1134,10 @@ class TypeCompleter {
 
   template <typename InstT>
     requires(InstT::Kind.template IsAnyOf<
-             SemIR::AssociatedEntityType, SemIR::FacetType, SemIR::FunctionType,
-             SemIR::GenericClassType, SemIR::GenericInterfaceType,
-             SemIR::UnboundElementType, SemIR::WhereExpr>())
+             SemIR::AssociatedEntityType, SemIR::FacetAccessType,
+             SemIR::FacetType, SemIR::FunctionType, SemIR::GenericClassType,
+             SemIR::GenericInterfaceType, SemIR::UnboundElementType,
+             SemIR::WhereExpr>())
   auto BuildValueReprForInst(SemIR::TypeId /*type_id*/, InstT /*inst*/) const
       -> SemIR::ValueRepr {
     // These types have no runtime operations, so we use an empty value
@@ -1340,7 +1335,6 @@ auto Context::GetAssociatedEntityType(SemIR::TypeId interface_type_id,
 }
 
 auto Context::GetBuiltinType(SemIR::BuiltinInstKind kind) -> SemIR::TypeId {
-  CARBON_CHECK(kind != SemIR::BuiltinInstKind::Invalid);
   auto type_id = GetTypeIdForTypeInst(SemIR::InstId::ForBuiltin(kind));
   // To keep client code simpler, complete builtin types before returning them.
   bool complete = TryToCompleteType(type_id);
