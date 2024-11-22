@@ -318,6 +318,14 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
   auto [lexical_result, non_lexical_scopes] =
       scope_stack().LookupInLexicalScopes(name_id);
 
+  if (lexical_result.is_valid()) {
+    // A lexical scope never needs an associated specific. If there's a
+    // lexically enclosing generic, then it also encloses the point of use of
+    // the name.
+    return {.specific_id = SemIR::SpecificId::Invalid,
+            .inst_id = lexical_result};
+  }
+
   // Walk the non-lexical scopes and perform lookups into each of them.
   for (auto [index, lookup_scope_id, specific_id] :
        llvm::reverse(non_lexical_scopes)) {
@@ -329,14 +337,6 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
         non_lexical_result.inst_id.is_valid()) {
       return non_lexical_result;
     }
-  }
-
-  if (lexical_result.is_valid()) {
-    // A lexical scope never needs an associated specific. If there's a
-    // lexically enclosing generic, then it also encloses the point of use of
-    // the name.
-    return {.specific_id = SemIR::SpecificId::Invalid,
-            .inst_id = lexical_result};
   }
 
   // We didn't find anything at all.
