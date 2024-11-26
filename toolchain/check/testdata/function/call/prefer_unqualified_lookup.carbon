@@ -15,7 +15,7 @@ library "[[@TEST_NAME]]";
 // F in the lexical scope.
 class Class(F:! type) {
   class Inner {
-    // F in a non-lexical scope.                      ^
+    // F in a non-lexical scope.
     fn F() -> i32 { return 0; }
     fn G() -> i32;
   }
