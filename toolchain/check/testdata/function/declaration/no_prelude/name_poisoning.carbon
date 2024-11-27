@@ -25,9 +25,12 @@ library "[[@TEST_NAME]]";
 
 namespace N;
 class C {};
+
+// Here we use C and poison N.C.
 fn N.F1(x: C);
 
-// TODO: Should fail here.
+// TODO: Should fail here since C was poisoned for namespace N when it was used
+// in N context without qualification.
 class N.C {}
 
 // --- fail_poison_with_usage.carbon
@@ -36,17 +39,23 @@ library "[[@TEST_NAME]]";
 
 namespace N;
 class C {};
+
+// Here we use C and poison N.C.
 fn N.F1(x: C);
 
-// TODO: Should fail here.
+// TODO: Should fail here since C was poisoned for namespace N when it was used
+// in N context without qualification.
 class N.C {}
-// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+6]]:21: error: package `Core` implicitly referenced here, but not found [CoreNotFound]
-// CHECK:STDERR: fn N.F2(x: C) {N.F1(x);}
-// CHECK:STDERR:                     ^
-// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE-7]]:9: note: initializing function parameter [InCallToFunctionParam]
+
+// TODO: Should not fail here since both N.F2() and N.F1() input is the class C
+// and not class N.C.
+// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+6]]:22: error: package `Core` implicitly referenced here, but not found [CoreNotFound]
+// CHECK:STDERR: fn N.F2(x: C) { N.F1(x); }
+// CHECK:STDERR:                      ^
+// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE-11]]:9: note: initializing function parameter [InCallToFunctionParam]
 // CHECK:STDERR: fn N.F1(x: C);
 // CHECK:STDERR:         ^~~~
-fn N.F2(x: C) {N.F1(x);}
+fn N.F2(x: C) { N.F1(x); }
 
 // CHECK:STDOUT: --- no_poison.carbon
 // CHECK:STDOUT:
@@ -135,7 +144,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %N: <namespace> = namespace [template] {
 // CHECK:STDOUT:     .F1 = %F1.decl
-// CHECK:STDOUT:     .C = %C.decl.loc9
+// CHECK:STDOUT:     .C = %C.decl.loc12
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl.loc5: type = class_decl @C.1 [template = constants.%C.1] {} {}
 // CHECK:STDOUT:   %F1.decl: %F1.type = fn_decl @F1 [template = constants.%F1] {
@@ -146,7 +155,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT:     %x.param: %C.1 = value_param runtime_param0
 // CHECK:STDOUT:     %x: %C.1 = bind_name x, %x.param
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %C.decl.loc9: type = class_decl @C.2 [template = constants.%C.2] {} {}
+// CHECK:STDOUT:   %C.decl.loc12: type = class_decl @C.2 [template = constants.%C.2] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C.1 {
@@ -157,7 +166,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C.2 {
-// CHECK:STDOUT:   %.loc9: <witness> = complete_type_witness %.1 [template = constants.%.2]
+// CHECK:STDOUT:   %.loc12: <witness> = complete_type_witness %.1 [template = constants.%.2]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%C.2
@@ -186,7 +195,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %N: <namespace> = namespace [template] {
 // CHECK:STDOUT:     .F1 = %F1.decl
-// CHECK:STDOUT:     .C = %C.decl.loc9
+// CHECK:STDOUT:     .C = %C.decl.loc12
 // CHECK:STDOUT:     .F2 = %F2.decl
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl.loc5: type = class_decl @C.1 [template = constants.%C.1] {} {}
@@ -198,12 +207,12 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT:     %x.param: %C.1 = value_param runtime_param0
 // CHECK:STDOUT:     %x: %C.1 = bind_name x, %x.param
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %C.decl.loc9: type = class_decl @C.2 [template = constants.%C.2] {} {}
+// CHECK:STDOUT:   %C.decl.loc12: type = class_decl @C.2 [template = constants.%C.2] {} {}
 // CHECK:STDOUT:   %F2.decl: %F2.type = fn_decl @F2 [template = constants.%F2] {
 // CHECK:STDOUT:     %x.patt: %C.2 = binding_pattern x
 // CHECK:STDOUT:     %x.param_patt: %C.2 = value_param_pattern %x.patt, runtime_param0
 // CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl.loc9 [template = constants.%C.2]
+// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl.loc12 [template = constants.%C.2]
 // CHECK:STDOUT:     %x.param: %C.2 = value_param runtime_param0
 // CHECK:STDOUT:     %x: %C.2 = bind_name x, %x.param
 // CHECK:STDOUT:   }
@@ -217,7 +226,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C.2 {
-// CHECK:STDOUT:   %.loc9: <witness> = complete_type_witness %.1 [template = constants.%.2]
+// CHECK:STDOUT:   %.loc12: <witness> = complete_type_witness %.1 [template = constants.%.2]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%C.2
@@ -230,7 +239,7 @@ fn N.F2(x: C) {N.F1(x);}
 // CHECK:STDOUT:   %N.ref: <namespace> = name_ref N, file.%N [template = file.%N]
 // CHECK:STDOUT:   %F1.ref: %F1.type = name_ref F1, file.%F1.decl [template = constants.%F1]
 // CHECK:STDOUT:   %x.ref: %C.2 = name_ref x, %x
-// CHECK:STDOUT:   %.loc16: %C.1 = converted %x.ref, <error> [template = <error>]
+// CHECK:STDOUT:   %.loc22: %C.1 = converted %x.ref, <error> [template = <error>]
 // CHECK:STDOUT:   %F1.call: init %empty_tuple.type = call %F1.ref(<error>)
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
