@@ -361,16 +361,16 @@ auto Context::LookupNameInExactScope(SemIRLoc loc, SemIR::NameId name_id,
                                      SemIR::NameScopeId scope_id,
                                      const SemIR::NameScope& scope)
     -> std::pair<SemIR::InstId, SemIR::AccessKind> {
-  if (auto lookup = scope.name_map.Lookup(name_id)) {
-    auto entry = scope.names[lookup.value()];
+  if (auto entry_id = scope.Lookup(name_id)) {
+    auto entry = scope.GetEntry(*entry_id);
     LoadImportRef(*this, entry.inst_id);
     return {entry.inst_id, entry.access_kind};
   }
 
-  if (!scope.import_ir_scopes.empty()) {
+  if (!scope.import_ir_scopes().empty()) {
     // TODO: Enforce other access modifiers for imports.
     return {ImportNameFromOtherPackage(*this, loc, scope_id,
-                                       scope.import_ir_scopes, name_id),
+                                       scope.import_ir_scopes(), name_id),
             SemIR::AccessKind::Public};
   }
   return {SemIR::InstId::Invalid, SemIR::AccessKind::Public};
@@ -527,7 +527,7 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
       continue;
     }
     const auto& name_scope = name_scopes().Get(scope_id);
-    has_error |= name_scope.has_error;
+    has_error |= name_scope.has_error();
 
     auto [scope_result_id, access_kind] =
         LookupNameInExactScope(loc, name_id, scope_id, name_scope);
@@ -548,7 +548,7 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
     if (!scope_result_id.is_valid() || is_access_prohibited) {
       // If nothing is found in this scope or if we encountered an invalid
       // access, look in its extended scopes.
-      const auto& extended = name_scope.extended_scopes;
+      const auto& extended = name_scope.extended_scopes();
       scopes.reserve(scopes.size() + extended.size());
       for (auto extended_id : llvm::reverse(extended)) {
         // Substitute into the constant describing the extended scope to

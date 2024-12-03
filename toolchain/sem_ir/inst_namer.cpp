@@ -560,7 +560,8 @@ auto InstNamer::CollectNamesInBlock(ScopeId scope_id,
       }
       // The namespace is specified here due to the name conflict.
       case CARBON_KIND(SemIR::Namespace inst): {
-        add_inst_name_id(sem_ir_.name_scopes().Get(inst.name_scope_id).name_id);
+        add_inst_name_id(
+            sem_ir_.name_scopes().Get(inst.name_scope_id).name_id());
         continue;
       }
       case OutParam::Kind:

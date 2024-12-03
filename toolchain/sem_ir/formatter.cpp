@@ -591,8 +591,8 @@ class FormatterImpl {
   auto FormatNameScope(NameScopeId id, llvm::StringRef label = "") -> void {
     const auto& scope = sem_ir_.name_scopes().Get(id);
 
-    if (scope.names.empty() && scope.extended_scopes.empty() &&
-        scope.import_ir_scopes.empty() && !scope.has_error) {
+    if (scope.entries().empty() && scope.extended_scopes().empty() &&
+        scope.import_ir_scopes().empty() && !scope.has_error()) {
       // Name scope is empty.
       return;
     }
@@ -602,7 +602,7 @@ class FormatterImpl {
       out_ << label;
     }
 
-    for (auto [name_id, inst_id, access_kind] : scope.names) {
+    for (auto [name_id, inst_id, access_kind] : scope.entries()) {
       Indent();
       out_ << ".";
       FormatName(name_id);
@@ -621,7 +621,7 @@ class FormatterImpl {
       out_ << "\n";
     }
 
-    for (auto extended_scope_id : scope.extended_scopes) {
+    for (auto extended_scope_id : scope.extended_scopes()) {
       Indent();
       out_ << "extend ";
       FormatName(extended_scope_id);
@@ -633,7 +633,7 @@ class FormatterImpl {
     // add or remove an unused prelude file, but is intended to still show the
     // existence of indirect imports.
     bool has_prelude_components = false;
-    for (auto [import_ir_id, unused] : scope.import_ir_scopes) {
+    for (auto [import_ir_id, unused] : scope.import_ir_scopes()) {
       auto label = GetImportIRLabel(import_ir_id);
       if (label.starts_with("Core//prelude/")) {
         if (has_prelude_components) {
@@ -648,7 +648,7 @@ class FormatterImpl {
       out_ << "import " << label << "\n";
     }
 
-    if (scope.has_error) {
+    if (scope.has_error()) {
       Indent();
       out_ << "has_error\n";
     }

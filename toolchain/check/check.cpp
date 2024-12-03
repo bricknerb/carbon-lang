@@ -193,7 +193,7 @@ static auto ImportCurrentPackage(Context& context, UnitInfo& unit_info,
       unit_info.package_imports[import_map_lookup.value()];
 
   if (self_import.has_load_error) {
-    context.name_scopes().Get(SemIR::NameScopeId::Package).has_error = true;
+    context.name_scopes().Get(SemIR::NameScopeId::Package).set_has_error();
   }
 
   ImportLibrariesFromCurrentPackage(
@@ -203,7 +203,7 @@ static auto ImportCurrentPackage(Context& context, UnitInfo& unit_info,
 
   context.scope_stack().Push(
       package_inst_id, SemIR::NameScopeId::Package, SemIR::SpecificId::Invalid,
-      context.name_scopes().Get(SemIR::NameScopeId::Package).has_error);
+      context.name_scopes().Get(SemIR::NameScopeId::Package).has_error());
 }
 
 // Imports all other packages (excluding the current package).
