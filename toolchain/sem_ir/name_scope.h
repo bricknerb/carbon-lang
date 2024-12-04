@@ -26,16 +26,12 @@ class NameScope : public Printable<NameScope> {
     AccessKind access_kind;
   };
 
-  class EntryId {
-   private:
-    friend class NameScope;
-
-    EntryId(int entry_index) : entry_index_(entry_index) {}
-
-    int entry_index_;
+  struct EntryId : public IdBase {
+    using IdBase::IdBase;
   };
 
-  NameScope(InstId inst_id, NameId name_id, NameScopeId parent_scope_id)
+  explicit NameScope(InstId inst_id, NameId name_id,
+                     NameScopeId parent_scope_id)
       : inst_id_(inst_id),
         name_id_(name_id),
         parent_scope_id_(parent_scope_id) {}
@@ -61,15 +57,13 @@ class NameScope : public Printable<NameScope> {
     out << "}";
   }
 
-  auto entries() const -> const llvm::SmallVector<Entry>& { return names_; }
+  auto entries() const -> llvm::ArrayRef<Entry> { return names_; }
 
   auto GetEntry(EntryId entry_id) const -> const Entry& {
-    return names_[entry_id.entry_index_];
+    return names_[entry_id.index];
   }
 
-  auto GetEntry(EntryId entry_id) -> Entry& {
-    return names_[entry_id.entry_index_];
-  }
+  auto GetEntry(EntryId entry_id) -> Entry& { return names_[entry_id.index]; }
 
   auto Lookup(NameId name_id) const -> std::optional<EntryId> {
     auto lookup = name_map_.Lookup(name_id);
@@ -105,7 +99,7 @@ class NameScope : public Printable<NameScope> {
     return {true, EntryId(names_.size() - 1)};
   }
 
-  auto extended_scopes() const -> const llvm::SmallVector<InstId, 1>& {
+  auto extended_scopes() const -> llvm::ArrayRef<InstId> {
     return extended_scopes_;
   }
 
@@ -134,12 +128,12 @@ class NameScope : public Printable<NameScope> {
     return is_closed_import() && parent_scope_id() == NameScopeId::Package;
   }
 
-  auto import_ir_scopes() const -> const
-      llvm::SmallVector<std::pair<SemIR::ImportIRId, SemIR::NameScopeId>, 0>& {
+  auto import_ir_scopes() const
+      -> llvm::ArrayRef<std::pair<SemIR::ImportIRId, SemIR::NameScopeId>> {
     return import_ir_scopes_;
   }
 
-  auto AddImportIrScope(
+  auto AddImportIRScope(
       const std::pair<SemIR::ImportIRId, SemIR::NameScopeId>& import_ir_scope)
       -> void {
     return import_ir_scopes_.push_back(import_ir_scope);

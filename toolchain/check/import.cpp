@@ -462,7 +462,7 @@ auto ImportLibrariesFromOtherPackage(Context& context,
       !result.is_duplicate_of_namespace_in_current_package);
   for (auto import_ir : import_irs) {
     auto ir_id = AddImportIR(context, import_ir);
-    scope.AddImportIrScope({ir_id, SemIR::NameScopeId::Package});
+    scope.AddImportIRScope({ir_id, SemIR::NameScopeId::Package});
     context.import_ir_constant_values()[ir_id.index].Set(
         SemIR::InstId::PackageNamespace, namespace_const_id);
   }
@@ -525,7 +525,7 @@ static auto AddNamespaceFromOtherPackage(Context& context,
   auto& scope = context.name_scopes().Get(result.name_scope_id);
   scope.set_is_closed_import(
       !result.is_duplicate_of_namespace_in_current_package);
-  scope.AddImportIrScope({import_ir_id, import_ns.name_scope_id});
+  scope.AddImportIRScope({import_ir_id, import_ns.name_scope_id});
   return result.inst_id;
 }
 
@@ -596,7 +596,7 @@ auto ImportNameFromOtherPackage(
     if (auto import_ns = import_inst.TryAs<SemIR::Namespace>()) {
       if (auto ns = context.insts().TryGetAs<SemIR::Namespace>(result_id)) {
         auto& name_scope = context.name_scopes().Get(ns->name_scope_id);
-        name_scope.AddImportIrScope({import_ir_id, import_ns->name_scope_id});
+        name_scope.AddImportIRScope({import_ir_id, import_ns->name_scope_id});
         continue;
       }
     }
