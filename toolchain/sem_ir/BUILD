@@ -74,6 +74,7 @@ cc_library(
         "generic.cpp",
         "impl.cpp",
         "name.cpp",
+        "name_scope.cpp",
         "type.cpp",
         "type_info.cpp",
     ],
