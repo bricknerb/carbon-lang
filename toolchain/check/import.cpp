@@ -271,17 +271,18 @@ static auto AddImportRefOrMerge(Context& context, SemIR::ImportIRId ir_id,
       name_id,
       // This InstId is temporary and would be overridden if used.
       SemIR::InstId::Invalid, SemIR::AccessKind::Public);
+  auto& entry = parent_scope.GetEntry(entry_id);
   if (inserted) {
     auto entity_name_id = context.entity_names().Add(
         {.name_id = name_id,
          .parent_scope_id = parent_scope_id,
          .bind_index = SemIR::CompileTimeBindIndex::Invalid});
-    parent_scope.GetEntry(entry_id).inst_id = AddImportRef(
+    entry.inst_id = AddImportRef(
         context, {.ir_id = ir_id, .inst_id = import_inst_id}, entity_name_id);
     return;
   }
 
-  auto inst_id = parent_scope.GetEntry(entry_id).inst_id;
+  auto inst_id = entry.inst_id;
   auto prev_ir_inst =
       GetCanonicalImportIRInst(context, &context.sem_ir(), inst_id);
   VerifySameCanonicalImportIRInst(context, inst_id, prev_ir_inst, ir_id,
