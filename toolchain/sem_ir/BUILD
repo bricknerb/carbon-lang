@@ -182,6 +182,17 @@ cc_library(
 )
 
 cc_test(
+    name = "name_scope_test",
+    size = "small",
+    srcs = ["name_scope_test.cpp"],
+    deps = [
+        ":file",
+        "//testing/base:gtest_main",
+        "@googletest//:gtest",
+    ],
+)
+
+cc_test(
     name = "typed_insts_test",
     size = "small",
     srcs = ["typed_insts_test.cpp"],

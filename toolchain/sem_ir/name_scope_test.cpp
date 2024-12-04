@@ -1,0 +1,264 @@
+// Part of the Carbon Language project, under the Apache License v2.0 with LLVM
+// Exceptions. See /LICENSE for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+#include "toolchain/sem_ir/name_scope.h"
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+namespace Carbon::SemIR {
+namespace {
+
+using testing::ElementsAre;
+using testing::Pair;
+
+TEST(NameScope, Empty) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_THAT(name_scope.entries(), ElementsAre());
+  EXPECT_THAT(name_scope.extended_scopes(), ElementsAre());
+  EXPECT_EQ(name_scope.inst_id(), scope_inst_id);
+  EXPECT_EQ(name_scope.name_id(), scope_name_id);
+  EXPECT_EQ(name_scope.parent_scope_id(), parent_scope_id);
+  EXPECT_FALSE(name_scope.has_error());
+  EXPECT_FALSE(name_scope.is_closed_import());
+  EXPECT_FALSE(name_scope.is_imported_package());
+  EXPECT_THAT(name_scope.import_ir_scopes(), ElementsAre());
+}
+
+TEST(NameScope, Lookup) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  NameScope::Entry entry1{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Public};
+  name_scope.AddRequired(entry1);
+
+  NameScope::Entry entry2{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Protected};
+  name_scope.AddRequired(entry2);
+
+  NameScope::Entry entry3{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Private};
+  name_scope.AddRequired(entry3);
+
+  auto lookup = name_scope.Lookup(entry1.name_id);
+  ASSERT_NE(lookup, std::nullopt);
+  EXPECT_EQ(StructReflection::AsTuple(
+                static_cast<NameScope&>(name_scope).GetEntry(*lookup)),
+            StructReflection::AsTuple(entry1));
+  EXPECT_EQ(StructReflection::AsTuple(
+                static_cast<const NameScope&>(name_scope).GetEntry(*lookup)),
+            StructReflection::AsTuple(entry1));
+
+  lookup = name_scope.Lookup(entry2.name_id);
+  ASSERT_NE(lookup, std::nullopt);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(*lookup)),
+            StructReflection::AsTuple(entry2));
+
+  lookup = name_scope.Lookup(entry3.name_id);
+  ASSERT_NE(lookup, std::nullopt);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(*lookup)),
+            StructReflection::AsTuple(entry3));
+
+  NameId unknown_name_id(id++);
+  lookup = name_scope.Lookup(unknown_name_id);
+  EXPECT_EQ(lookup, std::nullopt);
+}
+
+TEST(NameScope, LookupOrAdd) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  NameScope::Entry entry1{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Public};
+  auto lookup = name_scope.LookupOrAdd(
+      entry1.name_id, [&]() { return entry1.inst_id; }, entry1.access_kind);
+  EXPECT_TRUE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry1));
+
+  NameScope::Entry entry2{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Protected};
+  lookup = name_scope.LookupOrAdd(
+      entry2.name_id, [&]() { return entry2.inst_id; }, entry2.access_kind);
+  EXPECT_TRUE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry2));
+
+  NameScope::Entry entry3{.name_id = NameId(id++),
+                          .inst_id = InstId(id++),
+                          .access_kind = AccessKind::Private};
+  lookup = name_scope.LookupOrAdd(
+      entry3.name_id, [&]() { return entry3.inst_id; }, entry3.access_kind);
+  EXPECT_TRUE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry3));
+
+  lookup = name_scope.LookupOrAdd(
+      entry1.name_id,
+      [&]() {
+        ADD_FAILURE() << "Unexpected call";
+        return entry1.inst_id;
+      },
+      entry1.access_kind);
+  EXPECT_FALSE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry1));
+
+  lookup = name_scope.LookupOrAdd(
+      entry2.name_id,
+      [&]() {
+        ADD_FAILURE() << "Unexpected call";
+        return entry2.inst_id;
+      },
+      entry2.access_kind);
+  EXPECT_FALSE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry2));
+
+  lookup = name_scope.LookupOrAdd(
+      entry3.name_id,
+      [&]() {
+        ADD_FAILURE() << "Unexpected call";
+        return entry3.inst_id;
+      },
+      entry3.access_kind);
+  EXPECT_FALSE(lookup.first);
+  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
+            StructReflection::AsTuple(entry3));
+}
+
+TEST(NameScope, ExtendedScopes) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id = NameScopeId::Package;
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_THAT(name_scope.extended_scopes(), ElementsAre());
+
+  InstId extended_scope1(id++);
+  name_scope.AddExtendedScope(extended_scope1);
+  EXPECT_THAT(name_scope.extended_scopes(), ElementsAre(extended_scope1));
+
+  InstId extended_scope2(id++);
+  name_scope.AddExtendedScope(extended_scope2);
+  EXPECT_THAT(name_scope.extended_scopes(),
+              ElementsAre(extended_scope1, extended_scope2));
+}
+
+TEST(NameScope, HasError) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_FALSE(name_scope.has_error());
+
+  name_scope.set_has_error();
+  EXPECT_TRUE(name_scope.has_error());
+
+  name_scope.set_has_error();
+  EXPECT_TRUE(name_scope.has_error());
+}
+
+TEST(NameScope, IsClosedImport) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_FALSE(name_scope.is_closed_import());
+
+  name_scope.set_is_closed_import(true);
+  EXPECT_TRUE(name_scope.is_closed_import());
+
+  name_scope.set_is_closed_import(false);
+  EXPECT_FALSE(name_scope.is_closed_import());
+}
+
+TEST(NameScope, IsImportedPackageParentNonPackageScope) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id(id++);
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_FALSE(name_scope.is_imported_package());
+
+  name_scope.set_is_closed_import(true);
+  EXPECT_FALSE(name_scope.is_imported_package());
+
+  name_scope.set_is_closed_import(false);
+  EXPECT_FALSE(name_scope.is_imported_package());
+}
+
+TEST(NameScope, IsImportedPackageParentPackageScope) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id = NameScopeId::Package;
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_FALSE(name_scope.is_imported_package());
+
+  name_scope.set_is_closed_import(true);
+  EXPECT_TRUE(name_scope.is_imported_package());
+
+  name_scope.set_is_closed_import(false);
+  EXPECT_FALSE(name_scope.is_imported_package());
+}
+
+TEST(NameScope, ImportIRScopes) {
+  int id = 1;
+
+  InstId scope_inst_id(id++);
+  NameId scope_name_id(id++);
+  NameScopeId parent_scope_id = NameScopeId::Package;
+  NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
+
+  EXPECT_THAT(name_scope.import_ir_scopes(), ElementsAre());
+
+  ImportIRId import_ir_id1(id++);
+  NameScopeId import_name_scope_id1(id++);
+  name_scope.AddImportIRScope({import_ir_id1, import_name_scope_id1});
+  EXPECT_THAT(name_scope.import_ir_scopes(),
+              ElementsAre(Pair(import_ir_id1, import_name_scope_id1)));
+
+  ImportIRId import_ir_id2(id++);
+  NameScopeId import_name_scope_id2(id++);
+  name_scope.AddImportIRScope({import_ir_id2, import_name_scope_id2});
+  EXPECT_THAT(name_scope.import_ir_scopes(),
+              ElementsAre(Pair(import_ir_id1, import_name_scope_id1),
+                          Pair(import_ir_id2, import_name_scope_id2)));
+}
+
+}  // namespace
+}  // namespace Carbon::SemIR
