@@ -106,11 +106,8 @@ static auto AddNamespace(Context& context, SemIR::TypeId namespace_type_id,
   auto* parent_scope = &context.name_scopes().Get(parent_scope_id);
   auto insert_result = parent_scope->LookupOrAdd(
       name_id,
-      []() {
-        // This is temporary and would be overridden.
-        return SemIR::InstId::Invalid;
-      },
-      SemIR::AccessKind::Public);
+      // This InstId is temporary and would be overridden if used.
+      SemIR::InstId::Invalid, SemIR::AccessKind::Public);
   if (!insert_result.first) {
     auto prev_inst_id = parent_scope->GetEntry(insert_result.second).inst_id;
     if (auto namespace_inst =
@@ -272,17 +269,15 @@ static auto AddImportRefOrMerge(Context& context, SemIR::ImportIRId ir_id,
   auto& parent_scope = context.name_scopes().Get(parent_scope_id);
   auto insert = parent_scope.LookupOrAdd(
       name_id,
-      [&] {
-        auto entity_name_id = context.entity_names().Add(
-            {.name_id = name_id,
-             .parent_scope_id = parent_scope_id,
-             .bind_index = SemIR::CompileTimeBindIndex::Invalid});
-        return AddImportRef(context,
-                            {.ir_id = ir_id, .inst_id = import_inst_id},
-                            entity_name_id);
-      },
-      SemIR::AccessKind::Public);
+      // This InstId is temporary and would be overridden if used.
+      SemIR::InstId::Invalid, SemIR::AccessKind::Public);
   if (insert.first) {
+    auto entity_name_id = context.entity_names().Add(
+        {.name_id = name_id,
+         .parent_scope_id = parent_scope_id,
+         .bind_index = SemIR::CompileTimeBindIndex::Invalid});
+    parent_scope.GetEntry(insert.second).inst_id = AddImportRef(
+        context, {.ir_id = ir_id, .inst_id = import_inst_id}, entity_name_id);
     return;
   }
 

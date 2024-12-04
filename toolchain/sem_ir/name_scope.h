@@ -84,10 +84,9 @@ class NameScope : public Printable<NameScope> {
   auto AddRequired(Entry name_entry) -> void;
 
   // If the given name already exists, return true and an EntryId.
-  // If not, adds the name using the result of make_inst_id() and access_kind
-  // and return false and an EntryId.
-  auto LookupOrAdd(SemIR::NameId name_id,
-                   llvm::function_ref<InstId()> make_inst_id,
+  // If not, adds the name using inst_id and access_kind and returns false and
+  // an EntryId.
+  auto LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                    AccessKind access_kind) -> std::pair<bool, EntryId>;
 
   // Instructions returning values that are extended by this scope.

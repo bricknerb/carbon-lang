@@ -17,8 +17,7 @@ auto NameScope::AddRequired(Entry name_entry) -> void {
                name_entry.name_id);
 }
 
-auto NameScope::LookupOrAdd(SemIR::NameId name_id,
-                            llvm::function_ref<InstId()> make_inst_id,
+auto NameScope::LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                             AccessKind access_kind)
     -> std::pair<bool, EntryId> {
   auto insert_result = name_map_.Insert(name_id, names_.size());
@@ -26,9 +25,8 @@ auto NameScope::LookupOrAdd(SemIR::NameId name_id,
     return {false, EntryId(insert_result.value())};
   }
 
-  names_.push_back({.name_id = name_id,
-                    .inst_id = make_inst_id(),
-                    .access_kind = access_kind});
+  names_.push_back(
+      {.name_id = name_id, .inst_id = inst_id, .access_kind = access_kind});
   return {true, EntryId(names_.size() - 1)};
 }
 
