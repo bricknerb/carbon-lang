@@ -104,12 +104,12 @@ static auto AddNamespace(Context& context, SemIR::TypeId namespace_type_id,
                          llvm::function_ref<SemIR::InstId()> make_import_id)
     -> NamespaceResult {
   auto* parent_scope = &context.name_scopes().Get(parent_scope_id);
-  auto insert_result = parent_scope->LookupOrAdd(
+  auto [inserted, entry_id] = parent_scope->LookupOrAdd(
       name_id,
       // This InstId is temporary and would be overridden if used.
       SemIR::InstId::Invalid, SemIR::AccessKind::Public);
-  if (!insert_result.first) {
-    auto prev_inst_id = parent_scope->GetEntry(insert_result.second).inst_id;
+  if (!inserted) {
+    auto prev_inst_id = parent_scope->GetEntry(entry_id).inst_id;
     if (auto namespace_inst =
             context.insts().TryGetAs<SemIR::Namespace>(prev_inst_id)) {
       if (diagnose_duplicate_namespace) {
@@ -147,8 +147,8 @@ static auto AddNamespace(Context& context, SemIR::TypeId namespace_type_id,
 
   // Diagnose if there's a name conflict, but still produce the namespace to
   // supersede the name conflict in order to avoid repeat diagnostics.
-  auto& entry = parent_scope->GetEntry(insert_result.second);
-  if (!insert_result.first) {
+  auto& entry = parent_scope->GetEntry(entry_id);
+  if (!inserted) {
     context.DiagnoseDuplicateName(namespace_id, entry.inst_id);
     entry.access_kind = SemIR::AccessKind::Public;
   }
@@ -267,21 +267,21 @@ static auto AddImportRefOrMerge(Context& context, SemIR::ImportIRId ir_id,
                                 SemIR::NameId name_id) -> void {
   // Leave a placeholder that the inst comes from the other IR.
   auto& parent_scope = context.name_scopes().Get(parent_scope_id);
-  auto insert = parent_scope.LookupOrAdd(
+  auto [inserted, entry_id] = parent_scope.LookupOrAdd(
       name_id,
       // This InstId is temporary and would be overridden if used.
       SemIR::InstId::Invalid, SemIR::AccessKind::Public);
-  if (insert.first) {
+  if (inserted) {
     auto entity_name_id = context.entity_names().Add(
         {.name_id = name_id,
          .parent_scope_id = parent_scope_id,
          .bind_index = SemIR::CompileTimeBindIndex::Invalid});
-    parent_scope.GetEntry(insert.second).inst_id = AddImportRef(
+    parent_scope.GetEntry(entry_id).inst_id = AddImportRef(
         context, {.ir_id = ir_id, .inst_id = import_inst_id}, entity_name_id);
     return;
   }
 
-  auto inst_id = parent_scope.GetEntry(insert.second).inst_id;
+  auto inst_id = parent_scope.GetEntry(entry_id).inst_id;
   auto prev_ir_inst =
       GetCanonicalImportIRInst(context, &context.sem_ir(), inst_id);
   VerifySameCanonicalImportIRInst(context, inst_id, prev_ir_inst, ir_id,

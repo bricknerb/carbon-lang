@@ -90,47 +90,59 @@ TEST(NameScope, LookupOrAdd) {
   NameScope::Entry entry1{.name_id = NameId(id++),
                           .inst_id = InstId(id++),
                           .access_kind = AccessKind::Public};
-  auto lookup = name_scope.LookupOrAdd(entry1.name_id, entry1.inst_id,
-                                       entry1.access_kind);
-  EXPECT_TRUE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry1));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry1.name_id, entry1.inst_id, entry1.access_kind);
+    EXPECT_TRUE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry1));
+  }
 
   NameScope::Entry entry2{.name_id = NameId(id++),
                           .inst_id = InstId(id++),
                           .access_kind = AccessKind::Protected};
-  lookup = name_scope.LookupOrAdd(entry2.name_id, entry2.inst_id,
-                                  entry2.access_kind);
-  EXPECT_TRUE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry2));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry2.name_id, entry2.inst_id, entry2.access_kind);
+    EXPECT_TRUE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry2));
+  }
 
   NameScope::Entry entry3{.name_id = NameId(id++),
                           .inst_id = InstId(id++),
                           .access_kind = AccessKind::Private};
-  lookup = name_scope.LookupOrAdd(entry3.name_id, entry3.inst_id,
-                                  entry3.access_kind);
-  EXPECT_TRUE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry3));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry3.name_id, entry3.inst_id, entry3.access_kind);
+    EXPECT_TRUE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry3));
+  }
 
-  lookup = name_scope.LookupOrAdd(entry1.name_id, entry1.inst_id,
-                                  entry1.access_kind);
-  EXPECT_FALSE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry1));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry1.name_id, entry1.inst_id, entry1.access_kind);
+    EXPECT_FALSE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry1));
+  }
 
-  lookup = name_scope.LookupOrAdd(entry2.name_id, entry2.inst_id,
-                                  entry2.access_kind);
-  EXPECT_FALSE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry2));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry2.name_id, entry2.inst_id, entry2.access_kind);
+    EXPECT_FALSE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry2));
+  }
 
-  lookup = name_scope.LookupOrAdd(entry3.name_id, entry3.inst_id,
-                                  entry3.access_kind);
-  EXPECT_FALSE(lookup.first);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(lookup.second)),
-            StructReflection::AsTuple(entry3));
+  {
+    auto [added, entry_id] = name_scope.LookupOrAdd(
+        entry3.name_id, entry3.inst_id, entry3.access_kind);
+    EXPECT_FALSE(added);
+    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
+              StructReflection::AsTuple(entry3));
+  }
 }
 
 TEST(NameScope, ExtendedScopes) {
