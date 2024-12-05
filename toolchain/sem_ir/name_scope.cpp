@@ -8,7 +8,7 @@ namespace Carbon::SemIR {
 
 auto NameScope::AddRequired(Entry name_entry) -> void {
   auto add_name = [&] {
-    int index = names_.size();
+    EntryId index(names_.size());
     names_.push_back(name_entry);
     return index;
   };
@@ -20,7 +20,7 @@ auto NameScope::AddRequired(Entry name_entry) -> void {
 auto NameScope::LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                             AccessKind access_kind)
     -> std::pair<bool, EntryId> {
-  auto insert_result = name_map_.Insert(name_id, names_.size());
+  auto insert_result = name_map_.Insert(name_id, EntryId(names_.size()));
   if (!insert_result.is_inserted()) {
     return {false, EntryId(insert_result.value())};
   }

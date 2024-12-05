@@ -77,7 +77,7 @@ class NameScope : public Printable<NameScope> {
     if (!lookup) {
       return std::nullopt;
     }
-    return EntryId(lookup.value());
+    return lookup.value();
   }
 
   // Adds a new name known to not exist.
@@ -154,7 +154,7 @@ class NameScope : public Printable<NameScope> {
   // intensive, we can also switch the lookup to a set of indices into the
   // vector rather than a map from `NameId` to index.
   llvm::SmallVector<Entry> names_;
-  Map<NameId, int> name_map_;
+  Map<NameId, EntryId> name_map_;
 
   // Small vector size is set to 1: we expect that there will rarely be more
   // than a single extended scope.
