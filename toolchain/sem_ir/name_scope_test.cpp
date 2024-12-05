@@ -14,11 +14,11 @@ using testing::ElementsAre;
 using testing::Pair;
 
 TEST(NameScope, Empty) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_THAT(name_scope.entries(), ElementsAre());
@@ -33,25 +33,25 @@ TEST(NameScope, Empty) {
 }
 
 TEST(NameScope, Lookup) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
-  NameScope::Entry entry1{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry1{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Public};
   name_scope.AddRequired(entry1);
 
-  NameScope::Entry entry2{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry2{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Protected};
   name_scope.AddRequired(entry2);
 
-  NameScope::Entry entry3{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry3{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Private};
   name_scope.AddRequired(entry3);
 
@@ -74,21 +74,21 @@ TEST(NameScope, Lookup) {
   EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(*lookup)),
             StructReflection::AsTuple(entry3));
 
-  NameId unknown_name_id(id++);
+  NameId unknown_name_id(++id);
   lookup = name_scope.Lookup(unknown_name_id);
   EXPECT_EQ(lookup, std::nullopt);
 }
 
 TEST(NameScope, LookupOrAdd) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
-  NameScope::Entry entry1{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry1{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Public};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
@@ -98,8 +98,8 @@ TEST(NameScope, LookupOrAdd) {
               StructReflection::AsTuple(entry1));
   }
 
-  NameScope::Entry entry2{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry2{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Protected};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
@@ -109,8 +109,8 @@ TEST(NameScope, LookupOrAdd) {
               StructReflection::AsTuple(entry2));
   }
 
-  NameScope::Entry entry3{.name_id = NameId(id++),
-                          .inst_id = InstId(id++),
+  NameScope::Entry entry3{.name_id = NameId(++id),
+                          .inst_id = InstId(++id),
                           .access_kind = AccessKind::Private};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
@@ -146,31 +146,31 @@ TEST(NameScope, LookupOrAdd) {
 }
 
 TEST(NameScope, ExtendedScopes) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
   NameScopeId parent_scope_id = NameScopeId::Package;
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_THAT(name_scope.extended_scopes(), ElementsAre());
 
-  InstId extended_scope1(id++);
+  InstId extended_scope1(++id);
   name_scope.AddExtendedScope(extended_scope1);
   EXPECT_THAT(name_scope.extended_scopes(), ElementsAre(extended_scope1));
 
-  InstId extended_scope2(id++);
+  InstId extended_scope2(++id);
   name_scope.AddExtendedScope(extended_scope2);
   EXPECT_THAT(name_scope.extended_scopes(),
               ElementsAre(extended_scope1, extended_scope2));
 }
 
 TEST(NameScope, HasError) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_FALSE(name_scope.has_error());
@@ -183,11 +183,11 @@ TEST(NameScope, HasError) {
 }
 
 TEST(NameScope, IsClosedImport) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_FALSE(name_scope.is_closed_import());
@@ -200,11 +200,11 @@ TEST(NameScope, IsClosedImport) {
 }
 
 TEST(NameScope, IsImportedPackageParentNonPackageScope) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
-  NameScopeId parent_scope_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
+  NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_FALSE(name_scope.is_imported_package());
@@ -217,10 +217,10 @@ TEST(NameScope, IsImportedPackageParentNonPackageScope) {
 }
 
 TEST(NameScope, IsImportedPackageParentPackageScope) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
   NameScopeId parent_scope_id = NameScopeId::Package;
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
@@ -234,23 +234,23 @@ TEST(NameScope, IsImportedPackageParentPackageScope) {
 }
 
 TEST(NameScope, ImportIRScopes) {
-  int id = 1;
+  int id = 0;
 
-  InstId scope_inst_id(id++);
-  NameId scope_name_id(id++);
+  InstId scope_inst_id(++id);
+  NameId scope_name_id(++id);
   NameScopeId parent_scope_id = NameScopeId::Package;
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   EXPECT_THAT(name_scope.import_ir_scopes(), ElementsAre());
 
-  ImportIRId import_ir_id1(id++);
-  NameScopeId import_name_scope_id1(id++);
+  ImportIRId import_ir_id1(++id);
+  NameScopeId import_name_scope_id1(++id);
   name_scope.AddImportIRScope({import_ir_id1, import_name_scope_id1});
   EXPECT_THAT(name_scope.import_ir_scopes(),
               ElementsAre(Pair(import_ir_id1, import_name_scope_id1)));
 
-  ImportIRId import_ir_id2(id++);
-  NameScopeId import_name_scope_id2(id++);
+  ImportIRId import_ir_id2(++id);
+  NameScopeId import_name_scope_id2(++id);
   name_scope.AddImportIRScope({import_ir_id2, import_name_scope_id2});
   EXPECT_THAT(name_scope.import_ir_scopes(),
               ElementsAre(Pair(import_ir_id1, import_name_scope_id1),
