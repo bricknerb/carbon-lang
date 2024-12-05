@@ -179,7 +179,7 @@ static auto ExtendImpl(Context& context, Parse::NodeId extend_node,
     parent_scope.set_has_error();
     return;
   }
-  if (!parent_scope.has_error() && !context.TryToDefineType(constraint_id, [&] {
+  if (!context.TryToDefineType(constraint_id, [&] {
         CARBON_DIAGNOSTIC(
             ExtendUndefinedInterface, Error,
             "`extend impl` requires a definition for facet type {0}",
