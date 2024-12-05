@@ -10,8 +10,8 @@
 namespace Carbon::SemIR {
 namespace {
 
-using testing::ElementsAre;
-using testing::Pair;
+using ::testing::ElementsAre;
+using ::testing::Pair;
 
 TEST(NameScope, Empty) {
   int id = 0;
