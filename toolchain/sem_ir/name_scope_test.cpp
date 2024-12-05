@@ -50,19 +50,19 @@ TEST(NameScope, Lookup) {
   NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
-  NameScope::Entry entry1{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Public};
+  NameScope::Entry entry1 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Public};
   name_scope.AddRequired(entry1);
 
-  NameScope::Entry entry2{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Protected};
+  NameScope::Entry entry2 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Protected};
   name_scope.AddRequired(entry2);
 
-  NameScope::Entry entry3{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Private};
+  NameScope::Entry entry3 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Private};
   name_scope.AddRequired(entry3);
 
   auto lookup = name_scope.Lookup(entry1.name_id);
@@ -93,9 +93,9 @@ TEST(NameScope, LookupOrAdd) {
   NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
-  NameScope::Entry entry1{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Public};
+  NameScope::Entry entry1 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Public};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry1.name_id, entry1.inst_id, entry1.access_kind);
@@ -103,9 +103,9 @@ TEST(NameScope, LookupOrAdd) {
     EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry1));
   }
 
-  NameScope::Entry entry2{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Protected};
+  NameScope::Entry entry2 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Protected};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry2.name_id, entry2.inst_id, entry2.access_kind);
@@ -113,9 +113,9 @@ TEST(NameScope, LookupOrAdd) {
     EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry2));
   }
 
-  NameScope::Entry entry3{.name_id = NameId(++id),
-                          .inst_id = InstId(++id),
-                          .access_kind = AccessKind::Private};
+  NameScope::Entry entry3 = {.name_id = NameId(++id),
+                             .inst_id = InstId(++id),
+                             .access_kind = AccessKind::Private};
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry3.name_id, entry3.inst_id, entry3.access_kind);
