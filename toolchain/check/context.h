@@ -162,13 +162,6 @@ class Context {
     return AddPatternInst(SemIR::LocIdAndInst(node_id, inst));
   }
 
-  // Adds an instruction to the constants block, returning the produced ID.
-  auto AddConstant(SemIR::Inst inst, bool is_symbolic) -> SemIR::ConstantId {
-    auto const_id = constants().GetOrAdd(inst, is_symbolic);
-    CARBON_VLOG("AddConstant: {0}\n", inst);
-    return const_id;
-  }
-
   // Pushes a parse tree node onto the stack, storing the SemIR::Inst as the
   // result.
   template <typename InstT>
@@ -369,12 +362,12 @@ class Context {
       -> SemIR::TypeId {
     return TryToCompleteType(type_id, diagnoser, abstract_diagnoser)
                ? type_id
-               : SemIR::TypeId::Error;
+               : SemIR::ErrorInst::SingletonTypeId;
   }
 
   // Returns whether `type_id` represents a facet type.
   auto IsFacetType(SemIR::TypeId type_id) -> bool {
-    return type_id == SemIR::TypeId::TypeType ||
+    return type_id == SemIR::TypeType::SingletonTypeId ||
            types().Is<SemIR::FacetType>(type_id);
   }
 
@@ -410,9 +403,6 @@ class Context {
   auto GetGenericInterfaceType(SemIR::InterfaceId interface_id,
                                SemIR::SpecificId enclosing_specific_id)
       -> SemIR::TypeId;
-
-  // Returns the type `i32`.
-  auto GetInt32Type() -> SemIR::TypeId;
 
   // Gets the facet type corresponding to a particular interface.
   auto GetInterfaceType(SemIR::InterfaceId interface_id,

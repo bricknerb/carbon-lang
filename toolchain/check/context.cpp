@@ -61,10 +61,10 @@ Context::Context(const Lex::TokenizedBuffer& tokens, DiagnosticEmitter& emitter,
   // special `TypeId` values.
   type_ids_for_type_constants_.Insert(
       SemIR::ConstantId::ForTemplateConstant(SemIR::InstId::BuiltinErrorInst),
-      SemIR::TypeId::Error);
+      SemIR::ErrorInst::SingletonTypeId);
   type_ids_for_type_constants_.Insert(
       SemIR::ConstantId::ForTemplateConstant(SemIR::InstId::BuiltinTypeType),
-      SemIR::TypeId::TypeType);
+      SemIR::TypeType::SingletonTypeId);
 
   // TODO: Remove this and add a `VerifyOnFinish` once we properly push and pop
   // in the right places.
@@ -115,7 +115,8 @@ auto Context::FinishInst(SemIR::InstId inst_id, SemIR::Inst inst) -> void {
 
   // If the instruction has a symbolic constant type, track that we need to
   // substitute into it.
-  if (types().GetConstantId(inst.type_id()).is_symbolic()) {
+  if (constant_values().DependsOnGenericParameter(
+          types().GetConstantId(inst.type_id()))) {
     dep_kind |= GenericRegionStack::DependencyKind::SymbolicType;
   }
 
@@ -128,7 +129,7 @@ auto Context::FinishInst(SemIR::InstId inst_id, SemIR::Inst inst) -> void {
 
     // If the constant value is symbolic, track that we need to substitute into
     // it.
-    if (const_id.is_symbolic()) {
+    if (constant_values().DependsOnGenericParameter(const_id)) {
       dep_kind |= GenericRegionStack::DependencyKind::SymbolicConstant;
     }
   }
@@ -491,7 +492,7 @@ auto Context::AppendLookupScopesForConstant(
     }
     return true;
   }
-  if (base_const_id == SemIR::ConstantId::Error) {
+  if (base_const_id == SemIR::ErrorInst::SingletonConstantId) {
     // Lookup into this scope should fail without producing an error.
     scopes->push_back(LookupScope{.name_scope_id = SemIR::NameScopeId::Invalid,
                                   .specific_id = SemIR::SpecificId::Invalid});
@@ -760,9 +761,9 @@ auto Context::SetBlockArgResultBeforeConstantUse(SemIR::InstId select_id,
     const_id = constant_values().Get(literal.value().value.ToBool() ? if_true
                                                                     : if_false);
   } else {
-    CARBON_CHECK(cond_const_id == SemIR::ConstantId::Error,
+    CARBON_CHECK(cond_const_id == SemIR::ErrorInst::SingletonConstantId,
                  "Unexpected constant branch condition.");
-    const_id = SemIR::ConstantId::Error;
+    const_id = SemIR::ErrorInst::SingletonConstantId;
   }
 
   if (const_id.is_constant()) {
@@ -907,7 +908,7 @@ class TypeCompleter {
         }
         // For a pointer representation, the pointee also needs to be complete.
         if (value_rep.kind == SemIR::ValueRepr::Pointer) {
-          if (value_rep.type_id == SemIR::TypeId::Error) {
+          if (value_rep.type_id == SemIR::ErrorInst::SingletonTypeId) {
             break;
           }
           auto pointee_type_id =
@@ -1281,7 +1282,7 @@ auto Context::TryToDefineType(SemIR::TypeId type_id,
         ResolveSpecificDefinition(*this, interface.specific_id);
       }
     }
-    // TODO: Process other requirements.
+    // TODO: Finish facet type resolution.
   }
 
   return true;
@@ -1294,7 +1295,8 @@ auto Context::GetTypeIdForTypeConstant(SemIR::ConstantId constant_id)
   auto type_id =
       insts().Get(constant_values().GetInstId(constant_id)).type_id();
   // TODO: For now, we allow values of facet type to be used as types.
-  CARBON_CHECK(IsFacetType(type_id) || constant_id == SemIR::ConstantId::Error,
+  CARBON_CHECK(IsFacetType(type_id) ||
+                   constant_id == SemIR::ErrorInst::SingletonConstantId,
                "Forming type ID for non-type constant of type {0}",
                types().GetAsInst(type_id));
 
@@ -1304,10 +1306,11 @@ auto Context::GetTypeIdForTypeConstant(SemIR::ConstantId constant_id)
 auto Context::FacetTypeFromInterface(SemIR::InterfaceId interface_id,
                                      SemIR::SpecificId specific_id)
     -> SemIR::FacetType {
-  SemIR::FacetTypeId facet_type_id = facet_types().Add(SemIR::FacetTypeInfo{
-      .impls_constraints = {{interface_id, specific_id}},
-      .requirement_block_id = SemIR::InstBlockId::Invalid});
-  return {.type_id = SemIR::TypeId::TypeType, .facet_type_id = facet_type_id};
+  SemIR::FacetTypeId facet_type_id = facet_types().Add(
+      SemIR::FacetTypeInfo{.impls_constraints = {{interface_id, specific_id}},
+                           .other_requirements = false});
+  return {.type_id = SemIR::TypeType::SingletonTypeId,
+          .facet_type_id = facet_type_id};
 }
 
 // Gets or forms a type_id for a type, given the instruction kind and arguments.
@@ -1315,7 +1318,7 @@ template <typename InstT, typename... EachArgT>
 static auto GetTypeImpl(Context& context, EachArgT... each_arg)
     -> SemIR::TypeId {
   // TODO: Remove inst_id parameter from TryEvalInst.
-  InstT inst = {SemIR::TypeId::TypeType, each_arg...};
+  InstT inst = {SemIR::TypeType::SingletonTypeId, each_arg...};
   return context.GetTypeIdForTypeConstant(
       TryEvalInst(context, SemIR::InstId::Invalid, inst));
 }
@@ -1375,17 +1378,6 @@ auto Context::GetGenericInterfaceType(SemIR::InterfaceId interface_id,
     -> SemIR::TypeId {
   return GetCompleteTypeImpl<SemIR::GenericInterfaceType>(
       *this, interface_id, enclosing_specific_id);
-}
-
-auto Context::GetInt32Type() -> SemIR::TypeId {
-  auto bit_width_const_id = TryEvalInst(
-      *this, SemIR::InstId::Invalid,
-      SemIR::IntValue{
-          .type_id = GetBuiltinType(SemIR::BuiltinInstKind::IntLiteralType),
-          .int_id = ints().Add(32)});
-  return GetCompleteTypeImpl<SemIR::IntType>(
-      *this, SemIR::IntKind::Signed,
-      constant_values().GetInstId(bit_width_const_id));
 }
 
 auto Context::GetInterfaceType(SemIR::InterfaceId interface_id,

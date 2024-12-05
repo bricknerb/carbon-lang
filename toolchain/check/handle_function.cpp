@@ -12,6 +12,7 @@
 #include "toolchain/check/handle.h"
 #include "toolchain/check/import_ref.h"
 #include "toolchain/check/interface.h"
+#include "toolchain/check/literal.h"
 #include "toolchain/check/merge.h"
 #include "toolchain/check/modifiers.h"
 #include "toolchain/check/name_component.h"
@@ -44,11 +45,12 @@ auto HandleParseNode(Context& context, Parse::ReturnTypeId node_id) -> bool {
   // Propagate the type expression.
   auto [type_node_id, type_inst_id] = context.node_stack().PopExprWithNodeId();
   auto type_id = ExprAsType(context, type_node_id, type_inst_id).type_id;
-  auto return_slot_id = context.AddPatternInst<SemIR::ReturnSlotPattern>(
-      node_id, {.type_id = type_id, .type_inst_id = type_inst_id});
+  auto return_slot_pattern_id =
+      context.AddPatternInst<SemIR::ReturnSlotPattern>(
+          node_id, {.type_id = type_id, .type_inst_id = type_inst_id});
   auto param_pattern_id = context.AddPatternInst<SemIR::OutParamPattern>(
       node_id, {.type_id = type_id,
-                .subpattern_id = return_slot_id,
+                .subpattern_id = return_slot_pattern_id,
                 .runtime_index = SemIR::RuntimeParamIndex::Unknown});
   context.node_stack().Push(node_id, param_pattern_id);
   return true;
@@ -101,7 +103,7 @@ static auto MergeFunctionRedecl(Context& context, SemIRLoc new_loc,
     // Track the signature from the definition, so that IDs in the body
     // match IDs in the signature.
     prev_function.MergeDefinition(new_function);
-    prev_function.return_slot_id = new_function.return_slot_id;
+    prev_function.return_slot_pattern_id = new_function.return_slot_pattern_id;
   }
   if ((prev_import_ir_id.is_valid() && !new_is_import)) {
     ReplacePrevInstForMerge(context, new_function.parent_scope_id,
@@ -129,8 +131,7 @@ static auto TryMergeRedecl(Context& context, Parse::AnyFunctionDeclId node_id,
       break;
     }
     case SemIR::ImportRefLoaded::Kind: {
-      auto import_ir_inst =
-          GetCanonicalImportIRInst(context, &context.sem_ir(), prev_id);
+      auto import_ir_inst = GetCanonicalImportIRInst(context, prev_id);
 
       // Verify the decl so that things like aliases are name conflicts.
       const auto* import_ir =
@@ -242,7 +243,6 @@ static auto BuildFunctionDecl(Context& context,
       SemIR::Function{{name_context.MakeEntityWithParamsBase(
                           name, decl_id, is_extern, introducer.extern_library)},
                       {.return_slot_pattern_id = name.return_slot_pattern_id,
-                       .return_slot_id = name.return_slot_id,
                        .virtual_modifier = virtual_modifier}};
   if (is_definition) {
     function_info.definition_id = decl_id;
@@ -303,8 +303,11 @@ static auto BuildFunctionDecl(Context& context,
         !function_info.param_patterns_id.is_valid() ||
         !context.inst_blocks().Get(function_info.param_patterns_id).empty() ||
         (return_type_id.is_valid() &&
-         return_type_id != context.GetInt32Type() &&
-         return_type_id != context.GetTupleType({}))) {
+         return_type_id != context.GetTupleType({}) &&
+         // TODO: Decide on valid return types for `Main.Run`. Perhaps we should
+         // have an interface for this.
+         return_type_id != MakeIntType(context, node_id, SemIR::IntKind::Signed,
+                                       context.ints().Add(32)))) {
       CARBON_DIAGNOSTIC(InvalidMainRunSignature, Error,
                         "invalid signature for `Main.Run` function; expected "
                         "`fn ()` or `fn () -> i32`");
@@ -341,12 +344,12 @@ static auto HandleFunctionDefinitionAfterSignature(
   context.AddCurrentCodeBlockToFunction();
 
   // Check the return type is complete.
-  CheckFunctionReturnType(context, function.return_slot_id, function,
+  CheckFunctionReturnType(context, function.return_slot_pattern_id, function,
                           SemIR::SpecificId::Invalid);
 
   auto params_to_complete =
       context.inst_blocks().GetOrEmpty(function.call_params_id);
-  if (function.return_slot_id.is_valid()) {
+  if (function.return_slot_pattern_id.is_valid()) {
     // Exclude the return slot because it's diagnosed above.
     params_to_complete = params_to_complete.drop_back();
   }
@@ -408,7 +411,9 @@ auto HandleParseNode(Context& context, Parse::FunctionDefinitionId node_id)
   // If the `}` of the function is reachable, reject if we need a return value
   // and otherwise add an implicit `return;`.
   if (context.is_current_position_reachable()) {
-    if (context.functions().Get(function_id).return_slot_id.is_valid()) {
+    if (context.functions()
+            .Get(function_id)
+            .return_slot_pattern_id.is_valid()) {
       CARBON_DIAGNOSTIC(
           MissingReturnStatement, Error,
           "missing `return` at end of function with declared return type");

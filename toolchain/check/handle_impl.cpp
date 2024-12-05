@@ -101,7 +101,7 @@ auto HandleParseNode(Context& context, Parse::DefaultSelfImplAsId node_id)
     CARBON_DIAGNOSTIC(ImplAsOutsideClass, Error,
                       "`impl as` can only be used in a class");
     context.emitter().Emit(node_id, ImplAsOutsideClass);
-    self_type_id = SemIR::TypeId::Error;
+    self_type_id = SemIR::ErrorInst::SingletonTypeId;
   }
 
   // Build the implicit access to the enclosing `Self`.
@@ -112,7 +112,7 @@ auto HandleParseNode(Context& context, Parse::DefaultSelfImplAsId node_id)
   // handling of the `Self` expression.
   auto self_inst_id = context.AddInst(
       node_id,
-      SemIR::NameRef{.type_id = SemIR::TypeId::TypeType,
+      SemIR::NameRef{.type_id = SemIR::TypeType::SingletonTypeId,
                      .name_id = SemIR::NameId::SelfType,
                      .value_id = context.types().GetInstId(self_type_id)});
 
@@ -204,11 +204,10 @@ static auto PopImplIntroducerAndParamsAsNameComponent(
   if (implicit_param_patterns_id) {
     // Emit the `forall` match. This shouldn't produce any `Call` params,
     // because `impl`s are never actually called at runtime.
-    auto parameter_blocks =
+    auto call_params_id =
         CalleePatternMatch(context, *implicit_param_patterns_id,
                            SemIR::InstBlockId::Invalid, SemIR::InstId::Invalid);
-    CARBON_CHECK(parameter_blocks.call_params_id == SemIR::InstBlockId::Empty);
-    CARBON_CHECK(parameter_blocks.return_slot_id == SemIR::InstId::Invalid);
+    CARBON_CHECK(call_params_id == SemIR::InstBlockId::Empty);
   }
 
   Parse::NodeId first_param_node_id =
@@ -227,7 +226,6 @@ static auto PopImplIntroducerAndParamsAsNameComponent(
       .param_patterns_id = SemIR::InstBlockId::Invalid,
       .call_params_id = SemIR::InstBlockId::Invalid,
       .return_slot_pattern_id = SemIR::InstId::Invalid,
-      .return_slot_id = SemIR::InstId::Invalid,
       .pattern_block_id = context.pattern_block_stack().Pop(),
   };
 }

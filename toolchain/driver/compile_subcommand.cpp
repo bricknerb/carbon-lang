@@ -449,7 +449,7 @@ class CompilationUnit {
     sem_ir_converter_.emplace(node_converters, &*sem_ir_);
     return {.consumer = consumer_,
             .value_stores = &value_stores_,
-            .timings = &timings_,
+            .timings = timings_ ? &*timings_ : nullptr,
             .tokens = &*tokens_,
             .parse_tree = &*parse_tree_,
             .get_parse_tree_and_subtrees = *get_parse_tree_and_subtrees_,
@@ -479,16 +479,25 @@ class CompilationUnit {
     if (vlog_stream_ || print) {
       // Omit entities imported from files that we are not dumping.
       auto should_format_entity = [&](SemIR::InstId entity_inst_id) -> bool {
-        auto loc_id = sem_ir_->insts().GetLocId(entity_inst_id);
-        if (!loc_id.is_import_ir_inst_id()) {
-          return true;
+        // TODO: Reuse `GetCanonicalImportIRInst`. Currently it depends on
+        // `Check::Context`, which we don't have access to here.
+        const SemIR::File* file = &*sem_ir_;
+        while (true) {
+          auto loc_id = file->insts().GetLocId(entity_inst_id);
+          if (!loc_id.is_import_ir_inst_id()) {
+            return true;
+          }
+          auto import_ir_inst =
+              file->import_ir_insts().Get(loc_id.import_ir_inst_id());
+          const auto* import_file =
+              file->import_irs().Get(import_ir_inst.ir_id).sem_ir;
+          CARBON_CHECK(import_file);
+          if (!IncludeInDumps(import_file->filename())) {
+            return false;
+          }
+          file = import_file;
+          entity_inst_id = import_ir_inst.inst_id;
         }
-        auto import_ir_id =
-            sem_ir_->import_ir_insts().Get(loc_id.import_ir_inst_id()).ir_id;
-        const auto* import_file =
-            sem_ir_->import_irs().Get(import_ir_id).sem_ir;
-        CARBON_CHECK(import_file);
-        return IncludeInDumps(import_file->filename());
       };
 
       SemIR::Formatter formatter(*tokens_, *parse_tree_, *sem_ir_,
@@ -657,7 +666,7 @@ class CompilationUnit {
                llvm::StringLiteral timing_label, llvm::function_ref<void()> fn)
       -> void {
     CARBON_VLOG("*** {0}: {1} ***\n", logging_label, input_filename_);
-    Timings::ScopedTiming timing(&timings_, timing_label);
+    Timings::ScopedTiming timing(timings_ ? &*timings_ : nullptr, timing_label);
     fn();
     CARBON_VLOG("*** {0} done ***\n", logging_label);
   }

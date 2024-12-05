@@ -22,6 +22,7 @@ cc_library(
     name = "typed_insts",
     srcs = [
         "builtin_inst_kind.cpp",
+        "ids.cpp",
         "inst_kind.cpp",
     ],
     hdrs = [
@@ -29,6 +30,7 @@ cc_library(
         "id_kind.h",
         "ids.h",
         "inst_kind.h",
+        "singleton_insts.h",
         "typed_insts.h",
     ],
     textual_hdrs = ["inst_kind.def"],
@@ -69,6 +71,7 @@ cc_library(
         "builtin_function_kind.cpp",
         "class.cpp",
         "constant.cpp",
+        "facet_type_info.cpp",
         "file.cpp",
         "function.cpp",
         "generic.cpp",
