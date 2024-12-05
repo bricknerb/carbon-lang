@@ -36,26 +36,7 @@ class NameScope : public Printable<NameScope> {
         name_id_(name_id),
         parent_scope_id_(parent_scope_id) {}
 
-  auto Print(llvm::raw_ostream& out) const -> void {
-    out << "{inst: " << inst_id_ << ", parent_scope: " << parent_scope_id_
-        << ", has_error: " << (has_error_ ? "true" : "false");
-
-    out << ", extended_scopes: [";
-    llvm::ListSeparator scope_sep;
-    for (auto id : extended_scopes_) {
-      out << scope_sep << id;
-    }
-    out << "]";
-
-    out << ", names: {";
-    llvm::ListSeparator sep;
-    for (auto entry : names_) {
-      out << sep << entry.name_id << ": " << entry.inst_id;
-    }
-    out << "}";
-
-    out << "}";
-  }
+  auto Print(llvm::raw_ostream& out) const -> void;
 
   // Names in the scope.
   // Entries could become invalidated if the scope object is invalidated or if a
