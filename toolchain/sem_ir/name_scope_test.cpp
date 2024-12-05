@@ -11,7 +11,17 @@ namespace Carbon::SemIR {
 namespace {
 
 using ::testing::ElementsAre;
+using ::testing::Field;
 using ::testing::Pair;
+
+MATCHER_P(NameScopeEntryEquals, entry, "") {
+  return ExplainMatchResult(
+      AllOf(Field("name_id", &NameScope::Entry::name_id, entry.name_id),
+            Field("inst_id", &NameScope::Entry::inst_id, entry.inst_id),
+            Field("access_kind", &NameScope::Entry::access_kind,
+                  entry.access_kind)),
+      arg, result_listener);
+}
 
 TEST(NameScope, Empty) {
   int id = 0;
@@ -57,22 +67,18 @@ TEST(NameScope, Lookup) {
 
   auto lookup = name_scope.Lookup(entry1.name_id);
   ASSERT_NE(lookup, std::nullopt);
-  EXPECT_EQ(StructReflection::AsTuple(
-                static_cast<NameScope&>(name_scope).GetEntry(*lookup)),
-            StructReflection::AsTuple(entry1));
-  EXPECT_EQ(StructReflection::AsTuple(
-                static_cast<const NameScope&>(name_scope).GetEntry(*lookup)),
-            StructReflection::AsTuple(entry1));
+  EXPECT_THAT(static_cast<NameScope&>(name_scope).GetEntry(*lookup),
+              NameScopeEntryEquals(entry1));
+  EXPECT_THAT(static_cast<const NameScope&>(name_scope).GetEntry(*lookup),
+              NameScopeEntryEquals(entry1));
 
   lookup = name_scope.Lookup(entry2.name_id);
   ASSERT_NE(lookup, std::nullopt);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(*lookup)),
-            StructReflection::AsTuple(entry2));
+  EXPECT_THAT(name_scope.GetEntry(*lookup), NameScopeEntryEquals(entry2));
 
   lookup = name_scope.Lookup(entry3.name_id);
   ASSERT_NE(lookup, std::nullopt);
-  EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(*lookup)),
-            StructReflection::AsTuple(entry3));
+  EXPECT_THAT(name_scope.GetEntry(*lookup), NameScopeEntryEquals(entry3));
 
   NameId unknown_name_id(++id);
   lookup = name_scope.Lookup(unknown_name_id);
@@ -94,8 +100,7 @@ TEST(NameScope, LookupOrAdd) {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry1.name_id, entry1.inst_id, entry1.access_kind);
     EXPECT_TRUE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry1));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry1));
   }
 
   NameScope::Entry entry2{.name_id = NameId(++id),
@@ -105,8 +110,7 @@ TEST(NameScope, LookupOrAdd) {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry2.name_id, entry2.inst_id, entry2.access_kind);
     EXPECT_TRUE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry2));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry2));
   }
 
   NameScope::Entry entry3{.name_id = NameId(++id),
@@ -116,32 +120,28 @@ TEST(NameScope, LookupOrAdd) {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry3.name_id, entry3.inst_id, entry3.access_kind);
     EXPECT_TRUE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry3));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry3));
   }
 
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry1.name_id, entry1.inst_id, entry1.access_kind);
     EXPECT_FALSE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry1));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry1));
   }
 
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry2.name_id, entry2.inst_id, entry2.access_kind);
     EXPECT_FALSE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry2));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry2));
   }
 
   {
     auto [added, entry_id] = name_scope.LookupOrAdd(
         entry3.name_id, entry3.inst_id, entry3.access_kind);
     EXPECT_FALSE(added);
-    EXPECT_EQ(StructReflection::AsTuple(name_scope.GetEntry(entry_id)),
-              StructReflection::AsTuple(entry3));
+    EXPECT_THAT(name_scope.GetEntry(entry_id), NameScopeEntryEquals(entry3));
   }
 }
 
