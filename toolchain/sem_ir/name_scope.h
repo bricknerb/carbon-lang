@@ -38,9 +38,6 @@ class NameScope : public Printable<NameScope> {
 
   auto Print(llvm::raw_ostream& out) const -> void;
 
-  // Names in the scope.
-  // Entries could become invalidated if the scope object is invalidated or if a
-  // name is added.
   auto entries() const -> llvm::ArrayRef<Entry> { return names_; }
 
   // Get a specific Name entry based on an EntryId that return from a lookup.
@@ -70,7 +67,6 @@ class NameScope : public Printable<NameScope> {
   auto LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                    AccessKind access_kind) -> std::pair<bool, EntryId>;
 
-  // Instructions returning values that are extended by this scope.
   auto extended_scopes() const -> llvm::ArrayRef<InstId> {
     return extended_scopes_;
   }
@@ -79,27 +75,18 @@ class NameScope : public Printable<NameScope> {
     extended_scopes_.push_back(extended_scope);
   }
 
-  // The instruction which owns the scope.
   auto inst_id() const -> InstId { return inst_id_; }
 
-  // When the scope is a namespace, the name. Otherwise, invalid.
   auto name_id() const -> NameId { return name_id_; }
 
-  // The parent scope.
   auto parent_scope_id() const -> NameScopeId { return parent_scope_id_; }
 
-  // Whether we have diagnosed an error in a construct that would have added
-  // names to this scope. For example, this can happen if an `import` failed or
-  // an `extend` declaration was ill-formed. If true, names are assumed to be
-  // missing as a result of the error, and no further errors are produced for
-  // lookup failures in this scope.
   auto has_error() const -> bool { return has_error_; }
 
   // Mark that we have diagnosed an error in a construct that would have added
   // names to this scope.
   auto set_has_error() -> void { has_error_ = true; }
 
-  // True if this is a closed namespace created by importing a package.
   auto is_closed_import() const -> bool { return is_closed_import_; }
 
   auto set_is_closed_import(bool is_closed_import) -> void {
@@ -111,8 +98,6 @@ class NameScope : public Printable<NameScope> {
     return is_closed_import() && parent_scope_id() == NameScopeId::Package;
   }
 
-  // Imported IR scopes that compose this namespace. This will be empty for
-  // scopes that correspond to the current package.
   auto import_ir_scopes() const
       -> llvm::ArrayRef<std::pair<SemIR::ImportIRId, SemIR::NameScopeId>> {
     return import_ir_scopes_;
@@ -125,6 +110,10 @@ class NameScope : public Printable<NameScope> {
   }
 
  private:
+  // Names in the scope.
+  // Entries could become invalidated if the scope object is invalidated or if a
+  // name is added.
+  //
   // We store both an insertion-ordered vector for iterating
   // and a map from `NameId` to the index of that vector for name lookup.
   //
@@ -137,20 +126,35 @@ class NameScope : public Printable<NameScope> {
   llvm::SmallVector<Entry> names_;
   Map<NameId, EntryId> name_map_;
 
+  // Instructions returning values that are extended by this scope.
+  //
   // Small vector size is set to 1: we expect that there will rarely be more
   // than a single extended scope.
   // TODO: Revisit this once we have more kinds of extended scope and data.
   // TODO: Consider using something like `TinyPtrVector` for this.
   llvm::SmallVector<InstId, 1> extended_scopes_;
 
+  // The instruction which owns the scope.
   InstId inst_id_;
+
+  // When the scope is a namespace, the name. Otherwise, invalid.
   NameId name_id_;
+
+  // The parent scope.
   NameScopeId parent_scope_id_;
 
+  // Whether we have diagnosed an error in a construct that would have added
+  // names to this scope. For example, this can happen if an `import` failed or
+  // an `extend` declaration was ill-formed. If true, names are assumed to be
+  // missing as a result of the error, and no further errors are produced for
+  // lookup failures in this scope.
   bool has_error_ = false;
 
+  // True if this is a closed namespace created by importing a package.
   bool is_closed_import_ = false;
 
+  // Imported IR scopes that compose this namespace. This will be empty for
+  // scopes that correspond to the current package.
   llvm::SmallVector<std::pair<SemIR::ImportIRId, SemIR::NameScopeId>, 0>
       import_ir_scopes_;
 };
