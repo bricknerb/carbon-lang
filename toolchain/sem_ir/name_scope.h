@@ -26,7 +26,8 @@ class NameScope : public Printable<NameScope> {
     AccessKind access_kind;
   };
 
-  struct EntryId : public IdBase {
+  struct EntryId : public IdBase<EntryId> {
+    static constexpr llvm::StringLiteral Label = "name_scope_entry";
     using IdBase::IdBase;
   };
 
