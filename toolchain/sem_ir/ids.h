@@ -39,6 +39,10 @@ struct InstId : public IdBase, public Printable<InstId> {
   // An explicitly invalid ID.
   static const InstId Invalid;
 
+  // Represents that the name in this scope was poisoned by using it without
+  // qualifications.
+  static const InstId PoisonedName;
+
 // Builtin inst IDs.
 #define CARBON_SEM_IR_BUILTIN_INST_KIND(Name) static const InstId Builtin##Name;
 #include "toolchain/sem_ir/inst_kind.def"
@@ -54,10 +58,14 @@ struct InstId : public IdBase, public Printable<InstId> {
 
   using IdBase::IdBase;
 
+  constexpr auto is_poisoned() const -> bool {
+    return index == PoisonedNameIndex;
+  }
+
   // Returns true if the instruction is a builtin. Requires is_valid.
   auto is_builtin() const -> bool {
     CARBON_CHECK(is_valid());
-    return index < BuiltinInstKind::ValidCount;
+    return !is_poisoned() && index < BuiltinInstKind::ValidCount;
   }
 
   // Returns the BuiltinInstKind. Requires is_builtin.
@@ -70,6 +78,8 @@ struct InstId : public IdBase, public Printable<InstId> {
     out << "inst";
     if (!is_valid()) {
       IdBase::Print(out);
+    } else if (is_poisoned()) {
+      out << "<poisoned>";
     } else if (is_builtin()) {
       out << builtin_inst_kind();
     } else {
@@ -78,9 +88,12 @@ struct InstId : public IdBase, public Printable<InstId> {
       out << "+" << index - BuiltinInstKind::ValidCount;
     }
   }
+
+  static constexpr int32_t PoisonedNameIndex = InvalidIndex - 1;
 };
 
 constexpr InstId InstId::Invalid = InstId(InvalidIndex);
+constexpr InstId InstId::PoisonedName = InstId(PoisonedNameIndex);
 
 #define CARBON_SEM_IR_BUILTIN_INST_KIND(Name) \
   constexpr InstId InstId::Builtin##Name =    \

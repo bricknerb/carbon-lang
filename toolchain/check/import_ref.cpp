@@ -1195,6 +1195,9 @@ static auto AddNameScopeImportRefs(ImportContext& context,
                                    const SemIR::NameScope& import_scope,
                                    SemIR::NameScope& new_scope) -> void {
   for (auto entry : import_scope.entries()) {
+    if (entry.inst_id.is_poisoned()) {
+      continue;
+    }
     auto ref_id = AddImportRef(context, entry.inst_id);
     new_scope.AddRequired({.name_id = GetLocalNameId(context, entry.name_id),
                            .inst_id = ref_id,
@@ -2714,6 +2717,9 @@ static auto GetInstForLoad(Context& context,
 }
 
 auto LoadImportRef(Context& context, SemIR::InstId inst_id) -> void {
+  if (inst_id.is_poisoned()) {
+    return;
+  }
   auto inst = context.insts().TryGetAs<SemIR::ImportRefUnloaded>(inst_id);
   if (!inst) {
     return;

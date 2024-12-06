@@ -218,6 +218,14 @@ auto Context::DiagnoseDuplicateName(SemIRLoc dup_def, SemIRLoc prev_def)
       .Emit();
 }
 
+auto Context::DiagnosePoisonedName(SemIRLoc dup_def) -> void {
+  CARBON_DIAGNOSTIC(
+      NameDeclPoisoned, Error,
+      "cannot declare this name in this scope since is was already used "
+      "without qualification in the context of this scope");
+  emitter_->Build(dup_def, NameDeclPoisoned).Emit();
+}
+
 auto Context::DiagnoseNameNotFound(SemIRLoc loc, SemIR::NameId name_id)
     -> void {
   CARBON_DIAGNOSTIC(NameNotFound, Error, "name `{0}` not found", SemIR::NameId);
@@ -328,6 +336,8 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
       scope_stack().LookupInLexicalScopes(name_id);
 
   // Walk the non-lexical scopes and perform lookups into each of them.
+  // Collect scopes to poison this name when it's found.
+  std::vector<LookupScope> scopes_to_poison;
   for (auto [index, lookup_scope_id, specific_id] :
        llvm::reverse(non_lexical_scopes)) {
     if (auto non_lexical_result =
@@ -335,9 +345,17 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
                                 LookupScope{.name_scope_id = lookup_scope_id,
                                             .specific_id = specific_id},
                                 /*required=*/false);
-        non_lexical_result.inst_id.is_valid()) {
+        non_lexical_result.inst_id.is_valid() &&
+        !non_lexical_result.inst_id.is_poisoned()) {
+      // Poison the scopes for this name.
+      for (const auto [scope_id, specific_id] : scopes_to_poison) {
+        name_scopes().Get(scope_id).AddPoison(name_id);
+      }
+
       return non_lexical_result;
     }
+    scopes_to_poison.push_back(
+        {.name_scope_id = lookup_scope_id, .specific_id = specific_id});
   }
 
   if (lexical_result.is_valid()) {
@@ -589,7 +607,8 @@ auto Context::LookupQualifiedName(SemIRLoc loc, SemIR::NameId name_id,
     result.specific_id = specific_id;
   }
 
-  if (required && !result.inst_id.is_valid()) {
+  if (required &&
+      (!result.inst_id.is_valid() || result.inst_id.is_poisoned())) {
     if (!has_error) {
       if (prohibited_accesses.empty()) {
         DiagnoseNameNotFound(loc, name_id);
