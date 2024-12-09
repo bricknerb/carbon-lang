@@ -626,6 +626,10 @@ class FormatterImpl {
     }
 
     for (auto [name_id, inst_id, access_kind] : scope.entries()) {
+      if (inst_id.is_poisoned()) {
+        // TODO: Add poisoned names.
+        continue;
+      }
       Indent();
       out_ << ".";
       FormatName(name_id);

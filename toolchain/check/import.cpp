@@ -110,6 +110,7 @@ static auto AddNamespace(Context& context, SemIR::TypeId namespace_type_id,
       SemIR::InstId::Invalid, SemIR::AccessKind::Public);
   if (!inserted) {
     auto prev_inst_id = parent_scope->GetEntry(entry_id).inst_id;
+    CARBON_CHECK(!prev_inst_id.is_poisoned());
     if (auto namespace_inst =
             context.insts().TryGetAs<SemIR::Namespace>(prev_inst_id)) {
       if (diagnose_duplicate_namespace) {
