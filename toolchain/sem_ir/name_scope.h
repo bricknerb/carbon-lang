@@ -73,6 +73,8 @@ class NameScope : public Printable<NameScope> {
   //
   // If the name is not found, adds the name using inst_id and access_kind and
   // returns false and an EntryId.
+  //
+  // inst_id must not be poisoned.
   auto LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                    AccessKind access_kind) -> std::pair<bool, EntryId>;
 

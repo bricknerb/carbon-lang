@@ -47,13 +47,12 @@ auto NameScope::AddRequired(Entry name_entry) -> void {
 auto NameScope::LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
                             AccessKind access_kind)
     -> std::pair<bool, EntryId> {
+  CARBON_CHECK(!inst_id.is_poisoned(),
+               "Cannot add a poisoned name: {0}. Use AddPoison()", name_id);
   auto insert_result = name_map_.Insert(name_id, EntryId(names_.size()));
   if (!insert_result.is_inserted()) {
     return {false, EntryId(insert_result.value())};
   }
-
-  CARBON_CHECK(!inst_id.is_poisoned(),
-               "Cannot add a poisoned name: {0}. Use AddPoison()", name_id);
 
   names_.push_back(
       {.name_id = name_id, .inst_id = inst_id, .access_kind = access_kind});
