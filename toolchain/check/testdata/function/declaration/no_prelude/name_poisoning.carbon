@@ -48,6 +48,23 @@ fn N.F1(x: C);
 // CHECK:STDERR:
 class N.C {}
 
+// --- fail_use_undefined_poisoned_name.carbon
+
+library "[[@TEST_NAME]]";
+
+class C {};
+
+namespace N;
+// Here we use C and poison N.C.
+fn N.F1() -> C;
+
+// Try to use N.C which was never defined and poisoned.
+// CHECK:STDERR: fail_use_undefined_poisoned_name.carbon:[[@LINE+4]]:14: error: name `C` not found [NameNotFound]
+// CHECK:STDERR: fn N.F2() -> N.C;
+// CHECK:STDERR:              ^~~
+// CHECK:STDERR:
+fn N.F2() -> N.C;
+
 // --- fail_poison_with_usage.carbon
 
 library "[[@TEST_NAME]]";
@@ -313,6 +330,59 @@ class N.C {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F1(%x.param_patt: %C);
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_use_undefined_poisoned_name.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %C: type = class_type @C [template]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template]
+// CHECK:STDOUT:   %F1.type: type = fn_type @F1 [template]
+// CHECK:STDOUT:   %F1: %F1.type = struct_value () [template]
+// CHECK:STDOUT:   %F2.type: type = fn_type @F2 [template]
+// CHECK:STDOUT:   %F2: %F2.type = struct_value () [template]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     .N = %N
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
+// CHECK:STDOUT:   %N: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .F1 = %F1.decl
+// CHECK:STDOUT:     .F2 = %F2.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %F1.decl: %F1.type = fn_decl @F1 [template = constants.%F1] {
+// CHECK:STDOUT:     %return.patt: %C = return_slot_pattern
+// CHECK:STDOUT:     %return.param_patt: %C = out_param_pattern %return.patt, runtime_param0
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl [template = constants.%C]
+// CHECK:STDOUT:     %return.param: ref %C = out_param runtime_param0
+// CHECK:STDOUT:     %return: ref %C = return_slot %return.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %F2.decl: %F2.type = fn_decl @F2 [template = constants.%F2] {
+// CHECK:STDOUT:     %return.patt: <error> = return_slot_pattern
+// CHECK:STDOUT:     %return.param_patt: <error> = out_param_pattern %return.patt, runtime_param0
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %N.ref: <namespace> = name_ref N, file.%N [template = file.%N]
+// CHECK:STDOUT:     %C.ref: <error> = name_ref C, <error> [template = <error>]
+// CHECK:STDOUT:     %return.param: ref <error> = out_param runtime_param0
+// CHECK:STDOUT:     %return: ref <error> = return_slot %return.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @C {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%C
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F1() -> %C;
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F2() -> <error>;
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_poison_with_usage.carbon
 // CHECK:STDOUT:
