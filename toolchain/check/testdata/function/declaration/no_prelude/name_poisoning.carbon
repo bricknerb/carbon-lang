@@ -147,6 +147,13 @@ import library "poison";
 // This doesn't fail.
 class N.C {}
 
+// --- poison.impl.carbon
+
+impl library "[[@TEST_NAME]]";
+
+// TODO: This should fail since N.C was poisoned in the api.
+class N.C {}
+
 // CHECK:STDOUT: --- no_poison.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
@@ -530,7 +537,7 @@ class N.C {}
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
 // CHECK:STDOUT:   %N: <namespace> = namespace [template] {}
 // CHECK:STDOUT:   %C.ref: type = name_ref C, %C.decl [template = constants.%C]
-// CHECK:STDOUT:   %.loc12: type = bind_alias <invalid>, %C.decl [template = constants.%C]
+// CHECK:STDOUT:   %.loc10: type = bind_alias <invalid>, %C.decl [template = constants.%C]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C {
@@ -564,6 +571,41 @@ class N.C {}
 // CHECK:STDOUT:     .N = imports.%N
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %default.import = import <invalid>
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @C {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%C
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- poison.impl.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %C: type = class_type @C [template]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %import_ref.1 = import_ref Main//poison, C, unloaded
+// CHECK:STDOUT:   %import_ref.2: <namespace> = import_ref Main//poison, N, loaded
+// CHECK:STDOUT:   %N: <namespace> = namespace %import_ref.2, [template] {
+// CHECK:STDOUT:     .F1 = %import_ref.3
+// CHECK:STDOUT:     .C = file.%C.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .C = imports.%import_ref.1
+// CHECK:STDOUT:     .N = imports.%N
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %default.import.loc2_6.1 = import <invalid>
+// CHECK:STDOUT:   %default.import.loc2_6.2 = import <invalid>
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

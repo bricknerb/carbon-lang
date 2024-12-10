@@ -334,6 +334,9 @@ static auto ImportScopeFromApiFile(Context& context,
   auto& impl_scope = context.name_scopes().Get(impl_scope_id);
 
   for (const auto& api_entry : api_scope.entries()) {
+    if (api_entry.inst_id.is_poisoned()) {
+      continue;
+    }
     auto impl_name_id =
         CopyNameFromImportIR(context, api_sem_ir, api_entry.name_id);
     if (auto ns =
