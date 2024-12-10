@@ -66,6 +66,24 @@ fn N.F1(x: I);
 // CHECK:STDERR:
 interface N.I {}
 
+// --- fail_poison_namespace_without_usage.carbon
+
+library "[[@TEST_NAME]]";
+
+class C {};
+
+namespace N;
+// Here we use C and poison N.C.
+fn N.F1(x: C);
+
+// Should fail here since C was poisoned for namespace N when it was used in N
+// context without qualification.
+// CHECK:STDERR: fail_poison_namespace_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: namespace N.C;
+// CHECK:STDERR: ^~~~~~~~~~~~~~
+// CHECK:STDERR:
+namespace N.C;
+
 // --- fail_use_undefined_poisoned_name.carbon
 
 library "[[@TEST_NAME]]";
@@ -397,6 +415,46 @@ class N.C {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F1(%x.param_patt: %I.type);
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_poison_namespace_without_usage.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %C: type = class_type @C [template]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template]
+// CHECK:STDOUT:   %F1.type: type = fn_type @F1 [template]
+// CHECK:STDOUT:   %F1: %F1.type = struct_value () [template]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     .N = %N
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
+// CHECK:STDOUT:   %N: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .F1 = %F1.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %F1.decl: %F1.type = fn_decl @F1 [template = constants.%F1] {
+// CHECK:STDOUT:     %x.patt: %C = binding_pattern x
+// CHECK:STDOUT:     %x.param_patt: %C = value_param_pattern %x.patt, runtime_param0
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl [template = constants.%C]
+// CHECK:STDOUT:     %x.param: %C = value_param runtime_param0
+// CHECK:STDOUT:     %x: %C = bind_name x, %x.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %.loc16: <namespace> = namespace [template] {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @C {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%C
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F1(%x.param_patt: %C);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_use_undefined_poisoned_name.carbon
 // CHECK:STDOUT:
