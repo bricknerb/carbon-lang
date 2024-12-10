@@ -216,12 +216,12 @@ auto Context::DiagnoseDuplicateName(SemIRLoc dup_def, SemIRLoc prev_def)
       .Emit();
 }
 
-auto Context::DiagnosePoisonedName(SemIRLoc dup_def) -> void {
+auto Context::DiagnosePoisonedName(SemIRLoc loc) -> void {
   CARBON_DIAGNOSTIC(
-      NameDeclPoisoned, Error,
-      "cannot declare this name in this scope since is was already used "
-      "without qualification in the context of this scope");
-  emitter_->Build(dup_def, NameDeclPoisoned).Emit();
+      NameDeclUsedUnqualifiedBefore, Error,
+      "name previously used by unqualified name lookup and not found; "
+      "cannot later be declared");
+  emitter_->Build(loc, NameDeclUsedUnqualifiedBefore).Emit();
 }
 
 auto Context::DiagnoseNameNotFound(SemIRLoc loc, SemIR::NameId name_id)

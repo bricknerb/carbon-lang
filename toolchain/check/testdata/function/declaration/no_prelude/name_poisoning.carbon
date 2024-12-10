@@ -42,7 +42,7 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_without_usage.carbon:[[@LINE+4]]:1: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_poison_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N.C {}
 // CHECK:STDERR: ^~~~~~~~~~~
 // CHECK:STDERR:
@@ -77,7 +77,7 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+4]]:1: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N.C {}
 // CHECK:STDERR: ^~~~~~~~~~~
 // CHECK:STDERR:
@@ -108,38 +108,38 @@ class N1.N2.N3.D1 {
       // * N1.N2.N3.D1.D2.D3.C
       fn F(x: C);
 
-      // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:7: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+      // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:7: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
       // CHECK:STDERR:       class C {}
       // CHECK:STDERR:       ^~~~~~~~~
       // CHECK:STDERR:
       class C {}
     }
-    // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:5: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+    // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:5: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
     // CHECK:STDERR:     class C {}
     // CHECK:STDERR:     ^~~~~~~~~
     // CHECK:STDERR:
     class C {}
   }
-  // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:3: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+  // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:3: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
   // CHECK:STDERR:   class C {}
   // CHECK:STDERR:   ^~~~~~~~~
   // CHECK:STDERR:
   class C {}
 }
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N1.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~
 // CHECK:STDERR:
 class N1.C {}
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N1.N2.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~~~~
 // CHECK:STDERR:
 class N1.N2.C {}
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N1.N2.N3.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~~~~~~~
 // CHECK:STDERR:
@@ -152,7 +152,7 @@ library "[[@TEST_NAME]]";
 class C {}
 
 namespace N;
-// CHECK:STDERR: fail_alias.carbon:[[@LINE+3]]:9: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_alias.carbon:[[@LINE+3]]:9: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: alias N.C = C;
 // CHECK:STDERR:         ^
 alias N.C = C;
