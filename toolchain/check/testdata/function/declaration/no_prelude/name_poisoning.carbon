@@ -135,32 +135,17 @@ library "[[@TEST_NAME]]";
 class C {}
 
 namespace N;
-// CHECK:STDERR: fail_alias.carbon:[[@LINE+6]]:9: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
+// CHECK:STDERR: fail_alias.carbon:[[@LINE+3]]:9: error: cannot declare this name in this scope since is was already used without qualification in the context of this scope [NameDeclPoisoned]
 // CHECK:STDERR: alias N.C = C;
 // CHECK:STDERR:         ^
-// CHECK:STDERR:
-// CHECK:STDERR: fail_poison_import: error: file extension of `.carbon` required for api [IncorrectExtension]
-// CHECK:STDERR:
 alias N.C = C;
 
-// --- fail_poison_import
+// --- ignored_poison_in_import.carbon
 
 import library "poison";
 
-// TODO: Should fail here since C was poisoned for namespace N when it was used
-//       in N context without qualification in the imported library.
+// This doesn't fail.
 class N.C {}
-
-// TODO: Should not fail here since N.C failed to be defined so both N.F1() and
-//       N.F2() take C.
-// CHECK:STDERR: fail_poison_import:[[@LINE+7]]:22: error: `Core.ImplicitAs` implicitly referenced here, but package `Core` not found [CoreNotFound]
-// CHECK:STDERR: fn N.F2(x: C) { N.F1(x); }
-// CHECK:STDERR:                      ^
-// CHECK:STDERR: fail_poison_import:[[@LINE-11]]:1: in import [InImport]
-// CHECK:STDERR: poison.carbon:8:9: note: initializing function parameter [InCallToFunctionParam]
-// CHECK:STDERR: fn N.F1(x: C);
-// CHECK:STDERR:         ^~~~
-fn N.F2(x: C) { N.F1(x); }
 
 // CHECK:STDOUT: --- no_poison.carbon
 // CHECK:STDOUT:
@@ -545,7 +530,7 @@ fn N.F2(x: C) { N.F1(x); }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
 // CHECK:STDOUT:   %N: <namespace> = namespace [template] {}
 // CHECK:STDOUT:   %C.ref: type = name_ref C, %C.decl [template = constants.%C]
-// CHECK:STDOUT:   %.loc13: type = bind_alias <invalid>, %C.decl [template = constants.%C]
+// CHECK:STDOUT:   %.loc12: type = bind_alias <invalid>, %C.decl [template = constants.%C]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C {
@@ -556,18 +541,12 @@ fn N.F2(x: C) { N.F1(x); }
 // CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_poison_import
+// CHECK:STDOUT: --- ignored_poison_in_import.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %C.1: type = class_type @C.1 [template]
+// CHECK:STDOUT:   %C: type = class_type @C [template]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template]
-// CHECK:STDOUT:   %F2.type: type = fn_type @F2 [template]
-// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [template]
-// CHECK:STDOUT:   %F2: %F2.type = struct_value () [template]
-// CHECK:STDOUT:   %F1.type: type = fn_type @F1 [template]
-// CHECK:STDOUT:   %F1: %F1.type = struct_value () [template]
-// CHECK:STDOUT:   %C.2: type = class_type @C.2 [template]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -576,11 +555,7 @@ fn N.F2(x: C) { N.F1(x); }
 // CHECK:STDOUT:   %N: <namespace> = namespace %import_ref.2, [template] {
 // CHECK:STDOUT:     .F1 = %import_ref.3
 // CHECK:STDOUT:     .C = file.%C.decl
-// CHECK:STDOUT:     .F2 = file.%F2.decl
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %import_ref.3: %F1.type = import_ref Main//poison, F1, loaded [template = constants.%F1]
-// CHECK:STDOUT:   %import_ref.4: <witness> = import_ref Main//poison, loc4_10, loaded [template = constants.%complete_type]
-// CHECK:STDOUT:   %import_ref.5 = import_ref Main//poison, inst14 [no loc], unloaded
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -589,40 +564,14 @@ fn N.F2(x: C) { N.F1(x); }
 // CHECK:STDOUT:     .N = imports.%N
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %default.import = import <invalid>
-// CHECK:STDOUT:   %C.decl: type = class_decl @C.1 [template = constants.%C.1] {} {}
-// CHECK:STDOUT:   %F2.decl: %F2.type = fn_decl @F2 [template = constants.%F2] {
-// CHECK:STDOUT:     %x.patt: %C.1 = binding_pattern x
-// CHECK:STDOUT:     %x.param_patt: %C.1 = value_param_pattern %x.patt, runtime_param0
-// CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl [template = constants.%C.1]
-// CHECK:STDOUT:     %x.param: %C.1 = value_param runtime_param0
-// CHECK:STDOUT:     %x: %C.1 = bind_name x, %x.param
-// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [template = constants.%C] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @C.1 {
+// CHECK:STDOUT: class @C {
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%C.1
+// CHECK:STDOUT:   .Self = constants.%C
 // CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: class @C.2 [from "poison.carbon"] {
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = imports.%import_ref.5
-// CHECK:STDOUT:   complete_type_witness = imports.%import_ref.4
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: fn @F2(%x.param_patt: %C.1) {
-// CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %N.ref: <namespace> = name_ref N, imports.%N [template = imports.%N]
-// CHECK:STDOUT:   %F1.ref: %F1.type = name_ref F1, imports.%import_ref.3 [template = constants.%F1]
-// CHECK:STDOUT:   %x.ref: %C.1 = name_ref x, %x
-// CHECK:STDOUT:   %.loc17: %C.2 = converted %x.ref, <error> [template = <error>]
-// CHECK:STDOUT:   %F1.call: init %empty_tuple.type = call %F1.ref(<error>)
-// CHECK:STDOUT:   return
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: fn @F1(%x.param_patt: %C.2) [from "poison.carbon"];
 // CHECK:STDOUT:
