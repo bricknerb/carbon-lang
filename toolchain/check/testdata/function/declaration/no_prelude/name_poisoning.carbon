@@ -30,7 +30,7 @@ namespace N;
 // Here we use C and poison N.C.
 fn N.F1(x: C);
 
-// --- fail_poison_without_usage.carbon
+// --- fail_poison_class_without_usage.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -42,11 +42,29 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_class_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N.C {}
 // CHECK:STDERR: ^~~~~~~~~~~
 // CHECK:STDERR:
 class N.C {}
+
+// --- fail_poison_interface_without_usage.carbon
+
+library "[[@TEST_NAME]]";
+
+interface I {};
+
+namespace N;
+// Here we use I and poison N.I.
+fn N.F1(x: I);
+
+// Should fail here since I was poisoned for namespace N when it was used in N
+// context without qualification.
+// CHECK:STDERR: fail_poison_interface_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: interface N.I {}
+// CHECK:STDERR: ^~~~~~~~~~~~~~~
+// CHECK:STDERR:
+interface N.I {}
 
 // --- fail_use_undefined_poisoned_name.carbon
 
@@ -97,7 +115,7 @@ namespace N1;
 namespace N1.N2;
 namespace N1.N2.N3;
 class N1.N2.N3.D1 {
-  class D2 {
+  interface D2 {
     class D3 {
       // Here we use C and poison:
       // * N1.C
@@ -134,10 +152,10 @@ class N1.N2.N3.D1 {
 class N1.C {}
 
 // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
-// CHECK:STDERR: class N1.N2.C {}
-// CHECK:STDERR: ^~~~~~~~~~~~~~~
+// CHECK:STDERR: interface N1.N2.C {}
+// CHECK:STDERR: ^~~~~~~~~~~~~~~~~~~
 // CHECK:STDERR:
-class N1.N2.C {}
+interface N1.N2.C {}
 
 // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
 // CHECK:STDERR: class N1.N2.N3.C {}
@@ -282,7 +300,7 @@ class N.C {}
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F1(%x.param_patt: %C);
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_poison_without_usage.carbon
+// CHECK:STDOUT: --- fail_poison_class_without_usage.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %C: type = class_type @C [template]
@@ -330,6 +348,55 @@ class N.C {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F1(%x.param_patt: %C);
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_poison_interface_without_usage.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %I.type: type = facet_type <@I> [template]
+// CHECK:STDOUT:   %Self.1: %I.type = bind_symbolic_name Self, 0 [symbolic]
+// CHECK:STDOUT:   %F1.type: type = fn_type @F1 [template]
+// CHECK:STDOUT:   %F1: %F1.type = struct_value () [template]
+// CHECK:STDOUT:   %.type: type = facet_type <@.1> [template]
+// CHECK:STDOUT:   %Self.2: %.type = bind_symbolic_name Self, 0 [symbolic]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .I = %I.decl
+// CHECK:STDOUT:     .N = %N
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %I.decl: type = interface_decl @I [template = constants.%I.type] {} {}
+// CHECK:STDOUT:   %N: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .F1 = %F1.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %F1.decl: %F1.type = fn_decl @F1 [template = constants.%F1] {
+// CHECK:STDOUT:     %x.patt: %I.type = binding_pattern x
+// CHECK:STDOUT:     %x.param_patt: %I.type = value_param_pattern %x.patt, runtime_param0
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %I.ref: type = name_ref I, file.%I.decl [template = constants.%I.type]
+// CHECK:STDOUT:     %x.param: %I.type = value_param runtime_param0
+// CHECK:STDOUT:     %x: %I.type = bind_name x, %x.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %.decl: type = interface_decl @.1 [template = constants.%.type] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: interface @I {
+// CHECK:STDOUT:   %Self: %I.type = bind_symbolic_name Self, 0 [symbolic = constants.%Self.1]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = %Self
+// CHECK:STDOUT:   witness = ()
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: interface @.1 {
+// CHECK:STDOUT:   %Self: %.type = bind_symbolic_name Self, 0 [symbolic = constants.%Self.2]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = %Self
+// CHECK:STDOUT:   witness = ()
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F1(%x.param_patt: %I.type);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_use_undefined_poisoned_name.carbon
 // CHECK:STDOUT:
@@ -461,16 +528,21 @@ class N.C {}
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template]
 // CHECK:STDOUT:   %D1: type = class_type @D1 [template]
-// CHECK:STDOUT:   %D2: type = class_type @D2 [template]
-// CHECK:STDOUT:   %D3: type = class_type @D3 [template]
-// CHECK:STDOUT:   %F.type: type = fn_type @F [template]
-// CHECK:STDOUT:   %F: %F.type = struct_value () [template]
+// CHECK:STDOUT:   %D2.type: type = facet_type <@D2> [template]
+// CHECK:STDOUT:   %Self.1: %D2.type = bind_symbolic_name Self, 0 [symbolic]
+// CHECK:STDOUT:   %D3.1: type = class_type @D3 [template]
+// CHECK:STDOUT:   %D3.2: type = class_type @D3, @D3(%Self.1) [symbolic]
+// CHECK:STDOUT:   %F.type: type = fn_type @F, @D3(%Self.1) [symbolic]
+// CHECK:STDOUT:   %F: %F.type = struct_value () [symbolic]
 // CHECK:STDOUT:   %.1: type = class_type @.1 [template]
-// CHECK:STDOUT:   %.2: type = class_type @.2 [template]
-// CHECK:STDOUT:   %.3: type = class_type @.3 [template]
-// CHECK:STDOUT:   %.4: type = class_type @.4 [template]
-// CHECK:STDOUT:   %.5: type = class_type @.5 [template]
-// CHECK:STDOUT:   %.6: type = class_type @.6 [template]
+// CHECK:STDOUT:   %.2: type = class_type @.1, @.1(%Self.1) [symbolic]
+// CHECK:STDOUT:   %.3: type = class_type @.2 [template]
+// CHECK:STDOUT:   %.4: type = class_type @.2, @.2(%Self.1) [symbolic]
+// CHECK:STDOUT:   %.5: type = class_type @.3 [template]
+// CHECK:STDOUT:   %.6: type = class_type @.4 [template]
+// CHECK:STDOUT:   %.type: type = facet_type <@.6> [template]
+// CHECK:STDOUT:   %Self.2: %.type = bind_symbolic_name Self, 0 [symbolic]
+// CHECK:STDOUT:   %.7: type = class_type @.5 [template]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -489,9 +561,28 @@ class N.C {}
 // CHECK:STDOUT:     .D1 = %D1.decl
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %D1.decl: type = class_decl @D1 [template = constants.%D1] {} {}
-// CHECK:STDOUT:   %.decl.loc44: type = class_decl @.4 [template = constants.%.4] {} {}
-// CHECK:STDOUT:   %.decl.loc50: type = class_decl @.5 [template = constants.%.5] {} {}
-// CHECK:STDOUT:   %.decl.loc56: type = class_decl @.6 [template = constants.%.6] {} {}
+// CHECK:STDOUT:   %.decl.loc44: type = class_decl @.4 [template = constants.%.6] {} {}
+// CHECK:STDOUT:   %.decl.loc50: type = interface_decl @.6 [template = constants.%.type] {} {}
+// CHECK:STDOUT:   %.decl.loc56: type = class_decl @.5 [template = constants.%.7] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: interface @D2 {
+// CHECK:STDOUT:   %Self: %D2.type = bind_symbolic_name Self, 0 [symbolic = constants.%Self.1]
+// CHECK:STDOUT:   %D3.decl: type = class_decl @D3 [template = constants.%D3.1] {} {}
+// CHECK:STDOUT:   %.decl: type = class_decl @.2 [template = constants.%.3] {} {}
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = %Self
+// CHECK:STDOUT:   .D3 = %D3.decl
+// CHECK:STDOUT:   witness = ()
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: interface @.6 {
+// CHECK:STDOUT:   %Self: %.type = bind_symbolic_name Self, 0 [symbolic = constants.%Self.2]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = %Self
+// CHECK:STDOUT:   witness = ()
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C {
@@ -503,8 +594,8 @@ class N.C {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @D1 {
-// CHECK:STDOUT:   %D2.decl: type = class_decl @D2 [template = constants.%D2] {} {}
-// CHECK:STDOUT:   %.decl: type = class_decl @.3 [template = constants.%.3] {} {}
+// CHECK:STDOUT:   %D2.decl: type = interface_decl @D2 [template = constants.%D2.type] {} {}
+// CHECK:STDOUT:   %.decl: type = class_decl @.3 [template = constants.%.5] {} {}
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
@@ -513,68 +604,56 @@ class N.C {}
 // CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @D2 {
-// CHECK:STDOUT:   %D3.decl: type = class_decl @D3 [template = constants.%D3] {} {}
-// CHECK:STDOUT:   %.decl: type = class_decl @.2 [template = constants.%.2] {} {}
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT: generic class @D3(@D2.%Self: %D2.type) {
+// CHECK:STDOUT: !definition:
+// CHECK:STDOUT:   %Self: %D2.type = bind_symbolic_name Self, 0 [symbolic = %Self (constants.%Self.1)]
+// CHECK:STDOUT:   %F.type: type = fn_type @F, @D3(%Self) [symbolic = %F.type (constants.%F.type)]
+// CHECK:STDOUT:   %F: @D3.%F.type (%F.type) = struct_value () [symbolic = %F (constants.%F)]
 // CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%D2
-// CHECK:STDOUT:   .D3 = %D3.decl
-// CHECK:STDOUT:   complete_type_witness = %complete_type
-// CHECK:STDOUT: }
+// CHECK:STDOUT:   class {
+// CHECK:STDOUT:     %F.decl: @D3.%F.type (%F.type) = fn_decl @F [symbolic = @D3.%F (constants.%F)] {
+// CHECK:STDOUT:       %x.patt: %C = binding_pattern x
+// CHECK:STDOUT:       %x.param_patt: %C = value_param_pattern %x.patt, runtime_param0
+// CHECK:STDOUT:     } {
+// CHECK:STDOUT:       %C.ref: type = name_ref C, file.%C.decl [template = constants.%C]
+// CHECK:STDOUT:       %x.param: %C = value_param runtime_param0
+// CHECK:STDOUT:       %x: %C = bind_name x, %x.param
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %.decl: type = class_decl @.1 [template = constants.%.1] {} {}
+// CHECK:STDOUT:     %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @D3 {
-// CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [template = constants.%F] {
-// CHECK:STDOUT:     %x.patt: %C = binding_pattern x
-// CHECK:STDOUT:     %x.param_patt: %C = value_param_pattern %x.patt, runtime_param0
-// CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %C.ref: type = name_ref C, file.%C.decl [template = constants.%C]
-// CHECK:STDOUT:     %x.param: %C = value_param runtime_param0
-// CHECK:STDOUT:     %x: %C = bind_name x, %x.param
+// CHECK:STDOUT:   !members:
+// CHECK:STDOUT:     .Self = constants.%D3.2
+// CHECK:STDOUT:     .F = %F.decl
+// CHECK:STDOUT:     complete_type_witness = %complete_type
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.decl: type = class_decl @.1 [template = constants.%.1] {} {}
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
-// CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%D3
-// CHECK:STDOUT:   .F = %F.decl
-// CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @.1 {
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT: generic class @.1(@D2.%Self: %D2.type) {
+// CHECK:STDOUT: !definition:
 // CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%.1
-// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT:   class {
+// CHECK:STDOUT:     %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT:   !members:
+// CHECK:STDOUT:     .Self = constants.%.2
+// CHECK:STDOUT:     complete_type_witness = %complete_type
+// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @.2 {
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT: generic class @.2(@D2.%Self: %D2.type) {
+// CHECK:STDOUT: !definition:
 // CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%.2
-// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT:   class {
+// CHECK:STDOUT:     %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT:   !members:
+// CHECK:STDOUT:     .Self = constants.%.4
+// CHECK:STDOUT:     complete_type_witness = %complete_type
+// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @.3 {
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
-// CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%.3
-// CHECK:STDOUT:   complete_type_witness = %complete_type
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: class @.4 {
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
-// CHECK:STDOUT:
-// CHECK:STDOUT: !members:
-// CHECK:STDOUT:   .Self = constants.%.4
-// CHECK:STDOUT:   complete_type_witness = %complete_type
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: class @.5 {
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
@@ -582,7 +661,7 @@ class N.C {}
 // CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: class @.6 {
+// CHECK:STDOUT: class @.4 {
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
@@ -590,7 +669,28 @@ class N.C {}
 // CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @F(%x.param_patt: %C);
+// CHECK:STDOUT: class @.5 {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%.7
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: generic fn @F(@D2.%Self: %D2.type) {
+// CHECK:STDOUT:
+// CHECK:STDOUT:   fn(%x.param_patt: %C);
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: specific @D3(constants.%Self.1) {}
+// CHECK:STDOUT:
+// CHECK:STDOUT: specific @F(constants.%Self.1) {}
+// CHECK:STDOUT:
+// CHECK:STDOUT: specific @.1(constants.%Self.1) {}
+// CHECK:STDOUT:
+// CHECK:STDOUT: specific @D3(%Self) {}
+// CHECK:STDOUT:
+// CHECK:STDOUT: specific @.2(constants.%Self.1) {}
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_alias.carbon
 // CHECK:STDOUT:
