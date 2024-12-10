@@ -217,6 +217,7 @@ auto Context::DiagnoseDuplicateName(SemIRLoc dup_def, SemIRLoc prev_def)
 }
 
 auto Context::DiagnosePoisonedName(SemIRLoc loc) -> void {
+  // TODO: Improve the diagnostic to point to where the name was poisoned.
   CARBON_DIAGNOSTIC(
       NameDeclUsedUnqualifiedBefore, Error,
       "name previously used by unqualified name lookup and not found; "
