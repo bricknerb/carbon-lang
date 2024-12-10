@@ -84,6 +84,24 @@ fn N.F1(x: C);
 // CHECK:STDERR:
 namespace N.C;
 
+// --- fail_poison_member_without_usage.carbon
+
+library "[[@TEST_NAME]]";
+
+class C1 {};
+
+class D {
+  // Here we use C1 and poison D.C1.
+  fn F1(x: C1);
+
+  class C2 {};
+  // CHECK:STDERR: fail_poison_member_without_usage.carbon:[[@LINE+4]]:7: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+  // CHECK:STDERR:   var C1: C2;
+  // CHECK:STDERR:       ^~~~~~
+  // CHECK:STDERR:
+  var C1: C2;
+}
+
 // --- fail_use_undefined_poisoned_name.carbon
 
 library "[[@TEST_NAME]]";
@@ -455,6 +473,69 @@ class N.C {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F1(%x.param_patt: %C);
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_poison_member_without_usage.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %C1: type = class_type @C1 [template]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [template]
+// CHECK:STDOUT:   %complete_type.1: <witness> = complete_type_witness %empty_struct_type [template]
+// CHECK:STDOUT:   %D: type = class_type @D [template]
+// CHECK:STDOUT:   %F1.type: type = fn_type @F1 [template]
+// CHECK:STDOUT:   %F1: %F1.type = struct_value () [template]
+// CHECK:STDOUT:   %C2: type = class_type @C2 [template]
+// CHECK:STDOUT:   %D.elem: type = unbound_element_type %D, %C2 [template]
+// CHECK:STDOUT:   %struct_type.C1: type = struct_type {.C1: %C2} [template]
+// CHECK:STDOUT:   %complete_type.2: <witness> = complete_type_witness %struct_type.C1 [template]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .C1 = %C1.decl
+// CHECK:STDOUT:     .D = %D.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C1.decl: type = class_decl @C1 [template = constants.%C1] {} {}
+// CHECK:STDOUT:   %D.decl: type = class_decl @D [template = constants.%D] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @C1 {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type.1]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%C1
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @D {
+// CHECK:STDOUT:   %F1.decl: %F1.type = fn_decl @F1 [template = constants.%F1] {
+// CHECK:STDOUT:     %x.patt: %C1 = binding_pattern x
+// CHECK:STDOUT:     %x.param_patt: %C1 = value_param_pattern %x.patt, runtime_param0
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %C1.ref: type = name_ref C1, file.%C1.decl [template = constants.%C1]
+// CHECK:STDOUT:     %x.param: %C1 = value_param runtime_param0
+// CHECK:STDOUT:     %x: %C1 = bind_name x, %x.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C2.decl: type = class_decl @C2 [template = constants.%C2] {} {}
+// CHECK:STDOUT:   %C2.ref: type = name_ref C2, %C2.decl [template = constants.%C2]
+// CHECK:STDOUT:   %.loc15: %D.elem = field_decl C1, element0 [template]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %struct_type.C1 [template = constants.%complete_type.2]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%D
+// CHECK:STDOUT:   .F1 = %F1.decl
+// CHECK:STDOUT:   .C2 = %C2.decl
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @C2 {
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [template = constants.%complete_type.1]
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%C2
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F1(%x.param_patt: %C1);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_use_undefined_poisoned_name.carbon
 // CHECK:STDOUT:
