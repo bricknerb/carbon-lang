@@ -79,7 +79,7 @@ class NameScope : public Printable<NameScope> {
                    AccessKind access_kind) -> std::pair<bool, EntryId>;
 
   // Adds a new poisoned name.
-  auto AddPoison(SemIR::NameId name_id) -> void;
+  auto AddPoison(NameId name_id) -> void;
 
   auto extended_scopes() const -> llvm::ArrayRef<InstId> {
     return extended_scopes_;

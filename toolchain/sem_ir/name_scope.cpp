@@ -59,7 +59,7 @@ auto NameScope::LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
   return {true, EntryId(names_.size() - 1)};
 }
 
-auto NameScope::AddPoison(SemIR::NameId name_id) -> void {
+auto NameScope::AddPoison(NameId name_id) -> void {
   auto insert_result = name_map_.Insert(name_id, EntryId(names_.size()));
   CARBON_CHECK(insert_result.is_inserted(),
                "Trying to poison an existing name: {0}", name_id);
