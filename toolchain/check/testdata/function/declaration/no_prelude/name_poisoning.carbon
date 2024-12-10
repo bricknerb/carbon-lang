@@ -142,6 +142,7 @@ alias N.C = C;
 
 // --- ignored_poison_in_import.carbon
 
+library "[[@TEST_NAME]]";
 import library "poison";
 
 // This doesn't fail.
