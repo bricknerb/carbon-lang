@@ -106,6 +106,8 @@ class D {
 
 // --- fail_poison_function_without_usage.carbon
 
+library "[[@TEST_NAME]]";
+
 class C {};
 
 namespace N;
