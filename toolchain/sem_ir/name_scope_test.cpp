@@ -163,7 +163,6 @@ TEST(NameScope, Poison) {
 
   NameId poison2(++id);
   name_scope.AddPoison(poison2);
-  name_scope.AddPoison(poison2);  // Ignored.
   EXPECT_THAT(name_scope.entries(),
               ElementsAre(NameScopeEntryEquals(NameScope::Entry(
                               {.name_id = poison1,

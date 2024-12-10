@@ -62,15 +62,11 @@ auto NameScope::LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
 
 auto NameScope::AddPoison(SemIR::NameId name_id) -> void {
   auto insert_result = name_map_.Insert(name_id, EntryId(names_.size()));
-  if (insert_result.is_inserted()) {
-    names_.push_back({.name_id = name_id,
-                      .inst_id = InstId::PoisonedName,
-                      .access_kind = AccessKind::Public});
-    return;
-  }
-
-  CARBON_CHECK(GetEntry(insert_result.value()).inst_id.is_poisoned(),
-               "Trying to poison an existing non-poisoned name: {0}", name_id);
+  CARBON_CHECK(insert_result.is_inserted(),
+               "Trying to poison an existing name: {0}", name_id);
+  names_.push_back({.name_id = name_id,
+                    .inst_id = InstId::PoisonedName,
+                    .access_kind = AccessKind::Public});
 }
 
 }  // namespace Carbon::SemIR

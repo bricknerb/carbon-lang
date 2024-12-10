@@ -343,17 +343,18 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
                                 LookupScope{.name_scope_id = lookup_scope_id,
                                             .specific_id = specific_id},
                                 /*required=*/false);
-        non_lexical_result.inst_id.is_valid() &&
         !non_lexical_result.inst_id.is_poisoned()) {
-      // Poison the scopes for this name.
-      for (const auto [scope_id, specific_id] : scopes_to_poison) {
-        name_scopes().Get(scope_id).AddPoison(name_id);
-      }
+      if (non_lexical_result.inst_id.is_valid()) {
+        // Poison the scopes for this name.
+        for (const auto [scope_id, specific_id] : scopes_to_poison) {
+          name_scopes().Get(scope_id).AddPoison(name_id);
+        }
 
-      return non_lexical_result;
+        return non_lexical_result;
+      }
+      scopes_to_poison.push_back(
+          {.name_scope_id = lookup_scope_id, .specific_id = specific_id});
     }
-    scopes_to_poison.push_back(
-        {.name_scope_id = lookup_scope_id, .specific_id = specific_id});
   }
 
   if (lexical_result.is_valid()) {
