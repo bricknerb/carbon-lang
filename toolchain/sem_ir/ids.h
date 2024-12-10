@@ -45,17 +45,13 @@ struct InstId : public IdBase<InstId> {
 
   using IdBase::IdBase;
 
-  constexpr auto is_poisoned() const -> bool {
-    return index == PoisonedNameIndex;
-  }
+  constexpr auto is_poisoned() const -> bool { return *this == PoisonedName; }
 
   auto Print(llvm::raw_ostream& out) const -> void;
-
-  static constexpr int32_t PoisonedNameIndex = InvalidIndex - 1;
 };
 
 constexpr InstId InstId::Invalid = InstId(InvalidIndex);
-constexpr InstId InstId::PoisonedName = InstId(PoisonedNameIndex);
+constexpr InstId InstId::PoisonedName = InstId(InvalidIndex - 1);
 
 // An ID of an instruction that is referenced absolutely by another instruction.
 // This should only be used as the type of a field within a typed instruction

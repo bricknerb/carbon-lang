@@ -335,7 +335,7 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
 
   // Walk the non-lexical scopes and perform lookups into each of them.
   // Collect scopes to poison this name when it's found.
-  std::vector<LookupScope> scopes_to_poison;
+  llvm::SmallVector<LookupScope> scopes_to_poison;
   for (auto [index, lookup_scope_id, specific_id] :
        llvm::reverse(non_lexical_scopes)) {
     if (auto non_lexical_result =

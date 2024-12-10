@@ -292,8 +292,8 @@ static auto CheckQualifierIsResolved(
       }
       return true;
 
-    case DeclNameStack::NameContext::State::Unresolved:
     case DeclNameStack::NameContext::State::Poisoned:
+    case DeclNameStack::NameContext::State::Unresolved:
       // Because more qualifiers were found, we diagnose that the earlier
       // qualifier failed to resolve.
       context.DiagnoseNameNotFound(name_context.loc_id,

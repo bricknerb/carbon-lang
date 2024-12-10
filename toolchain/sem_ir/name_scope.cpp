@@ -70,7 +70,7 @@ auto NameScope::AddPoison(SemIR::NameId name_id) -> void {
   }
 
   CARBON_CHECK(GetEntry(insert_result.value()).inst_id.is_poisoned(),
-               "Trying to poison an existing non poisoned name: {0}", name_id);
+               "Trying to poison an existing non-poisoned name: {0}", name_id);
 }
 
 }  // namespace Carbon::SemIR

@@ -42,6 +42,7 @@ class NameScope : public Printable<NameScope> {
   auto entries() const -> llvm::ArrayRef<Entry> { return names_; }
 
   // Get a specific Name entry based on an EntryId that return from a lookup.
+  //
   // The Entry could become invalidated if the scope object is invalidated or if
   // a name is added.
   auto GetEntry(EntryId entry_id) const -> const Entry& {
@@ -51,6 +52,7 @@ class NameScope : public Printable<NameScope> {
 
   // Searches for the given name and returns an EntryId if found or nullopt if
   // not.
+  //
   // If the name is found, it might be a poisoned name.
   auto Lookup(NameId name_id) const -> std::optional<EntryId> {
     auto lookup = name_map_.Lookup(name_id);
@@ -61,11 +63,14 @@ class NameScope : public Printable<NameScope> {
   }
 
   // Adds a new name known to not exist.
+  //
   // Must not be poisoned.
   auto AddRequired(Entry name_entry) -> void;
 
   // If the given name already exists, return true and an EntryId.
+  //
   // If the name is found, it might be a poisoned name.
+  //
   // If the name is not found, adds the name using inst_id and access_kind and
   // returns false and an EntryId.
   auto LookupOrAdd(SemIR::NameId name_id, InstId inst_id,
@@ -118,6 +123,7 @@ class NameScope : public Printable<NameScope> {
 
  private:
   // Names in the scope, including poisoned names.
+  //
   // Entries could become invalidated if the scope object is invalidated or if a
   // name is added.
   //
@@ -178,7 +184,9 @@ class NameScopeStore {
   }
 
   // Adds a name that is required to exist in a name scope, such as `Self`.
+  //
   // These must never conflict.
+  //
   // inst_id must not be poisoned.
   auto AddRequiredName(NameScopeId scope_id, NameId name_id, InstId inst_id)
       -> void {

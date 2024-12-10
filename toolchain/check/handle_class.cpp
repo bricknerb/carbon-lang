@@ -114,7 +114,7 @@ static auto MergeOrAddName(Context& context, Parse::AnyClassDeclId node_id,
   }
 
   if (prev_id.is_poisoned()) {
-    // This is declaration of a poisoned name.
+    // This is a declaration of a poisoned name.
     context.DiagnosePoisonedName(class_decl_id);
     return;
   }
