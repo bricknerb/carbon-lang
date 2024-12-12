@@ -7,6 +7,7 @@
 // TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/function/declaration/no_prelude/name_poisoning.carbon
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/function/declaration/no_prelude/name_poisoning.carbon
+// CHECK:STDERR: fail_poison_class_without_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
 
 // --- no_poison.carbon
 
@@ -42,10 +43,11 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_class_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_class_without_usage.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: class N.C {}
 // CHECK:STDERR: ^~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_interface_without_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
 class N.C {}
 
 // --- fail_poison_interface_without_usage.carbon
@@ -60,10 +62,11 @@ fn N.F1(x: I);
 
 // Should fail here since I was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_interface_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_interface_without_usage.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: interface N.I {}
 // CHECK:STDERR: ^~~~~~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_namespace_without_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
 interface N.I {}
 
 // --- fail_poison_namespace_without_usage.carbon
@@ -78,10 +81,11 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_namespace_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_namespace_without_usage.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: namespace N.C;
 // CHECK:STDERR: ^~~~~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_member_without_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
 namespace N.C;
 
 // --- fail_poison_member_without_usage.carbon
@@ -97,10 +101,11 @@ class D {
   class C2 {};
   // Should fail here since C1 was poisoned for namespace class D when it was
   // used in D context without qualification.
-  // CHECK:STDERR: fail_poison_member_without_usage.carbon:[[@LINE+4]]:7: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+  // CHECK:STDERR: fail_poison_member_without_usage.carbon:[[@LINE+5]]:7: note: declared here [NameUseBeforeDeclNote]
   // CHECK:STDERR:   var C1: C2;
   // CHECK:STDERR:       ^~~~~~
   // CHECK:STDERR:
+  // CHECK:STDERR: fail_poison_function_without_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
   var C1: C2;
 }
 
@@ -116,7 +121,7 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_function_without_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_function_without_usage.carbon:[[@LINE+4]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: fn N.C();
 // CHECK:STDERR: ^~~~~~~~~
 // CHECK:STDERR:
@@ -133,10 +138,11 @@ namespace N;
 fn N.F1() -> C;
 
 // Try to use N.C which was never defined and poisoned.
-// CHECK:STDERR: fail_use_undefined_poisoned_name.carbon:[[@LINE+4]]:14: error: name `C` not found [NameNotFound]
+// CHECK:STDERR: fail_use_undefined_poisoned_name.carbon:[[@LINE+5]]:14: error: name `C` not found [NameNotFound]
 // CHECK:STDERR: fn N.F2() -> N.C;
 // CHECK:STDERR:              ^~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_with_usage.carbon: error: name used before it was declared [NameUseBeforeDecl]
 fn N.F2() -> N.C;
 
 // --- fail_poison_with_usage.carbon
@@ -151,10 +157,11 @@ fn N.F1(x: C);
 
 // Should fail here since C was poisoned for namespace N when it was used in N
 // context without qualification.
-// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_with_usage.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: class N.C {}
 // CHECK:STDERR: ^~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
 class N.C {}
 
 // Should not fail here since both N.F2() and N.F1() input is the class C and
@@ -182,41 +189,47 @@ class N1.N2.N3.D1 {
       // * N1.N2.N3.D1.D2.D3.C
       fn F(x: C);
 
-      // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:7: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+      // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:7: note: declared here [NameUseBeforeDeclNote]
       // CHECK:STDERR:       class C {}
       // CHECK:STDERR:       ^~~~~~~~~
       // CHECK:STDERR:
+      // CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
       class C {}
     }
-    // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:5: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+    // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:5: note: declared here [NameUseBeforeDeclNote]
     // CHECK:STDERR:     class C {}
     // CHECK:STDERR:     ^~~~~~~~~
     // CHECK:STDERR:
+    // CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
     class C {}
   }
-  // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:3: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+  // CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:3: note: declared here [NameUseBeforeDeclNote]
   // CHECK:STDERR:   class C {}
   // CHECK:STDERR:   ^~~~~~~~~
   // CHECK:STDERR:
+  // CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
   class C {}
 }
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: class N1.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
 class N1.C {}
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: interface N1.N2.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon: error: name used before it was declared [NameUseBeforeDecl]
 interface N1.N2.C {}
 
-// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+4]]:1: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_poison_multiple_scopes.carbon:[[@LINE+5]]:1: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: class N1.N2.N3.C {}
 // CHECK:STDERR: ^~~~~~~~~~~~~~~~~~
 // CHECK:STDERR:
+// CHECK:STDERR: fail_alias.carbon: error: name used before it was declared [NameUseBeforeDecl]
 class N1.N2.N3.C {}
 
 // --- fail_alias.carbon
@@ -226,7 +239,7 @@ library "[[@TEST_NAME]]";
 class C {}
 
 namespace N;
-// CHECK:STDERR: fail_alias.carbon:[[@LINE+3]]:9: error: name previously used by unqualified name lookup and not found; cannot later be declared [NameDeclUsedUnqualifiedBefore]
+// CHECK:STDERR: fail_alias.carbon:[[@LINE+3]]:9: note: declared here [NameUseBeforeDeclNote]
 // CHECK:STDERR: alias N.C = C;
 // CHECK:STDERR:         ^
 alias N.C = C;
@@ -481,7 +494,7 @@ class N.C {}
 // CHECK:STDOUT:     %x.param: %C = value_param runtime_param0
 // CHECK:STDOUT:     %x: %C = bind_name x, %x.param
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.loc16: <namespace> = namespace [template] {}
+// CHECK:STDOUT:   %.loc17: <namespace> = namespace [template] {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @C {
@@ -537,7 +550,7 @@ class N.C {}
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C2.decl: type = class_decl @C2 [template = constants.%C2] {} {}
 // CHECK:STDOUT:   %C2.ref: type = name_ref C2, %C2.decl [template = constants.%C2]
-// CHECK:STDOUT:   %.loc17: %D.elem = field_decl C1, element0 [template]
+// CHECK:STDOUT:   %.loc18: %D.elem = field_decl C1, element0 [template]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %struct_type.C1 [template = constants.%complete_type.2]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
@@ -764,9 +777,9 @@ class N.C {}
 // CHECK:STDOUT:     .D1 = %D1.decl
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %D1.decl: type = class_decl @D1 [template = constants.%D1] {} {}
-// CHECK:STDOUT:   %.decl.loc44: type = class_decl @.4 [template = constants.%.6] {} {}
-// CHECK:STDOUT:   %.decl.loc50: type = interface_decl @.6 [template = constants.%.type] {} {}
-// CHECK:STDOUT:   %.decl.loc56: type = class_decl @.5 [template = constants.%.7] {} {}
+// CHECK:STDOUT:   %.decl.loc48: type = class_decl @.4 [template = constants.%.6] {} {}
+// CHECK:STDOUT:   %.decl.loc55: type = interface_decl @.6 [template = constants.%.type] {} {}
+// CHECK:STDOUT:   %.decl.loc62: type = class_decl @.5 [template = constants.%.7] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: interface @D2 {

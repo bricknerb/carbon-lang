@@ -217,14 +217,15 @@ auto Context::DiagnoseDuplicateName(SemIRLoc dup_def, SemIRLoc prev_def)
 }
 
 auto Context::DiagnosePoisonedName(SemIRLoc loc) -> void {
-  // TODO: Improve the diagnostic to output the error where the name was
-  // poisoned and a note the name was later declared. See discussion in
+  // TODO: Improve the diagnostic to replace NodeId::Invalid with the location
+  // where the name was poisoned. See discussion in
   // https://github.com/carbon-language/carbon-lang/pull/4654#discussion_r1876607172
-  CARBON_DIAGNOSTIC(
-      NameDeclUsedUnqualifiedBefore, Error,
-      "name previously used by unqualified name lookup and not found; "
-      "cannot later be declared");
-  emitter_->Build(loc, NameDeclUsedUnqualifiedBefore).Emit();
+  CARBON_DIAGNOSTIC(NameUseBeforeDecl, Error,
+                    "name used before it was declared");
+  CARBON_DIAGNOSTIC(NameUseBeforeDeclNote, Note, "declared here");
+  emitter_->Build(SemIR::LocId::Invalid, NameUseBeforeDecl)
+      .Note(loc, NameUseBeforeDeclNote)
+      .Emit();
 }
 
 auto Context::DiagnoseNameNotFound(SemIRLoc loc, SemIR::NameId name_id)
