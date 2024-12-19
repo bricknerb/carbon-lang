@@ -39,17 +39,6 @@ auto clang_main(int Argc, char** Argv, const llvm::ToolContext& ToolContext)
     -> int;
 
 namespace Carbon {
-namespace {
-
-auto CC1MainImpl(llvm::SmallVectorImpl<const char*>& cc1_args) -> int {
-  // cc1_args[0] will be the `clang_path` so we don't need the prepend arg.
-  llvm::ToolContext tool_context = {
-      .Path = cc1_args[0], .PrependArg = "clang", .NeedsPrependArg = false};
-  return clang_main(cc1_args.size(), const_cast<char**>(cc1_args.data()),
-                    tool_context);
-}
-
-}  // namespace
 
 ClangRunner::ClangRunner(const InstallPaths* install_paths,
                          llvm::StringRef target,
@@ -157,7 +146,15 @@ auto ClangRunner::Run(llvm::ArrayRef<llvm::StringRef> args) -> bool {
   // Note the subprocessing will effectively call `clang -cc1`, which turns into
   // `carbon-busybox clang -cc1`, which results in an equivalent `clang_main`
   // call.
-  driver.CC1Main = CC1MainImpl;
+  std::function<int(llvm::SmallVectorImpl<const char*> & cc1_args)> cc1_main =
+      [](llvm::SmallVectorImpl<const char*>& cc1_args) -> int {
+    // cc1_args[0] will be the `clang_path` so we don't need the prepend arg.
+    llvm::ToolContext tool_context = {
+        .Path = cc1_args[0], .PrependArg = "clang", .NeedsPrependArg = false};
+    return clang_main(cc1_args.size(), const_cast<char**>(cc1_args.data()),
+                      tool_context);
+  };
+  driver.CC1Main = cc1_main;
 
   std::unique_ptr<clang::driver::Compilation> compilation(
       driver.BuildCompilation(cstr_args));
