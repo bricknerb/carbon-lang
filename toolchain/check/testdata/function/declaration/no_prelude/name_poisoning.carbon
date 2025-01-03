@@ -284,10 +284,11 @@ interface A {
 }
 class X {
   extend impl as A {
-    // CHECK:STDERR: fail_using_poisoned_name_in_impl_outside_class.carbon:[[@LINE+3]]:29: error: `impl as` can only be used in a class [ImplAsOutsideClass]
-    // CHECK:STDERR:     fn F() { return; } impl as B {}
-    // CHECK:STDERR:                             ^~
-    fn F() { return; } impl as B {}
+    fn F() { return; }
+    // CHECK:STDERR: fail_using_poisoned_name_in_impl_outside_class.carbon:[[@LINE+3]]:10: error: `impl as` can only be used in a class [ImplAsOutsideClass]
+    // CHECK:STDERR:     impl as B {}
+    // CHECK:STDERR:          ^~
+    impl as B {}
   }
 }
 
