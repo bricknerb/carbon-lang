@@ -421,7 +421,7 @@ auto Context::LookupUnqualifiedName(Parse::NodeId node_id,
           .scope_result = SemIR::ScopeLookupResult::MakeError()};
 }
 
-auto Context::LookupNameInExactScope(SemIRLoc loc, SemIR::NameId name_id,
+auto Context::LookupNameInExactScope(SemIR::LocId loc_id, SemIR::NameId name_id,
                                      SemIR::NameScopeId scope_id,
                                      SemIR::NameScope& scope,
                                      bool is_being_declared)
@@ -438,7 +438,7 @@ auto Context::LookupNameInExactScope(SemIRLoc loc, SemIR::NameId name_id,
   if (!scope.import_ir_scopes().empty()) {
     // TODO: Enforce other access modifiers for imports.
     return SemIR::ScopeLookupResult::MakeWrappedLookupResult(
-        ImportNameFromOtherPackage(*this, loc, scope_id,
+        ImportNameFromOtherPackage(*this, loc_id, scope_id,
                                    scope.import_ir_scopes(), name_id),
         SemIR::AccessKind::Public);
   }
