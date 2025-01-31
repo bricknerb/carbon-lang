@@ -44,10 +44,12 @@ struct PackageImports {
   llvm::SmallVector<Import> imports;
 };
 
+// A single Cpp import.
 struct CppImport {
   explicit CppImport(Parse::Tree::PackagingNames names) : names(names) {}
 
-  // The associated `import` instruction. Has a value after a file is checked.
+  // The associated `import Cpp` instruction. Has a value after a file is
+  // checked.
   SemIR::InstId import_decl_id = SemIR::InstId::None;
 
   Parse::Tree::PackagingNames names;

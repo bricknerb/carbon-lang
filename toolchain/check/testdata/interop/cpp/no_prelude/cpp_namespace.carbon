@@ -42,16 +42,16 @@ import Cpp library "header.h";
 
 alias MyCpp = Cpp;
 
-// --- fail_define_in_cpp_namespace.carbon
+// --- fail_add_name_to_cpp_namespace.carbon
 
 library "[[@TEST_NAME]]";
 
 import Cpp library "header.h";
 
-// CHECK:STDERR: fail_define_in_cpp_namespace.carbon:[[@LINE+7]]:7: error: imported packages cannot be used for declarations [QualifiedDeclOutsidePackage]
+// CHECK:STDERR: fail_add_name_to_cpp_namespace.carbon:[[@LINE+7]]:7: error: imported packages cannot be used for declarations [QualifiedDeclOutsidePackage]
 // CHECK:STDERR: class Cpp.C {};
 // CHECK:STDERR:       ^~~
-// CHECK:STDERR: fail_define_in_cpp_namespace.carbon:[[@LINE-5]]:1: note: package imported here [QualifiedDeclOutsidePackageSource]
+// CHECK:STDERR: fail_add_name_to_cpp_namespace.carbon:[[@LINE-5]]:1: note: package imported here [QualifiedDeclOutsidePackageSource]
 // CHECK:STDERR: import Cpp library "header.h";
 // CHECK:STDERR: ^~~~~~
 // CHECK:STDERR:
@@ -105,7 +105,7 @@ class Cpp.C {};
 // CHECK:STDOUT:   %MyCpp: <namespace> = bind_alias MyCpp, imports.%Cpp [template = imports.%Cpp]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_define_in_cpp_namespace.carbon
+// CHECK:STDOUT: --- fail_add_name_to_cpp_namespace.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %C: type = class_type @C [template]

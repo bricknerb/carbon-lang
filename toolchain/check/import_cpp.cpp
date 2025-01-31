@@ -116,11 +116,12 @@ static auto AddNamespace(Context& context, IdentifierId cpp_package_id,
       namespace_id, name_id, SemIR::NameScopeId::Package);
   context.ReplaceInstBeforeConstantUse(namespace_id, namespace_inst);
 
+  // Note we have to get the parent scope freshly, creating the imported
+  // namespace may invalidate the pointer above.
   parent_scope = &context.name_scopes().Get(SemIR::NameScopeId::Package);
 
-  auto& result = parent_scope->GetEntry(entry_id).result;
-  result = SemIR::ScopeLookupResult::MakeFound(namespace_id,
-                                               SemIR::AccessKind::Public);
+  parent_scope->GetEntry(entry_id).result = SemIR::ScopeLookupResult::MakeFound(
+      namespace_id, SemIR::AccessKind::Public);
 
   auto& scope = context.name_scopes().Get(namespace_inst.name_scope_id);
   scope.set_is_closed_import(true);
