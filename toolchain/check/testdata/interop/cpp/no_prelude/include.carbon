@@ -24,7 +24,14 @@ import Cpp library "including_file.h";
 
 // CHECK:STDOUT: --- import_function_decl.carbon
 // CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%cpp_import, [template] {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [template] {}
+// CHECK:STDOUT:   package: <namespace> = namespace [template] {
+// CHECK:STDOUT:     .Cpp = imports.%Cpp
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   import_cpp
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

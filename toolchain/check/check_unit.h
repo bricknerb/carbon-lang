@@ -44,6 +44,15 @@ struct PackageImports {
   llvm::SmallVector<Import> imports;
 };
 
+struct CppImport {
+  explicit CppImport(Parse::Tree::PackagingNames names) : names(names) {}
+
+  // The associated `import` instruction. Has a value after a file is checked.
+  SemIR::InstId import_decl_id = SemIR::InstId::None;
+
+  Parse::Tree::PackagingNames names;
+};
+
 // Contains information accumulated while checking a `Unit` (primarily import
 // information), in addition to the `Unit` itself.
 struct UnitAndImports {
@@ -75,7 +84,7 @@ struct UnitAndImports {
   Map<IdentifierId, int32_t> package_imports_map;
 
   // List of the `import Cpp` imports.
-  llvm::SmallVector<Parse::Tree::PackagingNames> cpp_imports;
+  llvm::SmallVector<CppImport> cpp_imports;
 
   // The remaining number of imports which must be checked before this unit can
   // be processed.

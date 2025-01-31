@@ -831,6 +831,13 @@ struct ImportDecl {
   NameId package_id;
 };
 
+// An `import Cpp` declaration.
+struct ImportCppDecl {
+  static constexpr auto Kind =
+      InstKind::ImportCppDecl.Define<Parse::ImportDeclId>(
+          {.ir_name = "import_cpp", .is_lowered = false});
+};
+
 // Common representation for all kinds of `ImportRef*` node.
 struct AnyImportRef {
   static constexpr InstKind Kinds[] = {InstKind::ImportRefUnloaded,

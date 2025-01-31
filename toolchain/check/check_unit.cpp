@@ -129,6 +129,11 @@ auto CheckUnit::InitPackageScopeAndImports() -> void {
         package_imports.node_id, {.package_id = SemIR::NameId::ForIdentifier(
                                       package_imports.package_id)});
   }
+  for (auto& cpp_import : unit_and_imports_->cpp_imports) {
+    CARBON_CHECK(!cpp_import.import_decl_id.has_value());
+    cpp_import.import_decl_id =
+        context_.AddInst<SemIR::ImportCppDecl>(cpp_import.names.node_id, {});
+  }
 
   // Process the imports.
   if (unit_and_imports_->api_for_impl) {
@@ -340,17 +345,22 @@ auto CheckUnit::ImportCppPackages() -> void {
     return;
   }
 
+  IdentifierId package_id = imports.front().names.package_id;
+  for (size_t i = 1; i < imports.size(); ++i) {
+    CARBON_CHECK(imports[i].names.package_id == package_id);
+  }
+
   llvm::SmallVector<std::pair<llvm::StringRef, SemIRLoc>> import_pairs;
   import_pairs.reserve(imports.size());
   for (const auto& import : imports) {
     import_pairs.push_back(
         {unit_and_imports_->unit->value_stores->string_literal_values().Get(
-             import.library_id),
-         import.node_id});
+             import.names.library_id),
+         import.names.node_id});
   }
 
   ImportCppFiles(context_, unit_and_imports_->unit->sem_ir->filename(),
-                 import_pairs, fs_);
+                 package_id, imports.front().import_decl_id, import_pairs, fs_);
 }
 
 // Loops over all nodes in the tree. On some errors, this may return early,
