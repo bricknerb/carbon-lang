@@ -19,7 +19,7 @@ interface I {
 
 class B {
   impl as I {
-    // CHECK:STDERR: fail_impl_function_poisoned.carbon:[[@LINE+3]]:13: error: name used before it was declared [NameUseBeforeDecl]
+    // CHECK:STDERR: fail_impl_function_poisoned.carbon:[[@LINE+3]]:13: error: name `B` used before it was declared [NameUseBeforeDecl]
     // CHECK:STDERR:     fn A(x: B);
     // CHECK:STDERR:             ^
     fn A(x: B);
@@ -108,6 +108,7 @@ class B {
 // CHECK:STDOUT:   %B.decl: %B.type.52d = fn_decl @B.2 [concrete = constants.%B.30a] {} {}
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .B = <poisoned>
 // CHECK:STDOUT:   .A = %A.decl
 // CHECK:STDOUT:   witness = @B.3.%impl_witness
 // CHECK:STDOUT: }
@@ -123,6 +124,8 @@ class B {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%B.fa3
+// CHECK:STDOUT:   .I = <poisoned>
+// CHECK:STDOUT:   .B = <poisoned>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: generic fn @A.1(@I.%Self: %I.type) {
