@@ -161,7 +161,7 @@ interface N.I;
 
 impl library "[[@TEST_NAME]]";
 
-// TODO: This should fail since N.F1 was poisoned in the api.
+// TODO: #4622 This should fail since N.F1 was poisoned in the api.
 interface N.I;
 
 // --- fail_poison_when_lookup_fails.carbon
