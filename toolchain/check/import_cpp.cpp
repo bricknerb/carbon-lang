@@ -238,7 +238,7 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
       {.return_slot_pattern_id = SemIR::InstId::None,
        .virtual_modifier = SemIR::FunctionFields::VirtualModifier::None,
        .self_param_id = SemIR::InstId::None,
-       .cpp_clang_decl = clang_decl}};
+       .cpp_decl = clang_decl}};
 
   function_decl.function_id = context.functions().Add(function_info);
 

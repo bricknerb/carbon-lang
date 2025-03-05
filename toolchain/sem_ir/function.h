@@ -56,7 +56,7 @@ struct FunctionFields {
   // expect it to be live from `Function` creation to mangling.
   // TODO: #4666 Ensure we can easily serialize/deserialize this. Consider decl
   // ID to point into the AST.
-  const clang::NamedDecl* cpp_clang_decl = nullptr;
+  const clang::NamedDecl* cpp_decl = nullptr;
 };
 
 // A function. See EntityWithParamsBase regarding the inheritance here.
