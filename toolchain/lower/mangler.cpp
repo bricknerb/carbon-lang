@@ -164,6 +164,7 @@ auto Mangler::Mangle(SemIR::FunctionId function_id,
 auto Mangler::MangleCppClang(const clang::NamedDecl* decl) -> std::string {
   if (!cpp_mangle_context_) {
     // We assume all declarations are from the same AST Context.
+    // TODO: #4666 Consider initializing this in the constructor.
     cpp_mangle_context_.reset(decl->getASTContext().createMangleContext());
   }
 
