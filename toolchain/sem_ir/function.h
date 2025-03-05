@@ -54,6 +54,8 @@ struct FunctionFields {
   // If the function is imported from C++, points to the Clang declaration in
   // the AST. Used for mangling. The AST is owned by `CompileSubcommand` so we
   // expect it to be live from `Function` creation to mangling.
+  // TODO: #4666 Ensure we can easily serialize/deserialize this. Consider decl
+  // ID to point into the AST.
   const clang::NamedDecl* cpp_clang_decl = nullptr;
 };
 
