@@ -168,11 +168,10 @@ auto Mangler::MangleCppClang(const clang::NamedDecl* decl) -> std::string {
         decl->getASTContext().createMangleContext());
   }
 
-  std::string cpp_mangled_name;
-  llvm::raw_string_ostream os(cpp_mangled_name);
-  cpp_clang_mangle_context_->mangleName(decl, os);
+  RawStringOstream cpp_mangled_name;
+  cpp_clang_mangle_context_->mangleName(decl, cpp_mangled_name);
 
-  return cpp_mangled_name;
+  return cpp_mangled_name.TakeStr();
 }
 
 }  // namespace Carbon::Lower
