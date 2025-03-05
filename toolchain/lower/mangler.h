@@ -62,7 +62,7 @@ class Mangler {
   // Clang Mangler lazily initialized when necessary. We create it once under
   // the assumption all declarations we need to mangle can use the same Mangler
   // (same AST Context).
-  std::unique_ptr<clang::MangleContext> cpp_clang_mangle_context_;
+  std::unique_ptr<clang::MangleContext> cpp_mangle_context_;
 };
 
 }  // namespace Carbon::Lower

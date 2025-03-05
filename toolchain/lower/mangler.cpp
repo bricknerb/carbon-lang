@@ -162,14 +162,13 @@ auto Mangler::Mangle(SemIR::FunctionId function_id,
 }
 
 auto Mangler::MangleCppClang(const clang::NamedDecl* decl) -> std::string {
-  if (!cpp_clang_mangle_context_) {
+  if (!cpp_mangle_context_) {
     // We assume all declarations are from the same AST Context.
-    cpp_clang_mangle_context_.reset(
-        decl->getASTContext().createMangleContext());
+    cpp_mangle_context_.reset(decl->getASTContext().createMangleContext());
   }
 
   RawStringOstream cpp_mangled_name;
-  cpp_clang_mangle_context_->mangleName(decl, cpp_mangled_name);
+  cpp_mangle_context_->mangleName(decl, cpp_mangled_name);
 
   return cpp_mangled_name.TakeStr();
 }
