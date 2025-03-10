@@ -22,7 +22,14 @@ class Mangler {
  public:
   // Initialize a new Mangler instance for mangling entities within the
   // specified `FileContext`.
-  explicit Mangler(FileContext& file_context) : file_context_(file_context) {}
+  explicit Mangler(FileContext& file_context)
+      : file_context_(file_context),
+        cpp_mangle_context_(file_context.sem_ir().cpp_ast()
+                                ? file_context.sem_ir()
+                                      .cpp_ast()
+                                      ->getASTContext()
+                                      .createMangleContext()
+                                : nullptr) {}
 
   // Produce a deterministically unique mangled name for the function specified
   // by `function_id` and `specific_id`.

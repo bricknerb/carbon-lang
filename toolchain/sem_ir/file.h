@@ -187,7 +187,7 @@ class File : public Printable<File> {
   auto import_cpps() const -> const ValueStore<ImportCppId>& {
     return import_cpps_;
   }
-  auto cpp_ast() -> clang::ASTUnit* { return cpp_ast_; }
+  auto cpp_ast() const -> clang::ASTUnit* { return cpp_ast_; }
   // TODO: When the AST can be created before creating `File`, initialize the
   // pointer in the constructor and remove this function.
   auto set_cpp_ast(clang::ASTUnit* cpp_ast) -> void { cpp_ast_ = cpp_ast; }
