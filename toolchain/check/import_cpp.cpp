@@ -89,6 +89,8 @@ static auto GenerateAst(Context& context, llvm::StringRef importing_file_path,
     context.emitter().Emit(loc, CppInteropParseWarning, num_warnings,
                            num_imports, diagnostics_str);
   }
+  // Remove link to the diagnostics consumer before its deletion.
+  ast->getDiagnostics().setClient(nullptr);
   return {std::move(ast), !ast || num_errors > 0};
 }
 
