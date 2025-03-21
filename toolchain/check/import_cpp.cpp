@@ -274,6 +274,8 @@ static auto ImportNamespaceDecl(Context& context,
   return result.inst_id;
 }
 
+// Creates a class declaration for the given class name in the given scope.
+// Returns the `InstId` for the declaration.
 static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
                            SemIR::NameId name_id)
     -> std::tuple<SemIR::ClassId, SemIR::InstId> {
@@ -323,6 +325,10 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
   return {class_decl.class_id, class_decl_id};
 }
 
+// Creates a class definition for the given class name in the given scope based
+// on the information in the given Clang declaration. Returns the `InstId` for
+// the declaration, which is assumed to be for a class definition. Returns the
+// new class id and instruction id.
 static auto BuildClassDefinition(Context& context,
                                  SemIR::NameScopeId parent_scope_id,
                                  SemIR::NameId name_id,
@@ -353,6 +359,7 @@ static auto BuildClassDefinition(Context& context,
   return {class_id, class_decl_id};
 }
 
+// Sets the `complete_type_witness_id` field for the given class.
 static auto SetClassCompleteTypeWitnessId(Context& context,
                                           SemIR::ClassId class_id) -> void {
   // The class type is now fully defined. Set its object representation.
@@ -367,6 +374,8 @@ static auto SetClassCompleteTypeWitnessId(Context& context,
                GetStructType(context, SemIR::StructTypeFieldsId::Empty)});
 }
 
+// Imports a record declaration from Clang to Carbon. If successful, returns
+// the new Carbon class declaration `InstId`.
 static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
                                 SemIR::NameScopeId parent_scope_id,
                                 SemIR::NameId name_id,
