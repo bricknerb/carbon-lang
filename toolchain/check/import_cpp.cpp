@@ -17,6 +17,7 @@
 #include "llvm/Support/raw_ostream.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/diagnostic_helpers.h"
+#include "toolchain/check/eval.h"
 #include "toolchain/check/import.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/type.h"
@@ -158,8 +159,8 @@ auto ImportCppFiles(Context& context, llvm::StringRef importing_file_path,
 
 // Look ups the given name in the Clang AST in a specific scope. Returns the
 // lookup result if lookup was successful.
-static auto ClangLookup(Context& context, SemIR::LocId loc_id,
-                        SemIR::NameScopeId scope_id, SemIR::NameId name_id)
+static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
+                        SemIR::NameId name_id)
     -> std::optional<clang::LookupResult> {
   std::optional<llvm::StringRef> name =
       context.names().GetAsStringIfIdentifier(name_id);
@@ -179,15 +180,13 @@ static auto ClangLookup(Context& context, SemIR::LocId loc_id,
               sema.getPreprocessor().getIdentifierInfo(*name)),
           clang::SourceLocation()),
       clang::Sema::LookupNameKind::LookupOrdinaryName);
+  // TODO: Diagnose on access and return the `AccessKind` for storage. We'll
+  // probably need a dedicated `DiagnosticConsumer` because
+  // `TextDiagnosticPrinter` assumes we're processing a C++ source file.
+  lookup.suppressDiagnostics();
 
   bool found = sema.LookupQualifiedName(
       lookup, context.name_scopes().Get(scope_id).cpp_decl_context());
-
-  if (lookup.isClassLookup()) {
-    // TODO: To support class lookup, also return the AccessKind for storage.
-    context.TODO(loc_id, "Unsupported: Lookup in Class");
-    return std::nullopt;
-  }
 
   if (!found) {
     return std::nullopt;
@@ -275,6 +274,123 @@ static auto ImportNamespaceDecl(Context& context,
   return result.inst_id;
 }
 
+static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
+                           SemIR::NameId name_id)
+    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
+  // Add the class declaration.
+  auto class_decl = SemIR::ClassDecl{
+      .type_id = SemIR::TypeType::SingletonTypeId,
+      .class_id = SemIR::ClassId::None,
+      .decl_block_id = context.inst_blocks().AddDefaultValue()};
+  auto class_decl_id =
+      AddPlaceholderInst(context, SemIR::LocIdAndInst::NoLoc(class_decl));
+
+  SemIR::Class class_info = {
+      {.name_id = name_id,
+       .parent_scope_id = parent_scope_id,
+       .generic_id = SemIR::GenericId::None,
+       .first_param_node_id = Parse::NodeId::None,
+       .last_param_node_id = Parse::NodeId::None,
+       .pattern_block_id = SemIR::InstBlockId::None,
+       .implicit_param_patterns_id = SemIR::InstBlockId::None,
+       .param_patterns_id = SemIR::InstBlockId::None,
+       // TODO: Consider supporting extern.
+       .is_extern = false,
+       .extern_library_id = SemIR::LibraryNameId::None,
+       .non_owning_decl_id = SemIR::InstId::None,
+       .first_owning_decl_id = class_decl_id},
+
+      {// `.self_type_id` depends on the ClassType, so is set below.
+       .self_type_id = SemIR::TypeId::None,
+       // TODO: Support Dynamic classes.
+       // TODO: Support Final classes.
+       .inheritance_kind = SemIR::Class::Base}};
+
+  class_decl.class_id = context.classes().Add(class_info);
+
+  // Write the class ID into the ClassDecl.
+  ReplaceInstBeforeConstantUse(context, class_decl_id, class_decl);
+
+  // Build the `Self` type using the resulting type constant.
+  // TODO: Decide whether we actually need this.
+  context.classes().Get(class_decl.class_id).self_type_id =
+      context.types().GetTypeIdForTypeConstantId(TryEvalInst(
+          context, SemIR::InstId::None,
+          SemIR::ClassType{.type_id = SemIR::TypeType::SingletonTypeId,
+                           .class_id = class_decl.class_id,
+                           .specific_id = SemIR::SpecificId::None}));
+
+  return {class_decl.class_id, class_decl_id};
+}
+
+static auto BuildClassDefinition(Context& context,
+                                 SemIR::NameScopeId parent_scope_id,
+                                 SemIR::NameId name_id,
+                                 clang::CXXRecordDecl* clang_decl)
+    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
+  auto [class_id, class_decl_id] =
+      BuildClassDecl(context, parent_scope_id, name_id);
+  auto& class_info = context.classes().Get(class_id);
+
+  // Track that this declaration is the definition.
+  CARBON_CHECK(!class_info.has_definition_started());
+  class_info.definition_id = class_decl_id;
+  class_info.scope_id = context.name_scopes().Add(
+      class_decl_id, SemIR::NameId::None, class_info.parent_scope_id);
+  class_info.body_block_id = context.inst_blocks().AddDefaultValue();
+
+  SemIR::NameScope& name_scope = context.name_scopes().Get(class_info.scope_id);
+  name_scope.set_cpp_decl_context(clang_decl);
+
+  // Introduce `Self`.
+  // TODO: Decide whether we actually need this for C++ based classes.
+  name_scope.AddRequired(
+      {.name_id = SemIR::NameId::SelfType,
+       .result = SemIR::ScopeLookupResult::MakeFound(
+           context.types().GetInstId(class_info.self_type_id),
+           SemIR::AccessKind::Public)});
+
+  return {class_id, class_decl_id};
+}
+
+static auto SetClassCompleteTypeWitnessId(Context& context,
+                                          SemIR::ClassId class_id) -> void {
+  // The class type is now fully defined. Set its object representation.
+  context.classes().Get(class_id).complete_type_witness_id =
+      AddInst<SemIR::CompleteTypeWitness>(
+          context,
+          // TODO: Consider having a proper location here.
+          Parse::NodeId::None,
+          {.type_id =
+               GetSingletonType(context, SemIR::WitnessType::SingletonInstId),
+           .object_repr_id =
+               GetStructType(context, SemIR::StructTypeFieldsId::Empty)});
+}
+
+static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
+                                SemIR::NameScopeId parent_scope_id,
+                                SemIR::NameId name_id,
+                                clang::CXXRecordDecl* clang_decl)
+    -> SemIR::InstId {
+  clang_decl = clang_decl->getDefinition();
+  if (!clang_decl) {
+    context.TODO(loc_id,
+                 "Unsupported: Record declarations without a definition");
+    return SemIR::ErrorInst::SingletonInstId;
+  }
+
+  if (clang_decl->isDynamicClass()) {
+    context.TODO(loc_id, "Unsupported: Dynamic Class");
+    return SemIR::ErrorInst::SingletonInstId;
+  }
+
+  auto [class_id, class_decl_id] =
+      BuildClassDefinition(context, parent_scope_id, name_id, clang_decl);
+  SetClassCompleteTypeWitnessId(context, class_id);
+
+  return class_decl_id;
+}
+
 // Imports a declaration from Clang to Carbon. If successful, returns the
 // instruction for the new Carbon declaration.
 static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
@@ -289,6 +405,11 @@ static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
           clang::dyn_cast<clang::NamespaceDecl>(clang_decl)) {
     return ImportNamespaceDecl(context, scope_id, name_id,
                                clang_namespace_decl);
+  }
+  if (auto* clang_record_decl =
+          clang::dyn_cast<clang::CXXRecordDecl>(clang_decl)) {
+    return ImportCXXRecordDecl(context, loc_id, scope_id, name_id,
+                               clang_record_decl);
   }
 
   context.TODO(loc_id, llvm::formatv("Unsupported: Declaration type {0}",
@@ -307,7 +428,7 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
         builder.Note(loc_id, InCppNameLookup, name_id);
       });
 
-  auto lookup = ClangLookup(context, loc_id, scope_id, name_id);
+  auto lookup = ClangLookup(context, scope_id, name_id);
   if (!lookup) {
     return SemIR::InstId::None;
   }
