@@ -284,6 +284,7 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
       .type_id = SemIR::TypeType::SingletonTypeId,
       .class_id = SemIR::ClassId::None,
       .decl_block_id = context.inst_blocks().AddDefaultValue()};
+  // TODO: Consider setting a proper location.
   auto class_decl_id =
       AddPlaceholderInst(context, SemIR::LocIdAndInst::NoLoc(class_decl));
 
