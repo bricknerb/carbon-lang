@@ -55,7 +55,7 @@ fn MyF(bar: Cpp.Bar*);
 // --- struct_public_static_member_function.h
 
 struct Bar {
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- import_struct_public_static_member_function.carbon
@@ -72,7 +72,7 @@ fn MyF() {
 
 struct Bar {
  private:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_import_struct_private_static_member_function.carbon
@@ -88,7 +88,7 @@ fn MyF() {
 // --- struct_public_member_function.h
 
 struct Bar {
-  void foo();
+  auto foo() -> void;
 };
 
 // --- fail_import_struct_public_member_function.carbon
@@ -165,11 +165,11 @@ fn MyF(bar : Cpp.Bar*) {
 // --- struct_inheritance_static.h
 
 struct Bar1 {
-  static void foo1();
+  static auto foo1() -> void;
 };
 
 struct Bar2 : public Bar1 {
-  static void foo2();
+  static auto foo2() -> void;
 };
 
 // --- import_struct_inheritance_static.carbon
@@ -229,7 +229,7 @@ fn MyF(bar : Cpp.Bar*);
 
 // --- struct_to_inherit_public.h
 
-struct Bar { static void foo(); };
+struct Bar { static auto foo() -> void; };
 
 // --- import_struct_to_inherit_public.carbon
 
@@ -249,7 +249,7 @@ fn MyF() {
 
 struct Bar {
  private:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_struct_to_inherit_private.carbon

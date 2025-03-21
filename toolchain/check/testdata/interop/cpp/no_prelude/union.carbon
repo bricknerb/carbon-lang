@@ -56,7 +56,7 @@ fn MyF(bar: Cpp.Bar*);
 
 union Bar {
  public:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- import_union_public_static_member_function.carbon
@@ -73,7 +73,7 @@ fn MyF() {
 
 union Bar {
  private:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_import_union_private_static_member_function.carbon
@@ -90,7 +90,7 @@ fn MyF() {
 
 union Bar {
  public:
-  void foo();
+  auto foo() -> void;
 };
 
 // --- fail_import_union_public_member_function.carbon
@@ -170,7 +170,7 @@ fn MyF(bar : Cpp.Bar*) {
 
 union Bar {
  public:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_import_union_to_inherit_public.carbon

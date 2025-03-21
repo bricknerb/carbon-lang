@@ -56,7 +56,7 @@ fn MyF(bar: Cpp.Bar*);
 
 class Bar {
  public:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- import_class_public_static_member_function.carbon
@@ -73,7 +73,7 @@ fn MyF() {
 
 class Bar {
  private:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_import_class_private_static_member_function.carbon
@@ -90,7 +90,7 @@ fn MyF() {
 
 class Bar {
  public:
-  void foo();
+  auto foo() -> void;
 };
 
 // --- fail_import_class_public_member_function.carbon
@@ -170,12 +170,12 @@ fn MyF(bar : Cpp.Bar*) {
 
 class Bar1 {
  public:
-  static void foo1();
+  static auto foo1() -> void;
 };
 
 class Bar2 : public Bar1 {
  public:
-  static void foo2();
+  static auto foo2() -> void;
 };
 
 // --- import_class_inheritance_static.carbon
@@ -238,7 +238,7 @@ fn MyF(bar : Cpp.Bar*);
 
 class Bar {
  public:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- import_class_to_inherit_public.carbon
@@ -259,7 +259,7 @@ fn MyF() {
 
 class Bar {
  private:
-  static void foo();
+  static auto foo() -> void;
 };
 
 // --- todo_fail_class_to_inherit_private.carbon
