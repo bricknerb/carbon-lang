@@ -863,8 +863,8 @@ fn G(x: A) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_14.1: type = splice_block %.loc5_14.3 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%HasF.type (%HasF.type.901) = name_ref Self, %.loc5_14.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc5_14.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_14.3: type = converted %Self.ref, %Self.as_type.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -1281,8 +1281,8 @@ fn G(x: A) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_14.1: type = splice_block %.loc5_14.3 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%HasF.type (%HasF.type.901) = name_ref Self, %.loc5_14.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc5_14.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_14.3: type = converted %Self.ref, %Self.as_type.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }

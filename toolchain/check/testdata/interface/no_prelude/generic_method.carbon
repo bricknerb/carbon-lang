@@ -206,8 +206,8 @@ fn CallIndirect() {
 // CHECK:STDOUT:       %return.param_patt: @F.1.%tuple.type.loc6_38.2 (%tuple.type.bd2) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @A.%T.loc5_13.1 [symbolic = %T (constants.%T.8b3)]
-// CHECK:STDOUT:       %.loc6_31: @F.1.%A.type (%A.type.75a) = specific_constant @A.%Self.1, @A(constants.%T.8b3) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.ref: @F.1.%A.type (%A.type.75a) = name_ref Self, %.loc6_31 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:       %.loc6_31: @F.1.%A.type (%A.type.75a) = specific_constant @A.%Self.1, @A(constants.%T.8b3) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %U.ref.loc6_37: type = name_ref U, %U.loc6_8.2 [symbolic = %U.loc6_8.1 (constants.%U.2cb)]
 // CHECK:STDOUT:       %.loc6_38.1: @F.1.%tuple.type.loc6_38.1 (%tuple.type.e59) = tuple_literal (%T.ref, %Self.ref, %U.ref.loc6_37)
 // CHECK:STDOUT:       %Self.as_type.loc6_38.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc6_38.1 (constants.%Self.as_type)]
@@ -672,8 +672,8 @@ fn CallIndirect() {
 // CHECK:STDOUT:       %return.param_patt: @F.1.%tuple.type.loc6_38.2 (%tuple.type.bd2) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @A.%T.loc5_13.1 [symbolic = %T (constants.%T.8b3)]
-// CHECK:STDOUT:       %.loc6_31: @F.1.%A.type (%A.type.75a) = specific_constant @A.%Self.1, @A(constants.%T.8b3) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.ref: @F.1.%A.type (%A.type.75a) = name_ref Self, %.loc6_31 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:       %.loc6_31: @F.1.%A.type (%A.type.75a) = specific_constant @A.%Self.1, @A(constants.%T.8b3) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %U.ref.loc6_37: type = name_ref U, %U.loc6_8.2 [symbolic = %U.loc6_8.1 (constants.%U.2cb)]
 // CHECK:STDOUT:       %.loc6_38.1: @F.1.%tuple.type.loc6_38.1 (%tuple.type.e59) = tuple_literal (%T.ref, %Self.ref, %U.ref.loc6_37)
 // CHECK:STDOUT:       %Self.as_type.loc6_38.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc6_38.1 (constants.%Self.as_type)]
@@ -812,8 +812,8 @@ fn CallIndirect() {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn(%U.patt.loc17_8.1: type, %u.param_patt: @F.2.%U.loc17_8.1 (%U.753)) -> %return.param_patt: @F.2.%tuple.type.loc17_42.2 (%tuple.type.8ae) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc18_12: @F.2.%F.type (%F.type.b3e) = specific_constant @impl.%F.decl, @impl(constants.%V1, constants.%V2, constants.%W) [symbolic = %F (constants.%F.d79)]
 // CHECK:STDOUT:     %F.ref: @F.2.%F.type (%F.type.b3e) = name_ref F, %.loc18_12 [symbolic = %F (constants.%F.d79)]
+// CHECK:STDOUT:     %.loc18_12: @F.2.%F.type (%F.type.b3e) = specific_constant @impl.%F.decl, @impl(constants.%V1, constants.%V2, constants.%W) [symbolic = %F (constants.%F.d79)]
 // CHECK:STDOUT:     %U.ref.loc18: type = name_ref U, %U.loc17_8.2 [symbolic = %U.loc17_8.1 (constants.%U.753)]
 // CHECK:STDOUT:     %u.ref: @F.2.%U.loc17_8.1 (%U.753) = name_ref u, %u
 // CHECK:STDOUT:     %F.specific_fn.loc18_12.1: <specific function> = specific_function %F.ref, @F.2(constants.%V1, constants.%V2, constants.%W, constants.%U.753) [symbolic = %F.specific_fn.loc18_12.2 (constants.%F.specific_fn.7d9)]

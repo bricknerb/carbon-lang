@@ -168,8 +168,8 @@ fn Class(F:! type).Inner.G() -> i32 { return F(); }
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn() -> %i32 {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc13_46: @G.%F.type (%F.type) = specific_constant @Inner.%F.decl, @Inner(constants.%F.8b3) [symbolic = %F.loc13_46.2 (constants.%F.3fa)]
 // CHECK:STDOUT:     %F.ref: @G.%F.type (%F.type) = name_ref F, %.loc13_46 [symbolic = %F.loc13_46.2 (constants.%F.3fa)]
+// CHECK:STDOUT:     %.loc13_46: @G.%F.type (%F.type) = specific_constant @Inner.%F.decl, @Inner(constants.%F.8b3) [symbolic = %F.loc13_46.2 (constants.%F.3fa)]
 // CHECK:STDOUT:     %F.specific_fn.loc13_46.1: <specific function> = specific_function %F.ref, @F(constants.%F.8b3) [symbolic = %F.specific_fn.loc13_46.2 (constants.%F.specific_fn)]
 // CHECK:STDOUT:     %F.call: init %i32 = call %F.specific_fn.loc13_46.1()
 // CHECK:STDOUT:     %.loc13_49.1: %i32 = value_of_initializer %F.call

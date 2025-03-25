@@ -208,8 +208,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc2_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %self.param: @Get.%Class (%Class.fe1) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_16.1: type = splice_block %Self.ref [symbolic = %Class (constants.%Class.fe1)] {
-// CHECK:STDOUT:         %.loc5_16.2: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc5_16.2 [symbolic = %Class (constants.%Class.fe1)]
+// CHECK:STDOUT:         %.loc5_16.2: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @Get.%Class (%Class.fe1) = bind_name self, %self.param
 // CHECK:STDOUT:       %return.param: ref @Get.%T (%T) = out_param call_param1
@@ -226,8 +226,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT:       %ptr.loc7_38.2: type = ptr_type %T [symbolic = %ptr.loc7_38.1 (constants.%ptr.79f)]
 // CHECK:STDOUT:       %self.param: @GetAddr.%ptr.loc7_29.1 (%ptr.955) = value_param call_param0
 // CHECK:STDOUT:       %.loc7_29: type = splice_block %ptr.loc7_29.2 [symbolic = %ptr.loc7_29.1 (constants.%ptr.955)] {
-// CHECK:STDOUT:         %.loc7_25: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc7_25 [symbolic = %Class (constants.%Class.fe1)]
+// CHECK:STDOUT:         %.loc7_25: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %ptr.loc7_29.2: type = ptr_type %Class.fe1 [symbolic = %ptr.loc7_29.1 (constants.%ptr.955)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @GetAddr.%ptr.loc7_29.1 (%ptr.955) = bind_name self, %self.param

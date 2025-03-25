@@ -280,8 +280,8 @@ fn Call() {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Main.import_ref.8db: <witness> = import_ref Main//get, inst22 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %Main.import_ref.6a9 = import_ref Main//get, inst23 [indirect], unloaded
+// CHECK:STDOUT:   %Main.import_ref.8db: <witness> = import_ref Main//get, inst23 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %Main.import_ref.6a9 = import_ref Main//get, inst24 [indirect], unloaded
 // CHECK:STDOUT:   %Main.import_ref.e5d = import_ref Main//i, inst18 [no loc], unloaded
 // CHECK:STDOUT:   %Main.import_ref.bcb: %I.assoc_type = import_ref Main//i, loc4_33, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %Main.F = import_ref Main//i, F, unloaded

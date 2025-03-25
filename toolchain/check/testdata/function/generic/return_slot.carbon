@@ -139,8 +139,8 @@ fn G() {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn() -> @Make.%T (%T) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc12_27: @Make.%Make.type (%Make.type.652) = specific_constant @Wrap.%Make.decl, @Wrap(constants.%T) [symbolic = %Make (constants.%Make.eb2)]
 // CHECK:STDOUT:     %Make.ref: @Make.%Make.type (%Make.type.652) = name_ref Make, %.loc12_27 [symbolic = %Make (constants.%Make.eb2)]
+// CHECK:STDOUT:     %.loc12_27: @Make.%Make.type (%Make.type.652) = specific_constant @Wrap.%Make.decl, @Wrap(constants.%T) [symbolic = %Make (constants.%Make.eb2)]
 // CHECK:STDOUT:     %Make.specific_fn.loc12_27.1: <specific function> = specific_function %Make.ref, @Make(constants.%T) [symbolic = %Make.specific_fn.loc12_27.2 (constants.%Make.specific_fn.bf1)]
 // CHECK:STDOUT:     %Make.call: init @Make.%T (%T) = call %Make.specific_fn.loc12_27.1()
 // CHECK:STDOUT:     %.loc12_33.1: @Make.%T (%T) = value_of_initializer %Make.call

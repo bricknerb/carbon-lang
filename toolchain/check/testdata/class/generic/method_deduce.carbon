@@ -216,8 +216,8 @@ fn CallGenericMethodWithNonDeducedParam(c: Class(A)) -> (A, B) {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn(%U.patt.loc15_10.1: type) -> %return.param_patt: @Get.%tuple.type (%tuple.type.30b) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc15_39: @Get.%Get.type (%Get.type.fd9) = specific_constant @Class.%Get.decl, @Class(constants.%T) [symbolic = %Get (constants.%Get.cf9)]
 // CHECK:STDOUT:     %Get.ref: @Get.%Get.type (%Get.type.fd9) = name_ref Get, %.loc15_39 [symbolic = %Get (constants.%Get.cf9)]
+// CHECK:STDOUT:     %.loc15_39: @Get.%Get.type (%Get.type.fd9) = specific_constant @Class.%Get.decl, @Class(constants.%T) [symbolic = %Get (constants.%Get.cf9)]
 // CHECK:STDOUT:     %U.ref.loc15_43: type = name_ref U, %U.loc15_10.2 [symbolic = %U.loc15_10.1 (constants.%U)]
 // CHECK:STDOUT:     %Get.specific_fn.loc15_39.1: <specific function> = specific_function %Get.ref, @Get(constants.%T, constants.%U) [symbolic = %Get.specific_fn.loc15_39.2 (constants.%Get.specific_fn.f73)]
 // CHECK:STDOUT:     %.loc15_44.1: ref @Get.%tuple.type (%tuple.type.30b) = temporary_storage
@@ -253,8 +253,8 @@ fn CallGenericMethodWithNonDeducedParam(c: Class(A)) -> (A, B) {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn(%x.param_patt: @GetNoDeduce.%T (%T), %U.patt.loc16_24.1: type) -> %return.param_patt: @GetNoDeduce.%tuple.type (%tuple.type.30b) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc16_53: @GetNoDeduce.%GetNoDeduce.type (%GetNoDeduce.type.766) = specific_constant @Class.%GetNoDeduce.decl, @Class(constants.%T) [symbolic = %GetNoDeduce (constants.%GetNoDeduce.c9a)]
 // CHECK:STDOUT:     %GetNoDeduce.ref: @GetNoDeduce.%GetNoDeduce.type (%GetNoDeduce.type.766) = name_ref GetNoDeduce, %.loc16_53 [symbolic = %GetNoDeduce (constants.%GetNoDeduce.c9a)]
+// CHECK:STDOUT:     %.loc16_53: @GetNoDeduce.%GetNoDeduce.type (%GetNoDeduce.type.766) = specific_constant @Class.%GetNoDeduce.decl, @Class(constants.%T) [symbolic = %GetNoDeduce (constants.%GetNoDeduce.c9a)]
 // CHECK:STDOUT:     %x.ref: @GetNoDeduce.%T (%T) = name_ref x, %x
 // CHECK:STDOUT:     %U.ref.loc16_68: type = name_ref U, %U.loc16_24.2 [symbolic = %U.loc16_24.1 (constants.%U)]
 // CHECK:STDOUT:     %GetNoDeduce.specific_fn.loc16_53.1: <specific function> = specific_function %GetNoDeduce.ref, @GetNoDeduce(constants.%T, constants.%U) [symbolic = %GetNoDeduce.specific_fn.loc16_53.2 (constants.%GetNoDeduce.specific_fn.536)]

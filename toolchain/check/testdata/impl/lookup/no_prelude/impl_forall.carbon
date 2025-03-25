@@ -211,8 +211,8 @@ fn TestSpecific(a: A({})) -> {} {
 // CHECK:STDOUT:       %U.ref: type = name_ref U, @I.%U.loc7_13.1 [symbolic = %U (constants.%U)]
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc8_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc8_14.1: type = splice_block %.loc8_14.3 [symbolic = %Self.as_type.loc8_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc8_14.2: @F.1.%I.type (%I.type.325e65.1) = specific_constant @I.%Self.1, @I(constants.%U) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%I.type (%I.type.325e65.1) = name_ref Self, %.loc8_14.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc8_14.2: @F.1.%I.type (%I.type.325e65.1) = specific_constant @I.%Self.1, @I(constants.%U) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc8_14.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc8_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc8_14.3: type = converted %Self.ref, %Self.as_type.loc8_14.2 [symbolic = %Self.as_type.loc8_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }

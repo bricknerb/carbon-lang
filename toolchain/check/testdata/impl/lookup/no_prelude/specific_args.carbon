@@ -112,8 +112,8 @@ fn H(c: C(InClassArgs)) { c.(I(X).F)(); }
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.%Self.as_type.loc4_36.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc4_36.1: type = splice_block %.loc4_36.3 [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc4_36.2: @F.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @F.%I.type (%I.type.325) = name_ref Self, %.loc4_36.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc4_36.2: @F.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc4_36.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc4_36.3: type = converted %Self.ref, %Self.as_type.loc4_36.2 [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }

@@ -204,8 +204,8 @@ interface J {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @ImplicitAs.%Dest.loc4_22.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.%Self.as_type.loc5_20.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_20.1: type = splice_block %.loc5_20.3 [symbolic = %Self.as_type.loc5_20.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_20.2: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = name_ref Self, %.loc5_20.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc5_20.2: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc5_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_20.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_20.3: type = converted %Self.ref, %Self.as_type.loc5_20.2 [symbolic = %Self.as_type.loc5_20.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -1019,9 +1019,9 @@ interface J {
 // CHECK:STDOUT:     %return.param_patt: <error> = out_param_pattern %return.patt, call_param0
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     %Id.ref: %Id.type = name_ref Id, file.%Id.decl [concrete = constants.%Id]
+// CHECK:STDOUT:     %T.ref: type = name_ref T, %impl.elem0.loc11_16.2 [symbolic = %impl.elem0.loc11_16.1 (constants.%impl.elem0)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc11_16.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc11_16.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc11_16.2: type = impl_witness_access %Self.as_wit.iface0.loc11_16.2, element0 [symbolic = %impl.elem0.loc11_16.1 (constants.%impl.elem0)]
-// CHECK:STDOUT:     %T.ref: type = name_ref T, %impl.elem0.loc11_16.2 [symbolic = %impl.elem0.loc11_16.1 (constants.%impl.elem0)]
 // CHECK:STDOUT:     %Id.specific_fn: <specific function> = specific_function %Id.ref, @Id(type) [concrete = constants.%Id.specific_fn]
 // CHECK:STDOUT:     %Id.call: init type = call %Id.specific_fn(%T.ref)
 // CHECK:STDOUT:     %.loc11_17.1: type = value_of_initializer %Id.call
@@ -1225,8 +1225,8 @@ interface J {
 // CHECK:STDOUT:     %return.patt: <error> = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: <error> = out_param_pattern %return.patt, call_param0
 // CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %.loc16: %I.type = converted @J.%Self, <error> [concrete = <error>]
 // CHECK:STDOUT:     %V.ref: <error> = name_ref V, <error> [concrete = <error>]
+// CHECK:STDOUT:     %.loc16: %I.type = converted @J.%Self, <error> [concrete = <error>]
 // CHECK:STDOUT:     %return.param: ref <error> = out_param call_param0
 // CHECK:STDOUT:     %return: ref <error> = return_slot %return.param
 // CHECK:STDOUT:   }

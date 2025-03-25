@@ -205,8 +205,8 @@ fn F() { ()[()]; }
 // CHECK:STDOUT:       %.loc5_51.2: type = converted %.loc5_51.1, constants.%empty_tuple.type [concrete = constants.%empty_tuple.type]
 // CHECK:STDOUT:       %self.param: @At.%Self.as_type.loc5_15.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_15.1: type = splice_block %.loc5_15.3 [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_15.2: @At.%IndexWith.type (%IndexWith.type.b94) = specific_constant @IndexWith.%Self.1, @IndexWith(constants.%SubscriptType) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @At.%IndexWith.type (%IndexWith.type.b94) = name_ref Self, %.loc5_15.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc5_15.2: @At.%IndexWith.type (%IndexWith.type.b94) = specific_constant @IndexWith.%Self.1, @IndexWith(constants.%SubscriptType) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc5_15.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_15.3: type = converted %Self.ref, %Self.as_type.loc5_15.2 [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }

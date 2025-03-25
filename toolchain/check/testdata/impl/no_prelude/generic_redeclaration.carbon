@@ -667,8 +667,8 @@ impl forall [T:! type] T as I {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn() -> %empty_tuple.type {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc21_12: @D.%C.type (%C.type) = specific_constant @impl.2caff2.2.%C.decl, @impl.2caff2.2(constants.%T) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:     %C.ref: @D.%C.type (%C.type) = name_ref C, %.loc21_12 [symbolic = %C (constants.%C)]
+// CHECK:STDOUT:     %.loc21_12: @D.%C.type (%C.type) = specific_constant @impl.2caff2.2.%C.decl, @impl.2caff2.2(constants.%T) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:     %C.specific_fn.loc21_12.1: <specific function> = specific_function %C.ref, @C(constants.%T) [symbolic = %C.specific_fn.loc21_12.2 (constants.%C.specific_fn)]
 // CHECK:STDOUT:     %C.call: init %empty_tuple.type = call %C.specific_fn.loc21_12.1()
 // CHECK:STDOUT:     %.loc21_14.1: ref %empty_tuple.type = temporary_storage

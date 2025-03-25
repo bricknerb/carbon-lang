@@ -12,6 +12,7 @@
 #include "toolchain/check/pointer_dereference.h"
 #include "toolchain/check/type.h"
 #include "toolchain/lex/token_kind.h"
+#include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
@@ -107,6 +108,11 @@ static auto GetIdentifierAsNameId(
 // lookup.
 static auto HandleNameAsExpr(Context& context, Parse::NodeId node_id,
                              SemIR::NameId name_id) -> SemIR::InstId {
+  SemIR::NameRef name_ref = {.type_id = SemIR::TypeId::None,
+                             .name_id = name_id,
+                             .value_id = SemIR::InstId::None};
+  SemIR::InstId name_ref_id =
+      AddPlaceholderInst(context, SemIR::LocIdAndInst(node_id, name_ref));
   auto result = LookupUnqualifiedName(context, node_id, name_id);
   SemIR::InstId inst_id = result.scope_result.target_inst_id();
   auto value = context.insts().Get(inst_id);
@@ -125,9 +131,10 @@ static auto HandleNameAsExpr(Context& context, Parse::NodeId node_id,
                                           .specific_id = result.specific_id});
   }
 
-  return AddInst<SemIR::NameRef>(
-      context, node_id,
-      {.type_id = type_id, .name_id = name_id, .value_id = inst_id});
+  name_ref.type_id = type_id;
+  name_ref.value_id = inst_id;
+  ReplaceInstBeforeConstantUse(context, name_ref_id, name_ref);
+  return name_ref_id;
 }
 
 auto HandleParseNode(Context& context,

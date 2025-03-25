@@ -443,9 +443,9 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.d9c) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.d9c) = out_param_pattern %return.patt, call_param2
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_29: type = name_ref U, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_29: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_29: type = impl_witness_access %Self.as_wit.iface0.loc5_29, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:     %U.ref.loc5_29: type = name_ref U, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type.3df) = value_param call_param0
 // CHECK:STDOUT:     %.loc5_14.1: type = splice_block %.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type.3df)] {
 // CHECK:STDOUT:       %Self.ref: %J.type = name_ref Self, @J.%Self [symbolic = %Self (constants.%Self.ccd)]
@@ -455,9 +455,9 @@ fn F() {
 // CHECK:STDOUT:     %self: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type.3df) = bind_name self, %self.param
 // CHECK:STDOUT:     %u.param: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.d9c) = value_param call_param1
 // CHECK:STDOUT:     %.loc5_23: type = splice_block %U.ref.loc5_23 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)] {
+// CHECK:STDOUT:       %U.ref.loc5_23: type = name_ref U, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_23.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_23.2: type = impl_witness_access %Self.as_wit.iface0.loc5_23.2, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:       %U.ref.loc5_23: type = name_ref U, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %u: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.d9c) = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.d9c) = out_param call_param2
@@ -743,14 +743,14 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_17: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_17: type = impl_witness_access %Self.as_wit.iface0.loc5_17, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %u.param: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = value_param call_param0
 // CHECK:STDOUT:     %.loc5: type = splice_block %U.ref.loc5_11 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)] {
+// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_11.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_11.2: type = impl_witness_access %Self.as_wit.iface0.loc5_11.2, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %u: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param call_param1
@@ -1069,14 +1069,14 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c3a6.1) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c3a6.1) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_17: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_17: type = impl_witness_access %Self.as_wit.iface0.loc5_17, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %u.param: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c3a6.1) = value_param call_param0
 // CHECK:STDOUT:     %.loc5: type = splice_block %U.ref.loc5_11 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)] {
+// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_11.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_11.2: type = impl_witness_access %Self.as_wit.iface0.loc5_11.2, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %u: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c3a6.1) = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c3a6.1) = out_param call_param1
@@ -1091,9 +1091,9 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @G.1.%impl.elem0.loc6_23.1 (%impl.elem0.d9c3a6.1) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @G.1.%impl.elem0.loc6_23.1 (%impl.elem0.d9c3a6.1) = out_param_pattern %return.patt, call_param2
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc6_29: type = name_ref U, %impl.elem0.loc6_29 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc6_29: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc6_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc6_29: type = impl_witness_access %Self.as_wit.iface0.loc6_29, element0 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:     %U.ref.loc6_29: type = name_ref U, %impl.elem0.loc6_29 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %self.param: @G.1.%Self.as_type.loc6_14.1 (%Self.as_type.3df) = value_param call_param0
 // CHECK:STDOUT:     %.loc6_14.1: type = splice_block %.loc6_14.2 [symbolic = %Self.as_type.loc6_14.1 (constants.%Self.as_type.3df)] {
 // CHECK:STDOUT:       %Self.ref: %J.type = name_ref Self, @J.%Self [symbolic = %Self (constants.%Self.ccd)]
@@ -1103,9 +1103,9 @@ fn F() {
 // CHECK:STDOUT:     %self: @G.1.%Self.as_type.loc6_14.1 (%Self.as_type.3df) = bind_name self, %self.param
 // CHECK:STDOUT:     %v.param: @G.1.%impl.elem0.loc6_23.1 (%impl.elem0.d9c3a6.1) = value_param call_param1
 // CHECK:STDOUT:     %.loc6_23: type = splice_block %U.ref.loc6_23 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)] {
+// CHECK:STDOUT:       %U.ref.loc6_23: type = name_ref U, %impl.elem0.loc6_23.2 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc6_23.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc6_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc6_23.2: type = impl_witness_access %Self.as_wit.iface0.loc6_23.2, element0 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:       %U.ref.loc6_23: type = name_ref U, %impl.elem0.loc6_23.2 [symbolic = %impl.elem0.loc6_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v: @G.1.%impl.elem0.loc6_23.1 (%impl.elem0.d9c3a6.1) = bind_name v, %v.param
 // CHECK:STDOUT:     %return.param: ref @G.1.%impl.elem0.loc6_23.1 (%impl.elem0.d9c3a6.1) = out_param call_param2
@@ -1597,16 +1597,16 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.%as_type (%as_type.6b96b1.1) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.%as_type (%as_type.6b96b1.1) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_17: %Add.type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_17: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_17: %Add.type = impl_witness_access %Self.as_wit.iface0.loc5_17, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
-// CHECK:STDOUT:     %U.ref.loc5_17: %Add.type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
 // CHECK:STDOUT:     %U.as_type.loc5_17: type = facet_access_type %U.ref.loc5_17 [symbolic = %as_type (constants.%as_type.6b96b1.1)]
 // CHECK:STDOUT:     %.loc5_17: type = converted %U.ref.loc5_17, %U.as_type.loc5_17 [symbolic = %as_type (constants.%as_type.6b96b1.1)]
 // CHECK:STDOUT:     %u.param: @F.%as_type (%as_type.6b96b1.1) = value_param call_param0
 // CHECK:STDOUT:     %.loc5_11.1: type = splice_block %.loc5_11.2 [symbolic = %as_type (constants.%as_type.6b96b1.1)] {
+// CHECK:STDOUT:       %U.ref.loc5_11: %Add.type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_11.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_11.2: %Add.type = impl_witness_access %Self.as_wit.iface0.loc5_11.2, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
-// CHECK:STDOUT:       %U.ref.loc5_11: %Add.type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.c57618.1)]
 // CHECK:STDOUT:       %U.as_type.loc5_11: type = facet_access_type %U.ref.loc5_11 [symbolic = %as_type (constants.%as_type.6b96b1.1)]
 // CHECK:STDOUT:       %.loc5_11.2: type = converted %U.ref.loc5_11, %U.as_type.loc5_11 [symbolic = %as_type (constants.%as_type.6b96b1.1)]
 // CHECK:STDOUT:     }
@@ -1826,9 +1826,9 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @G.%impl.elem0.loc5_23.1 (%impl.elem0.d9c3a6.1) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @G.%impl.elem0.loc5_23.1 (%impl.elem0.d9c3a6.1) = out_param_pattern %return.patt, call_param2
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_29: type = name_ref U, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_29: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_29: type = impl_witness_access %Self.as_wit.iface0.loc5_29, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:     %U.ref.loc5_29: type = name_ref U, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     %self.param: @G.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:     %.loc5_14.1: type = splice_block %.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
 // CHECK:STDOUT:       %Self.ref: %J.type = name_ref Self, @J.%Self [symbolic = %Self (constants.%Self)]
@@ -1838,9 +1838,9 @@ fn F() {
 // CHECK:STDOUT:     %self: @G.%Self.as_type.loc5_14.1 (%Self.as_type) = bind_name self, %self.param
 // CHECK:STDOUT:     %v.param: @G.%impl.elem0.loc5_23.1 (%impl.elem0.d9c3a6.1) = value_param call_param1
 // CHECK:STDOUT:     %.loc5_23: type = splice_block %U.ref.loc5_23 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)] {
+// CHECK:STDOUT:       %U.ref.loc5_23: type = name_ref U, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_23.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_23.2: type = impl_witness_access %Self.as_wit.iface0.loc5_23.2, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
-// CHECK:STDOUT:       %U.ref.loc5_23: type = name_ref U, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.d9c3a6.1)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v: @G.%impl.elem0.loc5_23.1 (%impl.elem0.d9c3a6.1) = bind_name v, %v.param
 // CHECK:STDOUT:     %return.param: ref @G.%impl.elem0.loc5_23.1 (%impl.elem0.d9c3a6.1) = out_param call_param2
@@ -2036,14 +2036,14 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_17: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_17: type = impl_witness_access %Self.as_wit.iface0.loc5_17, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %u.param: @F.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = value_param call_param0
 // CHECK:STDOUT:     %.loc5: type = splice_block %U.ref.loc5_11 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)] {
+// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_11.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_11.2: type = impl_witness_access %Self.as_wit.iface0.loc5_11.2, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %u: @F.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref @F.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param call_param1
@@ -2194,14 +2194,14 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_17: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_17: type = impl_witness_access %Self.as_wit.iface0.loc5_17, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:     %U.ref.loc5_17: type = name_ref U, %impl.elem0.loc5_17 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     %u.param: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = value_param call_param0
 // CHECK:STDOUT:     %.loc5: type = splice_block %U.ref.loc5_11 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)] {
+// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_11.2: <witness> = facet_access_witness @J.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_11.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_11.2: type = impl_witness_access %Self.as_wit.iface0.loc5_11.2, element0 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
-// CHECK:STDOUT:       %U.ref.loc5_11: type = name_ref U, %impl.elem0.loc5_11.2 [symbolic = %impl.elem0.loc5_11.1 (constants.%impl.elem0.d9c)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %u: @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref @F.1.%impl.elem0.loc5_11.1 (%impl.elem0.d9c) = out_param call_param1
@@ -2612,9 +2612,9 @@ fn F() {
 // CHECK:STDOUT:     %return.patt: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.c2f) = return_slot_pattern
 // CHECK:STDOUT:     %return.param_patt: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.c2f) = out_param_pattern %return.patt, call_param2
 // CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %V.ref.loc5_29: type = name_ref V, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_29: <witness> = facet_access_witness @K.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_29: type = impl_witness_access %Self.as_wit.iface0.loc5_29, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
-// CHECK:STDOUT:     %V.ref.loc5_29: type = name_ref V, %impl.elem0.loc5_29 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
 // CHECK:STDOUT:     %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:     %.loc5_14.1: type = splice_block %.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
 // CHECK:STDOUT:       %Self.ref: %K.type = name_ref Self, @K.%Self [symbolic = %Self (constants.%Self)]
@@ -2624,9 +2624,9 @@ fn F() {
 // CHECK:STDOUT:     %self: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = bind_name self, %self.param
 // CHECK:STDOUT:     %v.param: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.c2f) = value_param call_param1
 // CHECK:STDOUT:     %.loc5_23: type = splice_block %V.ref.loc5_23 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)] {
+// CHECK:STDOUT:       %V.ref.loc5_23: type = name_ref V, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
 // CHECK:STDOUT:       %Self.as_wit.iface0.loc5_23.2: <witness> = facet_access_witness @K.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_23.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:       %impl.elem0.loc5_23.2: type = impl_witness_access %Self.as_wit.iface0.loc5_23.2, element0 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
-// CHECK:STDOUT:       %V.ref.loc5_23: type = name_ref V, %impl.elem0.loc5_23.2 [symbolic = %impl.elem0.loc5_23.1 (constants.%impl.elem0.c2f)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v: @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.c2f) = bind_name v, %v.param
 // CHECK:STDOUT:     %return.param: ref @F.1.%impl.elem0.loc5_23.1 (%impl.elem0.c2f) = out_param call_param2
@@ -3211,9 +3211,9 @@ fn F() {
 // CHECK:STDOUT:     %return.param_patt: @F.1.%array_type.loc5_38.1 (%array_type.a05) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     %bool.make_type: init type = call constants.%Bool() [concrete = bool]
+// CHECK:STDOUT:     %N.ref: %i32 = name_ref N, %impl.elem0.loc5_37.2 [symbolic = %impl.elem0.loc5_37.1 (constants.%impl.elem0.ace)]
 // CHECK:STDOUT:     %Self.as_wit.iface0.loc5_37.2: <witness> = facet_access_witness @I.%Self, element0 [symbolic = %Self.as_wit.iface0.loc5_37.1 (constants.%Self.as_wit.iface0)]
 // CHECK:STDOUT:     %impl.elem0.loc5_37.2: %i32 = impl_witness_access %Self.as_wit.iface0.loc5_37.2, element0 [symbolic = %impl.elem0.loc5_37.1 (constants.%impl.elem0.ace)]
-// CHECK:STDOUT:     %N.ref: %i32 = name_ref N, %impl.elem0.loc5_37.2 [symbolic = %impl.elem0.loc5_37.1 (constants.%impl.elem0.ace)]
 // CHECK:STDOUT:     %.loc5_31.1: type = value_of_initializer %bool.make_type [concrete = bool]
 // CHECK:STDOUT:     %.loc5_31.2: type = converted %bool.make_type, %.loc5_31.1 [concrete = bool]
 // CHECK:STDOUT:     %impl.elem0.loc5_37.3: %.4d8 = impl_witness_access constants.%impl_witness.023, element0 [concrete = constants.%Convert.960]

@@ -633,8 +633,8 @@ fn H() {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn() -> @G.%U (%U) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc5_24: @G.%G.type (%G.type.56f312.1) = specific_constant @X.%G.decl, @X(constants.%U) [symbolic = %G (constants.%G.b504c4.1)]
 // CHECK:STDOUT:     %G.ref: @G.%G.type (%G.type.56f312.1) = name_ref G, %.loc5_24 [symbolic = %G (constants.%G.b504c4.1)]
+// CHECK:STDOUT:     %.loc5_24: @G.%G.type (%G.type.56f312.1) = specific_constant @X.%G.decl, @X(constants.%U) [symbolic = %G (constants.%G.b504c4.1)]
 // CHECK:STDOUT:     %G.specific_fn.loc5_24.1: <specific function> = specific_function %G.ref, @G(constants.%U) [symbolic = %G.specific_fn.loc5_24.2 (constants.%G.specific_fn.169)]
 // CHECK:STDOUT:     %G.call: init @G.%U (%U) = call %G.specific_fn.loc5_24.1()
 // CHECK:STDOUT:     %.loc5_27.1: @G.%U (%U) = value_of_initializer %G.call

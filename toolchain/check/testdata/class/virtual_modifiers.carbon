@@ -1632,8 +1632,8 @@ class T2 {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Base (%Base.370) = value_param call_param0
 // CHECK:STDOUT:       %.loc8_22.1: type = splice_block %Self.ref [symbolic = %Base (constants.%Base.370)] {
-// CHECK:STDOUT:         %.loc8_22.2: type = specific_constant constants.%Base.370, @Base(constants.%T) [symbolic = %Base (constants.%Base.370)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc8_22.2 [symbolic = %Base (constants.%Base.370)]
+// CHECK:STDOUT:         %.loc8_22.2: type = specific_constant constants.%Base.370, @Base(constants.%T) [symbolic = %Base (constants.%Base.370)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.1.%Base (%Base.370) = bind_name self, %self.param
 // CHECK:STDOUT:       %t.param: @F.1.%T (%T) = value_param call_param1
