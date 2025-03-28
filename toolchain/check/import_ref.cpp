@@ -448,8 +448,6 @@ class ImportContext {
 // we will only reach the second phase once: once a constant value is set, only
 // the resolution step that set it will retry.
 //
-// `context` must not be null.
-//
 // TODO: Fix class `extern` handling and merging, rewrite tests.
 // - check/testdata/class/cross_package_import.carbon
 // - check/testdata/class/extern.carbon
@@ -458,6 +456,7 @@ class ImportContext {
 // - check/testdata/packages/cross_package_import.carbon
 class ImportRefResolver : public ImportContext {
  public:
+  // `context` must not be null.
   explicit ImportRefResolver(Context* context, SemIR::ImportIRId import_ir_id)
       : ImportContext(context, import_ir_id) {}
 
