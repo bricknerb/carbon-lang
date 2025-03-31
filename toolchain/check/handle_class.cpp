@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include "toolchain/base/kind_switch.h"
+#include "toolchain/check/class.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/convert.h"
 #include "toolchain/check/decl_name_stack.h"
@@ -290,24 +291,13 @@ auto HandleParseNode(Context& context, Parse::ClassDefinitionStartId node_id)
     -> bool {
   auto [class_id, class_decl_id] =
       BuildClassDecl(context, node_id, /*is_definition=*/true);
-  auto& class_info = context.classes().Get(class_id);
-
-  // Track that this declaration is the definition.
-  CARBON_CHECK(!class_info.has_definition_started());
-  class_info.definition_id = class_decl_id;
-  class_info.scope_id = context.name_scopes().Add(
-      class_decl_id, SemIR::NameId::None, class_info.parent_scope_id);
+  auto& class_info = TrackClassDefinition(context, class_id, class_decl_id);
 
   // Enter the class scope.
   context.scope_stack().Push(
       class_decl_id, class_info.scope_id,
       context.generics().GetSelfSpecific(class_info.generic_id));
   StartGenericDefinition(context);
-
-  // Introduce `Self`.
-  context.name_scopes().AddRequiredName(
-      class_info.scope_id, SemIR::NameId::SelfType,
-      context.types().GetInstId(class_info.self_type_id));
 
   context.inst_block_stack().Push();
   context.node_stack().Push(node_id, class_id);

@@ -15,6 +15,7 @@
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/raw_ostream.h"
+#include "toolchain/check/class.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/check/eval.h"
@@ -335,24 +336,13 @@ static auto BuildClassDefinition(Context& context,
     -> std::tuple<SemIR::ClassId, SemIR::InstId> {
   auto [class_id, class_decl_id] =
       BuildClassDecl(context, parent_scope_id, name_id);
-  auto& class_info = context.classes().Get(class_id);
+  auto& class_info = TrackClassDefinition(context, class_id, class_decl_id);
 
-  // Track that this declaration is the definition.
-  CARBON_CHECK(!class_info.has_definition_started());
-  class_info.definition_id = class_decl_id;
-  class_info.scope_id = context.name_scopes().Add(
-      class_decl_id, SemIR::NameId::None, class_info.parent_scope_id);
   class_info.body_block_id = context.inst_blocks().AddDefaultValue();
 
-  SemIR::NameScope& name_scope = context.name_scopes().Get(class_info.scope_id);
-  name_scope.set_cpp_decl_context(clang_decl);
-
-  // Introduce `Self`.
-  name_scope.AddRequired(
-      {.name_id = SemIR::NameId::SelfType,
-       .result = SemIR::ScopeLookupResult::MakeFound(
-           context.types().GetInstId(class_info.self_type_id),
-           SemIR::AccessKind::Public)});
+  context.name_scopes()
+      .Get(class_info.scope_id)
+      .set_cpp_decl_context(clang_decl);
 
   return {class_id, class_decl_id};
 }
