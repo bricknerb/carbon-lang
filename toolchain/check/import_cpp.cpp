@@ -298,7 +298,6 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
        .pattern_block_id = SemIR::InstBlockId::None,
        .implicit_param_patterns_id = SemIR::InstBlockId::None,
        .param_patterns_id = SemIR::InstBlockId::None,
-       // TODO: Consider supporting extern.
        .is_extern = false,
        .extern_library_id = SemIR::LibraryNameId::None,
        .non_owning_decl_id = SemIR::InstId::None,
