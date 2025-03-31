@@ -314,13 +314,7 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
   // Write the class ID into the ClassDecl.
   ReplaceInstBeforeConstantUse(context, class_decl_id, class_decl);
 
-  // Build the `Self` type using the resulting type constant.
-  context.classes().Get(class_decl.class_id).self_type_id =
-      context.types().GetTypeIdForTypeConstantId(TryEvalInst(
-          context, SemIR::InstId::None,
-          SemIR::ClassType{.type_id = SemIR::TypeType::SingletonTypeId,
-                           .class_id = class_decl.class_id,
-                           .specific_id = SemIR::SpecificId::None}));
+  SetNewClassSelfTypeId(context, class_decl.class_id);
 
   return {class_decl.class_id, class_decl_id};
 }

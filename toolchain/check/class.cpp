@@ -5,8 +5,19 @@
 #include "toolchain/check/class.h"
 
 #include "toolchain/check/context.h"
+#include "toolchain/check/eval.h"
 
 namespace Carbon::Check {
+
+auto SetNewClassSelfTypeId(Context& context, SemIR::ClassId class_id) -> void {
+  auto& class_info = context.classes().Get(class_id);
+  auto specific_id = context.generics().GetSelfSpecific(class_info.generic_id);
+  class_info.self_type_id = context.types().GetTypeIdForTypeConstantId(
+      TryEvalInst(context, SemIR::InstId::None,
+                  SemIR::ClassType{.type_id = SemIR::TypeType::SingletonTypeId,
+                                   .class_id = class_id,
+                                   .specific_id = specific_id}));
+}
 
 auto TrackClassDefinition(Context& context, SemIR::ClassId class_id,
                           SemIR::InstId class_decl_id) -> SemIR::Class& {

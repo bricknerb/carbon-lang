@@ -260,18 +260,9 @@ static auto BuildClassDecl(Context& context, Parse::AnyClassDeclId node_id,
   ReplaceInstBeforeConstantUse(context, class_decl_id, class_decl);
 
   if (is_new_class) {
-    // Build the `Self` type using the resulting type constant.
     // TODO: Form this as part of building the definition, not as part of the
     // declaration.
-    auto& class_info = context.classes().Get(class_decl.class_id);
-    auto specific_id =
-        context.generics().GetSelfSpecific(class_info.generic_id);
-    class_info.self_type_id =
-        context.types().GetTypeIdForTypeConstantId(TryEvalInst(
-            context, SemIR::InstId::None,
-            SemIR::ClassType{.type_id = SemIR::TypeType::SingletonTypeId,
-                             .class_id = class_decl.class_id,
-                             .specific_id = specific_id}));
+    SetNewClassSelfTypeId(context, class_decl.class_id);
   }
 
   if (!is_definition && context.sem_ir().is_impl() && !is_extern) {
