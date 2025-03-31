@@ -348,7 +348,6 @@ static auto BuildClassDefinition(Context& context,
   name_scope.set_cpp_decl_context(clang_decl);
 
   // Introduce `Self`.
-  // TODO: Decide whether we actually need this for C++ based classes.
   name_scope.AddRequired(
       {.name_id = SemIR::NameId::SelfType,
        .result = SemIR::ScopeLookupResult::MakeFound(
