@@ -9,12 +9,23 @@
 
 namespace Carbon::Check {
 
+// If `type_id` is a class type, get its corresponding `SemIR::Class` object.
+// Otherwise returns `nullptr`.
+auto TryGetAsClass(Context& context, SemIR::TypeId type_id) -> SemIR::Class*;
+
 // Builds the `Self` type using the resulting type constant.
 auto SetNewClassSelfTypeId(Context& context, SemIR::ClassId class_id) -> void;
 
 // Tracks that this declaration is the definition and introduce `Self`.
 auto TrackClassDefinition(Context& context, SemIR::ClassId class_id,
                           SemIR::InstId class_decl_id) -> SemIR::Class&;
+
+// Compute object representation for a fully defined class.
+auto ComputeClassObjectRepresentation(
+    Context& context, Parse::NodeId node_id, SemIR::ClassId class_id,
+    llvm::ArrayRef<SemIR::InstId> field_decls,
+    llvm::ArrayRef<SemIR::InstId> vtable_contents,
+    llvm::ArrayRef<SemIR::InstId> inst_block) -> void;
 
 }  // namespace Carbon::Check
 

@@ -338,21 +338,6 @@ static auto BuildClassDefinition(Context& context,
   return {class_id, class_decl_id};
 }
 
-// Sets the `complete_type_witness_id` field for the given class.
-static auto SetClassCompleteTypeWitnessId(Context& context,
-                                          SemIR::ClassId class_id) -> void {
-  // The class type is now fully defined. Set its object representation.
-  context.classes().Get(class_id).complete_type_witness_id =
-      AddInst<SemIR::CompleteTypeWitness>(
-          context,
-          // TODO: Consider having a proper location here.
-          Parse::NodeId::None,
-          {.type_id =
-               GetSingletonType(context, SemIR::WitnessType::SingletonInstId),
-           .object_repr_id =
-               GetStructType(context, SemIR::StructTypeFieldsId::Empty)});
-}
-
 // Imports a record declaration from Clang to Carbon. If successful, returns
 // the new Carbon class declaration `InstId`.
 static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
@@ -374,7 +359,18 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
 
   auto [class_id, class_def_id] =
       BuildClassDefinition(context, parent_scope_id, name_id, clang_def);
-  SetClassCompleteTypeWitnessId(context, class_id);
+
+  // The class type is now fully defined. Compute its object representation.
+  ComputeClassObjectRepresentation(
+      context,
+      // TODO: Consider having a proper location here.
+      Parse::NodeId::None, class_id,
+      // TODO: Set fields.
+      /*field_decls=*/{},
+      // TODO: Set vtable.
+      /*vtable_contents=*/{},
+      // TODO: Set block.
+      /*inst_block=*/{});
 
   return class_def_id;
 }
