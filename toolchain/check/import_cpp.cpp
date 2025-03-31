@@ -302,7 +302,6 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
        .extern_library_id = SemIR::LibraryNameId::None,
        .non_owning_decl_id = SemIR::InstId::None,
        .first_owning_decl_id = class_decl_id},
-
       {// `.self_type_id` depends on the ClassType, so is set below.
        .self_type_id = SemIR::TypeId::None,
        // TODO: Support Dynamic classes.
