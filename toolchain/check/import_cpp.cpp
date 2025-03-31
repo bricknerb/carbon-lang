@@ -338,8 +338,6 @@ static auto BuildClassDefinition(Context& context,
       BuildClassDecl(context, parent_scope_id, name_id);
   auto& class_info = TrackClassDefinition(context, class_id, class_decl_id);
 
-  class_info.body_block_id = context.inst_blocks().AddDefaultValue();
-
   context.name_scopes()
       .Get(class_info.scope_id)
       .set_cpp_decl_context(clang_decl);
