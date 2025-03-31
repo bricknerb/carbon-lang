@@ -382,23 +382,23 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
                                 SemIR::NameId name_id,
                                 clang::CXXRecordDecl* clang_decl)
     -> SemIR::InstId {
-  clang_decl = clang_decl->getDefinition();
-  if (!clang_decl) {
+  clang::CXXRecordDecl* clang_def = clang_decl->getDefinition();
+  if (!clang_def) {
     context.TODO(loc_id,
                  "Unsupported: Record declarations without a definition");
     return SemIR::ErrorInst::SingletonInstId;
   }
 
-  if (clang_decl->isDynamicClass()) {
+  if (clang_def->isDynamicClass()) {
     context.TODO(loc_id, "Unsupported: Dynamic Class");
     return SemIR::ErrorInst::SingletonInstId;
   }
 
-  auto [class_id, class_decl_id] =
-      BuildClassDefinition(context, parent_scope_id, name_id, clang_decl);
+  auto [class_id, class_def_id] =
+      BuildClassDefinition(context, parent_scope_id, name_id, clang_def);
   SetClassCompleteTypeWitnessId(context, class_id);
 
-  return class_decl_id;
+  return class_def_id;
 }
 
 // Imports a declaration from Clang to Carbon. If successful, returns the
