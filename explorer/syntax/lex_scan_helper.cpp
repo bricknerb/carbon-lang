@@ -14,7 +14,7 @@ auto StringLexHelper::Advance() -> bool {
   CARBON_CHECK(is_eof_ == false);
   const char c = YyinputWrapper(yyscanner_);
   if (c <= 0) {
-    context_.RecordSyntaxError("Unexpected end of file");
+    context_->RecordSyntaxError("Unexpected end of file");
     is_eof_ = true;
     return false;
   }

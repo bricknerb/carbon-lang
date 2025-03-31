@@ -17,8 +17,9 @@ namespace Carbon {
 
 class StringLexHelper {
  public:
+  // `context` must not be null.
   StringLexHelper(const char* text, yyscan_t yyscanner,
-                  Carbon::ParseAndLexContext& context)
+                  Carbon::ParseAndLexContext* context)
       : str_(text), yyscanner_(yyscanner), context_(context), is_eof_(false) {}
   // Advances yyscanner by one char. Sets is_eof to true and returns false on
   // EOF.
@@ -33,7 +34,7 @@ class StringLexHelper {
  private:
   std::string str_;
   yyscan_t yyscanner_;
-  Carbon::ParseAndLexContext& context_;
+  Carbon::ParseAndLexContext* context_;
   // Skips reading next char.
   bool is_eof_;
 };

@@ -332,7 +332,7 @@ operand_start         [(A-Za-z0-9_\"]
 
 #*\" {
   // Found a double quote character.
-  Carbon::StringLexHelper str_lex_helper(yytext, yyscanner, context);
+  Carbon::StringLexHelper str_lex_helper(yytext, yyscanner, &context);
   const std::string& s = str_lex_helper.str();
   const int hashtag_num = s.find_first_of('"');
 
@@ -377,7 +377,7 @@ operand_start         [(A-Za-z0-9_\"]
 
 #*\'\'\' {
   // Multi-line string literal.
-  Carbon::StringLexHelper str_lex_helper(yytext, yyscanner, context);
+  Carbon::StringLexHelper str_lex_helper(yytext, yyscanner, &context);
   const std::string& s = str_lex_helper.str();
   const int hashtag_num = s.find_first_of('\'');
 
