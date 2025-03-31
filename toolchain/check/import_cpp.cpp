@@ -280,10 +280,10 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
                            SemIR::NameId name_id)
     -> std::tuple<SemIR::ClassId, SemIR::InstId> {
   // Add the class declaration.
-  auto class_decl = SemIR::ClassDecl{
-      .type_id = SemIR::TypeType::SingletonTypeId,
-      .class_id = SemIR::ClassId::None,
-      .decl_block_id = context.inst_blocks().AddDefaultValue()};
+  auto class_decl =
+      SemIR::ClassDecl{.type_id = SemIR::TypeType::SingletonTypeId,
+                       .class_id = SemIR::ClassId::None,
+                       .decl_block_id = SemIR::InstBlockId::None};
   // TODO: Consider setting a proper location.
   auto class_decl_id =
       AddPlaceholderInst(context, SemIR::LocIdAndInst::NoLoc(class_decl));
