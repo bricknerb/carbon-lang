@@ -98,13 +98,13 @@ static auto TestAlternatingFiles(TestParams& params)
     -> ErrorOr<FileTestBaseTest::RunResult> {
   params.output_stream << "unattached message 1\n"
                        << "a.carbon:2: message 2\n"
-                       << "b.carbon:5: message 3\n"
+                       << "b.carbon:5: message 3 with location a.carbon:2\n"
                        << "a.carbon:2: message 4\n"
                        << "b.carbon:5: message 5\n"
                        << "unattached message 6\n";
   params.error_stream << "unattached message 1\n"
                       << "a.carbon:2: message 2\n"
-                      << "b.carbon:5: message 3\n"
+                      << "b.carbon:5: message 3 with location a.carbon:2\n"
                       << "a.carbon:2: message 4\n"
                       << "b.carbon:5: message 5\n"
                       << "unattached message 6\n";
