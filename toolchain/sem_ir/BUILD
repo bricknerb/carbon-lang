@@ -25,6 +25,7 @@ cc_library(
         "inst_kind.cpp",
     ],
     hdrs = [
+        "clang_source_location.h",
         "id_kind.h",
         "ids.h",
         "inst_kind.h",
@@ -41,6 +42,7 @@ cc_library(
         "//toolchain/base:value_ids",
         "//toolchain/diagnostics:diagnostic_emitter",
         "//toolchain/parse:node_kind",
+        "@llvm-project//clang:basic",
         "@llvm-project//llvm:Support",
     ],
 )

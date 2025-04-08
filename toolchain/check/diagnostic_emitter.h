@@ -51,6 +51,10 @@ class DiagnosticEmitter : public DiagnosticEmitterBase {
   auto ConvertLocImpl(SemIRLoc loc, ContextFnT context_fn) const
       -> Diagnostics::ConvertedLoc;
 
+  //
+  auto TryConvertClangDiagnosticLoc(SemIRLoc loc) const
+      -> std::optional<Diagnostics::ConvertedLoc>;
+
   // Converts a node_id corresponding to a specific sem_ir to a diagnostic
   // location.
   auto ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id, bool token_only,

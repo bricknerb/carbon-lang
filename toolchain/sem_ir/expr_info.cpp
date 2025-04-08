@@ -28,6 +28,7 @@ auto GetExprCategory(const File& file, InstId inst_id) -> ExprCategory {
       case Branch::Kind:
       case BranchIf::Kind:
       case BranchWithArg::Kind:
+      case ClangDiagnostic::Kind:
       case FieldDecl::Kind:
       case FunctionDecl::Kind:
       case ImplDecl::Kind:

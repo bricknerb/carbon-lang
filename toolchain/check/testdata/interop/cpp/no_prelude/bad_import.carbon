@@ -22,18 +22,18 @@ import Cpp;
 
 library "[[@TEST_NAME]]";
 
-// CHECK:STDERR: fail_import_cpp_library_empty.carbon:[[@LINE+4]]:1: error: `Cpp` import missing library [CppInteropMissingLibrary]
+// CHECK:STDERR: fail_import_cpp_library_empty.carbon:[[@LINE+9]]:1: error: `Cpp` import missing library [CppInteropMissingLibrary]
 // CHECK:STDERR: import Cpp library "";
 // CHECK:STDERR: ^~~~~~~~~~~~~~~~~~~~~~
 // CHECK:STDERR:
-import Cpp library "";
-
-// --- fail_import_cpp_library_file_with_quotes.carbon
-// CHECK:STDERR: fail_import_cpp_library_file_with_quotes.carbon: error: C++:
+// CHECK:STDERR: fail_import_cpp_library_file_with_quotes.carbon.generated.cpp_imports.h:1: error: C++:
 // CHECK:STDERR: fail_import_cpp_library_file_with_quotes.carbon.generated.cpp_imports.h:1:10: fatal error: '\"foo.h\"' file not found
 // CHECK:STDERR:     1 | #include "\"foo.h\""
 // CHECK:STDERR:       |          ^~~~~~~~~~~
 // CHECK:STDERR:  [CppInteropParseError]
+import Cpp library "";
+
+// --- fail_import_cpp_library_file_with_quotes.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -68,6 +68,7 @@ import Cpp library "\"foo.h\"";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   clang_diag fail_import_cpp_library_file_with_quotes.carbon.generated.cpp_imports.h:1:10
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "\"foo.h\""
 // CHECK:STDOUT:   }

@@ -11,6 +11,7 @@
 #include "toolchain/base/value_ids.h"
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/parse/node_ids.h"
+#include "toolchain/sem_ir/clang_source_location.h"
 
 namespace Carbon::SemIR {
 
@@ -730,6 +731,14 @@ struct TypeId : public IdBase<TypeId> {
   auto is_concrete() const -> bool { return AsConstantId().is_concrete(); }
 
   auto Print(llvm::raw_ostream& out) const -> void;
+};
+
+// The ID of a Clang Source Location.
+struct ClangSourceLocationId : public IdBase<ClangSourceLocationId> {
+  static constexpr llvm::StringLiteral Label = "clang_source_location";
+  using ValueType = ClangSourceLocation;
+
+  using IdBase::IdBase;
 };
 
 // The ID of a type block.

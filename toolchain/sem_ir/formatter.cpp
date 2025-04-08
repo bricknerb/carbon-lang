@@ -1414,6 +1414,13 @@ class FormatterImpl {
     out_ << inst_namer_->GetLabelFor(scope_, id);
   }
 
+  auto FormatName(ClangSourceLocationId id) -> void {
+    ClangSourceLocation clang_source_location =
+        sem_ir_->clang_source_location_ids().Get(id);
+    clang_source_location.source_location.print(
+        out_, clang_source_location.diag_engine->getSourceManager());
+  }
+
   auto FormatConstant(ConstantId id) -> void {
     if (!id.has_value()) {
       out_ << "<not constant>";

@@ -4,6 +4,8 @@
 
 #include "toolchain/check/diagnostic_emitter.h"
 
+#include <optional>
+
 #include "common/raw_string_ostream.h"
 #include "toolchain/sem_ir/absolute_node_id.h"
 #include "toolchain/sem_ir/stringify_type.h"
@@ -12,6 +14,11 @@ namespace Carbon::Check {
 
 auto DiagnosticEmitter::ConvertLoc(SemIRLoc loc, ContextFnT context_fn) const
     -> Diagnostics::ConvertedLoc {
+  auto converted_clang_loc = TryConvertClangDiagnosticLoc(loc);
+  if (converted_clang_loc) {
+    return *converted_clang_loc;
+  }
+
   auto converted = ConvertLocImpl(loc, context_fn);
 
   // Use the token when possible, but -1 is the default value.
@@ -54,6 +61,32 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIRLoc loc,
   }
 
   return ConvertLocInFile(final_node_id, loc.token_only_, context_fn);
+}
+
+auto DiagnosticEmitter::TryConvertClangDiagnosticLoc(SemIRLoc loc) const
+    -> std::optional<Diagnostics::ConvertedLoc> {
+  if (!loc.is_inst_id_) {
+    return std::nullopt;
+  }
+  if (!loc.inst_id_.has_value()) {
+    return std::nullopt;
+  }
+
+  auto clang_diag =
+      sem_ir_->insts().TryGetAs<SemIR::ClangDiagnostic>(loc.inst_id_);
+  if (!clang_diag) {
+    return std::nullopt;
+  }
+
+  SemIR::ClangSourceLocation clang_loc =
+      sem_ir_->clang_source_location_ids().Get(clang_diag->clang_loc_id);
+  clang::PresumedLoc presumed_loc =
+      clang_loc.diag_engine->getSourceManager().getPresumedLoc(
+          clang_loc.source_location);
+
+  return Diagnostics::ConvertedLoc{
+      .loc = {.filename = presumed_loc.getFilename(),
+              .line_number = static_cast<int32_t>(presumed_loc.getLine())}};
 }
 
 auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,

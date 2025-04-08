@@ -26,6 +26,7 @@
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/name_scope.h"
+#include "toolchain/sem_ir/typed_insts.h"
 
 namespace Carbon::Check {
 
@@ -46,6 +47,18 @@ static auto GenerateCppIncludesHeaderCode(
 
 namespace {
 
+// Adds a `ClangDiagnostic` instruction which points on the source location
+// pointed by `info`.
+static auto AddClangDiagnosticInst(Context& context,
+                                   const clang::Diagnostic& info) {
+  SemIR::ClangSourceLocationId clang_source_location_id =
+      context.sem_ir().clang_source_location_ids().Add(
+          {.source_location = info.getLocation(),
+           .diag_engine = info.getDiags()});
+  return AddInst(context, SemIR::LocIdAndInst::NoLoc<SemIR::ClangDiagnostic>(
+                              {.clang_loc_id = clang_source_location_id}));
+}
+
 // Used to convert Clang diagnostics to Carbon diagnostics.
 class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
  public:
@@ -59,6 +72,9 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
   auto HandleDiagnostic(clang::DiagnosticsEngine::Level diag_level,
                         const clang::Diagnostic& info) -> void override {
     DiagnosticConsumer::HandleDiagnostic(diag_level, info);
+
+    SemIR::InstId clang_diagnostic_inst_id =
+        AddClangDiagnosticInst(*context_, info);
 
     llvm::SmallString<256> message;
     info.FormatDiagnostic(message);
@@ -83,9 +99,10 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
       case clang::DiagnosticsEngine::Note:
       case clang::DiagnosticsEngine::Remark: {
         context_->TODO(
-            loc_, llvm::formatv(
-                      "Unsupported: C++ diagnostic level for diagnostic\n{0}",
-                      diagnostics_str));
+            clang_diagnostic_inst_id,
+            llvm::formatv(
+                "Unsupported: C++ diagnostic level for diagnostic\n{0}",
+                diagnostics_str));
         return;
       }
       case clang::DiagnosticsEngine::Warning:
@@ -100,10 +117,8 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
         // TODO: This should be part of the location, instead of added as a note
         // here.
         CARBON_DIAGNOSTIC(InCppImport, Note, "in `Cpp` import");
-
-        // TODO: Use a more specific location.
         context_->emitter()
-            .Build(SemIR::LocId::None,
+            .Build(clang_diagnostic_inst_id,
                    diag_level == clang::DiagnosticsEngine::Warning
                        ? CppInteropParseWarning
                        : CppInteropParseError,

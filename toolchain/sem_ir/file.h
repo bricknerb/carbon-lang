@@ -221,6 +221,13 @@ class File : public Printable<File> {
   }
   auto insts() -> InstStore& { return insts_; }
   auto insts() const -> const InstStore& { return insts_; }
+  auto clang_source_location_ids() -> ValueStore<ClangSourceLocationId>& {
+    return clang_source_locations_;
+  }
+  auto clang_source_location_ids() const
+      -> const ValueStore<ClangSourceLocationId>& {
+    return clang_source_locations_;
+  }
   auto constant_values() -> ConstantValueStore& { return constant_values_; }
   auto constant_values() const -> const ConstantValueStore& {
     return constant_values_;
@@ -362,6 +369,9 @@ class File : public Printable<File> {
   // Single-entry/single-exit regions that are referenced as units, e.g. because
   // they represent expressions.
   ValueStore<ExprRegionId> expr_regions_;
+
+  // C++ source locations for C++ interop.
+  ValueStore<ClangSourceLocationId> clang_source_locations_;
 };
 
 }  // namespace Carbon::SemIR

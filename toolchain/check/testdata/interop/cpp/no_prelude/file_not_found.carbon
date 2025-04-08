@@ -7,13 +7,13 @@
 // TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/interop/cpp/no_prelude/file_not_found.carbon
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/no_prelude/file_not_found.carbon
-
-// --- fail_cpp_file_not_found.carbon
-// CHECK:STDERR: fail_cpp_file_not_found.carbon: error: C++:
+// CHECK:STDERR: fail_cpp_file_not_found.carbon.generated.cpp_imports.h:1: error: C++:
 // CHECK:STDERR: fail_cpp_file_not_found.carbon.generated.cpp_imports.h:1:10: fatal error: 'not_found.h' file not found
 // CHECK:STDERR:     1 | #include "not_found.h"
 // CHECK:STDERR:       |          ^~~~~~~~~~~~~
 // CHECK:STDERR:  [CppInteropParseError]
+
+// --- fail_cpp_file_not_found.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -36,6 +36,7 @@ import Cpp library "not_found.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   clang_diag fail_cpp_file_not_found.carbon.generated.cpp_imports.h:1:10
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "not_found.h"
 // CHECK:STDOUT:   }
