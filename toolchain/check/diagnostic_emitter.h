@@ -51,7 +51,7 @@ class DiagnosticEmitter : public DiagnosticEmitterBase {
   auto ConvertLocImpl(SemIRLoc loc, ContextFnT context_fn) const
       -> Diagnostics::ConvertedLoc;
 
-  //
+  // Returns `ConvertedLoc` if `loc` points to a `ClangDiagnostic` instruction.
   auto TryConvertClangDiagnosticLoc(SemIRLoc loc) const
       -> std::optional<Diagnostics::ConvertedLoc>;
 
