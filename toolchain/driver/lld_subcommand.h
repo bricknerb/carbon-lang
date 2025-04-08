@@ -23,7 +23,7 @@ struct LldOptions {
   // use a distinct enum because we only include the platforms supported by our
   // subcommand which is a subset of those recognized by the LLVM triple
   // infrastructure.
-  enum class Platform {
+  enum class Platform : uint8_t {
     Elf,
     MachO,
   };

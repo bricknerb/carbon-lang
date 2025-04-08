@@ -79,7 +79,7 @@ class DiagnosticConsumer : public Diagnostics::Consumer {
   // Converts a diagnostic level to an LSP severity.
   auto GetSeverity(Diagnostics::Level level) -> int {
     // https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity
-    enum class DiagnosticSeverity {
+    enum class DiagnosticSeverity : uint8_t {
       Error = 1,
       Warning = 2,
       Information = 3,

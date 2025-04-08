@@ -33,7 +33,7 @@ class FullPatternStack {
   // adjacent explicit parameter list together form a single full-pattern,
   // but we separate them here in order to represent the state transition
   // between them.
-  enum class Kind {
+  enum class Kind : uint8_t {
     NameBindingDecl,
     ImplicitParamList,
     ExplicitParamList,
