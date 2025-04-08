@@ -11,7 +11,6 @@
 #include "toolchain/base/value_ids.h"
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/parse/node_ids.h"
-#include "toolchain/sem_ir/clang_source_location.h"
 
 namespace Carbon::SemIR {
 
@@ -20,6 +19,7 @@ class File;
 class Inst;
 class NameScope;
 struct AssociatedConstant;
+struct ClangSourceLocation;
 struct Class;
 struct EntityName;
 struct ExprRegion;
