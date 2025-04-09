@@ -14,7 +14,6 @@ namespace Carbon::SemIR {
 // it can be transformed to a path and line number.
 struct ClangSourceLocation {
   clang::SourceLocation source_location;
-  const clang::DiagnosticsEngine* diag_engine;
 };
 
 }  // namespace Carbon::SemIR
