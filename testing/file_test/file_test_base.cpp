@@ -271,8 +271,8 @@ auto FileTestBase::GetLineNumberReplacements(
     llvm::ArrayRef<llvm::StringRef> filenames) const
     -> llvm::SmallVector<LineNumberReplacement> {
   return {{.has_file = true,
-           .re = std::make_shared<RE2>(llvm::formatv(
-               R"(:\ (?:\./)?({0}):(\d+)?)", llvm::join(filenames, "|"))),
+           .re = std::make_shared<RE2>(
+               llvm::formatv(R"(({0}):(\d+)?)", llvm::join(filenames, "|"))),
            .line_formatv = R"({0})"}};
 }
 
