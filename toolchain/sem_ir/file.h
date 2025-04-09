@@ -222,10 +222,10 @@ class File : public Printable<File> {
   }
   auto insts() -> InstStore& { return insts_; }
   auto insts() const -> const InstStore& { return insts_; }
-  auto clang_source_location_ids() -> ValueStore<ClangSourceLocationId>& {
+  auto clang_source_locations() -> ValueStore<ClangSourceLocationId>& {
     return clang_source_locations_;
   }
-  auto clang_source_location_ids() const
+  auto clang_source_locations() const
       -> const ValueStore<ClangSourceLocationId>& {
     return clang_source_locations_;
   }
