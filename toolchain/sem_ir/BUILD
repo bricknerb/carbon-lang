@@ -25,7 +25,6 @@ cc_library(
         "inst_kind.cpp",
     ],
     hdrs = [
-        "clang_source_location.h",
         "id_kind.h",
         "ids.h",
         "inst_kind.h",

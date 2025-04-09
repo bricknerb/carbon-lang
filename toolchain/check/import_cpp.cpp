@@ -52,8 +52,7 @@ namespace {
 static auto AddClangDiagnosticInst(Context& context,
                                    const clang::Diagnostic& info) {
   SemIR::ClangSourceLocationId clang_source_location_id =
-      context.sem_ir().clang_source_location_ids().Add(
-          {.source_location = info.getLocation()});
+      context.sem_ir().clang_source_location_ids().Add(info.getLocation());
   return AddInst(context, SemIR::LocIdAndInst::NoLoc<SemIR::ClangDiagnostic>(
                               {.clang_loc_id = clang_source_location_id}));
 }

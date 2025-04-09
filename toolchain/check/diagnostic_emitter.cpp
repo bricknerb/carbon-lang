@@ -78,12 +78,11 @@ auto DiagnosticEmitter::TryConvertClangDiagnosticLoc(SemIRLoc loc) const
     return std::nullopt;
   }
 
-  SemIR::ClangSourceLocation clang_loc =
+  clang::SourceLocation clang_loc =
       sem_ir_->clang_source_location_ids().Get(clang_diag->clang_loc_id);
   CARBON_CHECK(sem_ir_->cpp_ast());
   clang::PresumedLoc presumed_loc =
-      sem_ir_->cpp_ast()->getSourceManager().getPresumedLoc(
-          clang_loc.source_location);
+      sem_ir_->cpp_ast()->getSourceManager().getPresumedLoc(clang_loc);
 
   return Diagnostics::ConvertedLoc{
       .loc = {.filename = presumed_loc.getFilename(),

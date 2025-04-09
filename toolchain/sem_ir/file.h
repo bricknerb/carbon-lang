@@ -17,7 +17,6 @@
 #include "toolchain/base/yaml.h"
 #include "toolchain/parse/tree.h"
 #include "toolchain/sem_ir/associated_constant.h"
-#include "toolchain/sem_ir/clang_source_location.h"
 #include "toolchain/sem_ir/class.h"
 #include "toolchain/sem_ir/constant.h"
 #include "toolchain/sem_ir/entity_name.h"

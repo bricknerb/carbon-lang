@@ -12,6 +12,13 @@
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/parse/node_ids.h"
 
+namespace clang {
+
+// Forward declare indexed types, for integration with ValueStore.
+class SourceLocation;
+
+}  // namespace clang
+
 namespace Carbon::SemIR {
 
 // Forward declare indexed types, for integration with ValueStore.
@@ -19,7 +26,6 @@ class File;
 class Inst;
 class NameScope;
 struct AssociatedConstant;
-struct ClangSourceLocation;
 struct Class;
 struct EntityName;
 struct ExprRegion;
@@ -736,7 +742,7 @@ struct TypeId : public IdBase<TypeId> {
 // The ID of a Clang Source Location.
 struct ClangSourceLocationId : public IdBase<ClangSourceLocationId> {
   static constexpr llvm::StringLiteral Label = "clang_source_location";
-  using ValueType = ClangSourceLocation;
+  using ValueType = clang::SourceLocation;
 
   using IdBase::IdBase;
 };
