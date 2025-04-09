@@ -68,7 +68,7 @@ import Cpp library "\"foo.h\"";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag fail_import_cpp_library_file_with_quotes.carbon.generated.cpp_imports.h:1:10
+// CHECK:STDOUT:   clang_diag loc1_10
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "\"foo.h\""
 // CHECK:STDOUT:   }

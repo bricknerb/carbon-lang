@@ -1417,7 +1417,12 @@ class FormatterImpl {
   auto FormatName(ClangSourceLocationId id) -> void {
     clang::SourceLocation clang_source_location =
         sem_ir_->clang_source_location_ids().Get(id);
-    clang_source_location.print(out_, sem_ir_->cpp_ast()->getSourceManager());
+
+    clang::PresumedLoc presumed_loc =
+        sem_ir_->cpp_ast()->getSourceManager().getPresumedLoc(
+            clang_source_location);
+
+    out_ << "loc" << presumed_loc.getLine() << "_" << presumed_loc.getColumn();
   }
 
   auto FormatConstant(ConstantId id) -> void {

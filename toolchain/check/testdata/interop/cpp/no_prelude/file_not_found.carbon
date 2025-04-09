@@ -36,7 +36,7 @@ import Cpp library "not_found.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag fail_cpp_file_not_found.carbon.generated.cpp_imports.h:1:10
+// CHECK:STDOUT:   clang_diag loc1_10
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "not_found.h"
 // CHECK:STDOUT:   }
