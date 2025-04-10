@@ -391,10 +391,15 @@ struct ImportIRId : public IdBase<ImportIRId> {
   // instructions.
   static const ImportIRId ApiForImpl;
 
+  // The `Cpp` import. A null entry is added if there is none, in which case
+  // this ID should not show up in instructions.
+  static const ImportIRId Cpp;
+
   using IdBase::IdBase;
 };
 
 constexpr ImportIRId ImportIRId::ApiForImpl = ImportIRId(0);
+constexpr ImportIRId ImportIRId::Cpp = ImportIRId(ApiForImpl.index + 1);
 
 // A boolean value.
 struct BoolValue : public IdBase<BoolValue> {

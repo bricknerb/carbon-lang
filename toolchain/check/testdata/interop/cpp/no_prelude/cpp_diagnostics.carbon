@@ -395,7 +395,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_error.h"
 // CHECK:STDOUT:   }
@@ -414,8 +413,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "multiple_errors.h"
 // CHECK:STDOUT:   }
@@ -433,7 +430,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_warning.h"
 // CHECK:STDOUT:   }
@@ -451,9 +447,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
-// CHECK:STDOUT:   clang_diag loc10_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "multiple_warnings.h"
 // CHECK:STDOUT:   }
@@ -472,8 +465,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_error_and_one_warning.h"
 // CHECK:STDOUT:   }
@@ -492,11 +483,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
-// CHECK:STDOUT:   clang_diag loc10_2
-// CHECK:STDOUT:   clang_diag loc11_2
-// CHECK:STDOUT:   clang_diag loc12_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "multiple_errors_and_multiple_warnings.h"
 // CHECK:STDOUT:   }
@@ -514,10 +500,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
-// CHECK:STDOUT:   clang_diag loc10_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_warning.h"
 // CHECK:STDOUT:     import Cpp "multiple_warnings.h"
@@ -537,13 +519,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
-// CHECK:STDOUT:   clang_diag loc8_2
-// CHECK:STDOUT:   clang_diag loc9_2
-// CHECK:STDOUT:   clang_diag loc10_2
-// CHECK:STDOUT:   clang_diag loc11_2
-// CHECK:STDOUT:   clang_diag loc12_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_error_and_one_warning.h"
 // CHECK:STDOUT:     import Cpp "multiple_errors_and_multiple_warnings.h"
@@ -563,7 +538,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "indirect_error.h"
 // CHECK:STDOUT:   }
@@ -581,7 +555,6 @@ import Cpp library "indirect_warning.h";
 // CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .Cpp = imports.%Cpp
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   clang_diag loc8_2
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "indirect_warning.h"
 // CHECK:STDOUT:   }

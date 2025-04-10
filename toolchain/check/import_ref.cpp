@@ -32,7 +32,10 @@ static auto InternalAddImportIR(Context& context, SemIR::ImportIR import_ir)
   return context.import_irs().Add(import_ir);
 }
 
-auto SetApiImportIR(Context& context, SemIR::ImportIR import_ir) -> void {
+// Sets the IR for a specific ImportIRId. Should be called in the right order in
+// order to ensure the correct ID is assigned.
+static auto SetImportIR(Context& context, SemIR::ImportIR import_ir,
+                        SemIR::ImportIRId expected_import_ir_id) -> void {
   auto ir_id = SemIR::ImportIRId::None;
   if (import_ir.sem_ir != nullptr) {
     ir_id = AddImportIR(context, import_ir);
@@ -40,8 +43,17 @@ auto SetApiImportIR(Context& context, SemIR::ImportIR import_ir) -> void {
     // We don't have a check_ir_id, so add without touching check_ir_map.
     ir_id = InternalAddImportIR(context, import_ir);
   }
-  CARBON_CHECK(ir_id == SemIR::ImportIRId::ApiForImpl,
-               "ApiForImpl must be the first IR");
+  CARBON_CHECK(ir_id == expected_import_ir_id,
+               "Actual ImportIRId ($0) != Expected ImportIRId ({1})", ir_id,
+               expected_import_ir_id);
+}
+
+auto SetApiImportIR(Context& context, SemIR::ImportIR import_ir) -> void {
+  SetImportIR(context, import_ir, SemIR::ImportIRId::ApiForImpl);
+}
+
+auto SetCppImportIR(Context& context, SemIR::ImportIR import_ir) -> void {
+  SetImportIR(context, import_ir, SemIR::ImportIRId::Cpp);
 }
 
 auto AddImportIR(Context& context, SemIR::ImportIR import_ir)

@@ -31,6 +31,7 @@ fn B() {
 // CHECK:STDOUT: sem_ir:
 // CHECK:STDOUT:   import_irs:
 // CHECK:STDOUT:     ir0:             {decl_id: inst<none>, is_export: false}
+// CHECK:STDOUT:     ir1:             {decl_id: inst<none>, is_export: false}
 // CHECK:STDOUT:   import_ir_insts: {}
 // CHECK:STDOUT:   name_scopes:
 // CHECK:STDOUT:     name_scope0:     {inst: inst13, parent_scope: name_scope<none>, has_error: false, extended_scopes: [], names: {name0: inst14}}
@@ -107,10 +108,11 @@ fn B() {
 // CHECK:STDOUT: sem_ir:
 // CHECK:STDOUT:   import_irs:
 // CHECK:STDOUT:     ir0:             {decl_id: inst<none>, is_export: false}
-// CHECK:STDOUT:     ir1:             {decl_id: inst14, is_export: false}
+// CHECK:STDOUT:     ir1:             {decl_id: inst<none>, is_export: false}
+// CHECK:STDOUT:     ir2:             {decl_id: inst14, is_export: false}
 // CHECK:STDOUT:   import_ir_insts:
-// CHECK:STDOUT:     import_ir_inst0: {ir_id: ir1, inst_id: inst14}
-// CHECK:STDOUT:     import_ir_inst1: {ir_id: ir1, inst_id: inst14}
+// CHECK:STDOUT:     import_ir_inst0: {ir_id: ir2, inst_id: inst14}
+// CHECK:STDOUT:     import_ir_inst1: {ir_id: ir2, inst_id: inst14}
 // CHECK:STDOUT:   name_scopes:
 // CHECK:STDOUT:     name_scope0:     {inst: inst13, parent_scope: name_scope<none>, has_error: false, extended_scopes: [], names: {name1: inst15, name0: inst16}}
 // CHECK:STDOUT:     name_scope1:     {inst: inst15, parent_scope: name_scope0, has_error: false, extended_scopes: [], names: {name1: inst21}}

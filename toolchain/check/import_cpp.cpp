@@ -47,14 +47,16 @@ static auto GenerateCppIncludesHeaderCode(
 
 namespace {
 
-// Adds a `ClangDiagnostic` instruction which points on the source location
-// pointed by `info`.
-static auto AddClangDiagnosticInst(Context& context,
-                                   const clang::Diagnostic& info) {
+// Adds the given source location and an `ImportIRInst` referring to it in
+// `ImportIRId::Cpp`.
+static auto AddImportIRInst(Context& context,
+                            clang::SourceLocation clang_source_location)
+    -> SemIR::ImportIRInstId {
   SemIR::ClangSourceLocationId clang_source_location_id =
-      context.sem_ir().clang_source_locations().Add(info.getLocation());
-  return AddInst(context, SemIR::LocIdAndInst::NoLoc<SemIR::ClangDiagnostic>(
-                              {.clang_loc_id = clang_source_location_id}));
+      context.sem_ir().clang_source_locations().Add(clang_source_location);
+  return context.import_ir_insts().Add(
+      {.ir_id = SemIR::ImportIRId::Cpp,
+       .clang_source_location_id = clang_source_location_id});
 }
 
 // Used to convert Clang diagnostics to Carbon diagnostics.
@@ -71,8 +73,8 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
                         const clang::Diagnostic& info) -> void override {
     DiagnosticConsumer::HandleDiagnostic(diag_level, info);
 
-    SemIR::InstId clang_diagnostic_inst_id =
-        AddClangDiagnosticInst(*context_, info);
+    SemIR::ImportIRInstId clang_import_ir_inst_id =
+        AddImportIRInst(*context_, info.getLocation());
 
     llvm::SmallString<256> message;
     info.FormatDiagnostic(message);
@@ -92,10 +94,9 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
 
     std::string diagnostics_str = diagnostics_stream.TakeStr();
 
-    diagnostics_infos_.push_back(
-        {.level = diag_level,
-         .diagnostic_inst_id = clang_diagnostic_inst_id,
-         .message = diagnostics_str});
+    diagnostics_infos_.push_back({.level = diag_level,
+                                  .import_ir_inst_id = clang_import_ir_inst_id,
+                                  .message = diagnostics_str});
   }
 
   // Outputs Carbon diagnostics based on the collected Clang diagnostics. Must
@@ -107,7 +108,7 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
         case clang::DiagnosticsEngine::Note:
         case clang::DiagnosticsEngine::Remark: {
           context_->TODO(
-              info.diagnostic_inst_id,
+              SemIR::LocId(info.import_ir_inst_id),
               llvm::formatv(
                   "Unsupported: C++ diagnostic level for diagnostic\n{0}",
                   info.message));
@@ -126,7 +127,7 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
           // note here.
           CARBON_DIAGNOSTIC(InCppImport, Note, "in `Cpp` import");
           context_->emitter()
-              .Build(info.diagnostic_inst_id,
+              .Build(SemIR::LocId(info.import_ir_inst_id),
                      info.level == clang::DiagnosticsEngine::Warning
                          ? CppInteropParseWarning
                          : CppInteropParseError,
@@ -148,7 +149,7 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
 
   struct ClangDiagnosticInfo {
     clang::DiagnosticsEngine::Level level;
-    SemIR::InstId diagnostic_inst_id;
+    SemIR::ImportIRInstId import_ir_inst_id;
     std::string message;
   };
 

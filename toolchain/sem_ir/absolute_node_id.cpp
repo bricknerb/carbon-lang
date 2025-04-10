@@ -15,6 +15,7 @@ static auto FollowImportRef(
     const File*& cursor_ir, InstId& cursor_inst_id,
     ImportIRInstId import_ir_inst_id) -> void {
   auto import_ir_inst = cursor_ir->import_ir_insts().Get(import_ir_inst_id);
+  CARBON_CHECK(import_ir_inst.ir_id != ImportIRId::Cpp);
   const auto& import_ir = cursor_ir->import_irs().Get(import_ir_inst.ir_id);
   CARBON_CHECK(import_ir.decl_id.has_value(),
                "If we get `None` locations here, we may need to more "

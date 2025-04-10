@@ -680,16 +680,6 @@ struct ExportDecl {
   InstId value_id;
 };
 
-// Allows pointing to a source location in C++ in diagnostics.
-struct ClangDiagnostic {
-  static constexpr auto Kind = InstKind::ClangDiagnostic.Define<Parse::NodeId>(
-      {.ir_name = "clang_diag",
-       .constant_kind = InstConstantKind::Never,
-       .is_lowered = false});
-
-  ClangSourceLocationId clang_loc_id;
-};
-
 // Represents accessing the `type` field in a facet value, which is notionally a
 // pair of a type and a witness.
 struct FacetAccessType {

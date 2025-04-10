@@ -29,19 +29,34 @@ struct ImportIR : public Printable<ImportIR> {
 static_assert(sizeof(ImportIR) == 8 + sizeof(uintptr_t), "Unexpected size");
 
 // A reference to an instruction in an imported IR. Used for diagnostics with
-// LocId.
+// LocId. For `Cpp` import, points to a Clang source location.
 struct ImportIRInst : public Printable<ImportIRInst> {
   auto Print(llvm::raw_ostream& out) const -> void {
-    out << "{ir_id: " << ir_id << ", inst_id: " << inst_id << "}";
+    out << "{ir_id: " << ir_id << ", ";
+    if (ir_id == ImportIRId::Cpp) {
+      out << "clang_source_location_id: " << clang_source_location_id;
+    } else {
+      out << "inst_id: " << inst_id;
+    }
+    out << "}";
   }
 
   friend auto operator==(const ImportIRInst& lhs, const ImportIRInst& rhs)
       -> bool {
-    return lhs.ir_id == rhs.ir_id && lhs.inst_id == rhs.inst_id;
+    return lhs.ir_id == rhs.ir_id &&
+           (lhs.ir_id == ImportIRId::Cpp
+                ? lhs.clang_source_location_id == rhs.clang_source_location_id
+                : lhs.inst_id == rhs.inst_id);
   }
 
   ImportIRId ir_id;
-  InstId inst_id;
+  union {
+    // Set iff `ir_id != ImportIRId::Cpp`.
+    InstId inst_id;
+
+    // Set iff `ir_id == ImportIRId::Cpp`.
+    ClangSourceLocationId clang_source_location_id;
+  };
 };
 
 }  // namespace Carbon::SemIR

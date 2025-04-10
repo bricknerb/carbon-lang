@@ -33,7 +33,11 @@ static auto GetImportedIRCount(UnitAndImports* unit_and_imports) -> int {
     count += package_imports.imports.size();
   }
   if (!unit_and_imports->api_for_impl) {
-    // Leave an empty slot for ImportIRId::ApiForImpl.
+    // Leave an empty slot for `ImportIRId::ApiForImpl`.
+    ++count;
+  }
+  if (!unit_and_imports->cpp_import_names.empty()) {
+    // Leave an empty slot for `ImportIRId::Cpp`.
     ++count;
   }
   return count;
@@ -105,7 +109,7 @@ auto CheckUnit::InitPackageScopeAndImports() -> void {
   CARBON_CHECK(package_inst_id == SemIR::Namespace::PackageInstId);
 
   // If there is an implicit `api` import, set it first so that it uses the
-  // ImportIRId::ApiForImpl when processed for imports.
+  // `ImportIRId::ApiForImpl` when processed for imports.
   if (unit_and_imports_->api_for_impl) {
     const auto& names = context_.parse_tree().packaging_decl()->names;
     auto import_decl_id = AddInst<SemIR::ImportDecl>(
@@ -119,6 +123,15 @@ auto CheckUnit::InitPackageScopeAndImports() -> void {
     SetApiImportIR(context_,
                    {.decl_id = SemIR::InstId::None, .sem_ir = nullptr});
   }
+
+  // Add an implicit `Cpp` import If there is an implicit `api` import, set it
+  // second so that it uses the `ImportIRId::Cpp` when processed for imports.
+  SetCppImportIR(context_,
+                 {.decl_id = SemIR::InstId::None,
+                  .is_export = false,
+                  .sem_ir = unit_and_imports_->cpp_import_names.empty()
+                                ? nullptr
+                                : &context_.sem_ir()});
 
   // Add import instructions for everything directly imported. Implicit imports
   // are handled separately.
