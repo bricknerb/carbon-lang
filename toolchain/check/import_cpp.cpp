@@ -171,8 +171,7 @@ static auto AddNamespace(Context& context, PackageNameId cpp_package_id,
   }
 
   return AddImportNamespaceToScope(
-             context,
-             GetSingletonType(context, SemIR::NamespaceType::SingletonInstId),
+             context, GetSingletonType(context, SemIR::NamespaceType::InstId),
              SemIR::NameId::ForPackageName(cpp_package_id),
              SemIR::NameScopeId::Package,
              /*diagnose_duplicate_namespace=*/false,
@@ -273,8 +272,8 @@ static auto MapType(Context& context, clang::QualType type) -> TypeExpr {
       context.ast_context().getTypeSize(type) == 32) {
     return MakeIntType(context, context.ints().Add(32));
   }
-  return {.inst_id = SemIR::ErrorInst::SingletonTypeInstId,
-          .type_id = SemIR::ErrorInst::SingletonTypeId};
+  return {.inst_id = SemIR::ErrorInst::TypeInstId,
+          .type_id = SemIR::ErrorInst::TypeId};
 }
 
 // Returns a block id for the explicit parameters of the given function
@@ -293,7 +292,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
     SemIR::TypeId type_id = MapType(context, param_type).type_id;
-    if (type_id == SemIR::ErrorInst::SingletonTypeId) {
+    if (type_id == SemIR::ErrorInst::TypeId) {
       context.TODO(loc_id, llvm::formatv("Unsupported: parameter type: {0}",
                                          param_type.getAsString()));
       return SemIR::InstBlockId::None;
@@ -336,10 +335,10 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
     return SemIR::InstId::None;
   }
   auto [type_inst_id, type_id] = MapType(context, ret_type);
-  if (type_id == SemIR::ErrorInst::SingletonTypeId) {
+  if (type_id == SemIR::ErrorInst::TypeId) {
     context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
                                        ret_type.getAsString()));
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   SemIR::InstId return_slot_pattern_id = AddInstInNoBlock(
       // TODO: Fill in a location for the return type once available.
@@ -363,24 +362,24 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     -> SemIR::InstId {
   if (clang_decl->isVariadic()) {
     context.TODO(loc_id, "Unsupported: Variadic function");
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   if (!clang_decl->isGlobal()) {
     context.TODO(loc_id, "Unsupported: Non-global function");
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   if (clang_decl->getTemplatedKind() != clang::FunctionDecl::TK_NonTemplate) {
     context.TODO(loc_id, "Unsupported: Template function");
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   auto param_patterns_id =
       MakeParamPatternsBlockId(context, loc_id, *clang_decl);
   if (!param_patterns_id.has_value()) {
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
-  if (SemIR::ErrorInst::SingletonInstId == return_slot_pattern_id) {
-    return SemIR::ErrorInst::SingletonInstId;
+  if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
+    return SemIR::ErrorInst::InstId;
   }
 
   auto function_decl = SemIR::FunctionDecl{
@@ -426,8 +425,8 @@ static auto ImportNamespaceDecl(Context& context,
                                 clang::NamespaceDecl* clang_decl)
     -> SemIR::InstId {
   auto result = AddImportNamespace(
-      context, GetSingletonType(context, SemIR::NamespaceType::SingletonInstId),
-      name_id, parent_scope_id, /*import_id=*/SemIR::InstId::None);
+      context, GetSingletonType(context, SemIR::NamespaceType::InstId), name_id,
+      parent_scope_id, /*import_id=*/SemIR::InstId::None);
   context.name_scopes()
       .Get(result.name_scope_id)
       .set_cpp_decl_context(clang_decl);
@@ -440,10 +439,9 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
                            SemIR::NameId name_id)
     -> std::tuple<SemIR::ClassId, SemIR::InstId> {
   // Add the class declaration.
-  auto class_decl =
-      SemIR::ClassDecl{.type_id = SemIR::TypeType::SingletonTypeId,
-                       .class_id = SemIR::ClassId::None,
-                       .decl_block_id = SemIR::InstBlockId::None};
+  auto class_decl = SemIR::ClassDecl{.type_id = SemIR::TypeType::TypeId,
+                                     .class_id = SemIR::ClassId::None,
+                                     .decl_block_id = SemIR::InstBlockId::None};
   // TODO: Consider setting a proper location.
   auto class_decl_id =
       AddPlaceholderInst(context, SemIR::LocIdAndInst::NoLoc(class_decl));
@@ -511,12 +509,12 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
   if (!clang_def) {
     context.TODO(loc_id,
                  "Unsupported: Record declarations without a definition");
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
 
   if (clang_def->isDynamicClass()) {
     context.TODO(loc_id, "Unsupported: Dynamic Class");
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
 
   auto [class_id, class_def_id] =
@@ -584,7 +582,7 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                                "find a single result; LookupResultKind: {0}",
                                lookup->getResultKind())
                      .str());
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
 
   return ImportNameDecl(context, loc_id, scope_id, name_id,

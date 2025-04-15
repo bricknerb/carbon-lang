@@ -22,7 +22,7 @@ auto BuildAssociatedEntity(Context& context, SemIR::InterfaceId interface_id,
     // This should only happen if the interface is erroneously defined more than
     // once.
     // TODO: Find a way to CHECK this.
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
 
   // This associated entity is being declared as a member of the self specific

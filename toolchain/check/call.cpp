@@ -101,13 +101,12 @@ static auto PerformCallToGenericClass(Context& context, SemIR::LocId loc_id,
                           /*self_type_id=*/SemIR::InstId::None,
                           /*self_id=*/SemIR::InstId::None, arg_ids);
   if (!callee_specific_id) {
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
-  return GetOrAddInst<SemIR::ClassType>(
-      context, loc_id,
-      {.type_id = SemIR::TypeType::SingletonTypeId,
-       .class_id = class_id,
-       .specific_id = *callee_specific_id});
+  return GetOrAddInst<SemIR::ClassType>(context, loc_id,
+                                        {.type_id = SemIR::TypeType::TypeId,
+                                         .class_id = class_id,
+                                         .specific_id = *callee_specific_id});
 }
 
 // Performs a call where the callee is the name of a generic interface, such as
@@ -123,7 +122,7 @@ static auto PerformCallToGenericInterface(
                           /*self_type_id=*/SemIR::InstId::None,
                           /*self_id=*/SemIR::InstId::None, arg_ids);
   if (!callee_specific_id) {
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   return GetOrAddInst(
       context, loc_id,
@@ -149,23 +148,23 @@ static auto BuildCalleeSpecificFunction(
     // This is an associated function in an interface; the callee is the
     // specific function in the impl that corresponds to the specific function
     // we deduced.
-    callee_id = GetOrAddInst(
-        context, context.insts().GetLocId(generic_callee_id),
-        SemIR::SpecificImplFunction{
-            .type_id = GetSingletonType(
-                context, SemIR::SpecificFunctionType::SingletonInstId),
-            .callee_id = generic_callee_id,
-            .specific_id = callee_specific_id});
+    callee_id =
+        GetOrAddInst(context, context.insts().GetLocId(generic_callee_id),
+                     SemIR::SpecificImplFunction{
+                         .type_id = GetSingletonType(
+                             context, SemIR::SpecificFunctionType::InstId),
+                         .callee_id = generic_callee_id,
+                         .specific_id = callee_specific_id});
   } else {
     // This is a regular generic function. The callee is the specific function
     // we deduced.
-    callee_id = GetOrAddInst(
-        context, context.insts().GetLocId(generic_callee_id),
-        SemIR::SpecificFunction{
-            .type_id = GetSingletonType(
-                context, SemIR::SpecificFunctionType::SingletonInstId),
-            .callee_id = generic_callee_id,
-            .specific_id = callee_specific_id});
+    callee_id =
+        GetOrAddInst(context, context.insts().GetLocId(generic_callee_id),
+                     SemIR::SpecificFunction{
+                         .type_id = GetSingletonType(
+                             context, SemIR::SpecificFunctionType::InstId),
+                         .callee_id = generic_callee_id,
+                         .specific_id = callee_specific_id});
   }
 
   // Add the `self` argument back if there was one.
@@ -208,7 +207,7 @@ static auto PerformCallToFunction(Context& context, SemIR::LocId loc_id,
       EntityKind::Function, callee_function.enclosing_specific_id,
       callee_function.self_type_id, callee_function.self_id, arg_ids);
   if (!callee_specific_id) {
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
 
   if (callee_specific_id->has_value()) {
@@ -240,7 +239,7 @@ static auto PerformCallToFunction(Context& context, SemIR::LocId loc_id,
     case SemIR::InitRepr::Incomplete:
       // Don't form an initializing expression with an incomplete type.
       // CheckFunctionReturnType will have diagnosed this for us if needed.
-      return_info.type_id = SemIR::ErrorInst::SingletonTypeId;
+      return_info.type_id = SemIR::ErrorInst::TypeId;
       break;
   }
 
@@ -262,7 +261,7 @@ auto PerformCall(Context& context, SemIR::LocId loc_id, SemIR::InstId callee_id,
   // Try treating the callee as a function first.
   auto callee_function = GetCalleeFunction(context.sem_ir(), callee_id);
   if (callee_function.is_error) {
-    return SemIR::ErrorInst::SingletonInstId;
+    return SemIR::ErrorInst::InstId;
   }
   if (callee_function.function_id.has_value()) {
     return PerformCallToFunction(context, loc_id, callee_id, callee_function,
@@ -287,7 +286,7 @@ auto PerformCall(Context& context, SemIR::LocId loc_id, SemIR::InstId callee_id,
       CARBON_DIAGNOSTIC(CallToNonCallable, Error,
                         "value of type {0} is not callable", TypeOfInstId);
       context.emitter().Emit(loc_id, CallToNonCallable, callee_id);
-      return SemIR::ErrorInst::SingletonInstId;
+      return SemIR::ErrorInst::InstId;
     }
   }
 }
