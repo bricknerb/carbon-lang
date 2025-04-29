@@ -133,6 +133,9 @@ auto GetAbsoluteNodeId(const File* sem_ir, LocId loc_id)
       break;
 
     case LocId::Kind::ImportIRInstId:
+      CARBON_FATAL("Unexpected ImportIRInstId location");
+      break;
+
     case LocId::Kind::NodeId: {
       const File* cursor_ir = sem_ir;
       InstId cursor_inst_id = InstId::None;
