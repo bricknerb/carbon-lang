@@ -59,6 +59,8 @@ impl {.a: bool} as type where .Self impls I {}
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %false: bool = bool_literal false [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -75,6 +77,7 @@ impl {.a: bool} as type where .Self impls I {}
 // CHECK:STDOUT:     .Core = imports.%Core
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc11: type = converted @impl.%false, <error> [concrete = <error>]
 // CHECK:STDOUT:   impl_decl @impl [concrete] {} {
 // CHECK:STDOUT:     %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]

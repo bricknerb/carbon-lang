@@ -26,6 +26,8 @@ var y: {.a: i32, .b: (i32,)} = x;
 // CHECK:STDOUT:   %struct_type.a.b.057: type = struct_type {.a: Core.IntLiteral, .b: %tuple.type.985} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -97,6 +99,7 @@ var y: {.a: i32, .b: (i32,)} = x;
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
 // CHECK:STDOUT:   %.loc11_49.1: %tuple.type.985 = tuple_literal (%int_2)
 // CHECK:STDOUT:   %.loc11_50.1: %struct_type.a.b.057 = struct_literal (%int_1, %.loc11_49.1)
+// CHECK:STDOUT:   %Convert.ref.loc11_50: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc11_50: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc11_50.1: <bound method> = bound_method %int_1, %impl.elem0.loc11_50 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc11_50: <specific function> = specific_function %impl.elem0.loc11_50, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -105,6 +108,7 @@ var y: {.a: i32, .b: (i32,)} = x;
 // CHECK:STDOUT:   %.loc11_50.2: init %i32 = converted %int_1, %int.convert_checked.loc11_50 [concrete = constants.%int_1.5d2]
 // CHECK:STDOUT:   %.loc11_50.3: ref %i32 = struct_access file.%x.var, element0
 // CHECK:STDOUT:   %.loc11_50.4: init %i32 = initialize_from %.loc11_50.2 to %.loc11_50.3 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %Convert.ref.loc11_49: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc11_49: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc11_49.1: <bound method> = bound_method %int_2, %impl.elem0.loc11_49 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc11_49: <specific function> = specific_function %impl.elem0.loc11_49, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]

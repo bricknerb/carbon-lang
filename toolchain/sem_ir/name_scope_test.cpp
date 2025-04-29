@@ -21,7 +21,7 @@ TEST(ScopeLookupResult, MakeWrappedLookupResultUsingExistingInstId) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_TRUE(result.is_found());
   EXPECT_EQ(result.target_inst_id(), inst_id);
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Protected);
   EXPECT_TRUE(result == result);
 }
@@ -33,7 +33,7 @@ TEST(ScopeLookupResult, MakeWrappedLookupResultUsingNoneInstId) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_FALSE(result.is_found());
   EXPECT_DEATH(result.target_inst_id(), "is_found");
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Protected);
   EXPECT_TRUE(result == result);
 }
@@ -45,7 +45,7 @@ TEST(ScopeLookupResult, MakeWrappedLookupResultUsingErrorInst) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_TRUE(result.is_found());
   EXPECT_EQ(result.target_inst_id(), ErrorInst::InstId);
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Private);
   EXPECT_TRUE(result == result);
 }
@@ -57,7 +57,7 @@ TEST(ScopeLookupResult, MakeFoundExisting) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_TRUE(result.is_found());
   EXPECT_EQ(result.target_inst_id(), inst_id);
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Protected);
   EXPECT_TRUE(result == result);
 }
@@ -74,19 +74,19 @@ TEST(ScopeLookupResult, MakeNotFound) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_FALSE(result.is_found());
   EXPECT_DEATH(result.target_inst_id(), "is_found");
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Public);
   EXPECT_TRUE(result == result);
 }
 
 TEST(ScopeLookupResult, MakePoisoned) {
-  LocId loc_id(1);
-  auto result = ScopeLookupResult::MakePoisoned(loc_id);
+  InstId inst_id(1);
+  auto result = ScopeLookupResult::MakePoisoned(inst_id);
 
   EXPECT_TRUE(result.is_poisoned());
   EXPECT_FALSE(result.is_found());
   EXPECT_DEATH(result.target_inst_id(), "is_found");
-  EXPECT_EQ(result.poisoning_loc_id(), loc_id);
+  EXPECT_EQ(result.poisoning_inst_id(), inst_id);
   EXPECT_EQ(result.access_kind(), AccessKind::Public);
   EXPECT_TRUE(result == result);
 }
@@ -97,21 +97,21 @@ TEST(ScopeLookupResult, MakeError) {
   EXPECT_FALSE(result.is_poisoned());
   EXPECT_TRUE(result.is_found());
   EXPECT_EQ(result.target_inst_id(), ErrorInst::InstId);
-  EXPECT_DEATH(result.poisoning_loc_id(), "is_poisoned");
+  EXPECT_DEATH(result.poisoning_inst_id(), "is_poisoned");
   EXPECT_EQ(result.access_kind(), AccessKind::Public);
   EXPECT_TRUE(result == result);
 }
 
 TEST(ScopeLookupResult, EqualityPoisonedDifferent) {
-  EXPECT_FALSE(ScopeLookupResult::MakePoisoned(LocId(1)) ==
+  EXPECT_FALSE(ScopeLookupResult::MakePoisoned(InstId(1)) ==
                ScopeLookupResult::MakeNotFound());
   EXPECT_FALSE(ScopeLookupResult::MakeNotFound() ==
-               ScopeLookupResult::MakePoisoned(LocId(1)));
+               ScopeLookupResult::MakePoisoned(InstId(1)));
 }
 
 TEST(ScopeLookupResult, EqualityPoisonedLocIdDifferent) {
-  EXPECT_FALSE(ScopeLookupResult::MakePoisoned(LocId(1)) ==
-               ScopeLookupResult::MakePoisoned(LocId(2)));
+  EXPECT_FALSE(ScopeLookupResult::MakePoisoned(InstId(1)) ==
+               ScopeLookupResult::MakePoisoned(InstId(2)));
 }
 
 TEST(ScopeLookupResult, EqualityFoundDifferent) {
@@ -223,34 +223,34 @@ TEST(NameScope, LookupOrPoison) {
                                  InstId(++id), AccessKind::Private)};
   name_scope.AddRequired(entry3);
 
-  LocId poisoning_loc_id_known_entries(++id);
-  auto lookup =
-      name_scope.LookupOrPoison(poisoning_loc_id_known_entries, entry1.name_id);
+  InstId poisoning_inst_id_known_entries(++id);
+  auto lookup = name_scope.LookupOrPoison(poisoning_inst_id_known_entries,
+                                          entry1.name_id);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_EQ(static_cast<NameScope&>(name_scope).GetEntry(*lookup), entry1);
   EXPECT_EQ(static_cast<const NameScope&>(name_scope).GetEntry(*lookup),
             entry1);
 
-  lookup =
-      name_scope.LookupOrPoison(poisoning_loc_id_known_entries, entry2.name_id);
+  lookup = name_scope.LookupOrPoison(poisoning_inst_id_known_entries,
+                                     entry2.name_id);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_EQ(name_scope.GetEntry(*lookup), entry2);
 
-  lookup =
-      name_scope.LookupOrPoison(poisoning_loc_id_known_entries, entry3.name_id);
+  lookup = name_scope.LookupOrPoison(poisoning_inst_id_known_entries,
+                                     entry3.name_id);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_EQ(name_scope.GetEntry(*lookup), entry3);
 
   NameId unknown_name_id(++id);
-  LocId poisoning_loc_id_unknown_entry(++id);
-  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_loc_id_unknown_entry,
+  InstId poisoning_inst_id_unknown_entry(++id);
+  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_inst_id_unknown_entry,
                                       unknown_name_id),
             std::nullopt);
   // Check that this is different from Lookup() - does get poisoned.
   lookup = name_scope.Lookup(unknown_name_id);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_EQ(name_scope.GetEntry(*lookup).result,
-            ScopeLookupResult::MakePoisoned(poisoning_loc_id_unknown_entry));
+            ScopeLookupResult::MakePoisoned(poisoning_inst_id_unknown_entry));
 }
 
 TEST(NameScope, LookupOrPoisonNotIdentifier) {
@@ -260,9 +260,9 @@ TEST(NameScope, LookupOrPoisonNotIdentifier) {
   NameId scope_name_id(++id);
   NameScopeId parent_scope_id(++id);
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
-  LocId poisoning_loc_id(++id);
+  InstId poisoning_inst_id(++id);
 
-  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_loc_id, NameId::SelfType),
+  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_inst_id, NameId::SelfType),
             std::nullopt);
   // Check that this is different from the identifier use case - doesn't get
   // poisoned.
@@ -344,33 +344,33 @@ TEST(NameScope, Poison) {
   NameScope name_scope(scope_inst_id, scope_name_id, parent_scope_id);
 
   NameId poison1(++id);
-  LocId poisoning_loc1(++id);
-  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_loc1, poison1), std::nullopt);
+  InstId poisoning_inst1(++id);
+  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_inst1, poison1), std::nullopt);
   EXPECT_THAT(
       name_scope.entries(),
       ElementsAre(NameScope::Entry(
           {.name_id = poison1,
-           .result = ScopeLookupResult::MakePoisoned(poisoning_loc1)})));
+           .result = ScopeLookupResult::MakePoisoned(poisoning_inst1)})));
 
   NameId poison2(++id);
-  LocId poisoning_loc2(++id);
-  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_loc2, poison2), std::nullopt);
+  InstId poisoning_inst2(++id);
+  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_inst2, poison2), std::nullopt);
   EXPECT_THAT(
       name_scope.entries(),
       ElementsAre(
           NameScope::Entry(
               {.name_id = poison1,
-               .result = ScopeLookupResult::MakePoisoned(poisoning_loc1)}),
+               .result = ScopeLookupResult::MakePoisoned(poisoning_inst1)}),
           NameScope::Entry(
               {.name_id = poison2,
-               .result = ScopeLookupResult::MakePoisoned(poisoning_loc2)})));
+               .result = ScopeLookupResult::MakePoisoned(poisoning_inst2)})));
 
   auto lookup = name_scope.Lookup(poison1);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_THAT(name_scope.GetEntry(*lookup),
-              NameScope::Entry(
-                  {.name_id = poison1,
-                   .result = ScopeLookupResult::MakePoisoned(poisoning_loc1)}));
+              NameScope::Entry({.name_id = poison1,
+                                .result = ScopeLookupResult::MakePoisoned(
+                                    poisoning_inst1)}));
 }
 
 TEST(NameScope, AddRequiredAfterPoison) {
@@ -383,21 +383,22 @@ TEST(NameScope, AddRequiredAfterPoison) {
 
   NameId name_id(++id);
   InstId inst_id(++id);
-  LocId poisoning_loc_id(++id);
+  InstId poisoning_inst_id(++id);
 
-  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_loc_id, name_id), std::nullopt);
+  EXPECT_EQ(name_scope.LookupOrPoison(poisoning_inst_id, name_id),
+            std::nullopt);
   EXPECT_THAT(
       name_scope.entries(),
       ElementsAre(NameScope::Entry(
           {.name_id = name_id,
-           .result = ScopeLookupResult::MakePoisoned(poisoning_loc_id)})));
+           .result = ScopeLookupResult::MakePoisoned(poisoning_inst_id)})));
 
   NameScope::Entry entry = {
       .name_id = name_id,
       .result = ScopeLookupResult::MakeFound(inst_id, AccessKind::Private)};
   name_scope.AddRequired(entry);
 
-  auto lookup = name_scope.LookupOrPoison(poisoning_loc_id, name_id);
+  auto lookup = name_scope.LookupOrPoison(poisoning_inst_id, name_id);
   ASSERT_NE(lookup, std::nullopt);
   EXPECT_EQ(name_scope.GetEntry(*lookup),
             NameScope::Entry({.name_id = name_id,

@@ -36,6 +36,8 @@ fn Run() {
 // CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -97,12 +99,14 @@ fn Run() {
 // CHECK:STDOUT:     %.loc17: %pattern_type.761 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %Class = var c
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Class.ref: type = name_ref Class, file.%Class.decl [concrete = constants.%Class]
 // CHECK:STDOUT:   %c: ref %Class = bind_name c, %c.var
 // CHECK:STDOUT:   %c.ref.loc18: ref %Class = name_ref c, %c
 // CHECK:STDOUT:   %j.ref.loc18: %Class.elem = name_ref j, @Class.%.loc12 [concrete = @Class.%.loc12]
 // CHECK:STDOUT:   %.loc18_4: ref %i32 = class_element_access %c.ref.loc18, element0
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
+// CHECK:STDOUT:   %Convert.ref.loc18: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc18: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc18_7.1: <bound method> = bound_method %int_1, %impl.elem0.loc18 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc18: <specific function> = specific_function %impl.elem0.loc18, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -114,6 +118,7 @@ fn Run() {
 // CHECK:STDOUT:   %k.ref.loc19: %Class.elem = name_ref k, @Class.%.loc13 [concrete = @Class.%.loc13]
 // CHECK:STDOUT:   %.loc19_4: ref %i32 = class_element_access %c.ref.loc19, element1
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
+// CHECK:STDOUT:   %Convert.ref.loc19: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc19: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc19_7.1: <bound method> = bound_method %int_2, %impl.elem0.loc19 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc19: <specific function> = specific_function %impl.elem0.loc19, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -126,6 +131,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc20_3: %pattern_type.7ce = var_pattern %cj.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %cj.var: ref %i32 = var cj
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %c.ref.loc20: ref %Class = name_ref c, %c
 // CHECK:STDOUT:   %j.ref.loc20: %Class.elem = name_ref j, @Class.%.loc12 [concrete = @Class.%.loc12]
 // CHECK:STDOUT:   %.loc20_18.1: ref %i32 = class_element_access %c.ref.loc20, element0
@@ -141,6 +147,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc21_3: %pattern_type.7ce = var_pattern %ck.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %ck.var: ref %i32 = var ck
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %c.ref.loc21: ref %Class = name_ref c, %c
 // CHECK:STDOUT:   %k.ref.loc21: %Class.elem = name_ref k, @Class.%.loc13 [concrete = @Class.%.loc13]
 // CHECK:STDOUT:   %.loc21_18.1: ref %i32 = class_element_access %c.ref.loc21, element1

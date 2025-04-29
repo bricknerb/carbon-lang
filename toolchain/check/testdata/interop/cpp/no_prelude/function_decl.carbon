@@ -207,8 +207,8 @@ fn F() {
 // CHECK:STDOUT: fn @MyF() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT:   %foo.call: init %empty_tuple.type = call %foo.ref()
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
@@ -309,8 +309,8 @@ fn F() {
 // CHECK:STDOUT: fn @MyF() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %base.decl: %base.type = fn_decl @base [concrete = constants.%base] {} {}
 // CHECK:STDOUT:   %base.ref: %base.type = name_ref r#base, %base.decl [concrete = constants.%base]
+// CHECK:STDOUT:   %base.decl: %base.type = fn_decl @base [concrete = constants.%base] {} {}
 // CHECK:STDOUT:   %base.call: init %empty_tuple.type = call %base.ref()
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }

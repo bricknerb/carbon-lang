@@ -30,6 +30,8 @@ var b: array(1, 39999999999999999993);
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %int_39999999999999999993: Core.IntLiteral = int_value 39999999999999999993 [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -68,6 +70,7 @@ var b: array(1, 39999999999999999993);
 // CHECK:STDOUT:   %.loc24_37: type = splice_block %array_type.loc24 [concrete = <error>] {
 // CHECK:STDOUT:     %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
 // CHECK:STDOUT:     %int_39999999999999999993.loc24: Core.IntLiteral = int_value 39999999999999999993 [concrete = constants.%int_39999999999999999993]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:     %.loc24_14: type = converted %int_1, <error> [concrete = <error>]
 // CHECK:STDOUT:     %array_type.loc24: type = array_type %int_39999999999999999993.loc24, <error> [concrete = <error>]
 // CHECK:STDOUT:   }

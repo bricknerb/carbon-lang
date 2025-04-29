@@ -629,8 +629,8 @@ fn H() {
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn() -> @G.%U (%U) {
 // CHECK:STDOUT:   !entry:
-// CHECK:STDOUT:     %.loc5_24: @G.%G.type (%G.type.56f312.1) = specific_constant @X.%G.decl, @X(constants.%U) [symbolic = %G (constants.%G.b504c4.1)]
 // CHECK:STDOUT:     %G.ref: @G.%G.type (%G.type.56f312.1) = name_ref G, %.loc5_24 [symbolic = %G (constants.%G.b504c4.1)]
+// CHECK:STDOUT:     %.loc5_24: @G.%G.type (%G.type.56f312.1) = specific_constant @X.%G.decl, @X(constants.%U) [symbolic = %G (constants.%G.b504c4.1)]
 // CHECK:STDOUT:     %G.specific_fn.loc5_24.1: <specific function> = specific_function %G.ref, @G(constants.%U) [symbolic = %G.specific_fn.loc5_24.2 (constants.%G.specific_fn.169)]
 // CHECK:STDOUT:     %G.call: init @G.%U (%U) = call %G.specific_fn.loc5_24.1()
 // CHECK:STDOUT:     %.loc5_27.1: @G.%U (%U) = value_of_initializer %G.call
@@ -648,8 +648,8 @@ fn H() {
 // CHECK:STDOUT:   %int_32.loc13_18: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.loc13_18: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %C: type = class_type @C, @C(constants.%i32) [concrete = constants.%C.98a]
-// CHECK:STDOUT:   %.loc13_22: %G.type.862 = specific_constant @X.%G.decl, @X(constants.%i32) [concrete = constants.%G.d5e]
 // CHECK:STDOUT:   %G.ref: %G.type.862 = name_ref G, %.loc13_22 [concrete = constants.%G.d5e]
+// CHECK:STDOUT:   %.loc13_22: %G.type.862 = specific_constant @X.%G.decl, @X(constants.%i32) [concrete = constants.%G.d5e]
 // CHECK:STDOUT:   %G.specific_fn: <specific function> = specific_function %G.ref, @G(constants.%i32) [concrete = constants.%G.specific_fn.7a3]
 // CHECK:STDOUT:   %G.call: init %i32 = call %G.specific_fn()
 // CHECK:STDOUT:   %.loc13_10: type = splice_block %i32.loc13_10 [concrete = constants.%i32] {
@@ -657,6 +657,7 @@ fn H() {
 // CHECK:STDOUT:     %i32.loc13_10: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc13_25.1: ref %i32 = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc13_25.2: ref %i32 = temporary %.loc13_25.1, %G.call
 // CHECK:STDOUT:   %i: ref %i32 = bind_name i, %.loc13_25.2
 // CHECK:STDOUT:   return
@@ -854,8 +855,8 @@ fn H() {
 // CHECK:STDOUT:   %int_32.loc7_18: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.loc7_18: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %C: type = class_type @C, @C(constants.%i32) [concrete = constants.%C.98a]
-// CHECK:STDOUT:   %.loc7_22: %G.type.862 = specific_constant imports.%Main.import_ref.b8a, @X(constants.%i32) [concrete = constants.%G.d5e]
 // CHECK:STDOUT:   %G.ref: %G.type.862 = name_ref G, %.loc7_22 [concrete = constants.%G.d5e]
+// CHECK:STDOUT:   %.loc7_22: %G.type.862 = specific_constant imports.%Main.import_ref.b8a, @X(constants.%i32) [concrete = constants.%G.d5e]
 // CHECK:STDOUT:   %G.specific_fn: <specific function> = specific_function %G.ref, @G(constants.%i32) [concrete = constants.%G.specific_fn.7a3]
 // CHECK:STDOUT:   %G.call: init %i32 = call %G.specific_fn()
 // CHECK:STDOUT:   %.loc7_10: type = splice_block %i32.loc7_10 [concrete = constants.%i32] {
@@ -863,6 +864,7 @@ fn H() {
 // CHECK:STDOUT:     %i32.loc7_10: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc7_25.1: ref %i32 = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc7_25.2: ref %i32 = temporary %.loc7_25.1, %G.call
 // CHECK:STDOUT:   %j: ref %i32 = bind_name j, %.loc7_25.2
 // CHECK:STDOUT:   return

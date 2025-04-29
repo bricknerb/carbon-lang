@@ -48,8 +48,8 @@ class ScopeLookupResult {
     return MakeWrappedLookupResult(InstId::None, AccessKind::Public);
   }
 
-  static auto MakePoisoned(LocId poisoning_loc_id) -> ScopeLookupResult {
-    return ScopeLookupResult(poisoning_loc_id);
+  static auto MakePoisoned(InstId poisoning_inst_id) -> ScopeLookupResult {
+    return ScopeLookupResult(poisoning_inst_id);
   }
 
   static auto MakeError() -> ScopeLookupResult {
@@ -79,12 +79,12 @@ class ScopeLookupResult {
     return target_inst_id_;
   }
 
-  // The `LocId` where the name poisoning was triggered. Must only be called
-  // when lookup returned a poisoned name; in other words, when `is_poisoned()`
+  // The `InstId` where name poisoning was triggered. Must only be called when
+  // lookup returned a poisoned name; in other words, when `is_poisoned()`
   // returns true. Always returns an existing `InstId`.
-  auto poisoning_loc_id() const -> LocId {
+  auto poisoning_inst_id() const -> InstId {
     CARBON_CHECK(is_poisoned());
-    return poisoning_loc_id_;
+    return poisoning_inst_id_;
   }
 
   auto access_kind() const -> AccessKind { return access_kind_; }
@@ -96,7 +96,7 @@ class ScopeLookupResult {
                          const ScopeLookupResult& rhs) -> bool {
     return lhs.is_poisoned_ == rhs.is_poisoned_ &&
            lhs.access_kind_ == rhs.access_kind_ &&
-           (lhs.is_poisoned_ ? lhs.poisoning_loc_id_ == rhs.poisoning_loc_id_
+           (lhs.is_poisoned_ ? lhs.poisoning_inst_id_ == rhs.poisoning_inst_id_
                              : lhs.target_inst_id_ == rhs.target_inst_id_);
   }
 
@@ -106,14 +106,16 @@ class ScopeLookupResult {
         access_kind_(access_kind),
         is_poisoned_(false) {}
 
-  explicit ScopeLookupResult(LocId loc_id)
-      : poisoning_loc_id_(loc_id),
+  explicit ScopeLookupResult(InstId poisoning_inst_id)
+      : poisoning_inst_id_(poisoning_inst_id),
         access_kind_(AccessKind::Public),
-        is_poisoned_(true) {}
+        is_poisoned_(true) {
+    CARBON_CHECK(poisoning_inst_id.has_value());
+  }
 
   union {
     InstId target_inst_id_;
-    LocId poisoning_loc_id_;
+    InstId poisoning_inst_id_;
   };
   AccessKind access_kind_;
   bool is_poisoned_;
@@ -185,7 +187,7 @@ class NameScope : public Printable<NameScope> {
   // found, returns the corresponding EntryId. Otherwise, returns nullopt and
   // poisons the name so it can't be declared later. Names that are not
   // identifiers will not be poisoned.
-  auto LookupOrPoison(LocId loc_id, NameId name_id) -> std::optional<EntryId>;
+  auto LookupOrPoison(InstId inst_id, NameId name_id) -> std::optional<EntryId>;
 
   auto extended_scopes() const -> llvm::ArrayRef<InstId> {
     return extended_scopes_;

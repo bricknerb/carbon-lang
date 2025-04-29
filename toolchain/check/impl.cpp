@@ -206,8 +206,8 @@ auto FinishImplWitness(Context& context, SemIR::Impl& impl) -> void {
         }
         auto& fn = context.functions().Get(fn_type->function_id);
         auto lookup_result =
-            LookupNameInExactScope(context, SemIR::LocId(decl_id), fn.name_id,
-                                   impl.scope_id, impl_scope);
+            LookupNameInExactScope(context, decl_id, SemIR::LocId(decl_id),
+                                   fn.name_id, impl.scope_id, impl_scope);
         if (lookup_result.is_found()) {
           used_decl_ids.push_back(lookup_result.target_inst_id());
           witness_value = CheckAssociatedFunctionImplementation(

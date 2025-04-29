@@ -90,6 +90,7 @@ fn Run() -> i32 {
 // CHECK:STDOUT:     %.loc16: %pattern_type.761 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %Class = var c
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Class.ref: type = name_ref Class, file.%Class.decl [concrete = constants.%Class]
 // CHECK:STDOUT:   %c: ref %Class = bind_name c, %c.var
 // CHECK:STDOUT:   %c.ref: ref %Class = name_ref c, %c

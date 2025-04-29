@@ -435,8 +435,11 @@ fn Test(e: E) {
 // CHECK:STDOUT:       %.e29: %F.a8a = bind_value %.999
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %inst.splice_block.a04: <instruction> = inst_value [concrete] {
-// CHECK:STDOUT:     %.31f: <error> = splice_block <error> [concrete = <error>] {
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
+// CHECK:STDOUT:   %inst.splice_block.7f3: <instruction> = inst_value [concrete] {
+// CHECK:STDOUT:     %.c3f: <error> = splice_block <error> [concrete = <error>] {
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, %assoc0.af5 [concrete = %assoc0.af5]
 // CHECK:STDOUT:       %.fd6: %i32 = converted %.6c9, <error> [concrete = <error>]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:   }
@@ -553,6 +556,6 @@ fn Test(e: E) {
 // CHECK:STDOUT:   %.loc11_11.3 => constants.%inst.as_compatible
 // CHECK:STDOUT:   %.loc11_11.4 => constants.%inst.splice_block.2a2
 // CHECK:STDOUT:   %.loc11_11.5 => constants.%F.a8a
-// CHECK:STDOUT:   %.loc11_13.2 => constants.%inst.splice_block.a04
+// CHECK:STDOUT:   %.loc11_13.2 => constants.%inst.splice_block.7f3
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

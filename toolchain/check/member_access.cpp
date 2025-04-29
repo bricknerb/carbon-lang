@@ -65,11 +65,11 @@ static auto IsInstanceType(Context& context, SemIR::TypeId type_id) -> bool {
 
 // Returns the highest allowed access. For example, if this returns `Protected`
 // then only `Public` and `Protected` accesses are allowed--not `Private`.
-static auto GetHighestAllowedAccess(Context& context, SemIR::LocId loc_id,
+static auto GetHighestAllowedAccess(Context& context, SemIR::InstId inst_id,
                                     SemIR::ConstantId name_scope_const_id)
     -> SemIR::AccessKind {
   SemIR::ScopeLookupResult lookup_result =
-      LookupUnqualifiedName(context, loc_id, SemIR::NameId::SelfType,
+      LookupUnqualifiedName(context, inst_id, SemIR::NameId::SelfType,
                             /*required=*/false)
           .scope_result;
   CARBON_CHECK(!lookup_result.is_poisoned());
@@ -249,23 +249,35 @@ static auto LookupMemberNameInScope(Context& context, SemIR::LocId loc_id,
                                     llvm::ArrayRef<LookupScope> lookup_scopes,
                                     bool lookup_in_type_of_base, bool required)
     -> SemIR::InstId {
+  // TODO: Use a different kind of instruction that also references the
+  // `base_id` so that `SemIR` consumers can find it.
+  SemIR::NameRef member = {.type_id = SemIR::ErrorInst::TypeId,
+                           .name_id = name_id,
+                           .value_id = SemIR::ErrorInst::InstId};
+  SemIR::InstId member_id =
+      AddPlaceholderInst(context, SemIR::LocIdAndInst(loc_id, member));
+
   AccessInfo access_info = {
       .constant_id = name_scope_const_id,
       .highest_allowed_access =
-          GetHighestAllowedAccess(context, loc_id, name_scope_const_id),
+          GetHighestAllowedAccess(context, member_id, name_scope_const_id),
   };
+
   LookupResult result = LookupQualifiedName(
-      context, loc_id, name_id, lookup_scopes, required, access_info);
+      context, member_id, name_id, lookup_scopes, required, access_info);
 
   if (!result.scope_result.is_found()) {
+    CARBON_CHECK(name_id == SemIR::NameId::Destroy);
+    // TODO: Avoid adding this instruction in this case.
+    ReplaceInstBeforeConstantUse(context, member_id, member);
     return SemIR::ErrorInst::InstId;
   }
 
   // TODO: This duplicates the work that HandleNameAsExpr does. Factor this out.
-  auto type_id =
+  member.type_id =
       SemIR::GetTypeOfInstInSpecific(context.sem_ir(), result.specific_id,
                                      result.scope_result.target_inst_id());
-  CARBON_CHECK(type_id.has_value(), "Missing type for member {0}",
+  CARBON_CHECK(member.type_id.has_value(), "Missing type for member {0}",
                context.insts().Get(result.scope_result.target_inst_id()));
 
   // If the named entity has a constant value that depends on its specific,
@@ -277,19 +289,14 @@ static auto LookupMemberNameInScope(Context& context, SemIR::LocId loc_id,
     result.scope_result = SemIR::ScopeLookupResult::MakeFound(
         GetOrAddInst<SemIR::SpecificConstant>(
             context, loc_id,
-            {.type_id = type_id,
+            {.type_id = member.type_id,
              .inst_id = result.scope_result.target_inst_id(),
              .specific_id = result.specific_id}),
         SemIR::AccessKind::Public);
   }
 
-  // TODO: Use a different kind of instruction that also references the
-  // `base_id` so that `SemIR` consumers can find it.
-  auto member_id = GetOrAddInst<SemIR::NameRef>(
-      context, loc_id,
-      {.type_id = type_id,
-       .name_id = name_id,
-       .value_id = result.scope_result.target_inst_id()});
+  member.value_id = result.scope_result.target_inst_id();
+  ReplaceInstBeforeConstantUse(context, member_id, member);
 
   // If member name lookup finds an associated entity name, and the scope is not
   // a facet type, perform impl lookup.
@@ -297,8 +304,8 @@ static auto LookupMemberNameInScope(Context& context, SemIR::LocId loc_id,
   // TODO: We need to do this as part of searching extended scopes, because a
   // lookup that finds an associated entity and also finds the corresponding
   // impl member is not supposed to be treated as ambiguous.
-  if (auto assoc_type =
-          context.types().TryGetAs<SemIR::AssociatedEntityType>(type_id)) {
+  if (auto assoc_type = context.types().TryGetAs<SemIR::AssociatedEntityType>(
+          member.type_id)) {
     if (lookup_in_type_of_base) {
       SemIR::TypeId base_type_id = context.insts().Get(base_id).type_id();
       if (auto facet_access_type =

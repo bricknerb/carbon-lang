@@ -142,8 +142,10 @@ fn Initializing() {
 // CHECK:STDOUT:     %.loc28_3.1: %pattern_type.019 = var_pattern %x.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x.var: ref %X = var x
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.ref: %Make.type = name_ref Make, file.%Make.decl [concrete = constants.%Make]
 // CHECK:STDOUT:   %.loc28_3.2: ref %X = splice_block %x.var {}
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.call: init %X = call %Make.ref() to %.loc28_3.2
 // CHECK:STDOUT:   %X.ref.loc28_25: type = name_ref X, file.%X.decl [concrete = constants.%X]
 // CHECK:STDOUT:   assign %x.var, %Make.call

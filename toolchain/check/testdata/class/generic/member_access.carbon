@@ -213,8 +213,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc2_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %self.param: @Get.%Class (%Class.fe1) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_16.1: type = splice_block %Self.ref [symbolic = %Class (constants.%Class.fe1)] {
-// CHECK:STDOUT:         %.loc5_16.2: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc5_16.2 [symbolic = %Class (constants.%Class.fe1)]
+// CHECK:STDOUT:         %.loc5_16.2: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @Get.%Class (%Class.fe1) = bind_name self, %self.param
 // CHECK:STDOUT:       %return.param: ref @Get.%T (%T) = out_param call_param1
@@ -231,8 +231,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT:       %ptr.loc7_38.2: type = ptr_type %T.ref [symbolic = %ptr.loc7_38.1 (constants.%ptr.79f)]
 // CHECK:STDOUT:       %self.param: @GetAddr.%ptr.loc7_29.1 (%ptr.955) = value_param call_param0
 // CHECK:STDOUT:       %.loc7_29: type = splice_block %ptr.loc7_29.2 [symbolic = %ptr.loc7_29.1 (constants.%ptr.955)] {
-// CHECK:STDOUT:         %.loc7_25: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc7_25 [symbolic = %Class (constants.%Class.fe1)]
+// CHECK:STDOUT:         %.loc7_25: type = specific_constant constants.%Class.fe1, @Class(constants.%T) [symbolic = %Class (constants.%Class.fe1)]
 // CHECK:STDOUT:         %ptr.loc7_29.2: type = ptr_type %Self.ref [symbolic = %ptr.loc7_29.1 (constants.%ptr.955)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @GetAddr.%ptr.loc7_29.1 (%ptr.955) = bind_name self, %self.param
@@ -310,8 +310,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT: fn @MethodCall(%x.param: %Class.247) -> %i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %x.ref: %Class.247 = name_ref x, %x
-// CHECK:STDOUT:   %.loc15_11: %Get.type.59d = specific_constant @Class.%Get.decl, @Class(constants.%i32) [concrete = constants.%Get.a40]
 // CHECK:STDOUT:   %Get.ref: %Get.type.59d = name_ref Get, %.loc15_11 [concrete = constants.%Get.a40]
+// CHECK:STDOUT:   %.loc15_11: %Get.type.59d = specific_constant @Class.%Get.decl, @Class(constants.%i32) [concrete = constants.%Get.a40]
 // CHECK:STDOUT:   %Get.bound: <bound method> = bound_method %x.ref, %Get.ref
 // CHECK:STDOUT:   %Get.specific_fn: <specific function> = specific_function %Get.ref, @Get(constants.%i32) [concrete = constants.%Get.specific_fn]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %x.ref, %Get.specific_fn
@@ -325,8 +325,8 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.f7c = name_ref p, %p
 // CHECK:STDOUT:   %.loc19_12.1: ref %Class.247 = deref %p.ref
-// CHECK:STDOUT:   %.loc19_12.2: %GetAddr.type.be7 = specific_constant @Class.%GetAddr.decl, @Class(constants.%i32) [concrete = constants.%GetAddr.909]
 // CHECK:STDOUT:   %GetAddr.ref: %GetAddr.type.be7 = name_ref GetAddr, %.loc19_12.2 [concrete = constants.%GetAddr.909]
+// CHECK:STDOUT:   %.loc19_12.2: %GetAddr.type.be7 = specific_constant @Class.%GetAddr.decl, @Class(constants.%i32) [concrete = constants.%GetAddr.909]
 // CHECK:STDOUT:   %GetAddr.bound: <bound method> = bound_method %.loc19_12.1, %GetAddr.ref
 // CHECK:STDOUT:   %GetAddr.specific_fn: <specific function> = specific_function %GetAddr.ref, @GetAddr(constants.%i32) [concrete = constants.%GetAddr.specific_fn]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc19_12.1, %GetAddr.specific_fn
@@ -551,14 +551,15 @@ fn StaticMemberFunctionCall(T:! type) -> Class(T) {
 // CHECK:STDOUT:     %Class.ref.loc16: %Class.type = name_ref Class, file.%Class.decl [concrete = constants.%Class.generic]
 // CHECK:STDOUT:     %T.ref.loc16: type = name_ref T, %T.loc8_29.1 [symbolic = %T.loc8_29.2 (constants.%T)]
 // CHECK:STDOUT:     %Class.loc16: type = class_type @Class, @Class(constants.%T) [symbolic = %Class.loc8_49.2 (constants.%Class)]
-// CHECK:STDOUT:     %.loc16_18: @StaticMemberFunctionCall.%Make.type (%Make.type) = specific_constant @Class.%Make.decl, @Class(constants.%T) [symbolic = %Make (constants.%Make)]
 // CHECK:STDOUT:     %Make.ref: @StaticMemberFunctionCall.%Make.type (%Make.type) = name_ref Make, %.loc16_18 [symbolic = %Make (constants.%Make)]
+// CHECK:STDOUT:     %.loc16_18: @StaticMemberFunctionCall.%Make.type (%Make.type) = specific_constant @Class.%Make.decl, @Class(constants.%T) [symbolic = %Make (constants.%Make)]
 // CHECK:STDOUT:     %Make.specific_fn.loc16_18.1: <specific function> = specific_function %Make.ref, @Make(constants.%T) [symbolic = %Make.specific_fn.loc16_18.2 (constants.%Make.specific_fn)]
 // CHECK:STDOUT:     %.loc16_24: ref @StaticMemberFunctionCall.%Class.loc8_49.2 (%Class) = temporary_storage
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %Make.call: init @StaticMemberFunctionCall.%Class.loc8_49.2 (%Class) = call %Make.specific_fn.loc16_18.1() to %.loc16_24
 // CHECK:STDOUT:     %ImplicitAs.type.loc16_25.1: type = facet_type <@ImplicitAs, @ImplicitAs(constants.%Class)> [symbolic = %ImplicitAs.type.loc16_25.2 (constants.%ImplicitAs.type.53b)]
-// CHECK:STDOUT:     %.loc16_25.1: @StaticMemberFunctionCall.%ImplicitAs.assoc_type (%ImplicitAs.assoc_type.6aa) = specific_constant imports.%Core.import_ref.492, @ImplicitAs(constants.%Class) [symbolic = %assoc0 (constants.%assoc0.f00)]
 // CHECK:STDOUT:     %Convert.ref: @StaticMemberFunctionCall.%ImplicitAs.assoc_type (%ImplicitAs.assoc_type.6aa) = name_ref Convert, %.loc16_25.1 [symbolic = %assoc0 (constants.%assoc0.f00)]
+// CHECK:STDOUT:     %.loc16_25.1: @StaticMemberFunctionCall.%ImplicitAs.assoc_type (%ImplicitAs.assoc_type.6aa) = specific_constant imports.%Core.import_ref.492, @ImplicitAs(constants.%Class) [symbolic = %assoc0 (constants.%assoc0.f00)]
 // CHECK:STDOUT:     %.loc16_25.2: @StaticMemberFunctionCall.%Class.loc8_49.2 (%Class) = converted %Make.call, <error> [concrete = <error>]
 // CHECK:STDOUT:     return <error> to %return
 // CHECK:STDOUT:   }

@@ -31,6 +31,8 @@ fn ConstMismatch(p: const {}*) -> const ({}*) {
 // CHECK:STDOUT:   %pattern_type.3c6: type = pattern_type %const.987 [concrete]
 // CHECK:STDOUT:   %ConstMismatch.type: type = fn_type @ConstMismatch [concrete]
 // CHECK:STDOUT:   %ConstMismatch: %ConstMismatch.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.93d: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%const.987) [concrete]
+// CHECK:STDOUT:   %assoc0.393: %ImplicitAs.assoc_type.93d = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -73,6 +75,7 @@ fn ConstMismatch(p: const {}*) -> const ({}*) {
 // CHECK:STDOUT: fn @ConstMismatch(%p.param: %ptr.bf9) -> %const.987 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.bf9 = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.93d = name_ref Convert, constants.%assoc0.393 [concrete = constants.%assoc0.393]
 // CHECK:STDOUT:   %.loc19: %const.987 = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

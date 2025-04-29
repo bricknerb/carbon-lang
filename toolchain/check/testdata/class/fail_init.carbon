@@ -48,6 +48,8 @@ fn F() {
 // CHECK:STDOUT:   %struct_type.a.c: type = struct_type {.a: Core.IntLiteral, .c: Core.IntLiteral} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -104,6 +106,7 @@ fn F() {
 // CHECK:STDOUT:   %int_1.loc21: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %.loc21_10.1: %struct_type.a = struct_literal (%int_1.loc21)
 // CHECK:STDOUT:   %Class.ref.loc21: type = name_ref Class, file.%Class.decl [concrete = constants.%Class]
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc21_10.2: ref %Class = temporary_storage
 // CHECK:STDOUT:   %.loc21_10.3: ref %Class = temporary %.loc21_10.2, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc21_12: ref %Class = converted %.loc21_10.1, %.loc21_10.3 [concrete = <error>]
@@ -111,6 +114,8 @@ fn F() {
 // CHECK:STDOUT:   %int_2.loc26: Core.IntLiteral = int_value 2 [concrete = constants.%int_2]
 // CHECK:STDOUT:   %.loc26_18.1: %struct_type.a.c = struct_literal (%int_1.loc26, %int_2.loc26)
 // CHECK:STDOUT:   %Class.ref.loc26: type = name_ref Class, file.%Class.decl [concrete = constants.%Class]
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc26_18.1: <bound method> = bound_method %int_1.loc26, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -127,6 +132,7 @@ fn F() {
 // CHECK:STDOUT:   %int_3: Core.IntLiteral = int_value 3 [concrete = constants.%int_3]
 // CHECK:STDOUT:   %.loc31_26.1: %struct_type.a.b.c = struct_literal (%int_1.loc31, %int_2.loc31, %int_3)
 // CHECK:STDOUT:   %Class.ref.loc31: type = name_ref Class, file.%Class.decl [concrete = constants.%Class]
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc31_26.2: ref %Class = temporary_storage
 // CHECK:STDOUT:   %.loc31_26.3: ref %Class = temporary %.loc31_26.2, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc31_28: ref %Class = converted %.loc31_26.1, %.loc31_26.3 [concrete = <error>]

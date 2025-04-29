@@ -79,6 +79,8 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
 // CHECK:STDOUT:   %require_complete.4ae: <witness> = require_complete_type %T [template]
 // CHECK:STDOUT:   %int_3: Core.IntLiteral = int_value 3 [concrete]
+// CHECK:STDOUT:   %Mul.assoc_type: type = assoc_entity_type @Mul [concrete]
+// CHECK:STDOUT:   %assoc0: %Mul.assoc_type = assoc_entity element0, imports.%Core.import_ref.1ad [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -88,6 +90,7 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.777: %Mul.assoc_type = import_ref Core//prelude/operators/arithmetic, loc46_41, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -130,6 +133,7 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:     %.loc11_11.1: @F.%T.loc6_15.2 (%T) = splice_inst %.loc11_11.3
 // CHECK:STDOUT:     %.loc11_11.2: @F.%.loc11_11.5 (@F.%.loc11_11.5) = splice_inst %.loc11_11.4
 // CHECK:STDOUT:     %int_3: Core.IntLiteral = int_value 3 [concrete = constants.%int_3]
+// CHECK:STDOUT:     %Op.ref: %Mul.assoc_type = name_ref Op, imports.%Core.import_ref.777 [concrete = constants.%assoc0]
 // CHECK:STDOUT:     return <error>
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
@@ -154,6 +158,8 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
 // CHECK:STDOUT:   %int_3: Core.IntLiteral = int_value 3 [concrete]
+// CHECK:STDOUT:   %Mul.assoc_type: type = assoc_entity_type @Mul [concrete]
+// CHECK:STDOUT:   %assoc0: %Mul.assoc_type = assoc_entity element0, imports.%Core.import_ref.1ad [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -163,6 +169,7 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.777: %Mul.assoc_type = import_ref Core//prelude/operators/arithmetic, loc46_41, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -212,6 +219,7 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:     %c.ref: %C = name_ref c, %c.loc11_15.1 [template = %c.loc11_15.2 (constants.%c)]
 // CHECK:STDOUT:     %.loc16_11.1: @F.%.loc16_11.3 (@F.%.loc16_11.3) = splice_inst %.loc16_11.2
 // CHECK:STDOUT:     %int_3: Core.IntLiteral = int_value 3 [concrete = constants.%int_3]
+// CHECK:STDOUT:     %Op.ref: %Mul.assoc_type = name_ref Op, imports.%Core.import_ref.777 [concrete = constants.%assoc0]
 // CHECK:STDOUT:     return <error>
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
@@ -234,6 +242,8 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -292,7 +302,9 @@ fn F[template T:! type](x: T) {
 // CHECK:STDOUT:       %.loc22_3.1: %pattern_type.7ce = var_pattern %w.patt
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %w.var: ref %i32 = var w
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %x.ref: @F.%T.loc4_15.2 (%T) = name_ref x, %x
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:     %.loc22_3.2: %i32 = converted %x.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:     assign %w.var, <error>
 // CHECK:STDOUT:     %.loc22_10: type = splice_block %i32 [concrete = constants.%i32] {

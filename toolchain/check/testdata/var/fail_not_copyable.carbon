@@ -90,6 +90,7 @@ fn F(x: X) {
 // CHECK:STDOUT:     %.loc28: %pattern_type.019 = var_pattern %y.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %y.var: ref %X = var y
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %x.ref: %X = name_ref x, %x
 // CHECK:STDOUT:   assign %y.var, <error>
 // CHECK:STDOUT:   %X.ref.loc28: type = name_ref X, file.%X.decl [concrete = constants.%X]

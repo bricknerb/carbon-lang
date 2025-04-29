@@ -51,12 +51,12 @@ auto AddNameToLookup(Context& context, SemIR::NameId name_id,
 // Performs name lookup in a specified scope for a name appearing in a
 // declaration. If scope_id is `None`, performs lookup into the lexical scope
 // specified by scope_index instead.
-auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
+auto LookupNameInDecl(Context& context, SemIR::InstId inst_id,
                       SemIR::NameId name_id, SemIR::NameScopeId scope_id,
                       ScopeIndex scope_index) -> SemIR::ScopeLookupResult;
 
 // Performs an unqualified name lookup, returning the referenced `InstId`.
-auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
+auto LookupUnqualifiedName(Context& context, SemIR::InstId inst_id,
                            SemIR::NameId name_id, bool required = true)
     -> LookupResult;
 
@@ -71,8 +71,9 @@ auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
 // poison will be returned if it's already been looked up.
 //
 // If `name_id` is not an identifier, the name will not be poisoned.
-auto LookupNameInExactScope(Context& context, SemIR::LocId loc_id,
-                            SemIR::NameId name_id, SemIR::NameScopeId scope_id,
+auto LookupNameInExactScope(Context& context, SemIR::InstId inst_id,
+                            SemIR::LocId loc_id, SemIR::NameId name_id,
+                            SemIR::NameScopeId scope_id,
                             SemIR::NameScope& scope,
                             bool is_being_declared = false)
     -> SemIR::ScopeLookupResult;
@@ -87,7 +88,7 @@ auto AppendLookupScopesForConstant(Context& context, SemIR::LocId loc_id,
 
 // Performs a qualified name lookup in a specified scopes and in scopes that
 // they extend, returning the referenced `InstId`.
-auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
+auto LookupQualifiedName(Context& context, SemIR::InstId inst_id,
                          SemIR::NameId name_id,
                          llvm::ArrayRef<LookupScope> lookup_scopes,
                          bool required = true,
@@ -105,7 +106,7 @@ auto DiagnoseDuplicateName(Context& context, SemIR::NameId name_id,
 
 // Prints a diagnostic for a poisoned name when it's later declared.
 auto DiagnosePoisonedName(Context& context, SemIR::NameId name_id,
-                          SemIR::LocId poisoning_loc_id,
+                          SemIR::InstId poisoning_inst_id,
                           SemIR::LocId decl_name_loc_id) -> void;
 
 // Prints a diagnostic for a missing name.

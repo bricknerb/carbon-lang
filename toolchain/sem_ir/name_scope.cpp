@@ -67,7 +67,7 @@ auto NameScope::LookupOrAdd(NameId name_id, InstId inst_id,
   return {true, EntryId(names_.size() - 1)};
 }
 
-auto NameScope::LookupOrPoison(LocId loc_id, NameId name_id)
+auto NameScope::LookupOrPoison(InstId inst_id, NameId name_id)
     -> std::optional<EntryId> {
   if (!name_id.AsIdentifierId().has_value()) {
     return Lookup(name_id);
@@ -76,7 +76,7 @@ auto NameScope::LookupOrPoison(LocId loc_id, NameId name_id)
   auto insert_result = name_map_.Insert(name_id, EntryId(names_.size()));
   if (insert_result.is_inserted()) {
     names_.push_back({.name_id = name_id,
-                      .result = ScopeLookupResult::MakePoisoned(loc_id)});
+                      .result = ScopeLookupResult::MakePoisoned(inst_id)});
     return std::nullopt;
   }
   return insert_result.value();

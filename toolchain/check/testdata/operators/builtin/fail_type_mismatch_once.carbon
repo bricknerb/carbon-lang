@@ -28,6 +28,8 @@ fn Main() -> i32 {
 // CHECK:STDOUT:   %Main: %Main.type = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %float: f64 = float_literal 3.4000000000000004 [concrete]
+// CHECK:STDOUT:   %Add.assoc_type: type = assoc_entity_type @Add [concrete]
+// CHECK:STDOUT:   %assoc0: %Add.assoc_type = assoc_entity element0, imports.%Core.import_ref.6dd [concrete]
 // CHECK:STDOUT:   %int_12: Core.IntLiteral = int_value 12 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -38,6 +40,7 @@ fn Main() -> i32 {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.f6c: %Add.assoc_type = import_ref Core//prelude/operators/arithmetic, loc11_41, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -61,7 +64,9 @@ fn Main() -> i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %.loc18: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %float: f64 = float_literal 3.4000000000000004 [concrete = constants.%float]
+// CHECK:STDOUT:   %Op.ref.loc18_13: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %int_12: Core.IntLiteral = int_value 12 [concrete = constants.%int_12]
+// CHECK:STDOUT:   %Op.ref.loc18_19: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: <error> = impl_witness_access <error>, element0 [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

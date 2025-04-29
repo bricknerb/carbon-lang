@@ -91,6 +91,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.c88, @F(%i32) [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -151,8 +153,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:       %return.patt: @F.%pattern_type.loc9_14 (%pattern_type.253) = return_slot_pattern
 // CHECK:STDOUT:       %return.param_patt: @F.%pattern_type.loc9_14 (%pattern_type.253) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:     } {
-// CHECK:STDOUT:       %.loc9_17: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner (constants.%Inner.51b)]
 // CHECK:STDOUT:       %Inner.ref: type = name_ref Inner, %.loc9_17 [symbolic = %Inner (constants.%Inner.51b)]
+// CHECK:STDOUT:       %.loc9_17: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner (constants.%Inner.51b)]
 // CHECK:STDOUT:       %n.param: @F.%T (%T) = value_param call_param0
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Outer.%T.loc4_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %n: @F.%T (%T) = bind_name n, %n.param
@@ -224,15 +226,18 @@ fn Test() -> i32 {
 // CHECK:STDOUT:     %.loc13_3.1: %pattern_type.c22 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %Inner.721 = var c
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Outer.ref.loc13_29: %Outer.type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer.generic]
 // CHECK:STDOUT:   %int_32.loc13_35: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.loc13_35: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %Outer.loc13_38: type = class_type @Outer, @Outer(constants.%i32) [concrete = constants.%Outer.545]
-// CHECK:STDOUT:   %.loc13_39: %F.type.9d7 = specific_constant @Outer.%F.decl, @Outer(constants.%i32) [concrete = constants.%F.c88]
 // CHECK:STDOUT:   %F.ref: %F.type.9d7 = name_ref F, %.loc13_39 [concrete = constants.%F.c88]
+// CHECK:STDOUT:   %.loc13_39: %F.type.9d7 = specific_constant @Outer.%F.decl, @Outer(constants.%i32) [concrete = constants.%F.c88]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%i32) [concrete = constants.%F.specific_fn]
 // CHECK:STDOUT:   %.loc13_3.2: ref %Inner.721 = splice_block %c.var {}
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc13_42.1: <bound method> = bound_method %int_1, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -247,8 +252,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:     %int_32.loc13_16: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:     %i32.loc13_16: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:     %Outer.loc13_19: type = class_type @Outer, @Outer(constants.%i32) [concrete = constants.%Outer.545]
-// CHECK:STDOUT:     %.loc13_20.2: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.721]
 // CHECK:STDOUT:     %Inner.ref: type = name_ref Inner, %.loc13_20.2 [concrete = constants.%Inner.721]
+// CHECK:STDOUT:     %.loc13_20.2: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.721]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c: ref %Inner.721 = bind_name c, %c.var
 // CHECK:STDOUT:   %c.ref: ref %Inner.721 = name_ref c, %c
@@ -442,8 +447,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Outer.%T.loc4_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc6_16.1 (%Self.as_type.ea1) = value_param call_param0
 // CHECK:STDOUT:       %.loc6_16.1: type = splice_block %.loc6_16.3 [symbolic = %Self.as_type.loc6_16.1 (constants.%Self.as_type.ea1)] {
-// CHECK:STDOUT:         %.loc6_16.2: @F.1.%Inner.type (%Inner.type.392) = specific_constant @Inner.%Self.1, @Inner(constants.%T) [symbolic = %Self (constants.%Self.770)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%Inner.type (%Inner.type.392) = name_ref Self, %.loc6_16.2 [symbolic = %Self (constants.%Self.770)]
+// CHECK:STDOUT:         %.loc6_16.2: @F.1.%Inner.type (%Inner.type.392) = specific_constant @Inner.%Self.1, @Inner(constants.%T) [symbolic = %Self (constants.%Self.770)]
 // CHECK:STDOUT:         %Self.as_type.loc6_16.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc6_16.1 (constants.%Self.as_type.ea1)]
 // CHECK:STDOUT:         %.loc6_16.3: type = converted %Self.ref, %Self.as_type.loc6_16.2 [symbolic = %Self.as_type.loc6_16.1 (constants.%Self.as_type.ea1)]
 // CHECK:STDOUT:       }
@@ -482,8 +487,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Outer.%T.loc4_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %self.param: @F.2.%C (%C.390) = value_param call_param0
 // CHECK:STDOUT:       %.loc11_18.1: type = splice_block %C.ref [symbolic = %C (constants.%C.390)] {
-// CHECK:STDOUT:         %.loc11_18.2: type = specific_constant @Outer.%C.decl, @Outer(constants.%T) [symbolic = %C (constants.%C.390)]
 // CHECK:STDOUT:         %C.ref: type = name_ref C, %.loc11_18.2 [symbolic = %C (constants.%C.390)]
+// CHECK:STDOUT:         %.loc11_18.2: type = specific_constant @Outer.%C.decl, @Outer(constants.%T) [symbolic = %C (constants.%C.390)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.2.%C (%C.390) = bind_name self, %self.param
 // CHECK:STDOUT:       %return.param: ref @F.2.%T (%T) = out_param call_param1
@@ -549,8 +554,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:   class {
 // CHECK:STDOUT:     impl_decl @impl.eed [concrete] {} {
 // CHECK:STDOUT:       %Self.ref: type = name_ref Self, constants.%C.390 [symbolic = %C (constants.%C.390)]
-// CHECK:STDOUT:       %.loc10: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.type (constants.%Inner.type.392)]
 // CHECK:STDOUT:       %Inner.ref: type = name_ref Inner, %.loc10 [symbolic = %Inner.type (constants.%Inner.type.392)]
+// CHECK:STDOUT:       %.loc10: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.type (constants.%Inner.type.392)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %Inner.impl_witness_table = impl_witness_table (@impl.eed.%F.decl), @impl.eed [concrete]
 // CHECK:STDOUT:     %Inner.impl_witness: <witness> = impl_witness %Inner.impl_witness_table, @impl.eed(constants.%T) [symbolic = @impl.eed.%Inner.impl_witness (constants.%Inner.impl_witness.b15)]
@@ -573,8 +578,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:     %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:     %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:     %Outer: type = class_type @Outer, @Outer(constants.%i32) [concrete = constants.%Outer.545]
-// CHECK:STDOUT:     %.loc17: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.type.52d]
 // CHECK:STDOUT:     %Inner.ref: type = name_ref Inner, %.loc17 [concrete = constants.%Inner.type.52d]
+// CHECK:STDOUT:     %.loc17: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.type.52d]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Inner.impl_witness_table = impl_witness_table (@impl.a83.%F.decl), @impl.a83 [concrete]
 // CHECK:STDOUT:   %Inner.impl_witness: <witness> = impl_witness %Inner.impl_witness_table [concrete = constants.%Inner.impl_witness.1dc]
@@ -622,10 +627,10 @@ fn Test() -> i32 {
 // CHECK:STDOUT:   fn(%self.param: @F.2.%C (%C.390)) -> @F.2.%T (%T) {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %self.ref: @F.2.%C (%C.390) = name_ref self, %self
-// CHECK:STDOUT:     %.loc11_43: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.type (constants.%Inner.type.392)]
 // CHECK:STDOUT:     %Inner.ref: type = name_ref Inner, %.loc11_43 [symbolic = %Inner.type (constants.%Inner.type.392)]
-// CHECK:STDOUT:     %.loc11_48: @F.2.%Inner.assoc_type (%Inner.assoc_type.115) = specific_constant @Inner.%assoc0.loc6_28.1, @Inner(constants.%T) [symbolic = %assoc0 (constants.%assoc0.95e)]
+// CHECK:STDOUT:     %.loc11_43: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.type (constants.%Inner.type.392)]
 // CHECK:STDOUT:     %F.ref: @F.2.%Inner.assoc_type (%Inner.assoc_type.115) = name_ref F, %.loc11_48 [symbolic = %assoc0 (constants.%assoc0.95e)]
+// CHECK:STDOUT:     %.loc11_48: @F.2.%Inner.assoc_type (%Inner.assoc_type.115) = specific_constant @Inner.%assoc0.loc6_28.1, @Inner(constants.%T) [symbolic = %assoc0 (constants.%assoc0.95e)]
 // CHECK:STDOUT:     %impl.elem0.loc11_41.1: @F.2.%.loc11_41 (%.692) = impl_witness_access constants.%Inner.lookup_impl_witness, element0 [symbolic = %impl.elem0.loc11_41.2 (constants.%impl.elem0)]
 // CHECK:STDOUT:     %bound_method.loc11_41: <bound method> = bound_method %self.ref, %impl.elem0.loc11_41.1
 // CHECK:STDOUT:     %specific_impl_fn.loc11_41.1: <specific function> = specific_impl_function %impl.elem0.loc11_41.1, @F.1(constants.%T, constants.%Inner.facet.c18) [symbolic = %specific_impl_fn.loc11_41.2 (constants.%specific_impl_fn)]
@@ -646,6 +651,7 @@ fn Test() -> i32 {
 // CHECK:STDOUT:     %.loc23_3.1: %pattern_type.de9 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %C.70f = var c
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc23_26.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc23_26.2: init %C.70f = class_init (), %c.var [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc23_3.2: init %C.70f = converted %.loc23_26.1, %.loc23_26.2 [concrete = constants.%C.val]
@@ -655,8 +661,8 @@ fn Test() -> i32 {
 // CHECK:STDOUT:     %int_32.loc23: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:     %i32.loc23: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:     %Outer.loc23: type = class_type @Outer, @Outer(constants.%i32) [concrete = constants.%Outer.545]
-// CHECK:STDOUT:     %.loc23_20.2: type = specific_constant @Outer.%C.decl, @Outer(constants.%i32) [concrete = constants.%C.70f]
 // CHECK:STDOUT:     %C.ref: type = name_ref C, %.loc23_20.2 [concrete = constants.%C.70f]
+// CHECK:STDOUT:     %.loc23_20.2: type = specific_constant @Outer.%C.decl, @Outer(constants.%i32) [concrete = constants.%C.70f]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c: ref %C.70f = bind_name c, %c.var
 // CHECK:STDOUT:   %c.ref: ref %C.70f = name_ref c, %c
@@ -664,10 +670,10 @@ fn Test() -> i32 {
 // CHECK:STDOUT:   %int_32.loc24: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.loc24: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %Outer.loc24: type = class_type @Outer, @Outer(constants.%i32) [concrete = constants.%Outer.545]
-// CHECK:STDOUT:   %.loc24_23: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.type.52d]
 // CHECK:STDOUT:   %Inner.ref: type = name_ref Inner, %.loc24_23 [concrete = constants.%Inner.type.52d]
-// CHECK:STDOUT:   %.loc24_29: %Inner.assoc_type.215 = specific_constant @Inner.%assoc0.loc6_28.1, @Inner(constants.%i32) [concrete = constants.%assoc0.e80]
+// CHECK:STDOUT:   %.loc24_23: type = specific_constant @Outer.%Inner.decl, @Outer(constants.%i32) [concrete = constants.%Inner.type.52d]
 // CHECK:STDOUT:   %F.ref: %Inner.assoc_type.215 = name_ref F, %.loc24_29 [concrete = constants.%assoc0.e80]
+// CHECK:STDOUT:   %.loc24_29: %Inner.assoc_type.215 = specific_constant @Inner.%assoc0.loc6_28.1, @Inner(constants.%i32) [concrete = constants.%assoc0.e80]
 // CHECK:STDOUT:   %impl.elem0: %.b10 = impl_witness_access constants.%Inner.impl_witness.47d, element0 [concrete = constants.%F.e75]
 // CHECK:STDOUT:   %bound_method.loc24_11: <bound method> = bound_method %c.ref, %impl.elem0
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @F.2(constants.%i32) [concrete = constants.%F.specific_fn]

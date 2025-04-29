@@ -25,6 +25,8 @@ let n: i32 = 1 as 2;
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -56,6 +58,7 @@ let n: i32 = 1 as 2;
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc18: type = converted %int_2, <error> [concrete = <error>]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }

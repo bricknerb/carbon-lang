@@ -105,8 +105,8 @@ class Declaration(T:! type);
 // CHECK:STDOUT:       %ptr.loc12_38.2: type = ptr_type %T.ref [symbolic = %ptr.loc12_38.1 (constants.%ptr.79f)]
 // CHECK:STDOUT:       %self.param: @GetAddr.%ptr.loc12_29.1 (%ptr.955) = value_param call_param0
 // CHECK:STDOUT:       %.loc12_29: type = splice_block %ptr.loc12_29.2 [symbolic = %ptr.loc12_29.1 (constants.%ptr.955)] {
-// CHECK:STDOUT:         %.loc12_25: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc12_25 [symbolic = %Class (constants.%Class)]
+// CHECK:STDOUT:         %.loc12_25: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:         %ptr.loc12_29.2: type = ptr_type %Self.ref [symbolic = %ptr.loc12_29.1 (constants.%ptr.955)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @GetAddr.%ptr.loc12_29.1 (%ptr.955) = bind_name self, %self.param
@@ -122,8 +122,8 @@ class Declaration(T:! type);
 // CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc11_13.1 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %self.param: @GetValue.%Class (%Class) = value_param call_param0
 // CHECK:STDOUT:       %.loc17_21.1: type = splice_block %Self.ref [symbolic = %Class (constants.%Class)] {
-// CHECK:STDOUT:         %.loc17_21.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc17_21.2 [symbolic = %Class (constants.%Class)]
+// CHECK:STDOUT:         %.loc17_21.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @GetValue.%Class (%Class) = bind_name self, %self.param
 // CHECK:STDOUT:       %return.param: ref @GetValue.%T (%T) = out_param call_param1

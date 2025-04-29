@@ -159,8 +159,8 @@ interface Bar[T:! type] {}
 // CHECK:STDOUT:     %C.ref: %C.type = name_ref C, file.%C.decl [concrete = constants.%C.generic]
 // CHECK:STDOUT:     %X.ref.loc17_13: type = name_ref X, file.%X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %C: type = class_type @C, @C(constants.%X) [concrete = constants.%C.fac]
-// CHECK:STDOUT:     %.loc17: type = specific_constant @C.%GenericNoParams.decl, @C(constants.%X) [concrete = constants.%GenericNoParams.type.b7e]
 // CHECK:STDOUT:     %GenericNoParams.ref: type = name_ref GenericNoParams, %.loc17 [concrete = constants.%GenericNoParams.type.b7e]
+// CHECK:STDOUT:     %.loc17: type = specific_constant @C.%GenericNoParams.decl, @C(constants.%X) [concrete = constants.%GenericNoParams.type.b7e]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %GenericNoParams.impl_witness_table = impl_witness_table (), @impl.cd5 [concrete]
 // CHECK:STDOUT:   %GenericNoParams.impl_witness: <witness> = impl_witness %GenericNoParams.impl_witness_table [concrete = constants.%GenericNoParams.impl_witness]
@@ -169,8 +169,8 @@ interface Bar[T:! type] {}
 // CHECK:STDOUT:     %C.ref: %C.type = name_ref C, file.%C.decl [concrete = constants.%C.generic]
 // CHECK:STDOUT:     %X.ref.loc18_13: type = name_ref X, file.%X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %C: type = class_type @C, @C(constants.%X) [concrete = constants.%C.fac]
-// CHECK:STDOUT:     %.loc18: %GenericAndParams.type.425 = specific_constant @C.%GenericAndParams.decl, @C(constants.%X) [concrete = constants.%GenericAndParams.generic.b50]
 // CHECK:STDOUT:     %GenericAndParams.ref: %GenericAndParams.type.425 = name_ref GenericAndParams, %.loc18 [concrete = constants.%GenericAndParams.generic.b50]
+// CHECK:STDOUT:     %.loc18: %GenericAndParams.type.425 = specific_constant @C.%GenericAndParams.decl, @C(constants.%X) [concrete = constants.%GenericAndParams.generic.b50]
 // CHECK:STDOUT:     %X.ref.loc18_33: type = name_ref X, file.%X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %GenericAndParams.type: type = facet_type <@GenericAndParams.2, @GenericAndParams.2(constants.%X, constants.%X)> [concrete = constants.%GenericAndParams.type.79c]
 // CHECK:STDOUT:   }

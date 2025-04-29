@@ -178,8 +178,8 @@ fn Run() {
 // CHECK:STDOUT:     import Other//a
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Other.F: %F.type = import_ref Other//b, F, loaded [concrete = constants.%F]
-// CHECK:STDOUT:   %Other.import_ref.8db: <witness> = import_ref Other//b, inst31 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %Other.import_ref.bbd = import_ref Other//b, inst32 [indirect], unloaded
+// CHECK:STDOUT:   %Other.import_ref.8db: <witness> = import_ref Other//b, inst32 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %Other.import_ref.bbd = import_ref Other//b, inst33 [indirect], unloaded
 // CHECK:STDOUT:   %Other.NS1: <namespace> = import_ref Other//b, NS1, loaded
 // CHECK:STDOUT:   %NS1: <namespace> = namespace %Other.NS1, [concrete] {
 // CHECK:STDOUT:     .A = %Other.A
@@ -212,6 +212,7 @@ fn Run() {
 // CHECK:STDOUT:   %Other.ref.loc7: <namespace> = name_ref Other, imports.%Other [concrete = imports.%Other]
 // CHECK:STDOUT:   %F.ref.loc7: %F.type = name_ref F, imports.%Other.F [concrete = constants.%F]
 // CHECK:STDOUT:   %.loc7_11.1: ref %A = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call.loc7: init %A = call %F.ref.loc7() to %.loc7_11.1
 // CHECK:STDOUT:   %.loc7_11.2: ref %A = temporary %.loc7_11.1, %F.call.loc7
 // CHECK:STDOUT:   name_binding_decl {
@@ -219,6 +220,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc10_3: %pattern_type = var_pattern %a.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %a.var: ref %A = var a
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc10_19: type = splice_block %A.ref [concrete = constants.%A] {
 // CHECK:STDOUT:     %Other.ref.loc10: <namespace> = name_ref Other, imports.%Other [concrete = imports.%Other]
 // CHECK:STDOUT:     %NS1.ref: <namespace> = name_ref NS1, imports.%NS1 [concrete = imports.%NS1]
@@ -229,6 +231,7 @@ fn Run() {
 // CHECK:STDOUT:   %Other.ref.loc13: <namespace> = name_ref Other, imports.%Other [concrete = imports.%Other]
 // CHECK:STDOUT:   %F.ref.loc13: %F.type = name_ref F, imports.%Other.F [concrete = constants.%F]
 // CHECK:STDOUT:   %.loc13: ref %A = splice_block %a.ref {}
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call.loc13: init %A = call %F.ref.loc13() to %.loc13
 // CHECK:STDOUT:   assign %a.ref, %F.call.loc13
 // CHECK:STDOUT:   return

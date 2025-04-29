@@ -255,6 +255,7 @@ fn H() -> C({}).(I.F)() {}
 // CHECK:STDOUT:     %c.ref: ref %C.7a7 = name_ref c, file.%c
 // CHECK:STDOUT:     %I.ref: type = name_ref I, imports.%Main.I [concrete = constants.%I.type]
 // CHECK:STDOUT:     %F.ref: %I.assoc_type = name_ref F, imports.%Main.import_ref.c44 [concrete = constants.%assoc0]
+// CHECK:STDOUT:     %Convert.ref: <error> = name_ref Convert, <error> [concrete = <error>]
 // CHECK:STDOUT:     %.loc16: %I.type = converted %c.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:     %return.param: ref <error> = out_param call_param0
 // CHECK:STDOUT:     %return: ref <error> = return_slot %return.param
@@ -274,6 +275,7 @@ fn H() -> C({}).(I.F)() {}
 // CHECK:STDOUT:     %impl.elem0: %.81d = impl_witness_access constants.%I.impl_witness.6bb, element0 [concrete = constants.%F.9e6]
 // CHECK:STDOUT:     %specific_fn: <specific function> = specific_function %impl.elem0, @F.2(constants.%empty_struct_type) [concrete = constants.%F.specific_fn]
 // CHECK:STDOUT:     %F.call: init %empty_tuple.type = call %specific_fn()
+// CHECK:STDOUT:     %Convert.ref: <error> = name_ref Convert, <error> [concrete = <error>]
 // CHECK:STDOUT:     %.loc25_23.1: ref %empty_tuple.type = temporary_storage
 // CHECK:STDOUT:     %.loc25_23.2: ref %empty_tuple.type = temporary %.loc25_23.1, %F.call
 // CHECK:STDOUT:     %.loc25_23.3: type = converted %F.call, <error> [concrete = <error>]

@@ -102,15 +102,20 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT:   %Ordered.facet: %Ordered.type = facet_value %C, (%Ordered.impl_witness) [concrete]
 // CHECK:STDOUT:   %TestLess.type: type = fn_type @TestLess [concrete]
 // CHECK:STDOUT:   %TestLess: %TestLess.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Ordered.assoc_type: type = assoc_entity_type @Ordered [concrete]
+// CHECK:STDOUT:   %assoc0: %Ordered.assoc_type = assoc_entity element0, imports.%Core.import_ref.9da [concrete]
 // CHECK:STDOUT:   %.d60: type = fn_type_with_self_type %Less.type.341, %Ordered.facet [concrete]
 // CHECK:STDOUT:   %TestLessEqual.type: type = fn_type @TestLessEqual [concrete]
 // CHECK:STDOUT:   %TestLessEqual: %TestLessEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc1: %Ordered.assoc_type = assoc_entity element1, imports.%Core.import_ref.569 [concrete]
 // CHECK:STDOUT:   %.6b1: type = fn_type_with_self_type %LessOrEquivalent.type.859, %Ordered.facet [concrete]
 // CHECK:STDOUT:   %TestGreater.type: type = fn_type @TestGreater [concrete]
 // CHECK:STDOUT:   %TestGreater: %TestGreater.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc2: %Ordered.assoc_type = assoc_entity element2, imports.%Core.import_ref.da7 [concrete]
 // CHECK:STDOUT:   %.5ae: type = fn_type_with_self_type %Greater.type.270, %Ordered.facet [concrete]
 // CHECK:STDOUT:   %TestGreaterEqual.type: type = fn_type @TestGreaterEqual [concrete]
 // CHECK:STDOUT:   %TestGreaterEqual: %TestGreaterEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc3: %Ordered.assoc_type = assoc_entity element3, imports.%Core.import_ref.8fc [concrete]
 // CHECK:STDOUT:   %.0c4: type = fn_type_with_self_type %GreaterOrEquivalent.type.8af, %Ordered.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -122,6 +127,10 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Ordered: type = import_ref Core//prelude/operators/comparison, Ordered, loaded [concrete = constants.%Ordered.type]
+// CHECK:STDOUT:   %Core.import_ref.687: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc19_43, loaded [concrete = constants.%assoc0]
+// CHECK:STDOUT:   %Core.import_ref.17a: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc20_55, loaded [concrete = constants.%assoc1]
+// CHECK:STDOUT:   %Core.import_ref.b19: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc21_46, loaded [concrete = constants.%assoc2]
+// CHECK:STDOUT:   %Core.import_ref.254: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc22_58, loaded [concrete = constants.%assoc3]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -336,6 +345,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Less.ref: %Ordered.assoc_type = name_ref Less, imports.%Core.import_ref.687 [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: %.d60 = impl_witness_access constants.%Ordered.impl_witness, element0 [concrete = constants.%Less.738]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %Less.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -348,6 +358,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %LessOrEquivalent.ref: %Ordered.assoc_type = name_ref LessOrEquivalent, imports.%Core.import_ref.17a [concrete = constants.%assoc1]
 // CHECK:STDOUT:   %impl.elem1: %.6b1 = impl_witness_access constants.%Ordered.impl_witness, element1 [concrete = constants.%LessOrEquivalent.010]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem1
 // CHECK:STDOUT:   %LessOrEquivalent.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -360,6 +371,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Greater.ref: %Ordered.assoc_type = name_ref Greater, imports.%Core.import_ref.b19 [concrete = constants.%assoc2]
 // CHECK:STDOUT:   %impl.elem2: %.5ae = impl_witness_access constants.%Ordered.impl_witness, element2 [concrete = constants.%Greater.afe]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem2
 // CHECK:STDOUT:   %Greater.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -372,6 +384,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %GreaterOrEquivalent.ref: %Ordered.assoc_type = name_ref GreaterOrEquivalent, imports.%Core.import_ref.254 [concrete = constants.%assoc3]
 // CHECK:STDOUT:   %impl.elem3: %.0c4 = impl_witness_access constants.%Ordered.impl_witness, element3 [concrete = constants.%GreaterOrEquivalent.03b]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem3
 // CHECK:STDOUT:   %GreaterOrEquivalent.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -392,12 +405,17 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT:   %pattern_type.831: type = pattern_type bool [concrete]
 // CHECK:STDOUT:   %TestLess.type: type = fn_type @TestLess [concrete]
 // CHECK:STDOUT:   %TestLess: %TestLess.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Ordered.assoc_type: type = assoc_entity_type @Ordered [concrete]
+// CHECK:STDOUT:   %assoc0: %Ordered.assoc_type = assoc_entity element0, imports.%Core.import_ref.9da [concrete]
 // CHECK:STDOUT:   %TestLessEqual.type: type = fn_type @TestLessEqual [concrete]
 // CHECK:STDOUT:   %TestLessEqual: %TestLessEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc1: %Ordered.assoc_type = assoc_entity element1, imports.%Core.import_ref.569 [concrete]
 // CHECK:STDOUT:   %TestGreater.type: type = fn_type @TestGreater [concrete]
 // CHECK:STDOUT:   %TestGreater: %TestGreater.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc2: %Ordered.assoc_type = assoc_entity element2, imports.%Core.import_ref.da7 [concrete]
 // CHECK:STDOUT:   %TestGreaterEqual.type: type = fn_type @TestGreaterEqual [concrete]
 // CHECK:STDOUT:   %TestGreaterEqual: %TestGreaterEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc3: %Ordered.assoc_type = assoc_entity element3, imports.%Core.import_ref.8fc [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -407,6 +425,10 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.687: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc19_43, loaded [concrete = constants.%assoc0]
+// CHECK:STDOUT:   %Core.import_ref.17a: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc20_55, loaded [concrete = constants.%assoc1]
+// CHECK:STDOUT:   %Core.import_ref.b19: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc21_46, loaded [concrete = constants.%assoc2]
+// CHECK:STDOUT:   %Core.import_ref.254: %Ordered.assoc_type = import_ref Core//prelude/operators/comparison, loc22_58, loaded [concrete = constants.%assoc3]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -515,6 +537,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Less.ref: %Ordered.assoc_type = name_ref Less, imports.%Core.import_ref.687 [concrete = constants.%assoc0]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -522,6 +545,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %LessOrEquivalent.ref: %Ordered.assoc_type = name_ref LessOrEquivalent, imports.%Core.import_ref.17a [concrete = constants.%assoc1]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -529,6 +553,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Greater.ref: %Ordered.assoc_type = name_ref Greater, imports.%Core.import_ref.b19 [concrete = constants.%assoc2]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -536,6 +561,7 @@ fn TestGreaterEqual(a: D, b: D) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %GreaterOrEquivalent.ref: %Ordered.assoc_type = name_ref GreaterOrEquivalent, imports.%Core.import_ref.254 [concrete = constants.%assoc3]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

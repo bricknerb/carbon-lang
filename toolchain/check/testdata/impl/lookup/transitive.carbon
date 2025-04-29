@@ -293,8 +293,8 @@ fn Call() {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Main.import_ref.8db: <witness> = import_ref Main//get, inst23 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %Main.import_ref.6a9 = import_ref Main//get, inst24 [indirect], unloaded
+// CHECK:STDOUT:   %Main.import_ref.8db: <witness> = import_ref Main//get, inst24 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %Main.import_ref.6a9 = import_ref Main//get, inst25 [indirect], unloaded
 // CHECK:STDOUT:   %Main.import_ref.e5d = import_ref Main//i, inst19 [no loc], unloaded
 // CHECK:STDOUT:   %Main.import_ref.c44: %I.assoc_type = import_ref Main//i, loc4_33, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %Main.F = import_ref Main//i, F, unloaded
@@ -339,6 +339,7 @@ fn Call() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Get.ref: %Get.type = name_ref Get, imports.%Main.Get [concrete = constants.%Get]
 // CHECK:STDOUT:   %.loc9_7.1: ref %C = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Get.call: init %C = call %Get.ref() to %.loc9_7.1
 // CHECK:STDOUT:   %I.ref: type = name_ref I, imports.%Main.I [concrete = constants.%I.type]
 // CHECK:STDOUT:   %F.ref: %I.assoc_type = name_ref F, imports.%Main.import_ref.c44 [concrete = constants.%assoc0]

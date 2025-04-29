@@ -195,8 +195,8 @@ fn AccessMissingConcrete(I:! Interface(i32)) -> i32 {
 // CHECK:STDOUT:   fn() -> @AccessGeneric.%T.loc8_18.2 (%T) {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %I.ref: @AccessGeneric.%Interface.type.loc8_43.2 (%Interface.type.d32) = name_ref I, %I.loc8_28.1 [symbolic = %I.loc8_28.2 (constants.%I.a5f)]
-// CHECK:STDOUT:     %.loc9_11.1: @AccessGeneric.%Interface.assoc_type (%Interface.assoc_type.0d9) = specific_constant @X.%assoc0, @Interface(constants.%T) [symbolic = %assoc0 (constants.%assoc0.dbe)]
 // CHECK:STDOUT:     %X.ref: @AccessGeneric.%Interface.assoc_type (%Interface.assoc_type.0d9) = name_ref X, %.loc9_11.1 [symbolic = %assoc0 (constants.%assoc0.dbe)]
+// CHECK:STDOUT:     %.loc9_11.1: @AccessGeneric.%Interface.assoc_type (%Interface.assoc_type.0d9) = specific_constant @X.%assoc0, @Interface(constants.%T) [symbolic = %assoc0 (constants.%assoc0.dbe)]
 // CHECK:STDOUT:     %I.as_type.loc9_11.1: type = facet_access_type %I.ref [symbolic = %I.as_type.loc9_11.2 (constants.%I.as_type.59e)]
 // CHECK:STDOUT:     %.loc9_11.2: type = converted %I.ref, %I.as_type.loc9_11.1 [symbolic = %I.as_type.loc9_11.2 (constants.%I.as_type.59e)]
 // CHECK:STDOUT:     %impl.elem0.loc9_11.1: @AccessGeneric.%T.loc8_18.2 (%T) = impl_witness_access constants.%Interface.lookup_impl_witness.854, element0 [symbolic = %impl.elem0.loc9_11.2 (constants.%impl.elem0.7b9)]
@@ -215,8 +215,8 @@ fn AccessMissingConcrete(I:! Interface(i32)) -> i32 {
 // CHECK:STDOUT:   fn() -> %i32 {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %I.ref: %Interface.type.981 = name_ref I, %I.loc12_19.1 [symbolic = %I.loc12_19.2 (constants.%I.d08)]
-// CHECK:STDOUT:     %.loc13_11.1: %Interface.assoc_type.aaa = specific_constant @X.%assoc0, @Interface(constants.%i32) [concrete = constants.%assoc0.69f]
 // CHECK:STDOUT:     %X.ref: %Interface.assoc_type.aaa = name_ref X, %.loc13_11.1 [concrete = constants.%assoc0.69f]
+// CHECK:STDOUT:     %.loc13_11.1: %Interface.assoc_type.aaa = specific_constant @X.%assoc0, @Interface(constants.%i32) [concrete = constants.%assoc0.69f]
 // CHECK:STDOUT:     %I.as_type.loc13_11.1: type = facet_access_type %I.ref [symbolic = %I.as_type.loc13_11.2 (constants.%I.as_type.ee6)]
 // CHECK:STDOUT:     %.loc13_11.2: type = converted %I.ref, %I.as_type.loc13_11.1 [symbolic = %I.as_type.loc13_11.2 (constants.%I.as_type.ee6)]
 // CHECK:STDOUT:     %impl.elem0.loc13_11.1: %i32 = impl_witness_access constants.%Interface.lookup_impl_witness.a96, element0 [symbolic = %impl.elem0.loc13_11.2 (constants.%impl.elem0.e13)]

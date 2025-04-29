@@ -58,14 +58,14 @@ fn I(T:! type).F[self: Self]() -> Self { return self; }
 // CHECK:STDOUT:     %return.param_patt: @F.2.%pattern_type (%pattern_type.4be) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     %T.loc23_6: type = bind_symbolic_name T, 0 [symbolic = @I.%T.loc11_13.2 (constants.%T)]
-// CHECK:STDOUT:     %.loc23_35.1: @F.2.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:     %Self.ref.loc23_35: @F.2.%I.type (%I.type.325) = name_ref Self, %.loc23_35.1 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:     %.loc23_35.1: @F.2.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:     %Self.as_type.loc23_35: type = facet_access_type %Self.ref.loc23_35 [symbolic = %Self.as_type.loc23_24.2 (constants.%Self.as_type)]
 // CHECK:STDOUT:     %.loc23_35.2: type = converted %Self.ref.loc23_35, %Self.as_type.loc23_35 [symbolic = %Self.as_type.loc23_24.2 (constants.%Self.as_type)]
 // CHECK:STDOUT:     %self.param: @F.2.%Self.as_type.loc23_24.2 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:     %.loc23_24.1: type = splice_block %.loc23_24.3 [symbolic = %Self.as_type.loc23_24.2 (constants.%Self.as_type)] {
-// CHECK:STDOUT:       %.loc23_24.2: @F.2.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.ref.loc23_24: @F.2.%I.type (%I.type.325) = name_ref Self, %.loc23_24.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:       %.loc23_24.2: @F.2.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.as_type.loc23_24.1: type = facet_access_type %Self.ref.loc23_24 [symbolic = %Self.as_type.loc23_24.2 (constants.%Self.as_type)]
 // CHECK:STDOUT:       %.loc23_24.3: type = converted %Self.ref.loc23_24, %Self.as_type.loc23_24.1 [symbolic = %Self.as_type.loc23_24.2 (constants.%Self.as_type)]
 // CHECK:STDOUT:     }
@@ -94,14 +94,14 @@ fn I(T:! type).F[self: Self]() -> Self { return self; }
 // CHECK:STDOUT:       %return.patt: @F.1.%pattern_type (%pattern_type.4be) = return_slot_pattern
 // CHECK:STDOUT:       %return.param_patt: @F.1.%pattern_type (%pattern_type.4be) = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:     } {
-// CHECK:STDOUT:       %.loc13_25.1: @F.1.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.ref.loc13_25: @F.1.%I.type (%I.type.325) = name_ref Self, %.loc13_25.1 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:       %.loc13_25.1: @F.1.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:       %Self.as_type.loc13_25: type = facet_access_type %Self.ref.loc13_25 [symbolic = %Self.as_type.loc13_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       %.loc13_25.2: type = converted %Self.ref.loc13_25, %Self.as_type.loc13_25 [symbolic = %Self.as_type.loc13_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc13_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc13_14.1: type = splice_block %.loc13_14.3 [symbolic = %Self.as_type.loc13_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc13_14.2: @F.1.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref.loc13_14: @F.1.%I.type (%I.type.325) = name_ref Self, %.loc13_14.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc13_14.2: @F.1.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc13_14.2: type = facet_access_type %Self.ref.loc13_14 [symbolic = %Self.as_type.loc13_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc13_14.3: type = converted %Self.ref.loc13_14, %Self.as_type.loc13_14.2 [symbolic = %Self.as_type.loc13_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }

@@ -1067,12 +1067,12 @@ fn Test(c: HasExtraInterfaces.C(type)) {
 // CHECK:STDOUT:   %PackageB.G = import_ref PackageB//default, G, unloaded
 // CHECK:STDOUT:   %PackageB.import_ref.ef5: %HasG.type = import_ref PackageB//default, inst21 [no loc], loaded [symbolic = constants.%Self.fcb]
 // CHECK:STDOUT:   %PackageB.import_ref.ea7 = import_ref PackageB//default, loc13_25, unloaded
-// CHECK:STDOUT:   %PackageB.import_ref.8db: <witness> = import_ref PackageB//default, inst53 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %PackageB.import_ref.6a9 = import_ref PackageB//default, inst54 [indirect], unloaded
+// CHECK:STDOUT:   %PackageB.import_ref.8db: <witness> = import_ref PackageB//default, inst54 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %PackageB.import_ref.6a9 = import_ref PackageB//default, inst55 [indirect], unloaded
 // CHECK:STDOUT:   %PackageB.import_ref.dfb: type = import_ref PackageB//default, loc13_14, loaded [concrete = constants.%C]
 // CHECK:STDOUT:   %PackageB.import_ref.cee586.1: type = import_ref PackageB//default, loc13_20, loaded [concrete = constants.%HasG.type]
-// CHECK:STDOUT:   %PackageB.import_ref.96f = import_ref PackageB//default, inst79 [indirect], unloaded
-// CHECK:STDOUT:   %PackageB.import_ref.a0b = import_ref PackageB//default, inst80 [indirect], unloaded
+// CHECK:STDOUT:   %PackageB.import_ref.96f = import_ref PackageB//default, inst80 [indirect], unloaded
+// CHECK:STDOUT:   %PackageB.import_ref.a0b = import_ref PackageB//default, inst81 [indirect], unloaded
 // CHECK:STDOUT:   %PackageB.F = import_ref PackageB//default, F, unloaded
 // CHECK:STDOUT:   %PackageB.import_ref.5ba = import_ref PackageB//default, loc18_25, unloaded
 // CHECK:STDOUT:   %PackageB.import_ref.aa9f8a.1: type = import_ref PackageB//default, loc18_6, loaded [concrete = constants.%D]
@@ -1645,6 +1645,7 @@ fn Test(c: HasExtraInterfaces.C(type)) {
 // CHECK:STDOUT:     %.loc13_3.1: %pattern_type.004 = var_pattern %obj.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %obj.var: ref %AnyParam.241 = var obj
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc13_58.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc13_58.2: init %AnyParam.241 = class_init (), %obj.var [concrete = constants.%AnyParam.val]
 // CHECK:STDOUT:   %.loc13_3.2: init %AnyParam.241 = converted %.loc13_58.1, %.loc13_58.2 [concrete = constants.%AnyParam.val]
@@ -1829,6 +1830,7 @@ fn Test(c: HasExtraInterfaces.C(type)) {
 // CHECK:STDOUT:     %.loc8_3.1: %pattern_type.3ad = var_pattern %obj.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %obj.var: ref %AnyParam.861 = var obj
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc9_50.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc9_50.2: init %AnyParam.861 = class_init (), %obj.var [concrete = constants.%AnyParam.val]
 // CHECK:STDOUT:   %.loc8_3.2: init %AnyParam.861 = converted %.loc9_50.1, %.loc9_50.2 [concrete = constants.%AnyParam.val]
@@ -2052,6 +2054,7 @@ fn Test(c: HasExtraInterfaces.C(type)) {
 // CHECK:STDOUT:     %.loc13_3.1: %pattern_type.64f = var_pattern %obj.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %obj.var: ref %AnyParam.0dd = var obj
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc13_54.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc13_54.2: init %AnyParam.0dd = class_init (), %obj.var [concrete = constants.%AnyParam.val]
 // CHECK:STDOUT:   %.loc13_3.2: init %AnyParam.0dd = converted %.loc13_54.1, %.loc13_54.2 [concrete = constants.%AnyParam.val]
@@ -2232,6 +2235,7 @@ fn Test(c: HasExtraInterfaces.C(type)) {
 // CHECK:STDOUT:     %.loc8_3.1: %pattern_type.312 = var_pattern %obj.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %obj.var: ref %AnyParam.d71 = var obj
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc8_74.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc8_74.2: init %AnyParam.d71 = class_init (), %obj.var [concrete = constants.%AnyParam.val]
 // CHECK:STDOUT:   %.loc8_3.2: init %AnyParam.d71 = converted %.loc8_74.1, %.loc8_74.2 [concrete = constants.%AnyParam.val]

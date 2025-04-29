@@ -76,10 +76,16 @@ fn TestAssign(b: D) {
 // CHECK:STDOUT:   %pattern_type.510: type = pattern_type %D [concrete]
 // CHECK:STDOUT:   %Test.type: type = fn_type @Test [concrete]
 // CHECK:STDOUT:   %Test: %Test.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Add.assoc_type: type = assoc_entity_type @Add [concrete]
+// CHECK:STDOUT:   %assoc0.c7d: %Add.assoc_type = assoc_entity element0, imports.%Core.import_ref.6dd [concrete]
 // CHECK:STDOUT:   %.de4: type = fn_type_with_self_type %Op.type.545, %Add.facet [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.c42: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%C) [concrete]
+// CHECK:STDOUT:   %assoc0.e6d: %ImplicitAs.assoc_type.c42 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %TestAssign.type: type = fn_type @TestAssign [concrete]
 // CHECK:STDOUT:   %TestAssign: %TestAssign.type = struct_value () [concrete]
 // CHECK:STDOUT:   %C.val: %C = struct_value () [concrete]
+// CHECK:STDOUT:   %AddAssign.assoc_type: type = assoc_entity_type @AddAssign [concrete]
+// CHECK:STDOUT:   %assoc0.14b: %AddAssign.assoc_type = assoc_entity element0, imports.%Core.import_ref.f0c [concrete]
 // CHECK:STDOUT:   %.6d3: type = fn_type_with_self_type %Op.type.421, %AddAssign.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -92,7 +98,9 @@ fn TestAssign(b: D) {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Add: type = import_ref Core//prelude/operators/arithmetic, Add, loaded [concrete = constants.%Add.type]
+// CHECK:STDOUT:   %Core.import_ref.f6c: %Add.assoc_type = import_ref Core//prelude/operators/arithmetic, loc11_41, loaded [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT:   %Core.AddAssign: type = import_ref Core//prelude/operators/arithmetic, AddAssign, loaded [concrete = constants.%AddAssign.type]
+// CHECK:STDOUT:   %Core.import_ref.56a: %AddAssign.assoc_type = import_ref Core//prelude/operators/arithmetic, loc16_39, loaded [concrete = constants.%assoc0.14b]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -225,9 +233,12 @@ fn TestAssign(b: D) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT:   %impl.elem0: %.de4 = impl_witness_access constants.%Add.impl_witness, element0 [concrete = constants.%Op.c84]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc23: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.c42 = name_ref Convert, constants.%assoc0.e6d [concrete = constants.%assoc0.e6d]
 // CHECK:STDOUT:   %.loc34: %C = converted %b.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Op.call: init %C = call %bound_method(%a.ref, <error>) to %.loc23
 // CHECK:STDOUT:   return %Op.call to %return
@@ -240,6 +251,7 @@ fn TestAssign(b: D) {
 // CHECK:STDOUT:     %.loc38_3.1: %pattern_type.c48 = var_pattern %a.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %a.var: ref %C = var a
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc38_15.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc38_15.2: init %C = class_init (), %a.var [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc38_3.2: init %C = converted %.loc38_15.1, %.loc38_15.2 [concrete = constants.%C.val]
@@ -248,9 +260,11 @@ fn TestAssign(b: D) {
 // CHECK:STDOUT:   %a: ref %C = bind_name a, %a.var
 // CHECK:STDOUT:   %a.ref: ref %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %AddAssign.assoc_type = name_ref Op, imports.%Core.import_ref.56a [concrete = constants.%assoc0.14b]
 // CHECK:STDOUT:   %impl.elem0: %.6d3 = impl_witness_access constants.%AddAssign.impl_witness, element0 [concrete = constants.%Op.d8e]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %a.ref
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.c42 = name_ref Convert, constants.%assoc0.e6d [concrete = constants.%assoc0.e6d]
 // CHECK:STDOUT:   %.loc49: %C = converted %b.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Op.call: init %empty_tuple.type = call %bound_method(%addr, <error>)
 // CHECK:STDOUT:   return

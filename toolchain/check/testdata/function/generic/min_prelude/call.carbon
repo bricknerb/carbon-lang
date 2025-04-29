@@ -237,6 +237,7 @@ fn CallSpecific(x: C) -> C {
 // CHECK:STDOUT:   %x.ref: %C = name_ref x, %x
 // CHECK:STDOUT:   %Function.specific_fn: <specific function> = specific_function %Function.ref, @Function(constants.%C) [concrete = constants.%Function.specific_fn.1b5]
 // CHECK:STDOUT:   %.loc18: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Function.call: init %C = call %Function.specific_fn(%x.ref) to %.loc18
 // CHECK:STDOUT:   return %Function.call to %return
 // CHECK:STDOUT: }
@@ -458,6 +459,7 @@ fn CallSpecific(x: C) -> C {
 // CHECK:STDOUT:   %x.ref: %C = name_ref x, %x
 // CHECK:STDOUT:   %Function.specific_fn: <specific function> = specific_function %Function.ref, @Function(constants.%C) [concrete = constants.%Function.specific_fn.1b5]
 // CHECK:STDOUT:   %.loc18: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Function.call: init %C = call %Function.specific_fn(%x.ref) to %.loc18
 // CHECK:STDOUT:   return %Function.call to %return
 // CHECK:STDOUT: }

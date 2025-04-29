@@ -61,8 +61,8 @@ fn Class(T:! type).F[self: Self](n: T) {}
 // CHECK:STDOUT:     %T.loc16: type = bind_symbolic_name T, 0 [symbolic = @Class.%T.loc11_13.2 (constants.%T)]
 // CHECK:STDOUT:     %self.param.loc16: @F.%Class (%Class) = value_param call_param0
 // CHECK:STDOUT:     %.loc16_28.1: type = splice_block %Self.ref.loc16 [symbolic = %Class (constants.%Class)] {
-// CHECK:STDOUT:       %.loc16_28.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:       %Self.ref.loc16: type = name_ref Self, %.loc16_28.2 [symbolic = %Class (constants.%Class)]
+// CHECK:STDOUT:       %.loc16_28.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %self.loc16: @F.%Class (%Class) = bind_name self, %self.param.loc16
 // CHECK:STDOUT:     %n.param.loc16: @F.%T.loc13 (%T) = value_param call_param1
@@ -94,8 +94,8 @@ fn Class(T:! type).F[self: Self](n: T) {}
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param.loc13: @F.%Class (%Class) = value_param call_param0
 // CHECK:STDOUT:       %.loc13_14.1: type = splice_block %Self.ref.loc13 [symbolic = %Class (constants.%Class)] {
-// CHECK:STDOUT:         %.loc13_14.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:         %Self.ref.loc13: type = name_ref Self, %.loc13_14.2 [symbolic = %Class (constants.%Class)]
+// CHECK:STDOUT:         %.loc13_14.2: type = specific_constant constants.%Class, @Class(constants.%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self.loc13: @F.%Class (%Class) = bind_name self, %self.param.loc13
 // CHECK:STDOUT:       %n.param.loc13: @F.%T.loc13 (%T) = value_param call_param1

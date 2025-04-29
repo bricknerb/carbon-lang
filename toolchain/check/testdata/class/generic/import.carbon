@@ -106,6 +106,8 @@ class Class(U:! type) {
 // CHECK:STDOUT:   %int_0.5c6: Core.IntLiteral = int_value 0 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -207,6 +209,7 @@ class Class(U:! type) {
 // CHECK:STDOUT:   fn() -> %i32 {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %int_0: Core.IntLiteral = int_value 0 [concrete = constants.%int_0.5c6]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:     %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:     %bound_method.loc8_27.1: <bound method> = bound_method %int_0, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:     %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -276,6 +279,8 @@ class Class(U:! type) {
 // CHECK:STDOUT:   %struct_type.n.44a: type = struct_type {.n: Core.IntLiteral} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.b9e: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.ea0: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.d65: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.47a: %ImplicitAs.assoc_type.d65 = assoc_entity element0, imports.%Main.import_ref.0cc [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.2ce: <witness> = impl_witness %ImplicitAs.impl_witness_table.1ad, @impl.a8d(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.e14: type = fn_type @Convert.2, @impl.a8d(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.4cb: %Convert.type.e14 = struct_value () [concrete]
@@ -386,6 +391,7 @@ class Class(U:! type) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %.loc9_17.1: %struct_type.n.44a = struct_literal (%int_1)
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.d65 = name_ref Convert, constants.%assoc0.47a [concrete = constants.%assoc0.47a]
 // CHECK:STDOUT:   %impl.elem0: %.940 = impl_witness_access constants.%ImplicitAs.impl_witness.2ce, element0 [concrete = constants.%Convert.4cb]
 // CHECK:STDOUT:   %bound_method.loc9_17.1: <bound method> = bound_method %int_1, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -532,8 +538,10 @@ class Class(U:! type) {
 // CHECK:STDOUT:     %.loc6_3.1: %pattern_type.0b0 = var_pattern %v.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v.var: ref %CompleteClass.e9e = var v
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.ref.loc6: %F.type.b25 = name_ref F, imports.%Main.F [concrete = constants.%F.c41]
 // CHECK:STDOUT:   %.loc6_3.2: ref %CompleteClass.e9e = splice_block %v.var {}
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call.loc6: init %CompleteClass.e9e = call %F.ref.loc6() to %.loc6_3.2
 // CHECK:STDOUT:   assign %v.var, %F.call.loc6
 // CHECK:STDOUT:   %.loc6_27: type = splice_block %CompleteClass [concrete = constants.%CompleteClass.e9e] {
@@ -544,8 +552,8 @@ class Class(U:! type) {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v: ref %CompleteClass.e9e = bind_name v, %v.var
 // CHECK:STDOUT:   %v.ref: ref %CompleteClass.e9e = name_ref v, %v
-// CHECK:STDOUT:   %.loc7_11: %F.type.1bc = specific_constant imports.%Main.import_ref.a52, @CompleteClass(constants.%i32) [concrete = constants.%F.f7c]
 // CHECK:STDOUT:   %F.ref.loc7: %F.type.1bc = name_ref F, %.loc7_11 [concrete = constants.%F.f7c]
+// CHECK:STDOUT:   %.loc7_11: %F.type.1bc = specific_constant imports.%Main.import_ref.a52, @CompleteClass(constants.%i32) [concrete = constants.%F.f7c]
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref.loc7, @F.1(constants.%i32) [concrete = constants.%F.specific_fn]
 // CHECK:STDOUT:   %F.call.loc7: init %i32 = call %F.specific_fn()
 // CHECK:STDOUT:   %.loc7_15.1: %i32 = value_of_initializer %F.call.loc7
@@ -568,8 +576,10 @@ class Class(U:! type) {
 // CHECK:STDOUT:     %.loc11_3.1: %pattern_type.0b0 = var_pattern %v.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v.var: ref %CompleteClass.e9e = var v
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.ref: %F.type.b25 = name_ref F, imports.%Main.F [concrete = constants.%F.c41]
 // CHECK:STDOUT:   %.loc11_3.2: ref %CompleteClass.e9e = splice_block %v.var {}
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %CompleteClass.e9e = call %F.ref() to %.loc11_3.2
 // CHECK:STDOUT:   assign %v.var, %F.call
 // CHECK:STDOUT:   %.loc11_27: type = splice_block %CompleteClass [concrete = constants.%CompleteClass.e9e] {
@@ -642,6 +652,8 @@ class Class(U:! type) {
 // CHECK:STDOUT:   %CompleteClass.elem.426: type = unbound_element_type %CompleteClass.a06, %i32 [concrete]
 // CHECK:STDOUT:   %F.type.0aa: type = fn_type @F.1, @CompleteClass(%i32) [concrete]
 // CHECK:STDOUT:   %F.971: %F.type.0aa = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.cab: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%CompleteClass.0fe) [concrete]
+// CHECK:STDOUT:   %assoc0.2cc: %ImplicitAs.assoc_type.cab = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -701,9 +713,12 @@ class Class(U:! type) {
 // CHECK:STDOUT:     %.loc14_3.1: %pattern_type.062 = var_pattern %v.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v.var: ref %CompleteClass.0fe = var v
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.ref: %F.type.b25 = name_ref F, imports.%Main.F [concrete = constants.%F.c41]
 // CHECK:STDOUT:   %.loc14_34: ref %CompleteClass.a06 = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %CompleteClass.a06 = call %F.ref() to %.loc14_34
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.cab = name_ref Convert, constants.%assoc0.2cc [concrete = constants.%assoc0.2cc]
 // CHECK:STDOUT:   %.loc14_3.2: %CompleteClass.0fe = converted %F.call, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign %v.var, <error>
 // CHECK:STDOUT:   %.loc14_28: type = splice_block %CompleteClass [concrete = constants.%CompleteClass.0fe] {

@@ -190,6 +190,7 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:     %.loc8_28.1: type = splice_block %.loc8_28.3 [concrete = constants.%facet_type] {
 // CHECK:STDOUT:       %Animal.ref: type = name_ref Animal, file.%Animal.decl [concrete = constants.%Animal.type]
 // CHECK:STDOUT:       %Eats.ref: type = name_ref Eats, file.%Eats.decl [concrete = constants.%Eats.type]
+// CHECK:STDOUT:       %Op.ref: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc8_28.1: <bound method> = bound_method %Animal.ref, %impl.elem0 [concrete = constants.%Op.bound]
 // CHECK:STDOUT:       %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -459,6 +460,7 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:     %.loc7_22.1: type = splice_block %.loc7_22.3 [concrete = constants.%facet_type.6ff] {
 // CHECK:STDOUT:       %Tame.ref: type = name_ref Tame, file.%Tame.decl [concrete = constants.%Tame.type]
 // CHECK:STDOUT:       %Eats.ref: type = name_ref Eats, file.%Eats.decl [concrete = constants.%Eats.type]
+// CHECK:STDOUT:       %Op.ref: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc7_22.1: <bound method> = bound_method %Tame.ref, %impl.elem0 [concrete = constants.%Op.bound.9f8]
 // CHECK:STDOUT:       %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -484,12 +486,14 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:     %.loc9_39.1: type = splice_block %.loc9_39.3 [concrete = constants.%facet_type.a95] {
 // CHECK:STDOUT:       %Eats.ref: type = name_ref Eats, file.%Eats.decl [concrete = constants.%Eats.type]
 // CHECK:STDOUT:       %Animal.ref: type = name_ref Animal, file.%Animal.decl [concrete = constants.%Animal.type]
+// CHECK:STDOUT:       %Op.ref.loc9_30: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0.loc9_30: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc9_30.1: <bound method> = bound_method %Eats.ref, %impl.elem0.loc9_30 [concrete = constants.%Op.bound.d46]
 // CHECK:STDOUT:       %specific_fn.loc9_30: <specific function> = specific_function %impl.elem0.loc9_30, @Op.2(type) [concrete = constants.%Op.specific_fn]
 // CHECK:STDOUT:       %bound_method.loc9_30.2: <bound method> = bound_method %Eats.ref, %specific_fn.loc9_30 [concrete = constants.%bound_method.f8f]
 // CHECK:STDOUT:       %type.and.loc9_30: init type = call %bound_method.loc9_30.2(%Eats.ref, %Animal.ref) [concrete = constants.%facet_type.c3f]
 // CHECK:STDOUT:       %Tame.ref: type = name_ref Tame, file.%Tame.decl [concrete = constants.%Tame.type]
+// CHECK:STDOUT:       %Op.ref.loc9_39: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0.loc9_39: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc9_39.1: <bound method> = bound_method %type.and.loc9_30, %impl.elem0.loc9_39 [concrete = constants.%Op.bound.c0a]
 // CHECK:STDOUT:       %specific_fn.loc9_39: <specific function> = specific_function %impl.elem0.loc9_39, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -786,6 +790,7 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:     %.loc9_23.1: type = splice_block %.loc9_23.3 [concrete = constants.%facet_type.6ff] {
 // CHECK:STDOUT:       %Tame.ref: type = name_ref Tame, file.%Tame.decl [concrete = constants.%Tame.type]
 // CHECK:STDOUT:       %Eats.ref: type = name_ref Eats, file.%Eats.decl [concrete = constants.%Eats.type]
+// CHECK:STDOUT:       %Op.ref: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc9_23.1: <bound method> = bound_method %Tame.ref, %impl.elem0 [concrete = constants.%Op.bound.9f8]
 // CHECK:STDOUT:       %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -811,6 +816,7 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:     %.loc11_33.1: type = splice_block %.loc11_33.3 [concrete = constants.%facet_type.65c] {
 // CHECK:STDOUT:       %Animal.ref: type = name_ref Animal, file.%Animal.decl [concrete = constants.%Animal.type]
 // CHECK:STDOUT:       %Tame.ref: type = name_ref Tame, file.%Tame.decl [concrete = constants.%Tame.type]
+// CHECK:STDOUT:       %Op.ref: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:       %impl.elem0: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc11_33.1: <bound method> = bound_method %Animal.ref, %impl.elem0 [concrete = constants.%Op.bound.fe3]
 // CHECK:STDOUT:       %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -1658,8 +1664,8 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @As.%Dest.loc9_14.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.1.%Self.as_type.loc10_20.1 (%Self.as_type.7f0) = value_param call_param0
 // CHECK:STDOUT:       %.loc10_20.1: type = splice_block %.loc10_20.3 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)] {
-// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.ref: @Convert.1.%As.type (%As.type.8ba) = name_ref Self, %.loc10_20.2 [symbolic = %Self (constants.%Self.b4e)]
+// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.as_type.loc10_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:         %.loc10_20.3: type = converted %Self.ref, %Self.as_type.loc10_20.2 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:       }
@@ -1699,8 +1705,8 @@ fn CallsWithTypeExplicit(U:! type) {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @ImplicitAs.%Dest.loc13_22.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.2.%Self.as_type.loc14_20.1 (%Self.as_type.419) = value_param call_param0
 // CHECK:STDOUT:       %.loc14_20.1: type = splice_block %.loc14_20.3 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)] {
-// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.ref: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = name_ref Self, %.loc14_20.2 [symbolic = %Self (constants.%Self.0f3)]
+// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.as_type.loc14_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:         %.loc14_20.3: type = converted %Self.ref, %Self.as_type.loc14_20.2 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:       }

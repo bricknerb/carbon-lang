@@ -177,6 +177,8 @@ fn Run() {
 // CHECK:STDOUT:   %struct_type.x.c96: type = struct_type {.x: Core.IntLiteral} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.9ba: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.6da: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.e7f: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.0c0: %ImplicitAs.assoc_type.e7f = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.e36 = impl_witness_table (imports.%Core.import_ref.a86), @impl.c81 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.e34: <witness> = impl_witness %ImplicitAs.impl_witness_table.e36, @impl.c81(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.ed5: type = fn_type @Convert.2, @impl.c81(%int_32) [concrete]
@@ -288,6 +290,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc7_3.1: %pattern_type.2f0 = var_pattern %a.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %a.var: ref %Empty = var a
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc7_19.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc7_19.2: init %Empty = class_init (), %a.var [concrete = constants.%Empty.val]
 // CHECK:STDOUT:   %.loc7_3.2: init %Empty = converted %.loc7_19.1, %.loc7_19.2 [concrete = constants.%Empty.val]
@@ -299,8 +302,10 @@ fn Run() {
 // CHECK:STDOUT:     %.loc9_3.1: %pattern_type.f46 = var_pattern %b.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b.var: ref %Field = var b
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %.loc9_25.1: %struct_type.x.c96 = struct_literal (%int_1)
+// CHECK:STDOUT:   %Convert.ref.loc9: %ImplicitAs.assoc_type.e7f = name_ref Convert, constants.%assoc0.0c0 [concrete = constants.%assoc0.0c0]
 // CHECK:STDOUT:   %impl.elem0.loc9: %.d6a = impl_witness_access constants.%ImplicitAs.impl_witness.e34, element0 [concrete = constants.%Convert.16d]
 // CHECK:STDOUT:   %bound_method.loc9_25.1: <bound method> = bound_method %int_1, %impl.elem0.loc9 [concrete = constants.%Convert.bound.43e]
 // CHECK:STDOUT:   %specific_fn.loc9: <specific function> = specific_function %impl.elem0.loc9, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -318,6 +323,7 @@ fn Run() {
 // CHECK:STDOUT:   %x.ref: %Field.elem = name_ref x, imports.%Main.import_ref.4d2 [concrete = imports.%.d33]
 // CHECK:STDOUT:   %.loc10_4: ref %i32 = class_element_access %b.ref, element0
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
+// CHECK:STDOUT:   %Convert.ref.loc10: %ImplicitAs.assoc_type.e7f = name_ref Convert, constants.%assoc0.0c0 [concrete = constants.%assoc0.0c0]
 // CHECK:STDOUT:   %impl.elem0.loc10: %.d6a = impl_witness_access constants.%ImplicitAs.impl_witness.e34, element0 [concrete = constants.%Convert.16d]
 // CHECK:STDOUT:   %bound_method.loc10_7.1: <bound method> = bound_method %int_2, %impl.elem0.loc10 [concrete = constants.%Convert.bound.918]
 // CHECK:STDOUT:   %specific_fn.loc10: <specific function> = specific_function %impl.elem0.loc10, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -330,6 +336,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc12_3.1: %pattern_type.1b8 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %ForwardDeclared.7b34f2.1 = var c
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc12_29.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc12_29.2: init %ForwardDeclared.7b34f2.1 = class_init (), %c.var [concrete = constants.%ForwardDeclared.val]
 // CHECK:STDOUT:   %.loc12_3.2: init %ForwardDeclared.7b34f2.1 = converted %.loc12_29.1, %.loc12_29.2 [concrete = constants.%ForwardDeclared.val]

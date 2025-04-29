@@ -25,6 +25,8 @@ fn While() {
 // CHECK:STDOUT:   %While.type: type = fn_type @While [concrete]
 // CHECK:STDOUT:   %While: %While.type = struct_value () [concrete]
 // CHECK:STDOUT:   %str: String = string_literal "Hello" [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.97e: type = assoc_entity_type @ImplicitAs, @ImplicitAs(bool) [concrete]
+// CHECK:STDOUT:   %assoc0.59d: %ImplicitAs.assoc_type.97e = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -50,6 +52,7 @@ fn While() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !while.cond:
 // CHECK:STDOUT:   %str: String = string_literal "Hello" [concrete = constants.%str]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.97e = name_ref Convert, constants.%assoc0.59d [concrete = constants.%assoc0.59d]
 // CHECK:STDOUT:   %.loc19: bool = converted %str, <error> [concrete = <error>]
 // CHECK:STDOUT:   if <error> br !while.body else br !while.done
 // CHECK:STDOUT:

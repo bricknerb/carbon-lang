@@ -106,6 +106,7 @@ fn CallNegative() {
 // CHECK:STDOUT:       %.loc12_3: @ErrorIfNIsZero.%pattern_type (%pattern_type.896) = var_pattern %v.patt
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v.var: ref @ErrorIfNIsZero.%Int.loc12_20.2 (%Int) = var v
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %.loc12_20: type = splice_block %Int.loc12_20.1 [symbolic = %Int.loc12_20.2 (constants.%Int)] {
 // CHECK:STDOUT:       %Core.ref.loc12: <namespace> = name_ref Core, imports.%Core [concrete = imports.%Core]
 // CHECK:STDOUT:       %Int.ref: %Int.type = name_ref Int, imports.%Core.Int [concrete = constants.%Int.generic]

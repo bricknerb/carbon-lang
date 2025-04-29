@@ -26,6 +26,8 @@ fn Main() -> i32 {
 // CHECK:STDOUT:   %Main: %Main.type = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %int_34: Core.IntLiteral = int_value 34 [concrete]
+// CHECK:STDOUT:   %Add.assoc_type: type = assoc_entity_type @Add [concrete]
+// CHECK:STDOUT:   %assoc0: %Add.assoc_type = assoc_entity element0, imports.%Core.import_ref.6dd [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -35,6 +37,7 @@ fn Main() -> i32 {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.f6c: %Add.assoc_type = import_ref Core//prelude/operators/arithmetic, loc11_41, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -58,6 +61,7 @@ fn Main() -> i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %.loc16: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %int_34: Core.IntLiteral = int_value 34 [concrete = constants.%int_34]
+// CHECK:STDOUT:   %Op.ref: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

@@ -101,6 +101,8 @@ var dyn: Float(dyn_size);
 // CHECK:STDOUT:   %int_64.fab: Core.IntLiteral = int_value 64 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.9ba: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.6da: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.e7f: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.0c0: %ImplicitAs.assoc_type.e7f = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.e36 = impl_witness_table (imports.%Core.import_ref.a86), @impl.c81 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.e34: <witness> = impl_witness %ImplicitAs.impl_witness_table.e36, @impl.c81(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.ed5: type = fn_type @Convert.2, @impl.c81(%int_32) [concrete]
@@ -144,6 +146,7 @@ var dyn: Float(dyn_size);
 // CHECK:STDOUT:   %.loc6_16.1: type = splice_block %.loc6_16.3 [concrete = f64] {
 // CHECK:STDOUT:     %Float.ref: %Float.type = name_ref Float, imports.%Main.Float [concrete = constants.%Float]
 // CHECK:STDOUT:     %int_64: Core.IntLiteral = int_value 64 [concrete = constants.%int_64.fab]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.e7f = name_ref Convert, constants.%assoc0.0c0 [concrete = constants.%assoc0.0c0]
 // CHECK:STDOUT:     %impl.elem0: %.d6a = impl_witness_access constants.%ImplicitAs.impl_witness.e34, element0 [concrete = constants.%Convert.16d]
 // CHECK:STDOUT:     %bound_method.loc6_14.1: <bound method> = bound_method %int_64, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:     %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -202,6 +205,8 @@ var dyn: Float(dyn_size);
 // CHECK:STDOUT:   %pattern_type.501: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.9ba: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.6da: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.e7f: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.0c0: %ImplicitAs.assoc_type.e7f = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.e36 = impl_witness_table (imports.%Core.import_ref.a86), @impl.c81 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.e34: <witness> = impl_witness %ImplicitAs.impl_witness_table.e36, @impl.c81(%int_32.be0) [concrete]
 // CHECK:STDOUT:   %Convert.type.ed5: type = fn_type @Convert.2, @impl.c81(%int_32.be0) [concrete]
@@ -246,6 +251,7 @@ var dyn: Float(dyn_size);
 // CHECK:STDOUT:   %.loc10_28.1: type = splice_block %.loc10_28.3 [concrete = <error>] {
 // CHECK:STDOUT:     %Float.ref.loc10: %Float.type = name_ref Float, imports.%Main.Float [concrete = constants.%Float]
 // CHECK:STDOUT:     %int_32.loc10: Core.IntLiteral = int_value 32 [concrete = constants.%int_32.be0]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.e7f = name_ref Convert, constants.%assoc0.0c0 [concrete = constants.%assoc0.0c0]
 // CHECK:STDOUT:     %impl.elem0: %.d6a = impl_witness_access constants.%ImplicitAs.impl_witness.e34, element0 [concrete = constants.%Convert.16d]
 // CHECK:STDOUT:     %bound_method.loc10_26.1: <bound method> = bound_method %int_32.loc10, %impl.elem0 [concrete = constants.%Convert.bound.cce]
 // CHECK:STDOUT:     %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32.be0) [concrete = constants.%Convert.specific_fn]
@@ -289,6 +295,7 @@ var dyn: Float(dyn_size);
 // CHECK:STDOUT: fn @__global_init() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %int_64: Core.IntLiteral = int_value 64 [concrete = constants.%int_64.fab]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.e7f = name_ref Convert, constants.%assoc0.0c0 [concrete = constants.%assoc0.0c0]
 // CHECK:STDOUT:   %impl.elem0: %.d6a = impl_witness_access constants.%ImplicitAs.impl_witness.e34, element0 [concrete = constants.%Convert.16d]
 // CHECK:STDOUT:   %bound_method.loc12_1.1: <bound method> = bound_method %int_64, %impl.elem0 [concrete = constants.%Convert.bound.575]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32.be0) [concrete = constants.%Convert.specific_fn]

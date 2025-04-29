@@ -51,6 +51,7 @@ fn Run() {
 // CHECK:STDOUT:     %.loc16_3: %pattern_type.7ce = var_pattern %x.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x.var: ref %i32 = var x
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %str: String = string_literal "hello" [concrete = constants.%str]
 // CHECK:STDOUT:   assign %x.var, <error>
 // CHECK:STDOUT:   %.loc16_10: type = splice_block %i32 [concrete = constants.%i32] {

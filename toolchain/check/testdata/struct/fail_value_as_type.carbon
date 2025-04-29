@@ -22,6 +22,8 @@ var x: {.a = 1};
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %struct_type.a: type = struct_type {.a: Core.IntLiteral} [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -46,6 +48,7 @@ var x: {.a = 1};
 // CHECK:STDOUT:   %.1: <error> = splice_block <error> [concrete = <error>] {
 // CHECK:STDOUT:     %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
 // CHECK:STDOUT:     %.loc18_15.1: %struct_type.a = struct_literal (%int_1)
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:     %.loc18_15.2: type = converted %.loc18_15.1, <error> [concrete = <error>]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x: <error> = bind_name x, <error>

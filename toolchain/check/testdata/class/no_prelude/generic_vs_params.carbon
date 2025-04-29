@@ -178,8 +178,8 @@ class Foo[T:! type];
 // CHECK:STDOUT:     %C.ref.loc18: %C.type = name_ref C, %C.decl [concrete = constants.%C.generic]
 // CHECK:STDOUT:     %X.ref.loc18: type = name_ref X, %X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %C.loc18: type = class_type @C, @C(constants.%X) [concrete = constants.%C.fac]
-// CHECK:STDOUT:     %.loc18_12.2: type = specific_constant @C.%GenericNoParams.decl, @C(constants.%X) [concrete = constants.%GenericNoParams.fa1]
 // CHECK:STDOUT:     %GenericNoParams.ref: type = name_ref GenericNoParams, %.loc18_12.2 [concrete = constants.%GenericNoParams.fa1]
+// CHECK:STDOUT:     %.loc18_12.2: type = specific_constant @C.%GenericNoParams.decl, @C(constants.%X) [concrete = constants.%GenericNoParams.fa1]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %d: ref %GenericNoParams.fa1 = bind_name d, %d.var
 // CHECK:STDOUT:   name_binding_decl {
@@ -191,8 +191,8 @@ class Foo[T:! type];
 // CHECK:STDOUT:     %C.ref.loc19: %C.type = name_ref C, %C.decl [concrete = constants.%C.generic]
 // CHECK:STDOUT:     %X.ref.loc19_10: type = name_ref X, %X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %C.loc19: type = class_type @C, @C(constants.%X) [concrete = constants.%C.fac]
-// CHECK:STDOUT:     %.loc19_12: %GenericAndParams.type.c20 = specific_constant @C.%GenericAndParams.decl, @C(constants.%X) [concrete = constants.%GenericAndParams.generic.a55]
 // CHECK:STDOUT:     %GenericAndParams.ref.loc19: %GenericAndParams.type.c20 = name_ref GenericAndParams, %.loc19_12 [concrete = constants.%GenericAndParams.generic.a55]
+// CHECK:STDOUT:     %.loc19_12: %GenericAndParams.type.c20 = specific_constant @C.%GenericAndParams.decl, @C(constants.%X) [concrete = constants.%GenericAndParams.generic.a55]
 // CHECK:STDOUT:     %X.ref.loc19_30: type = name_ref X, %X.decl [concrete = constants.%X]
 // CHECK:STDOUT:     %GenericAndParams.loc19: type = class_type @GenericAndParams.2, @GenericAndParams.2(constants.%X, constants.%X) [concrete = constants.%GenericAndParams.91f]
 // CHECK:STDOUT:   }

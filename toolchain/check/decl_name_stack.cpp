@@ -180,7 +180,7 @@ auto DeclNameStack::AddNameOrDiagnose(NameContext name_context,
                                       SemIR::AccessKind access_kind) -> void {
   if (name_context.state == DeclNameStack::NameContext::State::Poisoned) {
     DiagnosePoisonedName(*context_, name_context.name_id_for_new_inst(),
-                         name_context.poisoning_loc_id, name_context.loc_id);
+                         name_context.poisoning_inst_id, name_context.loc_id);
   } else if (auto id = name_context.prev_inst_id(); id.has_value()) {
     DiagnoseDuplicateName(*context_, name_context.name_id, name_context.loc_id,
                           SemIR::LocId(id));
@@ -195,7 +195,7 @@ auto DeclNameStack::LookupOrAddName(NameContext name_context,
     -> SemIR::ScopeLookupResult {
   if (name_context.state == NameContext::State::Poisoned) {
     return SemIR::ScopeLookupResult::MakePoisoned(
-        name_context.poisoning_loc_id);
+        name_context.poisoning_inst_id);
   }
   if (auto id = name_context.prev_inst_id(); id.has_value()) {
     return SemIR::ScopeLookupResult::MakeFound(id, access_kind);
@@ -280,11 +280,11 @@ auto DeclNameStack::ApplyAndLookupName(NameContext& name_context,
   }
 
   // For identifier nodes, we need to perform a lookup on the identifier.
-  auto lookup_result = LookupNameInDecl(*context_, name_context.loc_id, name_id,
-                                        name_context.parent_scope_id,
-                                        name_context.initial_scope_index);
+  auto lookup_result = LookupNameInDecl(
+      *context_, name_context.poisoning_inst_id, name_id,
+      name_context.parent_scope_id, name_context.initial_scope_index);
   if (lookup_result.is_poisoned()) {
-    name_context.poisoning_loc_id = lookup_result.poisoning_loc_id();
+    name_context.poisoning_inst_id = lookup_result.poisoning_inst_id();
     name_context.state = NameContext::State::Poisoned;
   } else if (!lookup_result.is_found()) {
     // Invalid indicates an unresolved name. Store it and return.

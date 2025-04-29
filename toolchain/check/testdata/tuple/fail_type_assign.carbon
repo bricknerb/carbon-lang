@@ -25,6 +25,8 @@ var x: (i32, ) = (i32, );
 // CHECK:STDOUT:   %tuple.type.85c: type = tuple_type (type) [concrete]
 // CHECK:STDOUT:   %tuple.type.a1c: type = tuple_type (%i32) [concrete]
 // CHECK:STDOUT:   %pattern_type.b74: type = pattern_type %tuple.type.a1c [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -61,6 +63,7 @@ var x: (i32, ) = (i32, );
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %.loc18_24.1: %tuple.type.85c = tuple_literal (%i32)
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %.loc18_24.2: %i32 = converted %i32, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign file.%x.var, <error>
 // CHECK:STDOUT:   return

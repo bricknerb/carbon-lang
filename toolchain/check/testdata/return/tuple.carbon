@@ -28,6 +28,8 @@ fn Main() -> (i32, i32) {
 // CHECK:STDOUT:   %tuple.type.f94: type = tuple_type (Core.IntLiteral, Core.IntLiteral) [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -79,6 +81,7 @@ fn Main() -> (i32, i32) {
 // CHECK:STDOUT:   %int_15: Core.IntLiteral = int_value 15 [concrete = constants.%int_15.447]
 // CHECK:STDOUT:   %int_35: Core.IntLiteral = int_value 35 [concrete = constants.%int_35.c79]
 // CHECK:STDOUT:   %.loc13_17.1: %tuple.type.f94 = tuple_literal (%int_15, %int_35)
+// CHECK:STDOUT:   %Convert.ref.loc13_17.1: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc13_17.1: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc13_17.1: <bound method> = bound_method %int_15, %impl.elem0.loc13_17.1 [concrete = constants.%Convert.bound.75f]
 // CHECK:STDOUT:   %specific_fn.loc13_17.1: <specific function> = specific_function %impl.elem0.loc13_17.1, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -87,6 +90,7 @@ fn Main() -> (i32, i32) {
 // CHECK:STDOUT:   %.loc13_17.2: init %i32 = converted %int_15, %int.convert_checked.loc13_17.1 [concrete = constants.%int_15.7f7]
 // CHECK:STDOUT:   %tuple.elem0: ref %i32 = tuple_access %return, element0
 // CHECK:STDOUT:   %.loc13_17.3: init %i32 = initialize_from %.loc13_17.2 to %tuple.elem0 [concrete = constants.%int_15.7f7]
+// CHECK:STDOUT:   %Convert.ref.loc13_17.2: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc13_17.2: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc13_17.3: <bound method> = bound_method %int_35, %impl.elem0.loc13_17.2 [concrete = constants.%Convert.bound.76a]
 // CHECK:STDOUT:   %specific_fn.loc13_17.2: <specific function> = specific_function %impl.elem0.loc13_17.2, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]

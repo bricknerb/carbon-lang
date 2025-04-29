@@ -34,6 +34,8 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %array_type.f32: type = array_type %int_4, %i32 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -105,6 +107,7 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %i32.loc17_76: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %int_4: Core.IntLiteral = int_value 4 [concrete = constants.%int_4]
 // CHECK:STDOUT:   %array_type: type = array_type %int_4, %i32.loc17_76 [concrete = constants.%array_type.f32]
+// CHECK:STDOUT:   %Convert.ref.loc17_65.1: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc17_65.1: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc17_65.1: <bound method> = bound_method %int_5, %impl.elem0.loc17_65.1 [concrete = constants.%Convert.bound.4e6]
 // CHECK:STDOUT:   %specific_fn.loc17_65.1: <specific function> = specific_function %impl.elem0.loc17_65.1, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -115,6 +118,7 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %int_0.loc17_65: Core.IntLiteral = int_value 0 [concrete = constants.%int_0]
 // CHECK:STDOUT:   %.loc17_65.4: ref %i32 = array_index %.loc17_65.3, %int_0.loc17_65
 // CHECK:STDOUT:   %.loc17_65.5: init %i32 = initialize_from %.loc17_65.2 to %.loc17_65.4 [concrete = constants.%int_5.0f6]
+// CHECK:STDOUT:   %Convert.ref.loc17_65.2: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc17_65.2: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc17_65.3: <bound method> = bound_method %int_7, %impl.elem0.loc17_65.2 [concrete = constants.%Convert.bound.208]
 // CHECK:STDOUT:   %specific_fn.loc17_65.2: <specific function> = specific_function %impl.elem0.loc17_65.2, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -124,6 +128,7 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %int_1.loc17_65: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %.loc17_65.7: ref %i32 = array_index %.loc17_65.3, %int_1.loc17_65
 // CHECK:STDOUT:   %.loc17_65.8: init %i32 = initialize_from %.loc17_65.6 to %.loc17_65.7 [concrete = constants.%int_7.0b1]
+// CHECK:STDOUT:   %Convert.ref.loc17_65.3: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc17_65.3: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc17_65.5: <bound method> = bound_method %int_1.loc17_61, %impl.elem0.loc17_65.3 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc17_65.3: <specific function> = specific_function %impl.elem0.loc17_65.3, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -133,6 +138,7 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %int_2.loc17_65: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
 // CHECK:STDOUT:   %.loc17_65.10: ref %i32 = array_index %.loc17_65.3, %int_2.loc17_65
 // CHECK:STDOUT:   %.loc17_65.11: init %i32 = initialize_from %.loc17_65.9 to %.loc17_65.10 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %Convert.ref.loc17_65.4: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc17_65.4: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc17_65.7: <bound method> = bound_method %int_9, %impl.elem0.loc17_65.4 [concrete = constants.%Convert.bound.9e2]
 // CHECK:STDOUT:   %specific_fn.loc17_65.4: <specific function> = specific_function %impl.elem0.loc17_65.4, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -148,6 +154,7 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %.loc17_67.2: ref %array_type.f32 = temporary %.loc17_65.3, %.loc17_67.1
 // CHECK:STDOUT:   %int_32.loc17_86: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.loc17_86: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %Convert.ref.loc17_85: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc17_85: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc17_85.1: <bound method> = bound_method %int_2.loc17_85, %impl.elem0.loc17_85 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc17_85: <specific function> = specific_function %impl.elem0.loc17_85, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]

@@ -47,6 +47,8 @@ fn F(a: i32) -> i32 {
 // CHECK:STDOUT:   %ImplicitAs.assoc_type.ca0d85.2: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%T) [symbolic]
 // CHECK:STDOUT:   %assoc0.9f5e6b.2: %ImplicitAs.assoc_type.ca0d85.2 = assoc_entity element0, imports.%Core.import_ref.1c7 [symbolic]
 // CHECK:STDOUT:   %assoc0.dc0: %ImplicitAs.assoc_type.ca0d85.1 = assoc_entity element0, imports.%Core.import_ref.207 [symbolic]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -98,11 +100,12 @@ fn F(a: i32) -> i32 {
 // CHECK:STDOUT:   %int_5: Core.IntLiteral = int_value 5 [concrete = constants.%int_5]
 // CHECK:STDOUT:   %T.ref: type = name_ref T, %T [symbolic = constants.%T]
 // CHECK:STDOUT:   %ImplicitAs.type: type = facet_type <@ImplicitAs, @ImplicitAs(constants.%T)> [symbolic = constants.%ImplicitAs.type.d628ce.2]
+// CHECK:STDOUT:   %Convert.ref.loc21: %ImplicitAs.assoc_type.ca0d85.2 = name_ref Convert, %.loc21_14.1 [symbolic = constants.%assoc0.9f5e6b.2]
 // CHECK:STDOUT:   %.loc21_14.1: %ImplicitAs.assoc_type.ca0d85.2 = specific_constant imports.%Core.import_ref.492, @ImplicitAs(constants.%T) [symbolic = constants.%assoc0.9f5e6b.2]
-// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ca0d85.2 = name_ref Convert, %.loc21_14.1 [symbolic = constants.%assoc0.9f5e6b.2]
 // CHECK:STDOUT:   %.loc21_14.2: %T = converted %int_5, <error> [concrete = <error>]
 // CHECK:STDOUT:   %x: %T = bind_name x, <error>
 // CHECK:STDOUT:   %x.ref: %T = name_ref x, %x
+// CHECK:STDOUT:   %Convert.ref.loc29: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %.loc29: %i32 = converted %x.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

@@ -36,6 +36,8 @@ fn Run() {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -82,8 +84,10 @@ fn Run() {
 // CHECK:STDOUT:     %.loc21_3.1: %pattern_type.7ce = var_pattern %x.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x.var: ref %i32 = var x
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Foo.ref: %Foo.type = name_ref Foo, file.%Foo.decl [concrete = constants.%Foo]
 // CHECK:STDOUT:   %Foo.call: init f64 = call %Foo.ref()
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %.loc21_3.2: %i32 = converted %Foo.call, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign %x.var, <error>
 // CHECK:STDOUT:   %.loc21_10: type = splice_block %i32 [concrete = constants.%i32] {

@@ -171,6 +171,7 @@ fn InitFromAdaptedSpecific(x: i32) -> i32 {
 // CHECK:STDOUT:       %.loc9_3.1: @InitFromStructGeneric.%pattern_type.loc9 (%pattern_type.3c1) = var_pattern %v.patt
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v.var: ref @InitFromStructGeneric.%Class.loc9_17.2 (%Class.fe1) = var v
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %x.ref: @InitFromStructGeneric.%T.loc8_26.2 (%T) = name_ref x, %x
 // CHECK:STDOUT:     %.loc9_28.1: @InitFromStructGeneric.%struct_type.k (%struct_type.k.b21) = struct_literal (%x.ref)
 // CHECK:STDOUT:     %.loc9_28.2: ref @InitFromStructGeneric.%T.loc8_26.2 (%T) = class_element_access %v.var, element0
@@ -199,6 +200,7 @@ fn InitFromAdaptedSpecific(x: i32) -> i32 {
 // CHECK:STDOUT:     %.loc14_3.1: %pattern_type.0fa = var_pattern %v.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v.var: ref %Class.247 = var v
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %x.ref: %i32 = name_ref x, %x
 // CHECK:STDOUT:   %.loc14_30.1: %struct_type.k.0bf = struct_literal (%x.ref)
 // CHECK:STDOUT:   %.loc14_30.2: ref %i32 = class_element_access %v.var, element0

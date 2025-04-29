@@ -138,6 +138,7 @@ class C {
 // CHECK:STDOUT:       %.loc19_7.1: %pattern_type.c48 = var_pattern %c.patt
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %c.var: ref %C = var c
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %.loc19_19.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:     %.loc19_19.2: init %C = class_init (), %c.var [concrete = constants.%C.val]
 // CHECK:STDOUT:     %.loc19_7.2: init %C = converted %.loc19_19.1, %.loc19_19.2 [concrete = constants.%C.val]

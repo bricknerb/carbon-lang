@@ -68,6 +68,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc11_23.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %Never.ref: type = name_ref Never, file.%Never.decl [concrete = constants.%Never]
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc11_23.2: ref %Never = temporary_storage
 // CHECK:STDOUT:   %.loc11_23.3: ref %Never = temporary %.loc11_23.2, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc11_23.4: ref %Never = converted %.loc11_23.1, %.loc11_23.3 [concrete = <error>]

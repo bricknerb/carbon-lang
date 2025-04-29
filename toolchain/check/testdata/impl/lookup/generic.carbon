@@ -886,8 +886,8 @@ fn G(x: A) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_14.1: type = splice_block %.loc5_14.3 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self.322)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%HasF.type (%HasF.type.901) = name_ref Self, %.loc5_14.2 [symbolic = %Self (constants.%Self.322)]
+// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self.322)]
 // CHECK:STDOUT:         %Self.as_type.loc5_14.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_14.3: type = converted %Self.ref, %Self.as_type.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -954,8 +954,8 @@ fn G(x: A) {
 // CHECK:STDOUT:   %.loc13_12: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc13_13: type = converted %.loc13_12, constants.%empty_struct_type [concrete = constants.%empty_struct_type]
 // CHECK:STDOUT:   %HasF.type: type = facet_type <@HasF, @HasF(constants.%empty_struct_type)> [concrete = constants.%HasF.type.072]
-// CHECK:STDOUT:   %.loc13_14: %HasF.assoc_type.9e4 = specific_constant @HasF.%assoc0.loc5_21.1, @HasF(constants.%empty_struct_type) [concrete = constants.%assoc0.f76]
 // CHECK:STDOUT:   %F.ref: %HasF.assoc_type.9e4 = name_ref F, %.loc13_14 [concrete = constants.%assoc0.f76]
+// CHECK:STDOUT:   %.loc13_14: %HasF.assoc_type.9e4 = specific_constant @HasF.%assoc0.loc5_21.1, @HasF(constants.%empty_struct_type) [concrete = constants.%assoc0.f76]
 // CHECK:STDOUT:   %impl.elem0: %.21f = impl_witness_access constants.%HasF.impl_witness.25d, element0 [concrete = constants.%F.8c6]
 // CHECK:STDOUT:   %bound_method.loc13_4: <bound method> = bound_method %x.ref, %impl.elem0
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @F.2(constants.%empty_struct_type) [concrete = constants.%F.specific_fn]
@@ -1303,8 +1303,8 @@ fn G(x: A) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Self.as_type.loc5_14.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_14.1: type = splice_block %.loc5_14.3 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self.322)]
 // CHECK:STDOUT:         %Self.ref: @F.1.%HasF.type (%HasF.type.901) = name_ref Self, %.loc5_14.2 [symbolic = %Self (constants.%Self.322)]
+// CHECK:STDOUT:         %.loc5_14.2: @F.1.%HasF.type (%HasF.type.901) = specific_constant @HasF.%Self.1, @HasF(constants.%T) [symbolic = %Self (constants.%Self.322)]
 // CHECK:STDOUT:         %Self.as_type.loc5_14.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_14.3: type = converted %Self.ref, %Self.as_type.loc5_14.2 [symbolic = %Self.as_type.loc5_14.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -1392,8 +1392,8 @@ fn G(x: A) {
 // CHECK:STDOUT:   %HasF.ref: %HasF.type.fe3 = name_ref HasF, file.%HasF.decl [concrete = constants.%HasF.generic]
 // CHECK:STDOUT:   %B.ref: type = name_ref B, file.%B.decl [concrete = constants.%B]
 // CHECK:STDOUT:   %HasF.type: type = facet_type <@HasF, @HasF(constants.%B)> [concrete = constants.%HasF.type.2f5]
-// CHECK:STDOUT:   %.loc22: %HasF.assoc_type.1af = specific_constant @HasF.%assoc0.loc5_21.1, @HasF(constants.%B) [concrete = constants.%assoc0.402]
 // CHECK:STDOUT:   %F.ref: %HasF.assoc_type.1af = name_ref F, %.loc22 [concrete = constants.%assoc0.402]
+// CHECK:STDOUT:   %.loc22: %HasF.assoc_type.1af = specific_constant @HasF.%assoc0.loc5_21.1, @HasF(constants.%B) [concrete = constants.%assoc0.402]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

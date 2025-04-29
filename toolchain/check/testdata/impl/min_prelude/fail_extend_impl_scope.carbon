@@ -283,6 +283,7 @@ fn F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %.loc25_5.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %Point.ref: type = name_ref Point, file.%Point.decl [concrete = constants.%Point]
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc25_5.2: ref %Point = temporary_storage
 // CHECK:STDOUT:   %.loc25_5.3: init %Point = class_init (), %.loc25_5.2 [concrete = constants.%Point.val]
 // CHECK:STDOUT:   %.loc25_5.4: ref %Point = temporary %.loc25_5.2, %.loc25_5.3

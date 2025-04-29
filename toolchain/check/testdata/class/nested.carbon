@@ -166,6 +166,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc14: %pattern_type.e74 = var_pattern %o.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %o.var: ref %Outer = var o
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Outer.ref: type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer]
 // CHECK:STDOUT:   %o: ref %Outer = bind_name o, %o.var
 // CHECK:STDOUT:   name_binding_decl {
@@ -173,6 +174,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc15: %pattern_type.906 = var_pattern %i.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %i.var: ref %Inner = var i
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Inner.ref: type = name_ref Inner, @Outer.%Inner.decl [concrete = constants.%Inner]
 // CHECK:STDOUT:   %i: ref %Inner = bind_name i, %i.var
 // CHECK:STDOUT:   return
@@ -185,6 +187,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc25: %pattern_type.e74 = var_pattern %o.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %o.var: ref %Outer = var o
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Outer.ref: type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer]
 // CHECK:STDOUT:   %o: ref %Outer = bind_name o, %o.var
 // CHECK:STDOUT:   name_binding_decl {
@@ -192,6 +195,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc26: %pattern_type.906 = var_pattern %i.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %i.var: ref %Inner = var i
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Inner.ref: type = name_ref Inner, @Outer.%Inner.decl [concrete = constants.%Inner]
 // CHECK:STDOUT:   %i: ref %Inner = bind_name i, %i.var
 // CHECK:STDOUT:   return
@@ -204,6 +208,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc32: %pattern_type.e74 = var_pattern %o.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %o.var: ref %Outer = var o
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Outer.ref: type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer]
 // CHECK:STDOUT:   %o: ref %Outer = bind_name o, %o.var
 // CHECK:STDOUT:   name_binding_decl {
@@ -211,6 +216,7 @@ fn F(a: Outer*) {
 // CHECK:STDOUT:     %.loc33: %pattern_type.906 = var_pattern %i.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %i.var: ref %Inner = var i
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Inner.ref: type = name_ref Inner, @Outer.%Inner.decl [concrete = constants.%Inner]
 // CHECK:STDOUT:   %i: ref %Inner = bind_name i, %i.var
 // CHECK:STDOUT:   return

@@ -186,12 +186,14 @@ fn F() {
 // CHECK:STDOUT:     %.loc32_20.1: type = splice_block %.loc32_20.3 [concrete = constants.%facet_type.242] {
 // CHECK:STDOUT:       %A.ref.loc32: type = name_ref A, file.%A.decl [concrete = constants.%A.type]
 // CHECK:STDOUT:       %Empty.ref: type = name_ref Empty, file.%Empty.decl [concrete = constants.%Empty.type]
+// CHECK:STDOUT:       %Op.ref.loc32_12: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0.d45]
 // CHECK:STDOUT:       %impl.elem0.loc32_12: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc32_12.1: <bound method> = bound_method %A.ref.loc32, %impl.elem0.loc32_12 [concrete = constants.%Op.bound.6b1]
 // CHECK:STDOUT:       %specific_fn.loc32_12: <specific function> = specific_function %impl.elem0.loc32_12, @Op.2(type) [concrete = constants.%Op.specific_fn]
 // CHECK:STDOUT:       %bound_method.loc32_12.2: <bound method> = bound_method %A.ref.loc32, %specific_fn.loc32_12 [concrete = constants.%bound_method.96c]
 // CHECK:STDOUT:       %type.and.loc32_12: init type = call %bound_method.loc32_12.2(%A.ref.loc32, %Empty.ref) [concrete = constants.%facet_type.d5f]
 // CHECK:STDOUT:       %B.ref.loc32: type = name_ref B, file.%B.decl [concrete = constants.%B.type]
+// CHECK:STDOUT:       %Op.ref.loc32_20: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0.d45]
 // CHECK:STDOUT:       %impl.elem0.loc32_20: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:       %bound_method.loc32_20.1: <bound method> = bound_method %type.and.loc32_12, %impl.elem0.loc32_20 [concrete = constants.%Op.bound.b5b]
 // CHECK:STDOUT:       %specific_fn.loc32_20: <specific function> = specific_function %impl.elem0.loc32_20, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -410,6 +412,7 @@ fn F() {
 // CHECK:STDOUT:   %G.ref: %G.type = name_ref G, file.%G.decl [concrete = constants.%G]
 // CHECK:STDOUT:   %.loc44_6.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %C.ref: type = name_ref C, file.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc44_6.2: ref %C = temporary_storage
 // CHECK:STDOUT:   %.loc44_6.3: init %C = class_init (), %.loc44_6.2 [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc44_6.4: ref %C = temporary %.loc44_6.2, %.loc44_6.3
@@ -593,8 +596,8 @@ fn F() {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @As.%Dest.loc9_14.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.1.%Self.as_type.loc10_20.1 (%Self.as_type.7f0) = value_param call_param0
 // CHECK:STDOUT:       %.loc10_20.1: type = splice_block %.loc10_20.3 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)] {
-// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.ref: @Convert.1.%As.type (%As.type.8ba) = name_ref Self, %.loc10_20.2 [symbolic = %Self (constants.%Self.b4e)]
+// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.as_type.loc10_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:         %.loc10_20.3: type = converted %Self.ref, %Self.as_type.loc10_20.2 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:       }
@@ -634,8 +637,8 @@ fn F() {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @ImplicitAs.%Dest.loc13_22.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.2.%Self.as_type.loc14_20.1 (%Self.as_type.419) = value_param call_param0
 // CHECK:STDOUT:       %.loc14_20.1: type = splice_block %.loc14_20.3 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)] {
-// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.ref: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = name_ref Self, %.loc14_20.2 [symbolic = %Self (constants.%Self.0f3)]
+// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.as_type.loc14_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:         %.loc14_20.3: type = converted %Self.ref, %Self.as_type.loc14_20.2 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:       }

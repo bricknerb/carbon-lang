@@ -52,6 +52,7 @@ fn Main() {
 // CHECK:STDOUT:     %.loc16_3: %pattern_type.7ce = var_pattern %b.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b.var: ref %i32 = var b
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %a.ref: <error> = name_ref a, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_0: Core.IntLiteral = int_value 0 [concrete = constants.%int_0]
 // CHECK:STDOUT:   assign %b.var, <error>

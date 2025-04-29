@@ -408,6 +408,8 @@ fn ImportedConvertLocal(a: Adapter(C)) -> i32 {
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %Access.type: type = fn_type @Access [concrete]
 // CHECK:STDOUT:   %Access: %Access.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.22b: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%C.98a) [concrete]
+// CHECK:STDOUT:   %assoc0.4c0: %ImplicitAs.assoc_type.22b = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -493,6 +495,7 @@ fn ImportedConvertLocal(a: Adapter(C)) -> i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %Adapter = name_ref a, %a
 // CHECK:STDOUT:   %x.ref: %C.elem.476 = name_ref x, @C.%.loc5 [concrete = @C.%.loc5]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.22b = name_ref Convert, constants.%assoc0.4c0 [concrete = constants.%assoc0.4c0]
 // CHECK:STDOUT:   %.loc21_11.1: %C.98a = converted %a.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc21_11.2: %i32 = class_element_access <error>, element0 [concrete = <error>]
 // CHECK:STDOUT:   return <error>
@@ -639,6 +642,8 @@ fn ImportedConvertLocal(a: Adapter(C)) -> i32 {
 // CHECK:STDOUT:   %pattern_type.501: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %ImportedAccess.type: type = fn_type @ImportedAccess [concrete]
 // CHECK:STDOUT:   %ImportedAccess: %ImportedAccess.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.284: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%C.239) [concrete]
+// CHECK:STDOUT:   %assoc0.003: %ImplicitAs.assoc_type.284 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -716,6 +721,7 @@ fn ImportedConvertLocal(a: Adapter(C)) -> i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %Adapter = name_ref a, %a
 // CHECK:STDOUT:   %x.ref: %C.elem.ed6 = name_ref x, imports.%Main.import_ref.262 [concrete = imports.%.22b]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.284 = name_ref Convert, constants.%assoc0.003 [concrete = constants.%assoc0.003]
 // CHECK:STDOUT:   %.loc15_11.1: %C.239 = converted %a.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc15_11.2: %i32 = class_element_access <error>, element0 [concrete = <error>]
 // CHECK:STDOUT:   return <error>

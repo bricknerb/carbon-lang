@@ -241,8 +241,8 @@ fn Interface.C.F[self: Self](U:! type, u: U) -> U { return u; }
 // CHECK:STDOUT:     %U.ref.loc20_49: type = name_ref U, %U.loc20 [symbolic = %U.loc14_22.1 (constants.%U)]
 // CHECK:STDOUT:     %self.param.loc20: @F.%C (%C) = value_param call_param0
 // CHECK:STDOUT:     %.loc20_24.1: type = splice_block %Self.ref.loc20 [symbolic = %C (constants.%C)] {
-// CHECK:STDOUT:       %.loc20_24.2: type = specific_constant constants.%C, @C(constants.%Self) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:       %Self.ref.loc20: type = name_ref Self, %.loc20_24.2 [symbolic = %C (constants.%C)]
+// CHECK:STDOUT:       %.loc20_24.2: type = specific_constant constants.%C, @C(constants.%Self) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %self.loc20: @F.%C (%C) = bind_name self, %self.param.loc20
 // CHECK:STDOUT:     %U.loc20: type = bind_symbolic_name U, 1 [symbolic = %U.loc14_22.1 (constants.%U)]
@@ -283,8 +283,8 @@ fn Interface.C.F[self: Self](U:! type, u: U) -> U { return u; }
 // CHECK:STDOUT:       %U.ref.loc14_41: type = name_ref U, %U.loc14_22.2 [symbolic = %U.loc14_22.1 (constants.%U)]
 // CHECK:STDOUT:       %self.param.loc14: @F.%C (%C) = value_param call_param0
 // CHECK:STDOUT:       %.loc14_16.1: type = splice_block %Self.ref.loc14 [symbolic = %C (constants.%C)] {
-// CHECK:STDOUT:         %.loc14_16.2: type = specific_constant constants.%C, @C(constants.%Self) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:         %Self.ref.loc14: type = name_ref Self, %.loc14_16.2 [symbolic = %C (constants.%C)]
+// CHECK:STDOUT:         %.loc14_16.2: type = specific_constant constants.%C, @C(constants.%Self) [symbolic = %C (constants.%C)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self.loc14: @F.%C (%C) = bind_name self, %self.param.loc14
 // CHECK:STDOUT:       %U.loc14_22.2: type = bind_symbolic_name U, 1 [symbolic = %U.loc14_22.1 (constants.%U)]

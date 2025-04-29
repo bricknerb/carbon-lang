@@ -276,6 +276,8 @@ fn F(a: IntAdapter) -> i32 {
 // CHECK:STDOUT:   %pattern_type.080: type = pattern_type %SomeClassAdapter [concrete]
 // CHECK:STDOUT:   %F.type.b25: type = fn_type @F.2 [concrete]
 // CHECK:STDOUT:   %F.c41: %F.type.b25 = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.8f6: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%SomeClass) [concrete]
+// CHECK:STDOUT:   %assoc0.959: %ImplicitAs.assoc_type.8f6 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -344,6 +346,7 @@ fn F(a: IntAdapter) -> i32 {
 // CHECK:STDOUT:   %a.ref: %SomeClassAdapter = name_ref a, %a
 // CHECK:STDOUT:   %F.ref: %F.type.633 = name_ref F, @SomeClass.%F.decl [concrete = constants.%F.e19]
 // CHECK:STDOUT:   %F.bound: <bound method> = bound_method %a.ref, %F.ref
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.8f6 = name_ref Convert, constants.%assoc0.959 [concrete = constants.%assoc0.959]
 // CHECK:STDOUT:   %.loc23: %SomeClass = converted %a.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %F.bound(<error>)
 // CHECK:STDOUT:   return
@@ -363,6 +366,8 @@ fn F(a: IntAdapter) -> i32 {
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.8f6: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%SomeClass) [concrete]
+// CHECK:STDOUT:   %assoc0.959: %ImplicitAs.assoc_type.8f6 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -434,6 +439,7 @@ fn F(a: IntAdapter) -> i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %SomeClassAdapter = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %SomeClass.elem = name_ref b, @SomeClass.%.loc6 [concrete = @SomeClass.%.loc6]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.8f6 = name_ref Convert, constants.%assoc0.959 [concrete = constants.%assoc0.959]
 // CHECK:STDOUT:   %.loc21_11.1: %SomeClass = converted %a.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc21_11.2: %i32 = class_element_access <error>, element1 [concrete = <error>]
 // CHECK:STDOUT:   return <error>

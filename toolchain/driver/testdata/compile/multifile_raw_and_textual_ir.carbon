@@ -113,7 +113,7 @@ fn B() {
 // CHECK:STDOUT:     import_ir_inst1: {ir_id: ir2, inst_id: inst15}
 // CHECK:STDOUT:   name_scopes:
 // CHECK:STDOUT:     name_scope0:     {inst: inst14, parent_scope: name_scope<none>, has_error: false, extended_scopes: [], names: {name1: inst16, name0: inst17}}
-// CHECK:STDOUT:     name_scope1:     {inst: inst16, parent_scope: name_scope0, has_error: false, extended_scopes: [], names: {name1: inst22}}
+// CHECK:STDOUT:     name_scope1:     {inst: inst16, parent_scope: name_scope0, has_error: false, extended_scopes: [], names: {name1: inst23}}
 // CHECK:STDOUT:   entity_names:
 // CHECK:STDOUT:     entity_name0:    {name: name1, parent_scope: name_scope1, index: -1, is_template: 0}
 // CHECK:STDOUT:   functions:
@@ -135,7 +135,7 @@ fn B() {
 // CHECK:STDOUT:       value_repr:      {kind: none, type: type(inst19)}
 // CHECK:STDOUT:     'type(inst19)':
 // CHECK:STDOUT:       value_repr:      {kind: none, type: type(inst19)}
-// CHECK:STDOUT:     'type(inst24)':
+// CHECK:STDOUT:     'type(inst25)':
 // CHECK:STDOUT:       value_repr:      {kind: none, type: type(inst19)}
 // CHECK:STDOUT:   insts:
 // CHECK:STDOUT:     inst14:          {kind: Namespace, arg0: name_scope0, arg1: inst<none>, type: type(inst(NamespaceType))}
@@ -146,12 +146,12 @@ fn B() {
 // CHECK:STDOUT:     inst19:          {kind: TupleType, arg0: inst_block_empty, type: type(TypeType)}
 // CHECK:STDOUT:     inst20:          {kind: StructValue, arg0: inst_block_empty, type: type(inst18)}
 // CHECK:STDOUT:     inst21:          {kind: NameRef, arg0: name1, arg1: inst16, type: type(inst(NamespaceType))}
-// CHECK:STDOUT:     inst22:          {kind: ImportRefLoaded, arg0: import_ir_inst0, arg1: entity_name0, type: type(inst24)}
-// CHECK:STDOUT:     inst23:          {kind: FunctionDecl, arg0: function1, arg1: inst_block_empty, type: type(inst24)}
-// CHECK:STDOUT:     inst24:          {kind: FunctionType, arg0: function1, arg1: specific<none>, type: type(TypeType)}
-// CHECK:STDOUT:     inst25:          {kind: StructValue, arg0: inst_block_empty, type: type(inst24)}
-// CHECK:STDOUT:     inst26:          {kind: NameRef, arg0: name1, arg1: inst22, type: type(inst24)}
-// CHECK:STDOUT:     inst27:          {kind: Call, arg0: inst26, arg1: inst_block_empty, type: type(inst19)}
+// CHECK:STDOUT:     inst22:          {kind: NameRef, arg0: name1, arg1: inst23, type: type(inst25)}
+// CHECK:STDOUT:     inst23:          {kind: ImportRefLoaded, arg0: import_ir_inst0, arg1: entity_name0, type: type(inst25)}
+// CHECK:STDOUT:     inst24:          {kind: FunctionDecl, arg0: function1, arg1: inst_block_empty, type: type(inst25)}
+// CHECK:STDOUT:     inst25:          {kind: FunctionType, arg0: function1, arg1: specific<none>, type: type(TypeType)}
+// CHECK:STDOUT:     inst26:          {kind: StructValue, arg0: inst_block_empty, type: type(inst25)}
+// CHECK:STDOUT:     inst27:          {kind: Call, arg0: inst22, arg1: inst_block_empty, type: type(inst19)}
 // CHECK:STDOUT:     inst28:          {kind: Return}
 // CHECK:STDOUT:   constant_values:
 // CHECK:STDOUT:     inst14:          concrete_constant(inst14)
@@ -161,11 +161,11 @@ fn B() {
 // CHECK:STDOUT:     inst19:          concrete_constant(inst19)
 // CHECK:STDOUT:     inst20:          concrete_constant(inst20)
 // CHECK:STDOUT:     inst21:          concrete_constant(inst16)
-// CHECK:STDOUT:     inst22:          concrete_constant(inst25)
-// CHECK:STDOUT:     inst23:          concrete_constant(inst25)
-// CHECK:STDOUT:     inst24:          concrete_constant(inst24)
+// CHECK:STDOUT:     inst22:          concrete_constant(inst26)
+// CHECK:STDOUT:     inst23:          concrete_constant(inst26)
+// CHECK:STDOUT:     inst24:          concrete_constant(inst26)
 // CHECK:STDOUT:     inst25:          concrete_constant(inst25)
-// CHECK:STDOUT:     inst26:          concrete_constant(inst25)
+// CHECK:STDOUT:     inst26:          concrete_constant(inst26)
 // CHECK:STDOUT:   symbolic_constants: {}
 // CHECK:STDOUT:   inst_blocks:
 // CHECK:STDOUT:     inst_block_empty: {}
@@ -173,12 +173,12 @@ fn B() {
 // CHECK:STDOUT:       0:               inst17
 // CHECK:STDOUT:     import_refs:
 // CHECK:STDOUT:       0:               inst16
-// CHECK:STDOUT:       1:               inst22
+// CHECK:STDOUT:       1:               inst23
 // CHECK:STDOUT:     global_init:     {}
 // CHECK:STDOUT:     inst_block4:     {}
 // CHECK:STDOUT:     inst_block5:
 // CHECK:STDOUT:       0:               inst21
-// CHECK:STDOUT:       1:               inst26
+// CHECK:STDOUT:       1:               inst22
 // CHECK:STDOUT:       2:               inst27
 // CHECK:STDOUT:       3:               inst28
 // CHECK:STDOUT:     inst_block6:

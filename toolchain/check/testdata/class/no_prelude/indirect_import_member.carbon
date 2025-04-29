@@ -435,9 +435,9 @@ var x: () = D.C.F();
 // CHECK:STDOUT:   %Main.import_ref.8f2: <witness> = import_ref Main//e, loc8_1, loaded [concrete = constants.%complete_type]
 // CHECK:STDOUT:   %Main.import_ref.cab = import_ref Main//e, inst18 [no loc], unloaded
 // CHECK:STDOUT:   %Main.import_ref.bf1: type = import_ref Main//e, loc7_9, loaded [concrete = constants.%C]
-// CHECK:STDOUT:   %Main.import_ref.8f3: <witness> = import_ref Main//e, inst24 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %Main.import_ref.db8 = import_ref Main//e, inst25 [indirect], unloaded
-// CHECK:STDOUT:   %Main.import_ref.c85: %F.type = import_ref Main//e, inst26 [indirect], loaded [concrete = constants.%F]
+// CHECK:STDOUT:   %Main.import_ref.8f3: <witness> = import_ref Main//e, inst25 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %Main.import_ref.db8 = import_ref Main//e, inst26 [indirect], unloaded
+// CHECK:STDOUT:   %Main.import_ref.c85: %F.type = import_ref Main//e, inst27 [indirect], loaded [concrete = constants.%F]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -504,9 +504,9 @@ var x: () = D.C.F();
 // CHECK:STDOUT:   %Main.import_ref.8f2: <witness> = import_ref Main//e, loc8_1, loaded [concrete = constants.%complete_type]
 // CHECK:STDOUT:   %Main.import_ref.cab = import_ref Main//e, inst18 [no loc], unloaded
 // CHECK:STDOUT:   %Main.import_ref.bf1: type = import_ref Main//e, loc7_9, loaded [concrete = constants.%C]
-// CHECK:STDOUT:   %Main.import_ref.8f3: <witness> = import_ref Main//e, inst24 [indirect], loaded [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %Main.import_ref.db8 = import_ref Main//e, inst25 [indirect], unloaded
-// CHECK:STDOUT:   %Main.import_ref.c85: %F.type = import_ref Main//e, inst26 [indirect], loaded [concrete = constants.%F]
+// CHECK:STDOUT:   %Main.import_ref.8f3: <witness> = import_ref Main//e, inst25 [indirect], loaded [concrete = constants.%complete_type]
+// CHECK:STDOUT:   %Main.import_ref.db8 = import_ref Main//e, inst26 [indirect], unloaded
+// CHECK:STDOUT:   %Main.import_ref.c85: %F.type = import_ref Main//e, inst27 [indirect], loaded [concrete = constants.%F]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {

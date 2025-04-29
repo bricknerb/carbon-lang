@@ -178,6 +178,7 @@ fn G(p: C*) -> const C {
 // CHECK:STDOUT:   %p.ref: %ptr.019 = name_ref p, %p
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%C) [concrete = constants.%F.specific_fn.04a]
 // CHECK:STDOUT:   %.loc8_13: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %C = call %F.specific_fn(%p.ref) to %.loc8_13
 // CHECK:STDOUT:   return %F.call to %return
 // CHECK:STDOUT: }
@@ -328,6 +329,7 @@ fn G(p: C*) -> const C {
 // CHECK:STDOUT:   %p.ref: %ptr.801 = name_ref p, %p
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%C) [concrete = constants.%F.specific_fn.04a]
 // CHECK:STDOUT:   %.loc8_19: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %C = call %F.specific_fn(%p.ref) to %.loc8_19
 // CHECK:STDOUT:   return %F.call to %return
 // CHECK:STDOUT: }

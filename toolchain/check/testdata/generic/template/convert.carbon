@@ -78,6 +78,8 @@ fn Test(d: D) -> i32 {
 // CHECK:STDOUT:   %ImplicitAs.generic: %ImplicitAs.type.cc7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.96d: <witness> = impl_witness @C.%ImplicitAs.impl_witness_table [concrete]
 // CHECK:STDOUT:   %pattern_type.c48: type = pattern_type %C [concrete]
 // CHECK:STDOUT:   %Convert.type.dae: type = fn_type @Convert.2 [concrete]
@@ -98,8 +100,9 @@ fn Test(d: D) -> i32 {
 // CHECK:STDOUT:     %.fbe: %C = as_compatible @F.%x.ref
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.2ce: type = fn_type_with_self_type %Convert.type.1b6, %ImplicitAs.facet [concrete]
-// CHECK:STDOUT:   %inst.splice_block.1fd: <instruction> = inst_value [concrete] {
-// CHECK:STDOUT:     %.96d: %i32 = splice_block %.521 {
+// CHECK:STDOUT:   %inst.splice_block.58a: <instruction> = inst_value [concrete] {
+// CHECK:STDOUT:     %.654: %i32 = splice_block %.521 {
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, %assoc0.af5 [concrete = %assoc0.af5]
 // CHECK:STDOUT:       %impl.elem0: %.2ce = impl_witness_access %ImplicitAs.impl_witness.96d, element0 [concrete = %Convert.937]
 // CHECK:STDOUT:       %bound_method: <bound method> = bound_method %.fbe, %impl.elem0
 // CHECK:STDOUT:       %Convert.call: init %i32 = call %bound_method(%.fbe)
@@ -293,7 +296,7 @@ fn Test(d: D) -> i32 {
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %require_complete => constants.%complete_type.54b
 // CHECK:STDOUT:   %.loc5_11.3 => constants.%inst.as_compatible.c0a
-// CHECK:STDOUT:   %.loc5_11.4 => constants.%inst.splice_block.1fd
+// CHECK:STDOUT:   %.loc5_11.4 => constants.%inst.splice_block.58a
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_cannot_convert.carbon
@@ -318,8 +321,11 @@ fn Test(d: D) -> i32 {
 // CHECK:STDOUT:   %inst.as_compatible: <instruction> = inst_value [concrete] {
 // CHECK:STDOUT:     %.63b: %D = as_compatible @F.%x.ref
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %inst.splice_block: <instruction> = inst_value [concrete] {
-// CHECK:STDOUT:     %.593: <error> = splice_block <error> [concrete = <error>] {
+// CHECK:STDOUT:     %.176: <error> = splice_block <error> [concrete = <error>] {
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, %assoc0.af5 [concrete = %assoc0.af5]
 // CHECK:STDOUT:       %.16e: %i32 = converted %.63b, <error> [concrete = <error>]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:   }

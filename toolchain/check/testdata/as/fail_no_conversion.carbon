@@ -26,6 +26,8 @@ let n: (i32, i32) = 1 as (i32, i32);
 // CHECK:STDOUT:   %tuple.type.d07: type = tuple_type (%i32, %i32) [concrete]
 // CHECK:STDOUT:   %pattern_type.511: type = pattern_type %tuple.type.d07 [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %As.assoc_type.c31: type = assoc_entity_type @As, @As(%tuple.type.d07) [concrete]
+// CHECK:STDOUT:   %assoc0.940: %As.assoc_type.c31 = assoc_entity element0, imports.%Core.import_ref.708 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -67,6 +69,7 @@ let n: (i32, i32) = 1 as (i32, i32);
 // CHECK:STDOUT:   %i32.loc18_32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %.loc18_35.1: %tuple.type.24b = tuple_literal (%i32.loc18_27, %i32.loc18_32)
 // CHECK:STDOUT:   %.loc18_35.2: type = converted %.loc18_35.1, constants.%tuple.type.d07 [concrete = constants.%tuple.type.d07]
+// CHECK:STDOUT:   %Convert.ref: %As.assoc_type.c31 = name_ref Convert, constants.%assoc0.940 [concrete = constants.%assoc0.940]
 // CHECK:STDOUT:   %.loc18_23: %tuple.type.d07 = converted %int_1, <error> [concrete = <error>]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }

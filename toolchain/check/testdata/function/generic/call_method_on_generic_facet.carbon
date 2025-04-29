@@ -257,8 +257,8 @@ fn G() {
 // CHECK:STDOUT:   fn() {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %U.ref: @CallGenericMethod.%Generic.type.loc29_45.2 (%Generic.type.91ccba.2) = name_ref U, %U.loc29_32.1 [symbolic = %U.loc29_32.2 (constants.%U)]
-// CHECK:STDOUT:     %.loc30_4.1: @CallGenericMethod.%Generic.assoc_type (%Generic.assoc_type.0fd877.2) = specific_constant @Generic.%assoc0.loc12_9.1, @Generic(constants.%T) [symbolic = %assoc0 (constants.%assoc0.2966cb.2)]
 // CHECK:STDOUT:     %F.ref: @CallGenericMethod.%Generic.assoc_type (%Generic.assoc_type.0fd877.2) = name_ref F, %.loc30_4.1 [symbolic = %assoc0 (constants.%assoc0.2966cb.2)]
+// CHECK:STDOUT:     %.loc30_4.1: @CallGenericMethod.%Generic.assoc_type (%Generic.assoc_type.0fd877.2) = specific_constant @Generic.%assoc0.loc12_9.1, @Generic(constants.%T) [symbolic = %assoc0 (constants.%assoc0.2966cb.2)]
 // CHECK:STDOUT:     %U.as_type.loc30_4.1: type = facet_access_type %U.ref [symbolic = %U.as_type.loc30_4.2 (constants.%U.as_type)]
 // CHECK:STDOUT:     %.loc30_4.2: type = converted %U.ref, %U.as_type.loc30_4.1 [symbolic = %U.as_type.loc30_4.2 (constants.%U.as_type)]
 // CHECK:STDOUT:     %impl.elem0.loc30_4.1: @CallGenericMethod.%.loc30_4.3 (%.177) = impl_witness_access constants.%Generic.lookup_impl_witness, element0 [symbolic = %impl.elem0.loc30_4.2 (constants.%impl.elem0)]

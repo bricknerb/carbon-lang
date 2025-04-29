@@ -22,6 +22,8 @@ var x: type = 42;
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %pattern_type.98f: type = pattern_type type [concrete]
 // CHECK:STDOUT:   %int_42: Core.IntLiteral = int_value 42 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -49,6 +51,7 @@ var x: type = 42;
 // CHECK:STDOUT: fn @__global_init() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %int_42: Core.IntLiteral = int_value 42 [concrete = constants.%int_42]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc18: type = converted %int_42, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign file.%x.var, <error>
 // CHECK:STDOUT:   return

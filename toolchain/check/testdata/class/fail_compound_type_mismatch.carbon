@@ -44,6 +44,8 @@ fn AccessBInA(a: A) -> i32 {
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %AccessBInA.type: type = fn_type @AccessBInA [concrete]
 // CHECK:STDOUT:   %AccessBInA: %AccessBInA.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.4a0: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%B) [concrete]
+// CHECK:STDOUT:   %assoc0.b08: %ImplicitAs.assoc_type.4a0 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -112,6 +114,7 @@ fn AccessBInA(a: A) -> i32 {
 // CHECK:STDOUT:   %a.ref: %A = name_ref a, %a
 // CHECK:STDOUT:   %B.ref: type = name_ref B, file.%B.decl [concrete = constants.%B]
 // CHECK:STDOUT:   %b.ref: %B.elem = name_ref b, @B.%.loc16 [concrete = @B.%.loc16]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.4a0 = name_ref Convert, constants.%assoc0.b08 [concrete = constants.%assoc0.b08]
 // CHECK:STDOUT:   %.loc27_11.1: %B = converted %a.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc27_11.2: %i32 = class_element_access <error>, element0 [concrete = <error>]
 // CHECK:STDOUT:   return <error>

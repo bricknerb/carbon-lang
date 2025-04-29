@@ -141,6 +141,7 @@ fn F(s: {.a: A}, b: B) {
 // CHECK:STDOUT:   %F.ref.loc28: %F.type.649 = name_ref F, @A.%F.decl [concrete = constants.%F.485]
 // CHECK:STDOUT:   %F.bound.loc28: <bound method> = bound_method %.loc28_4.1, %F.ref.loc28
 // CHECK:STDOUT:   %.loc28_4.2: ref %A = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %addr.loc28: %ptr.6db = addr_of %.loc28_4.2
 // CHECK:STDOUT:   %F.call.loc28: init %empty_tuple.type = call %F.bound.loc28(%addr.loc28)
 // CHECK:STDOUT:   %b.ref: %B = name_ref b, %b
@@ -150,6 +151,7 @@ fn F(s: {.a: A}, b: B) {
 // CHECK:STDOUT:   %F.ref.loc39: %F.type.649 = name_ref F, @A.%F.decl [concrete = constants.%F.485]
 // CHECK:STDOUT:   %F.bound.loc39: <bound method> = bound_method %.loc39_4.2, %F.ref.loc39
 // CHECK:STDOUT:   %.loc39_4.3: ref %A = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %addr.loc39: %ptr.6db = addr_of %.loc39_4.3
 // CHECK:STDOUT:   %F.call.loc39: init %empty_tuple.type = call %F.bound.loc39(%addr.loc39)
 // CHECK:STDOUT:   return

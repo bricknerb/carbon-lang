@@ -63,6 +63,8 @@ fn ConvertIncomplete(p: Incomplete*) -> A2* { return p; }
 // CHECK:STDOUT:   %pattern_type.d72: type = pattern_type %ptr.678 [concrete]
 // CHECK:STDOUT:   %ConvertUnrelated.type: type = fn_type @ConvertUnrelated [concrete]
 // CHECK:STDOUT:   %ConvertUnrelated: %ConvertUnrelated.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.bdb: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.678) [concrete]
+// CHECK:STDOUT:   %assoc0.e50: %ImplicitAs.assoc_type.bdb = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %Incomplete: type = class_type @Incomplete [concrete]
 // CHECK:STDOUT:   %ptr.c62: type = ptr_type %Incomplete [concrete]
 // CHECK:STDOUT:   %pattern_type.275: type = pattern_type %ptr.c62 [concrete]
@@ -70,6 +72,8 @@ fn ConvertIncomplete(p: Incomplete*) -> A2* { return p; }
 // CHECK:STDOUT:   %pattern_type.2c5: type = pattern_type %ptr.590 [concrete]
 // CHECK:STDOUT:   %ConvertIncomplete.type: type = fn_type @ConvertIncomplete [concrete]
 // CHECK:STDOUT:   %ConvertIncomplete: %ConvertIncomplete.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.a76: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.590) [concrete]
+// CHECK:STDOUT:   %assoc0.74b: %ImplicitAs.assoc_type.a76 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -181,6 +185,7 @@ fn ConvertIncomplete(p: Incomplete*) -> A2* { return p; }
 // CHECK:STDOUT: fn @ConvertUnrelated(%p.param: %ptr.afe) -> %ptr.678 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.afe = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.bdb = name_ref Convert, constants.%assoc0.e50 [concrete = constants.%assoc0.e50]
 // CHECK:STDOUT:   %.loc31_46: %ptr.678 = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
@@ -188,6 +193,7 @@ fn ConvertIncomplete(p: Incomplete*) -> A2* { return p; }
 // CHECK:STDOUT: fn @ConvertIncomplete(%p.param: %ptr.c62) -> %ptr.590 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.c62 = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.a76 = name_ref Convert, constants.%assoc0.74b [concrete = constants.%assoc0.74b]
 // CHECK:STDOUT:   %.loc42_55: %ptr.590 = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

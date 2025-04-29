@@ -182,6 +182,8 @@ class Class {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Class: type = class_type @Class [concrete]
 // CHECK:STDOUT:   %pattern_type.761: type = pattern_type %Class [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
@@ -213,6 +215,7 @@ class Class {
 // CHECK:STDOUT:     %return.param_patt: <error> = out_param_pattern %return.patt, call_param1
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     %self.ref: %Class = name_ref self, %self
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:     %.loc12: type = converted %self.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:     %self.param: %Class = value_param call_param0
 // CHECK:STDOUT:     %Self.ref: type = name_ref Self, constants.%Class [concrete = constants.%Class]

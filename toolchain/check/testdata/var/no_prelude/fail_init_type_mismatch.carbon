@@ -42,6 +42,7 @@ var x: {} = ();
 // CHECK:STDOUT: fn @__global_init() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %.loc15_14.1: %empty_tuple.type = tuple_literal ()
+// CHECK:STDOUT:   %Convert.ref: <error> = name_ref Convert, <error> [concrete = <error>]
 // CHECK:STDOUT:   %empty_tuple: %empty_tuple.type = tuple_value () [concrete = constants.%empty_tuple]
 // CHECK:STDOUT:   %.loc15_14.2: %empty_tuple.type = converted %.loc15_14.1, %empty_tuple [concrete = constants.%empty_tuple]
 // CHECK:STDOUT:   %.loc15_1: %empty_struct_type = converted %.loc15_14.1, <error> [concrete = <error>]

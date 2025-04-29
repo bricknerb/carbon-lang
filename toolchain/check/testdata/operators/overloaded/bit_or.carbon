@@ -57,9 +57,13 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:   %BitOrAssign.facet: %BitOrAssign.type = facet_value %C, (%BitOrAssign.impl_witness) [concrete]
 // CHECK:STDOUT:   %TestOp.type: type = fn_type @TestOp [concrete]
 // CHECK:STDOUT:   %TestOp: %TestOp.type = struct_value () [concrete]
+// CHECK:STDOUT:   %BitOr.assoc_type: type = assoc_entity_type @BitOr [concrete]
+// CHECK:STDOUT:   %assoc0.e16: %BitOr.assoc_type = assoc_entity element0, imports.%Core.import_ref.bab [concrete]
 // CHECK:STDOUT:   %.421: type = fn_type_with_self_type %Op.type.9bb, %BitOr.facet [concrete]
 // CHECK:STDOUT:   %TestAssign.type: type = fn_type @TestAssign [concrete]
 // CHECK:STDOUT:   %TestAssign: %TestAssign.type = struct_value () [concrete]
+// CHECK:STDOUT:   %BitOrAssign.assoc_type: type = assoc_entity_type @BitOrAssign [concrete]
+// CHECK:STDOUT:   %assoc0.285: %BitOrAssign.assoc_type = assoc_entity element0, imports.%Core.import_ref.12b [concrete]
 // CHECK:STDOUT:   %.8bd: type = fn_type_with_self_type %Op.type.099, %BitOrAssign.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -71,7 +75,9 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.BitOr: type = import_ref Core//prelude/operators/bitwise, BitOr, loaded [concrete = constants.%BitOr.type]
+// CHECK:STDOUT:   %Core.import_ref.823: %BitOr.assoc_type = import_ref Core//prelude/operators/bitwise, loc26_41, loaded [concrete = constants.%assoc0.e16]
 // CHECK:STDOUT:   %Core.BitOrAssign: type = import_ref Core//prelude/operators/bitwise, BitOrAssign, loaded [concrete = constants.%BitOrAssign.type]
+// CHECK:STDOUT:   %Core.import_ref.81e: %BitOrAssign.assoc_type = import_ref Core//prelude/operators/bitwise, loc31_39, loaded [concrete = constants.%assoc0.285]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -210,9 +216,11 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %BitOr.assoc_type = name_ref Op, imports.%Core.import_ref.823 [concrete = constants.%assoc0.e16]
 // CHECK:STDOUT:   %impl.elem0: %.421 = impl_witness_access constants.%BitOr.impl_witness, element0 [concrete = constants.%Op.59a]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc26: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Op.call: init %C = call %bound_method(%a.ref, %b.ref) to %.loc26
 // CHECK:STDOUT:   return %Op.call to %return
 // CHECK:STDOUT: }
@@ -222,6 +230,7 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:   %a.ref: %ptr.019 = name_ref a, %a
 // CHECK:STDOUT:   %.loc31: ref %C = deref %a.ref
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %BitOrAssign.assoc_type = name_ref Op, imports.%Core.import_ref.81e [concrete = constants.%assoc0.285]
 // CHECK:STDOUT:   %impl.elem0: %.8bd = impl_witness_access constants.%BitOrAssign.impl_witness, element0 [concrete = constants.%Op.b27]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc31, %impl.elem0
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %.loc31

@@ -255,6 +255,8 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %DeriveFromNonType: type = class_type @DeriveFromNonType [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %DeriveFromNonType [concrete]
 // CHECK:STDOUT:   %pattern_type.ffe: type = pattern_type %ptr [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -301,6 +303,7 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @DeriveFromNonType {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc12_16: type = converted %int_32, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc12_18: <error> = base_decl <error>, element0 [concrete]
 // CHECK:STDOUT:   %struct_type.base: type = struct_type {.base: <error>} [concrete = <error>]
@@ -444,6 +447,8 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT:   %pattern_type.600: type = pattern_type %ptr.1ab [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseTuple.type: type = fn_type @ConvertToBadBaseTuple [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseTuple: %ConvertToBadBaseTuple.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.9d4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.1ab) [concrete]
+// CHECK:STDOUT:   %assoc0.f1a: %ImplicitAs.assoc_type.9d4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
@@ -538,6 +543,7 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT: fn @ConvertToBadBaseTuple(%p.param: %ptr.340) -> %ptr.1ab {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.340 = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.9d4 = name_ref Convert, constants.%assoc0.f1a [concrete = constants.%assoc0.f1a]
 // CHECK:STDOUT:   %.loc21_69: %ptr.1ab = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
@@ -563,6 +569,8 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT:   %pattern_type.8dd: type = pattern_type %ptr.3ee [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseStruct.type: type = fn_type @ConvertToBadBaseStruct [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseStruct: %ConvertToBadBaseStruct.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.e71: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.3ee) [concrete]
+// CHECK:STDOUT:   %assoc0.646: %ImplicitAs.assoc_type.e71 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %AccessMemberWithInvalidBaseStruct.type: type = fn_type @AccessMemberWithInvalidBaseStruct [concrete]
 // CHECK:STDOUT:   %AccessMemberWithInvalidBaseStruct: %AccessMemberWithInvalidBaseStruct.type = struct_value () [concrete]
@@ -647,6 +655,7 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT: fn @ConvertToBadBaseStruct(%p.param: %ptr.df0) -> %ptr.3ee {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.df0 = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.e71 = name_ref Convert, constants.%assoc0.646 [concrete = constants.%assoc0.646]
 // CHECK:STDOUT:   %.loc21_82: %ptr.3ee = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
@@ -670,6 +679,8 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT:   %pattern_type.275: type = pattern_type %ptr.c62 [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseIncomplete.type: type = fn_type @ConvertToBadBaseIncomplete [concrete]
 // CHECK:STDOUT:   %ConvertToBadBaseIncomplete: %ConvertToBadBaseIncomplete.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.7be: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.c62) [concrete]
+// CHECK:STDOUT:   %assoc0.22a: %ImplicitAs.assoc_type.7be = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
@@ -753,6 +764,7 @@ fn AccessMemberWithInvalidBaseFinal_NoMember(p: DeriveFromFinal*) -> i32 {
 // CHECK:STDOUT: fn @ConvertToBadBaseIncomplete(%p.param: %ptr.089) -> %ptr.c62 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.089 = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.7be = name_ref Convert, constants.%assoc0.22a [concrete = constants.%assoc0.22a]
 // CHECK:STDOUT:   %.loc28_82: %ptr.c62 = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

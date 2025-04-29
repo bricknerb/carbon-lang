@@ -48,6 +48,8 @@ fn Test() {
 // CHECK:STDOUT:   %pattern_type.98f: type = pattern_type type [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.ac8: type = facet_type <@ImplicitAs, @ImplicitAs(%X)> [concrete]
 // CHECK:STDOUT:   %Convert.type.665: type = fn_type @Convert.1, @ImplicitAs(%X) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.af2: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%X) [concrete]
+// CHECK:STDOUT:   %assoc0.fda: %ImplicitAs.assoc_type.af2 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.aa3: <witness> = impl_witness file.%ImplicitAs.impl_witness_table.loc15 [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %pattern_type.019: type = pattern_type %X [concrete]
@@ -56,6 +58,8 @@ fn Test() {
 // CHECK:STDOUT:   %ImplicitAs.facet.d80: %ImplicitAs.type.ac8 = facet_value %i32, (%ImplicitAs.impl_witness.aa3) [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.b30: <witness> = impl_witness file.%ImplicitAs.impl_witness_table.loc19 [concrete]
 // CHECK:STDOUT:   %Convert.type.8a1: type = fn_type @Convert.3 [concrete]
 // CHECK:STDOUT:   %Convert.c7a: %Convert.type.8a1 = struct_value () [concrete]
@@ -261,7 +265,9 @@ fn Test() {
 // CHECK:STDOUT:   %X.ref: type = name_ref X, file.%X.decl [concrete = constants.%X]
 // CHECK:STDOUT:   %Source.specific_fn.loc30: <specific function> = specific_function %Source.ref.loc30, @Source(constants.%X) [concrete = constants.%Source.specific_fn.363]
 // CHECK:STDOUT:   %.loc30_20.1: ref %X = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Source.call.loc30: init %X = call %Source.specific_fn.loc30() to %.loc30_20.1
+// CHECK:STDOUT:   %Convert.ref.loc30: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc30: %.2ea = impl_witness_access constants.%ImplicitAs.impl_witness.b30, element0 [concrete = constants.%Convert.c7a]
 // CHECK:STDOUT:   %bound_method.loc30: <bound method> = bound_method %Source.call.loc30, %impl.elem0.loc30
 // CHECK:STDOUT:   %.loc30_20.2: ref %X = temporary %.loc30_20.1, %Source.call.loc30
@@ -276,9 +282,11 @@ fn Test() {
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %Source.specific_fn.loc31: <specific function> = specific_function %Source.ref.loc31, @Source(constants.%i32) [concrete = constants.%Source.specific_fn.cc7]
 // CHECK:STDOUT:   %Source.call.loc31: init %i32 = call %Source.specific_fn.loc31()
+// CHECK:STDOUT:   %Convert.ref.loc31: %ImplicitAs.assoc_type.af2 = name_ref Convert, constants.%assoc0.fda [concrete = constants.%assoc0.fda]
 // CHECK:STDOUT:   %impl.elem0.loc31: %.9b4 = impl_witness_access constants.%ImplicitAs.impl_witness.aa3, element0 [concrete = constants.%Convert.08a]
 // CHECK:STDOUT:   %bound_method.loc31: <bound method> = bound_method %Source.call.loc31, %impl.elem0.loc31
 // CHECK:STDOUT:   %.loc31_20.1: ref %X = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc31_20.2: %i32 = value_of_initializer %Source.call.loc31
 // CHECK:STDOUT:   %.loc31_20.3: %i32 = converted %Source.call.loc31, %.loc31_20.2
 // CHECK:STDOUT:   %Convert.call.loc31: init %X = call %bound_method.loc31(%.loc31_20.3) to %.loc31_20.1

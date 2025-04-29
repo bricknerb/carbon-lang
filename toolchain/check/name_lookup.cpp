@@ -13,6 +13,7 @@
 #include "toolchain/check/member_access.h"
 #include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/format_providers.h"
+#include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/name_scope.h"
 
 namespace Carbon::Check {
@@ -29,7 +30,7 @@ auto AddNameToLookup(Context& context, SemIR::NameId name_id,
   }
 }
 
-auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
+auto LookupNameInDecl(Context& context, SemIR::InstId inst_id,
                       SemIR::NameId name_id, SemIR::NameScopeId scope_id,
                       ScopeIndex scope_index) -> SemIR::ScopeLookupResult {
   if (!scope_id.has_value()) {
@@ -80,13 +81,14 @@ auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
     //
     //    // Error, no `F` in `B`.
     //    fn B.F() {}
-    return LookupNameInExactScope(context, loc_id, name_id, scope_id,
+    return LookupNameInExactScope(context, inst_id, SemIR::LocId(inst_id),
+                                  name_id, scope_id,
                                   context.name_scopes().Get(scope_id),
                                   /*is_being_declared=*/true);
   }
 }
 
-auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
+auto LookupUnqualifiedName(Context& context, SemIR::InstId inst_id,
                            SemIR::NameId name_id, bool required)
     -> LookupResult {
   // TODO: Check for shadowed lookup results.
@@ -100,7 +102,7 @@ auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
   for (auto [index, lookup_scope_id, specific_id] :
        llvm::reverse(non_lexical_scopes)) {
     if (auto non_lexical_result =
-            LookupQualifiedName(context, loc_id, name_id,
+            LookupQualifiedName(context, inst_id, name_id,
                                 LookupScope{.name_scope_id = lookup_scope_id,
                                             .specific_id = specific_id},
                                 /*required=*/false);
@@ -119,8 +121,8 @@ auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
           const auto& interface =
               context.interfaces().Get(interface_decl.interface_id);
           SemIR::InstId result_inst_id = GetAssociatedValue(
-              context, loc_id, interface.self_param_id, target_inst_id,
-              assoc_type->GetSpecificInterface());
+              context, SemIR::LocId(inst_id), interface.self_param_id,
+              target_inst_id, assoc_type->GetSpecificInterface());
           non_lexical_result.scope_result = SemIR::ScopeLookupResult::MakeFound(
               result_inst_id, non_lexical_result.scope_result.access_kind());
         }
@@ -132,7 +134,7 @@ auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
   if (lexical_result == SemIR::InstId::InitTombstone) {
     CARBON_DIAGNOSTIC(UsedBeforeInitialization, Error,
                       "`{0}` used before initialization", SemIR::NameId);
-    context.emitter().Emit(loc_id, UsedBeforeInitialization, name_id);
+    context.emitter().Emit(inst_id, UsedBeforeInitialization, name_id);
     return {.specific_id = SemIR::SpecificId::None,
             .scope_result = SemIR::ScopeLookupResult::MakeError()};
   }
@@ -148,20 +150,21 @@ auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,
 
   // We didn't find anything at all.
   if (required) {
-    DiagnoseNameNotFound(context, loc_id, name_id);
+    DiagnoseNameNotFound(context, SemIR::LocId(inst_id), name_id);
   }
 
   return {.specific_id = SemIR::SpecificId::None,
           .scope_result = SemIR::ScopeLookupResult::MakeError()};
 }
 
-auto LookupNameInExactScope(Context& context, SemIR::LocId loc_id,
-                            SemIR::NameId name_id, SemIR::NameScopeId scope_id,
+auto LookupNameInExactScope(Context& context, SemIR::InstId inst_id,
+                            SemIR::LocId loc_id, SemIR::NameId name_id,
+                            SemIR::NameScopeId scope_id,
                             SemIR::NameScope& scope, bool is_being_declared)
     -> SemIR::ScopeLookupResult {
   if (auto entry_id = is_being_declared
                           ? scope.Lookup(name_id)
-                          : scope.LookupOrPoison(loc_id, name_id)) {
+                          : scope.LookupOrPoison(inst_id, name_id)) {
     auto lookup_result = scope.GetEntry(*entry_id).result;
     if (!lookup_result.is_poisoned()) {
       LoadImportRef(context, lookup_result.target_inst_id());
@@ -381,7 +384,7 @@ static auto DiagnoseMemberNameNotFound(
   context.emitter().Emit(loc_id, MemberNameNotFound, name_id);
 }
 
-auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
+auto LookupQualifiedName(Context& context, SemIR::InstId inst_id,
                          SemIR::NameId name_id,
                          llvm::ArrayRef<LookupScope> lookup_scopes,
                          bool required, std::optional<AccessInfo> access_info)
@@ -407,8 +410,8 @@ auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
     auto& name_scope = context.name_scopes().Get(scope_id);
     has_error |= name_scope.has_error();
 
-    const SemIR::ScopeLookupResult scope_result =
-        LookupNameInExactScope(context, loc_id, name_id, scope_id, name_scope);
+    const SemIR::ScopeLookupResult scope_result = LookupNameInExactScope(
+        context, inst_id, SemIR::LocId(inst_id), name_id, scope_id, name_scope);
     SemIR::AccessKind access_kind = scope_result.access_kind();
 
     auto is_access_prohibited =
@@ -437,8 +440,8 @@ auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
         SemIR::ConstantId const_id = GetConstantValueInSpecific(
             context.sem_ir(), specific_id, extended_id);
 
-        if (!AppendLookupScopesForConstant(context, loc_id, const_id,
-                                           &scopes)) {
+        if (!AppendLookupScopesForConstant(context, SemIR::LocId(inst_id),
+                                           const_id, &scopes)) {
           // TODO: Handle case where we have a symbolic type and instead should
           // look in its type.
         }
@@ -453,7 +456,7 @@ auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
           NameAmbiguousDueToExtend, Error,
           "ambiguous use of name `{0}` found in multiple extended scopes",
           SemIR::NameId);
-      context.emitter().Emit(loc_id, NameAmbiguousDueToExtend, name_id);
+      context.emitter().Emit(inst_id, NameAmbiguousDueToExtend, name_id);
       // TODO: Add notes pointing to the scopes.
       return {.specific_id = SemIR::SpecificId::None,
               .scope_result = SemIR::ScopeLookupResult::MakeError()};
@@ -466,7 +469,8 @@ auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
   if (required && !result.scope_result.is_found()) {
     if (!has_error) {
       if (prohibited_accesses.empty()) {
-        DiagnoseMemberNameNotFound(context, loc_id, name_id, lookup_scopes);
+        DiagnoseMemberNameNotFound(context, SemIR::LocId(inst_id), name_id,
+                                   lookup_scopes);
       } else {
         //  TODO: We should report multiple prohibited accesses in case we don't
         //  find a valid lookup. Reporting the last one should suffice for now.
@@ -475,9 +479,9 @@ auto LookupQualifiedName(Context& context, SemIR::LocId loc_id,
 
         // Note, `access_info` is guaranteed to have a value here, since
         // `prohibited_accesses` is non-empty.
-        DiagnoseInvalidQualifiedNameAccess(context, loc_id, scope_result_id,
-                                           name_id, access_kind,
-                                           is_parent_access, *access_info);
+        DiagnoseInvalidQualifiedNameAccess(
+            context, SemIR::LocId(inst_id), scope_result_id, name_id,
+            access_kind, is_parent_access, *access_info);
       }
     }
 
@@ -503,7 +507,8 @@ static auto GetCorePackage(Context& context, SemIR::LocId loc_id,
 
   // Look up `package.Core`.
   auto core_scope_result = LookupNameInExactScope(
-      context, loc_id, core_name_id, SemIR::NameScopeId::Package,
+      context, SemIR::InstId::None, loc_id, core_name_id,
+      SemIR::NameScopeId::Package,
       context.name_scopes().Get(SemIR::NameScopeId::Package));
   if (core_scope_result.is_found()) {
     // We expect it to be a namespace.
@@ -530,9 +535,9 @@ auto LookupNameInCore(Context& context, SemIR::LocId loc_id,
   }
 
   auto name_id = SemIR::NameId::ForIdentifier(context.identifiers().Add(name));
-  auto scope_result =
-      LookupNameInExactScope(context, loc_id, name_id, core_package_id,
-                             context.name_scopes().Get(core_package_id));
+  auto scope_result = LookupNameInExactScope(
+      context, SemIR::ErrorInst::InstId, loc_id, name_id, core_package_id,
+      context.name_scopes().Get(core_package_id));
   if (!scope_result.is_found()) {
     CARBON_DIAGNOSTIC(
         CoreNameNotFound, Error,
@@ -561,15 +566,16 @@ auto DiagnoseDuplicateName(Context& context, SemIR::NameId name_id,
 }
 
 auto DiagnosePoisonedName(Context& context, SemIR::NameId name_id,
-                          SemIR::LocId poisoning_loc_id,
+                          SemIR::InstId poisoning_inst_id,
                           SemIR::LocId decl_name_loc_id) -> void {
-  CARBON_CHECK(poisoning_loc_id.has_value(),
-               "Trying to diagnose poisoned name with no poisoning location");
+  CARBON_CHECK(
+      poisoning_inst_id.has_value(),
+      "Trying to diagnose poisoned name with no poisoning instruction");
   CARBON_DIAGNOSTIC(NameUseBeforeDecl, Error,
                     "name `{0}` used before it was declared", SemIR::NameId);
   CARBON_DIAGNOSTIC(NameUseBeforeDeclNote, Note, "declared here");
   context.emitter()
-      .Build(poisoning_loc_id, NameUseBeforeDecl, name_id)
+      .Build(poisoning_inst_id, NameUseBeforeDecl, name_id)
       .Note(decl_name_loc_id, NameUseBeforeDeclNote)
       .Emit();
 }

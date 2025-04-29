@@ -31,6 +31,7 @@ impl true as I {}
 // CHECK:STDOUT:   %I.decl: type = interface_decl @I [concrete = constants.%I.type] {} {}
 // CHECK:STDOUT:   impl_decl @impl [concrete] {} {
 // CHECK:STDOUT:     %true: bool = bool_literal true [concrete = constants.%true]
+// CHECK:STDOUT:     %Convert.ref: <error> = name_ref Convert, <error> [concrete = <error>]
 // CHECK:STDOUT:     %.loc17: type = converted %true, <error> [concrete = <error>]
 // CHECK:STDOUT:     %I.ref: type = name_ref I, file.%I.decl [concrete = constants.%I.type]
 // CHECK:STDOUT:   }

@@ -204,6 +204,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %p.ref: %C.131 = name_ref p, %p
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%D) [concrete = constants.%F.specific_fn.c4a]
 // CHECK:STDOUT:   %.loc9_15: ref %D = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %D = call %F.specific_fn(%p.ref) to %.loc9_15
 // CHECK:STDOUT:   return %F.call to %return
 // CHECK:STDOUT: }
@@ -371,6 +372,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     %p.ref: @F.%I.loc7_22.2 (%I.ff1) = name_ref p, %p
 // CHECK:STDOUT:     %F.specific_fn.loc7_39.1: <specific function> = specific_function %F.ref, @F(constants.%T) [symbolic = %F.specific_fn.loc7_39.2 (constants.%F.specific_fn.ef1)]
 // CHECK:STDOUT:     %.loc7_25: ref %C = splice_block %return {}
+// CHECK:STDOUT:     %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:     %F.call: init %C = call %F.specific_fn.loc7_39.1(%p.ref) to %.loc7_25
 // CHECK:STDOUT:     return %F.call to %return
 // CHECK:STDOUT:   }
@@ -382,6 +384,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %p.ref: %I.ed8 = name_ref p, %p
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%C) [concrete = constants.%F.specific_fn.04a]
 // CHECK:STDOUT:   %.loc9_15: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %C = call %F.specific_fn(%p.ref) to %.loc9_15
 // CHECK:STDOUT:   return %F.call to %return
 // CHECK:STDOUT: }
@@ -506,8 +509,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:       %Outer.ref: %Outer.type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer.generic]
 // CHECK:STDOUT:       %T.ref.loc13_35: type = name_ref T, %T.loc13_6.1 [symbolic = %T.loc13_6.2 (constants.%T)]
 // CHECK:STDOUT:       %Outer.loc13_36.1: type = class_type @Outer, @Outer(constants.%T) [symbolic = %Outer.loc13_36.2 (constants.%Outer.9d6)]
-// CHECK:STDOUT:       %.loc13_37: @F.%Inner.type (%Inner.type.eae) = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.generic (constants.%Inner.generic.137)]
 // CHECK:STDOUT:       %Inner.ref: @F.%Inner.type (%Inner.type.eae) = name_ref Inner, %.loc13_37 [symbolic = %Inner.generic (constants.%Inner.generic.137)]
+// CHECK:STDOUT:       %.loc13_37: @F.%Inner.type (%Inner.type.eae) = specific_constant @Outer.%Inner.decl, @Outer(constants.%T) [symbolic = %Inner.generic (constants.%Inner.generic.137)]
 // CHECK:STDOUT:       %U.ref.loc13_44: type = name_ref U, %U.loc13_16.1 [symbolic = %U.loc13_16.2 (constants.%U)]
 // CHECK:STDOUT:       %Inner.loc13_45.1: type = class_type @Inner, @Inner(constants.%T, constants.%U) [symbolic = %Inner.loc13_45.2 (constants.%Inner.c71)]
 // CHECK:STDOUT:     }
@@ -530,8 +533,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:       %Outer.ref: %Outer.type = name_ref Outer, file.%Outer.decl [concrete = constants.%Outer.generic]
 // CHECK:STDOUT:       %C.ref.loc15_15: type = name_ref C, file.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:       %Outer: type = class_type @Outer, @Outer(constants.%C) [concrete = constants.%Outer.7c4]
-// CHECK:STDOUT:       %.loc15_17: %Inner.type.181 = specific_constant @Outer.%Inner.decl, @Outer(constants.%C) [concrete = constants.%Inner.generic.205]
 // CHECK:STDOUT:       %Inner.ref: %Inner.type.181 = name_ref Inner, %.loc15_17 [concrete = constants.%Inner.generic.205]
+// CHECK:STDOUT:       %.loc15_17: %Inner.type.181 = specific_constant @Outer.%Inner.decl, @Outer(constants.%C) [concrete = constants.%Inner.generic.205]
 // CHECK:STDOUT:       %D.ref.loc15_24: type = name_ref D, file.%D.decl [concrete = constants.%D]
 // CHECK:STDOUT:       %Inner: type = class_type @Inner, @Inner(constants.%C, constants.%D) [concrete = constants.%Inner.d70]
 // CHECK:STDOUT:     }
@@ -745,6 +748,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %int_0.5c6: Core.IntLiteral = int_value 0 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -858,6 +863,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %.loc9_13.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %WithNontype.ref: %WithNontype.type = name_ref WithNontype, file.%WithNontype.decl [concrete = constants.%WithNontype.generic]
 // CHECK:STDOUT:   %int_0: Core.IntLiteral = int_value 0 [concrete = constants.%int_0.5c6]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc9_31.1: <bound method> = bound_method %int_0, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -866,6 +872,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %.loc9_31.1: %i32 = value_of_initializer %int.convert_checked [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %.loc9_31.2: %i32 = converted %int_0, %.loc9_31.1 [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %WithNontype: type = class_type @WithNontype, @WithNontype(constants.%int_0.6a9) [concrete = constants.%WithNontype.b82]
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc9_13.2: ref %WithNontype.b82 = temporary_storage
 // CHECK:STDOUT:   %.loc9_13.3: init %WithNontype.b82 = class_init (), %.loc9_13.2 [concrete = constants.%WithNontype.val]
 // CHECK:STDOUT:   %.loc9_13.4: ref %WithNontype.b82 = temporary %.loc9_13.2, %.loc9_13.3

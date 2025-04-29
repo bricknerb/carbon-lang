@@ -74,6 +74,8 @@ fn CallWrongSelf(ws: WrongSelf) {
 // CHECK:STDOUT:   %pattern_type.381: type = pattern_type %WrongSelf [concrete]
 // CHECK:STDOUT:   %CallWrongSelf.type: type = fn_type @CallWrongSelf [concrete]
 // CHECK:STDOUT:   %CallWrongSelf: %CallWrongSelf.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.480: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%Class) [concrete]
+// CHECK:STDOUT:   %assoc0.160: %ImplicitAs.assoc_type.480 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -178,6 +180,7 @@ fn CallWrongSelf(ws: WrongSelf) {
 // CHECK:STDOUT:     %.loc33: %pattern_type.761 = var_pattern %self.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %self.var: ref %Class = var self
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Self.ref.loc33: type = name_ref Self, constants.%Class [concrete = constants.%Class]
 // CHECK:STDOUT:   %self: ref %Class = bind_name self, %self.var
 // CHECK:STDOUT:   %self.ref: ref %Class = name_ref self, %self
@@ -192,6 +195,7 @@ fn CallWrongSelf(ws: WrongSelf) {
 // CHECK:STDOUT:   %ws.ref: %WrongSelf = name_ref ws, %ws
 // CHECK:STDOUT:   %F.ref: %F.type.25f = name_ref F, @WrongSelf.%F.decl [concrete = constants.%F.3a3]
 // CHECK:STDOUT:   %F.bound: <bound method> = bound_method %ws.ref, %F.ref
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.480 = name_ref Convert, constants.%assoc0.160 [concrete = constants.%assoc0.160]
 // CHECK:STDOUT:   %.loc56: %Class = converted %ws.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %F.bound(<error>)
 // CHECK:STDOUT:   return

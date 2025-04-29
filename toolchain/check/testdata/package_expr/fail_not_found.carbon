@@ -51,6 +51,7 @@ fn Main() {
 // CHECK:STDOUT:     %.loc16_3: %pattern_type.7ce = var_pattern %y.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %y.var: ref %i32 = var y
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %package.ref: <namespace> = name_ref package, package [concrete = package]
 // CHECK:STDOUT:   %x.ref: <error> = name_ref x, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign %y.var, <error>

@@ -1252,6 +1252,8 @@ let K: (E where .F = .Self.G) = bool;
 // CHECK:STDOUT:   %I.facet: %I.type = facet_value %.Self.as_type, (%I.lookup_impl_witness) [symbolic_self]
 // CHECK:STDOUT:   %impl.elem0: type = impl_witness_access %I.lookup_impl_witness, element0 [symbolic_self]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %RewriteTypeMismatch.type: type = fn_type @RewriteTypeMismatch [concrete]
 // CHECK:STDOUT:   %RewriteTypeMismatch: %RewriteTypeMismatch.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -1284,6 +1286,7 @@ let K: (E where .F = .Self.G) = bool;
 // CHECK:STDOUT:       %.loc16_36: type = converted %.Self.ref, %.Self.as_type [symbolic_self = constants.%.Self.as_type]
 // CHECK:STDOUT:       %impl.elem0: type = impl_witness_access constants.%I.lookup_impl_witness, element0 [symbolic_self = constants.%impl.elem0]
 // CHECK:STDOUT:       %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2]
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:       %.loc16_46: type = converted %int_2, <error> [concrete = <error>]
 // CHECK:STDOUT:       %.loc16_30.2: type = where_expr %.Self [concrete = <error>] {
 // CHECK:STDOUT:         requirement_rewrite %impl.elem0, <error>

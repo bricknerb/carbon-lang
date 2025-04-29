@@ -520,6 +520,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc12_3.1: %pattern_type.fb9 = var_pattern %d.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %d.var: ref %Derived = var d
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc12_30.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc12_31.1: %struct_type.base.f5e = struct_literal (%.loc12_30.1)
 // CHECK:STDOUT:   %.loc12_31.2: ref %Base = class_element_access %d.var, element0
@@ -673,6 +674,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc7_3.1: %pattern_type = var_pattern %v.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v.var: ref %Base = var v
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc7_28.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc7_28.2: ref %ptr.454 = class_element_access %v.var, element0
 // CHECK:STDOUT:   %.loc7_28.3: ref %ptr.454 = vtable_ptr imports.%Modifiers.import_ref.ace
@@ -910,6 +912,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc19_3.1: %pattern_type.e47 = var_pattern %b1.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b1.var: ref %B1 = var b1
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc19_17.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc19_17.2: ref %ptr.454 = class_element_access %b1.var, element0
 // CHECK:STDOUT:   %.loc19_17.3: ref %ptr.454 = vtable_ptr @B1.%.loc6
@@ -924,6 +927,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc20_3.1: %pattern_type.b19 = var_pattern %b2.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b2.var: ref %B2 = var b2
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc20_26.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc20_27.1: %struct_type.base.f5e = struct_literal (%.loc20_26.1)
 // CHECK:STDOUT:   %.loc20_27.2: ref %B1 = class_element_access %b2.var, element0
@@ -942,6 +946,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc21_3.1: %pattern_type.c48 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %C = var c
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc21_33.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc21_34.1: %struct_type.base.f5e = struct_literal (%.loc21_33.1)
 // CHECK:STDOUT:   %.loc21_35.1: %struct_type.base.a0c = struct_literal (%.loc21_34.1)
@@ -1032,6 +1037,8 @@ base class T1(T:! type) {
 // CHECK:STDOUT:   %int_3.1ba: Core.IntLiteral = int_value 3 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -1110,7 +1117,9 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc12_3.1: %pattern_type.7ce = var_pattern %i.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %i.var: ref %i32 = var i
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_3.loc12: Core.IntLiteral = int_value 3 [concrete = constants.%int_3.1ba]
+// CHECK:STDOUT:   %Convert.ref.loc12: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc12: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc12_3.1: <bound method> = bound_method %int_3.loc12, %impl.elem0.loc12 [concrete = constants.%Convert.bound.b30]
 // CHECK:STDOUT:   %specific_fn.loc12: <specific function> = specific_function %impl.elem0.loc12, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -1128,6 +1137,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc14_3.1: %pattern_type.bcc = var_pattern %b1.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b1.var: ref %Base = var b1
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %i.ref.loc14_25: ref %i32 = name_ref i, %i
 // CHECK:STDOUT:   %i.ref.loc14_34: ref %i32 = name_ref i, %i
 // CHECK:STDOUT:   %.loc14_35.1: %struct_type.m2.m1.68c = struct_literal (%i.ref.loc14_25, %i.ref.loc14_34)
@@ -1150,12 +1160,14 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     %.loc15_3.1: %pattern_type.bcc = var_pattern %b2.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b2.var: ref %Base = var b2
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_3.loc15: Core.IntLiteral = int_value 3 [concrete = constants.%int_3.1ba]
 // CHECK:STDOUT:   %int_5: Core.IntLiteral = int_value 5 [concrete = constants.%int_5.64b]
 // CHECK:STDOUT:   %.loc15_35.1: %struct_type.m2.m1.5f2 = struct_literal (%int_3.loc15, %int_5)
 // CHECK:STDOUT:   %.loc15_35.2: ref %ptr.454 = class_element_access %b2.var, element0
 // CHECK:STDOUT:   %.loc15_35.3: ref %ptr.454 = vtable_ptr @Base.%.loc9
 // CHECK:STDOUT:   %.loc15_35.4: init %ptr.454 = initialize_from %.loc15_35.3 to %.loc15_35.2
+// CHECK:STDOUT:   %Convert.ref.loc15_35.1: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc15_35.1: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc15_35.1: <bound method> = bound_method %int_5, %impl.elem0.loc15_35.1 [concrete = constants.%Convert.bound.4e6]
 // CHECK:STDOUT:   %specific_fn.loc15_35.1: <specific function> = specific_function %impl.elem0.loc15_35.1, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -1164,6 +1176,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:   %.loc15_35.5: init %i32 = converted %int_5, %int.convert_checked.loc15_35.1 [concrete = constants.%int_5.0f6]
 // CHECK:STDOUT:   %.loc15_35.6: ref %i32 = class_element_access %b2.var, element2
 // CHECK:STDOUT:   %.loc15_35.7: init %i32 = initialize_from %.loc15_35.5 to %.loc15_35.6 [concrete = constants.%int_5.0f6]
+// CHECK:STDOUT:   %Convert.ref.loc15_35.2: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc15_35.2: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc15_35.3: <bound method> = bound_method %int_3.loc15, %impl.elem0.loc15_35.2 [concrete = constants.%Convert.bound.b30]
 // CHECK:STDOUT:   %specific_fn.loc15_35.2: <specific function> = specific_function %impl.elem0.loc15_35.2, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -1181,6 +1194,7 @@ base class T1(T:! type) {
 // CHECK:STDOUT:   %m2.ref: %Base.elem = name_ref m2, @Base.%.loc6 [concrete = @Base.%.loc6]
 // CHECK:STDOUT:   %.loc18_5: ref %i32 = class_element_access %b1.ref, element2
 // CHECK:STDOUT:   %int_4: Core.IntLiteral = int_value 4 [concrete = constants.%int_4.0c1]
+// CHECK:STDOUT:   %Convert.ref.loc18: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc18: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc18_9.1: <bound method> = bound_method %int_4, %impl.elem0.loc18 [concrete = constants.%Convert.bound.ac3]
 // CHECK:STDOUT:   %specific_fn.loc18: <specific function> = specific_function %impl.elem0.loc18, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -1831,8 +1845,8 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.1.%Base (%Base.370) = value_param call_param0
 // CHECK:STDOUT:       %.loc8_22.1: type = splice_block %Self.ref [symbolic = %Base (constants.%Base.370)] {
-// CHECK:STDOUT:         %.loc8_22.2: type = specific_constant constants.%Base.370, @Base(constants.%T) [symbolic = %Base (constants.%Base.370)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc8_22.2 [symbolic = %Base (constants.%Base.370)]
+// CHECK:STDOUT:         %.loc8_22.2: type = specific_constant constants.%Base.370, @Base(constants.%T) [symbolic = %Base (constants.%Base.370)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.1.%Base (%Base.370) = bind_name self, %self.param
 // CHECK:STDOUT:       %t.param: @F.1.%T (%T) = value_param call_param1
@@ -2196,8 +2210,8 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.%T1 (%T1) = value_param call_param0
 // CHECK:STDOUT:       %.loc9_22.1: type = splice_block %Self.ref [symbolic = %T1 (constants.%T1)] {
-// CHECK:STDOUT:         %.loc9_22.2: type = specific_constant constants.%T1, @T1(constants.%T.8b3) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc9_22.2 [symbolic = %T1 (constants.%T1)]
+// CHECK:STDOUT:         %.loc9_22.2: type = specific_constant constants.%T1, @T1(constants.%T.8b3) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.%T1 (%T1) = bind_name self, %self.param
 // CHECK:STDOUT:       %T.loc9_28.2: type = bind_symbolic_name T, 1 [symbolic = %T.loc9_28.1 (constants.%T.336)]
@@ -2288,8 +2302,8 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.%T1 (%T1) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_22.1: type = splice_block %Self.ref [symbolic = %T1 (constants.%T1)] {
-// CHECK:STDOUT:         %.loc5_22.2: type = specific_constant constants.%T1, @T1(constants.%T) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc5_22.2 [symbolic = %T1 (constants.%T1)]
+// CHECK:STDOUT:         %.loc5_22.2: type = specific_constant constants.%T1, @T1(constants.%T) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.%T1 (%T1) = bind_name self, %self.param
 // CHECK:STDOUT:     }
@@ -2381,8 +2395,8 @@ base class T1(T:! type) {
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.%T1 (%T1) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_22.1: type = splice_block %Self.ref [symbolic = %T1 (constants.%T1)] {
-// CHECK:STDOUT:         %.loc5_22.2: type = specific_constant constants.%T1, @T1(constants.%T) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:         %Self.ref: type = name_ref Self, %.loc5_22.2 [symbolic = %T1 (constants.%T1)]
+// CHECK:STDOUT:         %.loc5_22.2: type = specific_constant constants.%T1, @T1(constants.%T) [symbolic = %T1 (constants.%T1)]
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:       %self: @F.%T1 (%T1) = bind_name self, %self.param
 // CHECK:STDOUT:       %t.param: @F.%T (%T) = value_param call_param1

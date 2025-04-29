@@ -66,9 +66,13 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT:   %AddAssign.facet: %AddAssign.type = facet_value %C, (%AddAssign.impl_witness) [concrete]
 // CHECK:STDOUT:   %TestIncNonRef.type: type = fn_type @TestIncNonRef [concrete]
 // CHECK:STDOUT:   %TestIncNonRef: %TestIncNonRef.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Inc.assoc_type: type = assoc_entity_type @Inc [concrete]
+// CHECK:STDOUT:   %assoc0.937: %Inc.assoc_type = assoc_entity element0, imports.%Core.import_ref.92d [concrete]
 // CHECK:STDOUT:   %.bc7: type = fn_type_with_self_type %Op.type.e3a, %Inc.facet [concrete]
 // CHECK:STDOUT:   %TestAddAssignNonRef.type: type = fn_type @TestAddAssignNonRef [concrete]
 // CHECK:STDOUT:   %TestAddAssignNonRef: %TestAddAssignNonRef.type = struct_value () [concrete]
+// CHECK:STDOUT:   %AddAssign.assoc_type: type = assoc_entity_type @AddAssign [concrete]
+// CHECK:STDOUT:   %assoc0.14b: %AddAssign.assoc_type = assoc_entity element0, imports.%Core.import_ref.f0c [concrete]
 // CHECK:STDOUT:   %.6d3: type = fn_type_with_self_type %Op.type.421, %AddAssign.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -80,7 +84,9 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Inc: type = import_ref Core//prelude/operators/arithmetic, Inc, loaded [concrete = constants.%Inc.type]
+// CHECK:STDOUT:   %Core.import_ref.fe8: %Inc.assoc_type = import_ref Core//prelude/operators/arithmetic, loc21_28, loaded [concrete = constants.%assoc0.937]
 // CHECK:STDOUT:   %Core.AddAssign: type = import_ref Core//prelude/operators/arithmetic, AddAssign, loaded [concrete = constants.%AddAssign.type]
+// CHECK:STDOUT:   %Core.import_ref.56a: %AddAssign.assoc_type = import_ref Core//prelude/operators/arithmetic, loc16_39, loaded [concrete = constants.%assoc0.14b]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -190,9 +196,11 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT: fn @TestIncNonRef(%a.param: %C) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
+// CHECK:STDOUT:   %Op.ref: %Inc.assoc_type = name_ref Op, imports.%Core.import_ref.fe8 [concrete = constants.%assoc0.937]
 // CHECK:STDOUT:   %impl.elem0: %.bc7 = impl_witness_access constants.%Inc.impl_witness, element0 [concrete = constants.%Op.0c9]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc30: ref %C = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %.loc30
 // CHECK:STDOUT:   %Op.call: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return
@@ -202,9 +210,11 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %AddAssign.assoc_type = name_ref Op, imports.%Core.import_ref.56a [concrete = constants.%assoc0.14b]
 // CHECK:STDOUT:   %impl.elem0: %.6d3 = impl_witness_access constants.%AddAssign.impl_witness, element0 [concrete = constants.%Op.d8e]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc41: ref %C = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %.loc41
 // CHECK:STDOUT:   %Op.call: init %empty_tuple.type = call %bound_method(%addr, %b.ref)
 // CHECK:STDOUT:   return

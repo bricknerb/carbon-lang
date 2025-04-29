@@ -208,8 +208,8 @@ fn F() { ()[()]; }
 // CHECK:STDOUT:       %.loc5_51.2: type = converted %.loc5_51.1, constants.%empty_tuple.type [concrete = constants.%empty_tuple.type]
 // CHECK:STDOUT:       %self.param: @At.%Self.as_type.loc5_15.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc5_15.1: type = splice_block %.loc5_15.3 [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc5_15.2: @At.%IndexWith.type (%IndexWith.type.b94) = specific_constant @IndexWith.%Self.1, @IndexWith(constants.%SubscriptType) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @At.%IndexWith.type (%IndexWith.type.b94) = name_ref Self, %.loc5_15.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc5_15.2: @At.%IndexWith.type (%IndexWith.type.b94) = specific_constant @IndexWith.%Self.1, @IndexWith(constants.%SubscriptType) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc5_15.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc5_15.3: type = converted %Self.ref, %Self.as_type.loc5_15.2 [symbolic = %Self.as_type.loc5_15.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -403,6 +403,7 @@ fn F() { ()[()]; }
 // CHECK:STDOUT:   %.loc12_11.2: %empty_tuple.type = converted %.loc12_11.1, %empty_tuple.loc12_11 [concrete = constants.%empty_tuple]
 // CHECK:STDOUT:   %empty_tuple.loc12_14: %empty_tuple.type = tuple_value () [concrete = constants.%empty_tuple]
 // CHECK:STDOUT:   %.loc12_15: %empty_tuple.type = converted %.loc12_14, %empty_tuple.loc12_14 [concrete = constants.%empty_tuple]
+// CHECK:STDOUT:   %At.ref: %IndexWith.assoc_type.3d4 = name_ref At, constants.%assoc0.21b [concrete = constants.%assoc0.21b]
 // CHECK:STDOUT:   %impl.elem0: %.ffc = impl_witness_access constants.%IndexWith.impl_witness, element0 [concrete = constants.%At.7c4]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc12_11.2, %impl.elem0 [concrete = constants.%At.bound]
 // CHECK:STDOUT:   %At.call: init %empty_tuple.type = call %bound_method(%.loc12_11.2, %.loc12_15)

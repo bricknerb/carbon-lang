@@ -108,6 +108,8 @@ class C {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Bad: type = class_type @Bad [concrete]
 // CHECK:STDOUT:   %int_100: Core.IntLiteral = int_value 100 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %pattern_type.fc4: type = pattern_type %Bad [concrete]
 // CHECK:STDOUT:   %Use.type: type = fn_type @Use [concrete]
 // CHECK:STDOUT:   %Use: %Use.type = struct_value () [concrete]
@@ -141,6 +143,7 @@ class C {
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @Bad {
 // CHECK:STDOUT:   %int_100: Core.IntLiteral = int_value 100 [concrete = constants.%int_100]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc12: type = converted %int_100, <error> [concrete = <error>]
 // CHECK:STDOUT:   adapt_decl <error> [concrete]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness <error> [concrete = <error>]
@@ -163,6 +166,8 @@ class C {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Bad: type = class_type @Bad [concrete]
 // CHECK:STDOUT:   %int_100: Core.IntLiteral = int_value 100 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %pattern_type.fc4: type = pattern_type %Bad [concrete]
 // CHECK:STDOUT:   %Use.type: type = fn_type @Use [concrete]
 // CHECK:STDOUT:   %Use: %Use.type = struct_value () [concrete]
@@ -196,6 +201,7 @@ class C {
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @Bad {
 // CHECK:STDOUT:   %int_100: Core.IntLiteral = int_value 100 [concrete = constants.%int_100]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:   %.loc12: type = converted %int_100, <error> [concrete = <error>]
 // CHECK:STDOUT:   adapt_decl <error> [concrete]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness <error> [concrete = <error>]

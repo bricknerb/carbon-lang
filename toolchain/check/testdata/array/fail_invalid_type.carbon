@@ -21,6 +21,8 @@ var a: array(1, 1);
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -45,6 +47,7 @@ var a: array(1, 1);
 // CHECK:STDOUT:   %.loc18_18: type = splice_block %array_type [concrete = <error>] {
 // CHECK:STDOUT:     %int_1.loc18_14: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
 // CHECK:STDOUT:     %int_1.loc18_17: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:     %.loc18_14: type = converted %int_1.loc18_14, <error> [concrete = <error>]
 // CHECK:STDOUT:     %array_type: type = array_type %int_1.loc18_17, <error> [concrete = <error>]
 // CHECK:STDOUT:   }

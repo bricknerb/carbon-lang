@@ -261,6 +261,7 @@ fn F(T: Z(C)) -> T.(Z(C).X) {
 // CHECK:STDOUT: class @C {
 // CHECK:STDOUT:   %I.ref: type = name_ref I, file.%I.decl [concrete = constants.%I.type]
 // CHECK:STDOUT:   %J.ref: type = name_ref J, file.%J.decl [concrete = constants.%J.type]
+// CHECK:STDOUT:   %Op.ref: %BitAnd.assoc_type = name_ref Op, imports.%Core.import_ref.a46 [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: %.518 = impl_witness_access constants.%BitAnd.impl_witness.0e5, element0 [concrete = constants.%Op.444]
 // CHECK:STDOUT:   %bound_method.loc7_13.1: <bound method> = bound_method %I.ref, %impl.elem0 [concrete = constants.%Op.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(type) [concrete = constants.%Op.specific_fn]
@@ -406,8 +407,8 @@ fn F(T: Z(C)) -> T.(Z(C).X) {
 // CHECK:STDOUT:     %Z.type: type = facet_type <@Z, @Z(constants.%C)> [concrete = constants.%Z.type.049]
 // CHECK:STDOUT:     %.Self: %Z.type.049 = bind_symbolic_name .Self [symbolic_self = constants.%.Self]
 // CHECK:STDOUT:     %.Self.ref: %Z.type.049 = name_ref .Self, %.Self [symbolic_self = constants.%.Self]
-// CHECK:STDOUT:     %.loc8_46.1: %Z.assoc_type.252 = specific_constant @X.%assoc0, @Z(constants.%C) [concrete = constants.%assoc0.ea4]
 // CHECK:STDOUT:     %X.ref: %Z.assoc_type.252 = name_ref X, %.loc8_46.1 [concrete = constants.%assoc0.ea4]
+// CHECK:STDOUT:     %.loc8_46.1: %Z.assoc_type.252 = specific_constant @X.%assoc0, @Z(constants.%C) [concrete = constants.%assoc0.ea4]
 // CHECK:STDOUT:     %.Self.as_type: type = facet_access_type %.Self.ref [symbolic_self = constants.%.Self.as_type]
 // CHECK:STDOUT:     %.loc8_46.2: type = converted %.Self.ref, %.Self.as_type [symbolic_self = constants.%.Self.as_type]
 // CHECK:STDOUT:     %impl.elem0: type = impl_witness_access constants.%Z.lookup_impl_witness, element0 [symbolic_self = constants.%impl.elem0]
@@ -431,8 +432,8 @@ fn F(T: Z(C)) -> T.(Z(C).X) {
 // CHECK:STDOUT:     %Z.ref.loc14_21: %Z.type.9fb = name_ref Z, file.%Z.decl [concrete = constants.%Z.generic]
 // CHECK:STDOUT:     %C.ref.loc14_23: type = name_ref C, file.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:     %Z.type.loc14_24: type = facet_type <@Z, @Z(constants.%C)> [concrete = constants.%Z.type.049]
-// CHECK:STDOUT:     %.loc14_25: %Z.assoc_type.252 = specific_constant @X.%assoc0, @Z(constants.%C) [concrete = constants.%assoc0.ea4]
 // CHECK:STDOUT:     %X.ref: %Z.assoc_type.252 = name_ref X, %.loc14_25 [concrete = constants.%assoc0.ea4]
+// CHECK:STDOUT:     %.loc14_25: %Z.assoc_type.252 = specific_constant @X.%assoc0, @Z(constants.%C) [concrete = constants.%assoc0.ea4]
 // CHECK:STDOUT:     %T.param: %Z.type.049 = value_param call_param0
 // CHECK:STDOUT:     %.loc14_12: type = splice_block %Z.type.loc14_12 [concrete = constants.%Z.type.049] {
 // CHECK:STDOUT:       %Z.ref.loc14_9: %Z.type.9fb = name_ref Z, file.%Z.decl [concrete = constants.%Z.generic]
@@ -618,8 +619,8 @@ fn F(T: Z(C)) -> T.(Z(C).X) {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @As.%Dest.loc9_14.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.1.%Self.as_type.loc10_20.1 (%Self.as_type.7f0) = value_param call_param0
 // CHECK:STDOUT:       %.loc10_20.1: type = splice_block %.loc10_20.3 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)] {
-// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.ref: @Convert.1.%As.type (%As.type.8ba) = name_ref Self, %.loc10_20.2 [symbolic = %Self (constants.%Self.b4e)]
+// CHECK:STDOUT:         %.loc10_20.2: @Convert.1.%As.type (%As.type.8ba) = specific_constant @As.%Self.1, @As(constants.%Dest) [symbolic = %Self (constants.%Self.b4e)]
 // CHECK:STDOUT:         %Self.as_type.loc10_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:         %.loc10_20.3: type = converted %Self.ref, %Self.as_type.loc10_20.2 [symbolic = %Self.as_type.loc10_20.1 (constants.%Self.as_type.7f0)]
 // CHECK:STDOUT:       }
@@ -659,8 +660,8 @@ fn F(T: Z(C)) -> T.(Z(C).X) {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @ImplicitAs.%Dest.loc13_22.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.2.%Self.as_type.loc14_20.1 (%Self.as_type.419) = value_param call_param0
 // CHECK:STDOUT:       %.loc14_20.1: type = splice_block %.loc14_20.3 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)] {
-// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.ref: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = name_ref Self, %.loc14_20.2 [symbolic = %Self (constants.%Self.0f3)]
+// CHECK:STDOUT:         %.loc14_20.2: @Convert.2.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self.0f3)]
 // CHECK:STDOUT:         %Self.as_type.loc14_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:         %.loc14_20.3: type = converted %Self.ref, %Self.as_type.loc14_20.2 [symbolic = %Self.as_type.loc14_20.1 (constants.%Self.as_type.419)]
 // CHECK:STDOUT:       }

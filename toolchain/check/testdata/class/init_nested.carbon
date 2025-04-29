@@ -121,9 +121,11 @@ fn MakeOuter() -> Outer {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %MakeInner.ref.loc24_16: %MakeInner.type = name_ref MakeInner, file.%MakeInner.decl [concrete = constants.%MakeInner]
 // CHECK:STDOUT:   %.loc24_45.1: ref %Inner = class_element_access %return, element0
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %MakeInner.call.loc24_26: init %Inner = call %MakeInner.ref.loc24_16() to %.loc24_45.1
 // CHECK:STDOUT:   %MakeInner.ref.loc24_34: %MakeInner.type = name_ref MakeInner, file.%MakeInner.decl [concrete = constants.%MakeInner]
 // CHECK:STDOUT:   %.loc24_45.2: ref %Inner = class_element_access %return, element1
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %MakeInner.call.loc24_44: init %Inner = call %MakeInner.ref.loc24_34() to %.loc24_45.2
 // CHECK:STDOUT:   %.loc24_45.3: %struct_type.c.d.dce = struct_literal (%MakeInner.call.loc24_26, %MakeInner.call.loc24_44)
 // CHECK:STDOUT:   %.loc24_45.4: init %Outer = class_init (%MakeInner.call.loc24_26, %MakeInner.call.loc24_44), %return

@@ -112,8 +112,8 @@ fn H(c: C(InClassArgs)) { c.(I(X).F)(); }
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %self.param: @F.%Self.as_type.loc4_36.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc4_36.1: type = splice_block %.loc4_36.3 [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc4_36.2: @F.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @F.%I.type (%I.type.325) = name_ref Self, %.loc4_36.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc4_36.2: @F.%I.type (%I.type.325) = specific_constant @I.%Self.1, @I(constants.%T) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc4_36.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc4_36.3: type = converted %Self.ref, %Self.as_type.loc4_36.2 [symbolic = %Self.as_type.loc4_36.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -469,8 +469,8 @@ fn H(c: C(InClassArgs)) { c.(I(X).F)(); }
 // CHECK:STDOUT:   %I.ref: %I.type.dac = name_ref I, imports.%Main.I [concrete = constants.%I.generic]
 // CHECK:STDOUT:   %InInterfaceArgs.ref: type = name_ref InInterfaceArgs, imports.%Main.InInterfaceArgs [concrete = constants.%InInterfaceArgs]
 // CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(constants.%InInterfaceArgs)> [concrete = constants.%I.type.e45]
-// CHECK:STDOUT:   %.loc6: %I.assoc_type.521 = specific_constant imports.%Main.import_ref.474, @I(constants.%InInterfaceArgs) [concrete = constants.%assoc0.63d]
 // CHECK:STDOUT:   %F.ref: %I.assoc_type.521 = name_ref F, %.loc6 [concrete = constants.%assoc0.63d]
+// CHECK:STDOUT:   %.loc6: %I.assoc_type.521 = specific_constant imports.%Main.import_ref.474, @I(constants.%InInterfaceArgs) [concrete = constants.%assoc0.63d]
 // CHECK:STDOUT:   %impl.elem0: %.658 = impl_witness_access constants.%I.impl_witness, element0 [concrete = constants.%F.d5f]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %x.ref, %impl.elem0
 // CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %bound_method(%x.ref)
@@ -858,8 +858,8 @@ fn H(c: C(InClassArgs)) { c.(I(X).F)(); }
 // CHECK:STDOUT:   %I.ref: %I.type.dac = name_ref I, imports.%Main.I [concrete = constants.%I.generic]
 // CHECK:STDOUT:   %X.ref: type = name_ref X, imports.%Main.X [concrete = constants.%X]
 // CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(constants.%X)> [concrete = constants.%I.type.45c]
-// CHECK:STDOUT:   %.loc6_34: %I.assoc_type.2db = specific_constant imports.%Main.import_ref.474, @I(constants.%X) [concrete = constants.%assoc0.071]
 // CHECK:STDOUT:   %F.ref: %I.assoc_type.2db = name_ref F, %.loc6_34 [concrete = constants.%assoc0.071]
+// CHECK:STDOUT:   %.loc6_34: %I.assoc_type.2db = specific_constant imports.%Main.import_ref.474, @I(constants.%X) [concrete = constants.%assoc0.071]
 // CHECK:STDOUT:   %impl.elem0: %.d3f = impl_witness_access constants.%I.impl_witness, element0 [concrete = constants.%F.7ab]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %c.ref, %impl.elem0
 // CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %bound_method(%c.ref)

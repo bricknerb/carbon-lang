@@ -37,6 +37,8 @@ fn G(p: const (const i32)**) -> i32** {
 // CHECK:STDOUT:   %pattern_type.d91: type = pattern_type %ptr.5d5 [concrete]
 // CHECK:STDOUT:   %G.type: type = fn_type @G [concrete]
 // CHECK:STDOUT:   %G: %G.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.194: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%ptr.5d5) [concrete]
+// CHECK:STDOUT:   %assoc0.a5d: %ImplicitAs.assoc_type.194 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -82,6 +84,7 @@ fn G(p: const (const i32)**) -> i32** {
 // CHECK:STDOUT: fn @G(%p.param: %ptr.3bc) -> %ptr.5d5 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %p.ref: %ptr.3bc = name_ref p, %p
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.194 = name_ref Convert, constants.%assoc0.a5d [concrete = constants.%assoc0.a5d]
 // CHECK:STDOUT:   %.loc23: %ptr.5d5 = converted %p.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }

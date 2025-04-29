@@ -167,8 +167,8 @@ fn InstanceCallFail() {
 // CHECK:STDOUT:       %Dest.ref: type = name_ref Dest, @ImplicitAs.%Dest.loc3_22.1 [symbolic = %Dest (constants.%Dest)]
 // CHECK:STDOUT:       %self.param: @Convert.%Self.as_type.loc4_20.1 (%Self.as_type) = value_param call_param0
 // CHECK:STDOUT:       %.loc4_20.1: type = splice_block %.loc4_20.3 [symbolic = %Self.as_type.loc4_20.1 (constants.%Self.as_type)] {
-// CHECK:STDOUT:         %.loc4_20.2: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.ref: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = name_ref Self, %.loc4_20.2 [symbolic = %Self (constants.%Self)]
+// CHECK:STDOUT:         %.loc4_20.2: @Convert.%ImplicitAs.type (%ImplicitAs.type.07f) = specific_constant @ImplicitAs.%Self.1, @ImplicitAs(constants.%Dest) [symbolic = %Self (constants.%Self)]
 // CHECK:STDOUT:         %Self.as_type.loc4_20.2: type = facet_access_type %Self.ref [symbolic = %Self.as_type.loc4_20.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:         %.loc4_20.3: type = converted %Self.ref, %Self.as_type.loc4_20.2 [symbolic = %Self.as_type.loc4_20.1 (constants.%Self.as_type)]
 // CHECK:STDOUT:       }
@@ -430,6 +430,7 @@ fn InstanceCallFail() {
 // CHECK:STDOUT:   %n.ref: %struct_type.b = name_ref n, %n
 // CHECK:STDOUT:   %NonInstance2.ref: type = name_ref NonInstance2, file.%NonInstance2.decl [concrete = constants.%NonInstance2.type]
 // CHECK:STDOUT:   %F2.ref: %NonInstance2.assoc_type = name_ref F2, @NonInstance2.%assoc0 [concrete = constants.%assoc0.92e]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.f63 = name_ref Convert, constants.%assoc0.ba9 [concrete = constants.%assoc0.ba9]
 // CHECK:STDOUT:   %.loc21: %NonInstance2.type = converted %n.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
@@ -614,6 +615,7 @@ fn InstanceCallFail() {
 // CHECK:STDOUT:   %NonInstance3.ref: type = name_ref NonInstance3, file.%NonInstance3.decl [concrete = constants.%NonInstance3.type]
 // CHECK:STDOUT:   %F3.ref: %NonInstance3.assoc_type = name_ref F3, @NonInstance3.%assoc0 [concrete = constants.%assoc0.2f5]
 // CHECK:STDOUT:   %.loc21_4.1: ref %struct_type.c = deref %p.ref
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.4e3 = name_ref Convert, constants.%assoc0.d0b [concrete = constants.%assoc0.d0b]
 // CHECK:STDOUT:   %.loc21_4.2: %NonInstance3.type = converted %.loc21_4.1, <error> [concrete = <error>]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }

@@ -40,6 +40,8 @@ fn TestOp(a: C) -> C {
 // CHECK:STDOUT:   %C.val: %C = struct_value () [concrete]
 // CHECK:STDOUT:   %TestOp.type: type = fn_type @TestOp [concrete]
 // CHECK:STDOUT:   %TestOp: %TestOp.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Negate.assoc_type: type = assoc_entity_type @Negate [concrete]
+// CHECK:STDOUT:   %assoc0: %Negate.assoc_type = assoc_entity element0, imports.%Core.import_ref.2d2 [concrete]
 // CHECK:STDOUT:   %.365: type = fn_type_with_self_type %Op.type.e42, %Negate.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -50,6 +52,7 @@ fn TestOp(a: C) -> C {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Negate: type = import_ref Core//prelude/operators/arithmetic, Negate, loaded [concrete = constants.%Negate.type]
+// CHECK:STDOUT:   %Core.import_ref.cd8: %Negate.assoc_type = import_ref Core//prelude/operators/arithmetic, loc26_30, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -123,9 +126,11 @@ fn TestOp(a: C) -> C {
 // CHECK:STDOUT: fn @TestOp(%a.param: %C) -> %return.param: %C {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
+// CHECK:STDOUT:   %Op.ref: %Negate.assoc_type = name_ref Op, imports.%Core.import_ref.cd8 [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: %.365 = impl_witness_access constants.%Negate.impl_witness, element0 [concrete = constants.%Op.64c]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc23: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Op.call: init %C = call %bound_method(%a.ref) to %.loc23
 // CHECK:STDOUT:   return %Op.call to %return
 // CHECK:STDOUT: }

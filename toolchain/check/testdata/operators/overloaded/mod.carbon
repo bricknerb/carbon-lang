@@ -57,9 +57,13 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:   %ModAssign.facet: %ModAssign.type = facet_value %C, (%ModAssign.impl_witness) [concrete]
 // CHECK:STDOUT:   %TestOp.type: type = fn_type @TestOp [concrete]
 // CHECK:STDOUT:   %TestOp: %TestOp.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Mod.assoc_type: type = assoc_entity_type @Mod [concrete]
+// CHECK:STDOUT:   %assoc0.bb0: %Mod.assoc_type = assoc_entity element0, imports.%Core.import_ref.11e [concrete]
 // CHECK:STDOUT:   %.0c1: type = fn_type_with_self_type %Op.type.860, %Mod.facet [concrete]
 // CHECK:STDOUT:   %TestAssign.type: type = fn_type @TestAssign [concrete]
 // CHECK:STDOUT:   %TestAssign: %TestAssign.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ModAssign.assoc_type: type = assoc_entity_type @ModAssign [concrete]
+// CHECK:STDOUT:   %assoc0.aa5: %ModAssign.assoc_type = assoc_entity element0, imports.%Core.import_ref.ec3 [concrete]
 // CHECK:STDOUT:   %.1f2: type = fn_type_with_self_type %Op.type.fae, %ModAssign.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -71,7 +75,9 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Mod: type = import_ref Core//prelude/operators/arithmetic, Mod, loaded [concrete = constants.%Mod.type]
+// CHECK:STDOUT:   %Core.import_ref.554: %Mod.assoc_type = import_ref Core//prelude/operators/arithmetic, loc66_41, loaded [concrete = constants.%assoc0.bb0]
 // CHECK:STDOUT:   %Core.ModAssign: type = import_ref Core//prelude/operators/arithmetic, ModAssign, loaded [concrete = constants.%ModAssign.type]
+// CHECK:STDOUT:   %Core.import_ref.d1f: %ModAssign.assoc_type = import_ref Core//prelude/operators/arithmetic, loc71_39, loaded [concrete = constants.%assoc0.aa5]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -210,9 +216,11 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %Mod.assoc_type = name_ref Op, imports.%Core.import_ref.554 [concrete = constants.%assoc0.bb0]
 // CHECK:STDOUT:   %impl.elem0: %.0c1 = impl_witness_access constants.%Mod.impl_witness, element0 [concrete = constants.%Op.777]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %.loc26: ref %C = splice_block %return {}
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Op.call: init %C = call %bound_method(%a.ref, %b.ref) to %.loc26
 // CHECK:STDOUT:   return %Op.call to %return
 // CHECK:STDOUT: }
@@ -222,6 +230,7 @@ fn TestAssign(a: C*, b: C) {
 // CHECK:STDOUT:   %a.ref: %ptr.019 = name_ref a, %a
 // CHECK:STDOUT:   %.loc31: ref %C = deref %a.ref
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %ModAssign.assoc_type = name_ref Op, imports.%Core.import_ref.d1f [concrete = constants.%assoc0.aa5]
 // CHECK:STDOUT:   %impl.elem0: %.1f2 = impl_witness_access constants.%ModAssign.impl_witness, element0 [concrete = constants.%Op.d6c]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc31, %impl.elem0
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %.loc31

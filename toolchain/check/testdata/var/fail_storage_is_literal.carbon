@@ -25,6 +25,8 @@ fn Main() {
 // CHECK:STDOUT:   %Main.type: type = fn_type @Main [concrete]
 // CHECK:STDOUT:   %Main: %Main.type = struct_value () [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -55,6 +57,7 @@ fn Main() {
 // CHECK:STDOUT:   assign %x.var, <error>
 // CHECK:STDOUT:   %.1: <error> = splice_block <error> [concrete = <error>] {
 // CHECK:STDOUT:     %int_1.loc19_10: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
+// CHECK:STDOUT:     %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:     %.loc19_10: type = converted %int_1.loc19_10, <error> [concrete = <error>]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x: <error> = bind_name x, <error>

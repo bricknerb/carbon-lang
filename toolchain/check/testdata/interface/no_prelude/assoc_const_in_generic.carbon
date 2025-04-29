@@ -130,8 +130,8 @@ fn H() {
 // CHECK:STDOUT:     %I.ref: %I.type.dac = name_ref I, file.%I.decl [concrete = constants.%I.generic]
 // CHECK:STDOUT:     %T.ref: type = name_ref T, %T.loc15_6.1 [symbolic = %T.loc15_6.2 (constants.%T)]
 // CHECK:STDOUT:     %I.type.loc19_6.1: type = facet_type <@I, @I(constants.%T)> [symbolic = %I.type.loc19_6.2 (constants.%I.type.325)]
-// CHECK:STDOUT:     %.loc19: @G.%I.assoc_type (%I.assoc_type.1e5) = specific_constant @I.%assoc0.loc12_22.1, @I(constants.%T) [symbolic = %assoc0 (constants.%assoc0.8f0)]
 // CHECK:STDOUT:     %F.ref: @G.%I.assoc_type (%I.assoc_type.1e5) = name_ref F, %.loc19 [symbolic = %assoc0 (constants.%assoc0.8f0)]
+// CHECK:STDOUT:     %.loc19: @G.%I.assoc_type (%I.assoc_type.1e5) = specific_constant @I.%assoc0.loc12_22.1, @I(constants.%T) [symbolic = %assoc0 (constants.%assoc0.8f0)]
 // CHECK:STDOUT:     return
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }

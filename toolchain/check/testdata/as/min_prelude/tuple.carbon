@@ -95,9 +95,11 @@ fn Var() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Make.ref.loc12_20: %Make.type = name_ref Make, file.%Make.decl [concrete = constants.%Make]
 // CHECK:STDOUT:   %.loc12_25.1: ref %X = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.call.loc12_25: init %X = call %Make.ref.loc12_20() to %.loc12_25.1
 // CHECK:STDOUT:   %Make.ref.loc12_28: %Make.type = name_ref Make, file.%Make.decl [concrete = constants.%Make]
 // CHECK:STDOUT:   %.loc12_33.1: ref %X = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.call.loc12_33: init %X = call %Make.ref.loc12_28() to %.loc12_33.1
 // CHECK:STDOUT:   %.loc12_34.1: %tuple.type.b67 = tuple_literal (%Make.call.loc12_25, %Make.call.loc12_33)
 // CHECK:STDOUT:   %X.ref.loc12_40: type = name_ref X, file.%X.decl [concrete = constants.%X]
@@ -129,9 +131,11 @@ fn Var() {
 // CHECK:STDOUT:   %b.var: ref %tuple.type.b67 = var b
 // CHECK:STDOUT:   %Make.ref.loc17_20: %Make.type = name_ref Make, file.%Make.decl [concrete = constants.%Make]
 // CHECK:STDOUT:   %tuple.elem0: ref %X = tuple_access %b.var, element0
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.call.loc17_25: init %X = call %Make.ref.loc17_20() to %tuple.elem0
 // CHECK:STDOUT:   %Make.ref.loc17_28: %Make.type = name_ref Make, file.%Make.decl [concrete = constants.%Make]
 // CHECK:STDOUT:   %tuple.elem1: ref %X = tuple_access %b.var, element1
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Make.call.loc17_33: init %X = call %Make.ref.loc17_28() to %tuple.elem1
 // CHECK:STDOUT:   %.loc17_34.1: %tuple.type.b67 = tuple_literal (%Make.call.loc17_25, %Make.call.loc17_33)
 // CHECK:STDOUT:   %X.ref.loc17_40: type = name_ref X, file.%X.decl [concrete = constants.%X]

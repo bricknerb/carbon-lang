@@ -51,11 +51,19 @@ fn TestRef(b: C) {
 // CHECK:STDOUT:   %pattern_type.c48: type = pattern_type %C [concrete]
 // CHECK:STDOUT:   %TestUnary.type: type = fn_type @TestUnary [concrete]
 // CHECK:STDOUT:   %TestUnary: %TestUnary.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Negate.assoc_type: type = assoc_entity_type @Negate [concrete]
+// CHECK:STDOUT:   %assoc0.654: %Negate.assoc_type = assoc_entity element0, imports.%Core.import_ref.2d2 [concrete]
 // CHECK:STDOUT:   %TestBinary.type: type = fn_type @TestBinary [concrete]
 // CHECK:STDOUT:   %TestBinary: %TestBinary.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Add.assoc_type: type = assoc_entity_type @Add [concrete]
+// CHECK:STDOUT:   %assoc0.c7d: %Add.assoc_type = assoc_entity element0, imports.%Core.import_ref.6dd [concrete]
 // CHECK:STDOUT:   %TestRef.type: type = fn_type @TestRef [concrete]
 // CHECK:STDOUT:   %TestRef: %TestRef.type = struct_value () [concrete]
 // CHECK:STDOUT:   %C.val: %C = struct_value () [concrete]
+// CHECK:STDOUT:   %AddAssign.assoc_type: type = assoc_entity_type @AddAssign [concrete]
+// CHECK:STDOUT:   %assoc0.14b: %AddAssign.assoc_type = assoc_entity element0, imports.%Core.import_ref.f0c [concrete]
+// CHECK:STDOUT:   %Inc.assoc_type: type = assoc_entity_type @Inc [concrete]
+// CHECK:STDOUT:   %assoc0.937: %Inc.assoc_type = assoc_entity element0, imports.%Core.import_ref.92d [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -67,6 +75,10 @@ fn TestRef(b: C) {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.cd8: %Negate.assoc_type = import_ref Core//prelude/operators/arithmetic, loc26_30, loaded [concrete = constants.%assoc0.654]
+// CHECK:STDOUT:   %Core.import_ref.f6c: %Add.assoc_type = import_ref Core//prelude/operators/arithmetic, loc11_41, loaded [concrete = constants.%assoc0.c7d]
+// CHECK:STDOUT:   %Core.import_ref.56a: %AddAssign.assoc_type = import_ref Core//prelude/operators/arithmetic, loc16_39, loaded [concrete = constants.%assoc0.14b]
+// CHECK:STDOUT:   %Core.import_ref.fe8: %Inc.assoc_type = import_ref Core//prelude/operators/arithmetic, loc21_28, loaded [concrete = constants.%assoc0.937]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -132,6 +144,7 @@ fn TestRef(b: C) {
 // CHECK:STDOUT: fn @TestUnary(%a.param: %C) -> %return.param: %C {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
+// CHECK:STDOUT:   %Op.ref: %Negate.assoc_type = name_ref Op, imports.%Core.import_ref.cd8 [concrete = constants.%assoc0.654]
 // CHECK:STDOUT:   return <error> to %return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -139,6 +152,7 @@ fn TestRef(b: C) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT:   return <error> to %return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -149,6 +163,7 @@ fn TestRef(b: C) {
 // CHECK:STDOUT:     %.loc32_3.1: %pattern_type.c48 = var_pattern %a.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %a.var: ref %C = var a
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc32_15.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc32_15.2: init %C = class_init (), %a.var [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc32_3.2: init %C = converted %.loc32_15.1, %.loc32_15.2 [concrete = constants.%C.val]
@@ -157,7 +172,9 @@ fn TestRef(b: C) {
 // CHECK:STDOUT:   %a: ref %C = bind_name a, %a.var
 // CHECK:STDOUT:   %a.ref.loc37: ref %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Op.ref.loc37: %AddAssign.assoc_type = name_ref Op, imports.%Core.import_ref.56a [concrete = constants.%assoc0.14b]
 // CHECK:STDOUT:   %a.ref.loc42: ref %C = name_ref a, %a
+// CHECK:STDOUT:   %Op.ref.loc42: %Inc.assoc_type = name_ref Op, imports.%Core.import_ref.fe8 [concrete = constants.%assoc0.937]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

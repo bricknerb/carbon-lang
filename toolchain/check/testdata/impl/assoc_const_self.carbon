@@ -127,6 +127,8 @@ fn CallF() {
 // CHECK:STDOUT:   %complete_type.f8a: <witness> = complete_type_witness %i32.builtin [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -192,6 +194,7 @@ fn CallF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %I.impl_witness_table.loc10 = impl_witness_table (%impl_witness_assoc_constant.loc10), @impl.728 [concrete]
 // CHECK:STDOUT:   %I.impl_witness.loc10: <witness> = impl_witness %I.impl_witness_table.loc10 [concrete = constants.%I.impl_witness.5ef]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc10_15.1: <bound method> = bound_method constants.%int_0.5c6, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -277,6 +280,8 @@ fn CallF() {
 // CHECK:STDOUT:   %I.impl_witness: <witness> = impl_witness file.%I.impl_witness_table [concrete]
 // CHECK:STDOUT:   %I.facet.7ee: %I.type = facet_value %empty_struct_type, (%I.impl_witness) [concrete]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.f96: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%empty_struct_type) [concrete]
+// CHECK:STDOUT:   %assoc0.665: %ImplicitAs.assoc_type.f96 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -311,6 +316,7 @@ fn CallF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %I.impl_witness_table = impl_witness_table (%impl_witness_assoc_constant), @impl [concrete]
 // CHECK:STDOUT:   %I.impl_witness: <witness> = impl_witness %I.impl_witness_table [concrete = constants.%I.impl_witness]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.f96 = name_ref Convert, constants.%assoc0.665 [concrete = constants.%assoc0.665]
 // CHECK:STDOUT:   %.loc15: %empty_struct_type = converted constants.%int_0, <error> [concrete = <error>]
 // CHECK:STDOUT:   %impl_witness_assoc_constant: <error> = impl_witness_assoc_constant <error> [concrete = <error>]
 // CHECK:STDOUT: }
@@ -375,6 +381,8 @@ fn CallF() {
 // CHECK:STDOUT:   %ImplicitAs.generic: %ImplicitAs.type.cc7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.15e: type = facet_type <@ImplicitAs, @ImplicitAs(%C)> [concrete]
 // CHECK:STDOUT:   %Convert.type.56d: type = fn_type @Convert.1, @ImplicitAs(%C) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.c42: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%C) [concrete]
+// CHECK:STDOUT:   %assoc0.e6d: %ImplicitAs.assoc_type.c42 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness: <witness> = impl_witness file.%ImplicitAs.impl_witness_table [concrete]
 // CHECK:STDOUT:   %pattern_type.cb1: type = pattern_type %empty_tuple.type [concrete]
 // CHECK:STDOUT:   %pattern_type.c48: type = pattern_type %C [concrete]
@@ -442,6 +450,7 @@ fn CallF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %I.impl_witness_table = impl_witness_table (%impl_witness_assoc_constant), @impl.cbe [concrete]
 // CHECK:STDOUT:   %I.impl_witness: <witness> = impl_witness %I.impl_witness_table [concrete = constants.%I.impl_witness]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.c42 = name_ref Convert, constants.%assoc0.e6d [concrete = constants.%assoc0.e6d]
 // CHECK:STDOUT:   %impl.elem0: %.5c3 = impl_witness_access constants.%ImplicitAs.impl_witness, element0 [concrete = constants.%Convert.155]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method constants.%empty_tuple, %impl.elem0 [concrete = constants.%Convert.bound]
 // CHECK:STDOUT:   %.loc18_13.1: ref %C = temporary_storage
@@ -556,6 +565,8 @@ fn CallF() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %Negate.type: type = facet_type <@Negate> [concrete]
+// CHECK:STDOUT:   %Negate.assoc_type: type = assoc_entity_type @Negate [concrete]
+// CHECK:STDOUT:   %assoc0.654: %Negate.assoc_type = assoc_entity element0, imports.%Core.import_ref.2d2 [concrete]
 // CHECK:STDOUT:   %Op.type.e42: type = fn_type @Op.1 [concrete]
 // CHECK:STDOUT:   %Negate.impl_witness_table = impl_witness_table (imports.%Core.import_ref.c15), @impl.8cb [concrete]
 // CHECK:STDOUT:   %Negate.impl_witness: <witness> = impl_witness %Negate.impl_witness_table [concrete]
@@ -583,6 +594,7 @@ fn CallF() {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.IntLiteral: %IntLiteral.type = import_ref Core//prelude/types/int_literal, IntLiteral, loaded [concrete = constants.%IntLiteral]
+// CHECK:STDOUT:   %Core.import_ref.cd8: %Negate.assoc_type = import_ref Core//prelude/operators/arithmetic, loc26_30, loaded [concrete = constants.%assoc0.654]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -608,6 +620,7 @@ fn CallF() {
 // CHECK:STDOUT:     %.loc15_7.2: type = converted %.loc15_7.1, constants.%empty_struct_type [concrete = constants.%empty_struct_type]
 // CHECK:STDOUT:     %I.ref: %I.type.dac = name_ref I, file.%I.decl [concrete = constants.%I.generic]
 // CHECK:STDOUT:     %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
+// CHECK:STDOUT:     %Op.ref: %Negate.assoc_type = name_ref Op, imports.%Core.import_ref.cd8 [concrete = constants.%assoc0.654]
 // CHECK:STDOUT:     %impl.elem0.loc15_14: %.63a = impl_witness_access constants.%Negate.impl_witness, element0 [concrete = constants.%Op.bba]
 // CHECK:STDOUT:     %bound_method: <bound method> = bound_method %int_1, %impl.elem0.loc15_14 [concrete = constants.%Op.bound]
 // CHECK:STDOUT:     %int.snegate: init Core.IntLiteral = call %bound_method(%int_1) [concrete = constants.%int_-1]
@@ -616,8 +629,8 @@ fn CallF() {
 // CHECK:STDOUT:     %I.type: type = facet_type <@I, @I(constants.%int_-1)> [concrete = constants.%I.type.057]
 // CHECK:STDOUT:     %.Self: %I.type.057 = bind_symbolic_name .Self [symbolic_self = constants.%.Self]
 // CHECK:STDOUT:     %.Self.ref: %I.type.057 = name_ref .Self, %.Self [symbolic_self = constants.%.Self]
-// CHECK:STDOUT:     %.loc15_24.1: %I.assoc_type.247 = specific_constant @V.%assoc0, @I(constants.%int_-1) [concrete = constants.%assoc0.350]
 // CHECK:STDOUT:     %V.ref: %I.assoc_type.247 = name_ref V, %.loc15_24.1 [concrete = constants.%assoc0.350]
+// CHECK:STDOUT:     %.loc15_24.1: %I.assoc_type.247 = specific_constant @V.%assoc0, @I(constants.%int_-1) [concrete = constants.%assoc0.350]
 // CHECK:STDOUT:     %.Self.as_type: type = facet_access_type %.Self.ref [symbolic_self = constants.%.Self.as_type]
 // CHECK:STDOUT:     %.loc15_24.2: type = converted %.Self.ref, %.Self.as_type [symbolic_self = constants.%.Self.as_type]
 // CHECK:STDOUT:     %impl.elem0.loc15_24: <error> = impl_witness_access constants.%I.lookup_impl_witness, element0 [concrete = <error>]

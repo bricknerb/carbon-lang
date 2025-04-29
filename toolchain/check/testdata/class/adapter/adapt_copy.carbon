@@ -213,6 +213,7 @@ fn InTuple(c: (AdaptStruct, u32)) -> (AdaptStruct, u32) {
 // CHECK:STDOUT:     %.loc11: %pattern_type.cdf = var_pattern %d.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %d.var: ref %AdaptCopyable = var d
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %c.ref: %AdaptCopyable = name_ref c, %c
 // CHECK:STDOUT:   assign %d.var, %c.ref
 // CHECK:STDOUT:   %AdaptCopyable.ref.loc11: type = name_ref AdaptCopyable, file.%AdaptCopyable.decl [concrete = constants.%AdaptCopyable]
@@ -358,6 +359,7 @@ fn InTuple(c: (AdaptStruct, u32)) -> (AdaptStruct, u32) {
 // CHECK:STDOUT:     %.loc9_3.1: %pattern_type.562 = var_pattern %d.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %d.var: ref %AdaptTuple = var d
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %c.ref: %AdaptTuple = name_ref c, %c
 // CHECK:STDOUT:   %.loc9_3.2: %tuple.type.d07 = as_compatible %c.ref
 // CHECK:STDOUT:   %tuple.elem0.loc9_3.1: %i32 = tuple_access %.loc9_3.2, element0
@@ -521,6 +523,7 @@ fn InTuple(c: (AdaptStruct, u32)) -> (AdaptStruct, u32) {
 // CHECK:STDOUT:     %.loc17: %pattern_type = var_pattern %b.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b.var: ref %AdaptNoncopyable = var b
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %a.ref: %AdaptNoncopyable = name_ref a, %a
 // CHECK:STDOUT:   assign %b.var, <error>
 // CHECK:STDOUT:   %AdaptNoncopyable.ref.loc17: type = name_ref AdaptNoncopyable, file.%AdaptNoncopyable.decl [concrete = constants.%AdaptNoncopyable]
@@ -613,6 +616,7 @@ fn InTuple(c: (AdaptStruct, u32)) -> (AdaptStruct, u32) {
 // CHECK:STDOUT:     %.loc20_3.1: %pattern_type.7e5 = var_pattern %b.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b.var: ref %AdaptNoncopyableIndirect = var b
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %a.ref: %AdaptNoncopyableIndirect = name_ref a, %a
 // CHECK:STDOUT:   %.loc20_3.2: %tuple.type.c9a = as_compatible %a.ref
 // CHECK:STDOUT:   %tuple.elem0.loc20_3.1: %i32 = tuple_access %.loc20_3.2, element0
@@ -731,6 +735,7 @@ fn InTuple(c: (AdaptStruct, u32)) -> (AdaptStruct, u32) {
 // CHECK:STDOUT:     %.loc9_3.1: %pattern_type.f45 = var_pattern %h.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %h.var: ref %AdaptStruct = var h
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %g.ref: %AdaptStruct = name_ref g, %g
 // CHECK:STDOUT:   %.loc9_3.2: %struct_type.e.f = as_compatible %g.ref
 // CHECK:STDOUT:   %.loc9_3.3: %i32 = struct_access %.loc9_3.2, element0

@@ -423,6 +423,7 @@ class X {
 // CHECK:STDOUT:   %Zero.call: init %empty_tuple.type = call %impl.elem0()
 // CHECK:STDOUT:   %.loc29_5.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %Point.ref.loc29: type = name_ref Point, file.%Point.decl [concrete = constants.%Point]
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc29_5.2: ref %Point = temporary_storage
 // CHECK:STDOUT:   %.loc29_5.3: init %Point = class_init (), %.loc29_5.2 [concrete = constants.%Point.val]
 // CHECK:STDOUT:   %.loc29_5.4: ref %Point = temporary %.loc29_5.2, %.loc29_5.3

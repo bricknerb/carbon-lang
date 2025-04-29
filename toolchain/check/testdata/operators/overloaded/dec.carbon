@@ -43,6 +43,8 @@ fn TestOp() {
 // CHECK:STDOUT:   %TestOp: %TestOp.type = struct_value () [concrete]
 // CHECK:STDOUT:   %pattern_type.c48: type = pattern_type %C [concrete]
 // CHECK:STDOUT:   %C.val: %C = struct_value () [concrete]
+// CHECK:STDOUT:   %Dec.assoc_type: type = assoc_entity_type @Dec [concrete]
+// CHECK:STDOUT:   %assoc0: %Dec.assoc_type = assoc_entity element0, imports.%Core.import_ref.0a2 [concrete]
 // CHECK:STDOUT:   %.859: type = fn_type_with_self_type %Op.type.633, %Dec.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -53,6 +55,7 @@ fn TestOp() {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Dec: type = import_ref Core//prelude/operators/arithmetic, Dec, loaded [concrete = constants.%Dec.type]
+// CHECK:STDOUT:   %Core.import_ref.b61: %Dec.assoc_type = import_ref Core//prelude/operators/arithmetic, loc41_28, loaded [concrete = constants.%assoc0]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -111,6 +114,7 @@ fn TestOp() {
 // CHECK:STDOUT:     %.loc22_3.1: %pattern_type.c48 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %C = var c
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc22_15.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc22_15.2: init %C = class_init (), %c.var [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc22_3.2: init %C = converted %.loc22_15.1, %.loc22_15.2 [concrete = constants.%C.val]
@@ -118,6 +122,7 @@ fn TestOp() {
 // CHECK:STDOUT:   %C.ref: type = name_ref C, file.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   %c: ref %C = bind_name c, %c.var
 // CHECK:STDOUT:   %c.ref: ref %C = name_ref c, %c
+// CHECK:STDOUT:   %Op.ref: %Dec.assoc_type = name_ref Op, imports.%Core.import_ref.b61 [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: %.859 = impl_witness_access constants.%Dec.impl_witness, element0 [concrete = constants.%Op.cf9]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %c.ref, %impl.elem0
 // CHECK:STDOUT:   %addr: %ptr.019 = addr_of %c.ref

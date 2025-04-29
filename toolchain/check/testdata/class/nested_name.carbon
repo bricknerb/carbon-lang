@@ -127,6 +127,7 @@ fn G(o: Outer) {
 // CHECK:STDOUT:     %.loc22_3: %pattern_type.906 = var_pattern %i.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %i.var: ref %Inner = var i
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc22_11: type = splice_block %Inner.ref [concrete = constants.%Inner] {
 // CHECK:STDOUT:     %o.ref: %Outer = name_ref o, %o
 // CHECK:STDOUT:     %Inner.ref: type = name_ref Inner, @Outer.%Inner.decl [concrete = constants.%Inner]

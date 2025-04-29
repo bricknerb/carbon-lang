@@ -24,6 +24,8 @@ var x: {.a: i32} = {.a: i32};
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %struct_type.a: type = struct_type {.a: %i32} [concrete]
 // CHECK:STDOUT:   %pattern_type.268: type = pattern_type %struct_type.a [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.b9d: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%struct_type.a) [concrete]
+// CHECK:STDOUT:   %assoc0.77e: %ImplicitAs.assoc_type.b9d = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -59,6 +61,7 @@ var x: {.a: i32} = {.a: i32};
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %struct_type.a: type = struct_type {.a: %i32} [concrete = constants.%struct_type.a]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.b9d = name_ref Convert, constants.%assoc0.77e [concrete = constants.%assoc0.77e]
 // CHECK:STDOUT:   %.loc18: %struct_type.a = converted %struct_type.a, <error> [concrete = <error>]
 // CHECK:STDOUT:   assign file.%x.var, <error>
 // CHECK:STDOUT:   return

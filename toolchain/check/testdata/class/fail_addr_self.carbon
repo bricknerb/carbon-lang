@@ -129,6 +129,7 @@ fn F(c: Class, p: Class*) {
 // CHECK:STDOUT:   %F.ref.loc28: %F.type.f1b = name_ref F, @Class.%F.decl [concrete = constants.%F.1f2]
 // CHECK:STDOUT:   %F.bound.loc28: <bound method> = bound_method %c.ref.loc28, %F.ref.loc28
 // CHECK:STDOUT:   %.loc28: ref %Class = temporary_storage
+// CHECK:STDOUT:   %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %addr.loc28: %ptr.e71 = addr_of %.loc28
 // CHECK:STDOUT:   %F.call.loc28: init %empty_tuple.type = call %F.bound.loc28(%addr.loc28)
 // CHECK:STDOUT:   %c.ref.loc30: %Class = name_ref c, %c

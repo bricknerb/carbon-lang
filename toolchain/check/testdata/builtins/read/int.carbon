@@ -75,6 +75,7 @@ fn Main() {
 // CHECK:STDOUT:     %i32.loc16: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc16_25.1: ref %i32 = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc16_25.2: ref %i32 = temporary %.loc16_25.1, %read.char.loc16
 // CHECK:STDOUT:   %n: ref %i32 = bind_name n, %.loc16_25.2
 // CHECK:STDOUT:   name_binding_decl {
@@ -88,6 +89,7 @@ fn Main() {
 // CHECK:STDOUT:     %i32.loc17: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc17_30.1: ref %i32 = temporary_storage
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc17_30.2: ref %i32 = temporary %.loc17_30.1, %read.char.loc17
 // CHECK:STDOUT:   %m: ref %i32 = bind_name m, %.loc17_30.2
 // CHECK:STDOUT:   return

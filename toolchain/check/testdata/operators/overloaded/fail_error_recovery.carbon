@@ -34,6 +34,8 @@ fn G(n: i32) {
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %Add.type: type = facet_type <@Add> [concrete]
+// CHECK:STDOUT:   %Add.assoc_type: type = assoc_entity_type @Add [concrete]
+// CHECK:STDOUT:   %assoc0.c7d: %Add.assoc_type = assoc_entity element0, imports.%Core.import_ref.6dd [concrete]
 // CHECK:STDOUT:   %Op.type.545: type = fn_type @Op.1 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -55,6 +57,7 @@ fn G(n: i32) {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.f6c: %Add.assoc_type = import_ref Core//prelude/operators/arithmetic, loc11_41, loaded [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -83,6 +86,7 @@ fn G(n: i32) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %undeclared.ref: <error> = name_ref undeclared, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
+// CHECK:STDOUT:   %Op.ref: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT:   %impl.elem0: <error> = impl_witness_access <error>, element0 [concrete = <error>]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
@@ -91,6 +95,7 @@ fn G(n: i32) {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %n.ref: %i32 = name_ref n, %n
 // CHECK:STDOUT:   %undeclared.ref: <error> = name_ref undeclared, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Op.ref: %Add.assoc_type = name_ref Op, imports.%Core.import_ref.f6c [concrete = constants.%assoc0.c7d]
 // CHECK:STDOUT:   %impl.elem0: %.ac9 = impl_witness_access constants.%Add.impl_witness.dbc, element0 [concrete = constants.%Op.c82]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %n.ref, %impl.elem0
 // CHECK:STDOUT:   return

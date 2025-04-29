@@ -794,7 +794,9 @@ fn G() { F({}); }
 // CHECK:STDOUT:     %.6f0: ref %C.7a7 = as_compatible @F.%v.var
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %inst.splice_block: <instruction> = inst_value [concrete] {
-// CHECK:STDOUT:     %.432: <error> = splice_block <error> [concrete = <error>] {}
+// CHECK:STDOUT:     %.f8c: <error> = splice_block <error> [concrete = <error>] {
+// CHECK:STDOUT:       %destroy.ref: <error> = name_ref destroy, <error> [concrete = <error>]
+// CHECK:STDOUT:     }
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

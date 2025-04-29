@@ -151,14 +151,15 @@ class DeclNameStack {
     // The name of the final name component.
     SemIR::NameId name_id = SemIR::NameId::None;
 
+    // TODO: Consider replacing this union with `SemIR::InstId inst_id`.
     union {
       // The ID of a resolved qualifier, including both identifiers and
       // expressions. `None` indicates resolution failed.
       SemIR::InstId resolved_inst_id;
 
       // When `state` is `Poisoned` (name is unresolved due to name poisoning),
-      // the poisoning location.
-      SemIR::LocId poisoning_loc_id = SemIR::LocId::None;
+      // the poisoning instruction.
+      SemIR::InstId poisoning_inst_id = SemIR::InstId::None;
     };
   };
 

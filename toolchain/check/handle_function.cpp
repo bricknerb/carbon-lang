@@ -199,7 +199,7 @@ static auto TryMergeRedecl(Context& context, Parse::AnyFunctionDeclId node_id,
     -> void {
   if (name_context.state == DeclNameStack::NameContext::State::Poisoned) {
     DiagnosePoisonedName(context, name_context.name_id_for_new_inst(),
-                         name_context.poisoning_loc_id, name_context.loc_id);
+                         name_context.poisoning_inst_id, name_context.loc_id);
     return;
   }
 

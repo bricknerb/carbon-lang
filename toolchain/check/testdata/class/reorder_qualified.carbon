@@ -83,6 +83,8 @@ class A {
 // CHECK:STDOUT:   %struct_type.a.a6c: type = struct_type {.a: Core.IntLiteral} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -232,8 +234,10 @@ class A {
 // CHECK:STDOUT:     %.loc29_7.1: %pattern_type.c10 = var_pattern %a.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %a.var: ref %A = var a
+// CHECK:STDOUT:   %destroy.ref.1: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %.loc29_25.1: %struct_type.a.a6c = struct_literal (%int_1)
+// CHECK:STDOUT:   %Convert.ref.loc29: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc29: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc29_25.1: <bound method> = bound_method %int_1, %impl.elem0.loc29 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc29: <specific function> = specific_function %impl.elem0.loc29, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -252,8 +256,10 @@ class A {
 // CHECK:STDOUT:     %.loc30_7.1: %pattern_type.98e = var_pattern %b.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %b.var: ref %B = var b
+// CHECK:STDOUT:   %destroy.ref.2: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
 // CHECK:STDOUT:   %.loc30_25.1: %struct_type.b.a15 = struct_literal (%int_2)
+// CHECK:STDOUT:   %Convert.ref.loc30: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc30: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc30_25.1: <bound method> = bound_method %int_2, %impl.elem0.loc30 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc30: <specific function> = specific_function %impl.elem0.loc30, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -272,8 +278,10 @@ class A {
 // CHECK:STDOUT:     %.loc31_7.1: %pattern_type.6d8 = var_pattern %c.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c.var: ref %C = var c
+// CHECK:STDOUT:   %destroy.ref.3: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_3: Core.IntLiteral = int_value 3 [concrete = constants.%int_3.1ba]
 // CHECK:STDOUT:   %.loc31_25.1: %struct_type.c.5b8 = struct_literal (%int_3)
+// CHECK:STDOUT:   %Convert.ref.loc31: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc31: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc31_25.1: <bound method> = bound_method %int_3, %impl.elem0.loc31 [concrete = constants.%Convert.bound.b30]
 // CHECK:STDOUT:   %specific_fn.loc31: <specific function> = specific_function %impl.elem0.loc31, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -292,8 +300,10 @@ class A {
 // CHECK:STDOUT:     %.loc32_7.1: %pattern_type.d58 = var_pattern %d.patt
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %d.var: ref %D = var d
+// CHECK:STDOUT:   %destroy.ref.4: <error> = name_ref destroy, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_4: Core.IntLiteral = int_value 4 [concrete = constants.%int_4.0c1]
 // CHECK:STDOUT:   %.loc32_25.1: %struct_type.d.3ea = struct_literal (%int_4)
+// CHECK:STDOUT:   %Convert.ref.loc32: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc32: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc32_25.1: <bound method> = bound_method %int_4, %impl.elem0.loc32 [concrete = constants.%Convert.bound.ac3]
 // CHECK:STDOUT:   %specific_fn.loc32: <specific function> = specific_function %impl.elem0.loc32, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]

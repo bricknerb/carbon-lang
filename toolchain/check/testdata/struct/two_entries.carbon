@@ -26,6 +26,8 @@ var y: {.a: i32, .b: i32} = x;
 // CHECK:STDOUT:   %struct_type.a.b.cfd: type = struct_type {.a: Core.IntLiteral, .b: Core.IntLiteral} [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.205: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %Convert.type.1b6: type = fn_type @Convert.1, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (imports.%Core.import_ref.a5b), @impl.4f9 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c75: <witness> = impl_witness %ImplicitAs.impl_witness_table.a2f, @impl.4f9(%int_32) [concrete]
 // CHECK:STDOUT:   %Convert.type.035: type = fn_type @Convert.2, @impl.4f9(%int_32) [concrete]
@@ -70,6 +72,7 @@ var y: {.a: i32, .b: i32} = x;
 // CHECK:STDOUT:     %i32.loc11_22: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:     %struct_type.a.b.loc11: type = struct_type {.a: %i32, .b: %i32} [concrete = constants.%struct_type.a.b.501]
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Convert.ref.loc11_44.1: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc11_44.1: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc11_44.1: <bound method> = bound_method @__global_init.%int_1.loc11, %impl.elem0.loc11_44.1 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc11_44.1: <specific function> = specific_function %impl.elem0.loc11_44.1, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -77,6 +80,7 @@ var y: {.a: i32, .b: i32} = x;
 // CHECK:STDOUT:   %int.convert_checked.loc11_44.1: init %i32 = call %bound_method.loc11_44.2(@__global_init.%int_1.loc11) [concrete = constants.%int_1.5d2]
 // CHECK:STDOUT:   %.loc11_44.1: %i32 = value_of_initializer %int.convert_checked.loc11_44.1 [concrete = constants.%int_1.5d2]
 // CHECK:STDOUT:   %.loc11_44.2: %i32 = converted @__global_init.%int_1.loc11, %.loc11_44.1 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %Convert.ref.loc11_44.2: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc11_44.2: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc11_44.3: <bound method> = bound_method @__global_init.%int_2.loc11, %impl.elem0.loc11_44.2 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc11_44.2: <specific function> = specific_function %impl.elem0.loc11_44.2, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -135,6 +139,7 @@ var y: {.a: i32, .b: i32} = x;
 // CHECK:STDOUT:   %int_1.loc14: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_2.loc14: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
 // CHECK:STDOUT:   %.loc14_44.1: %struct_type.a.b.cfd = struct_literal (%int_1.loc14, %int_2.loc14)
+// CHECK:STDOUT:   %Convert.ref.loc14_44.1: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc14_44.1: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc14_44.1: <bound method> = bound_method %int_1.loc14, %impl.elem0.loc14_44.1 [concrete = constants.%Convert.bound.ab5]
 // CHECK:STDOUT:   %specific_fn.loc14_44.1: <specific function> = specific_function %impl.elem0.loc14_44.1, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]
@@ -143,6 +148,7 @@ var y: {.a: i32, .b: i32} = x;
 // CHECK:STDOUT:   %.loc14_44.2: init %i32 = converted %int_1.loc14, %int.convert_checked.loc14_44.1 [concrete = constants.%int_1.5d2]
 // CHECK:STDOUT:   %.loc14_44.3: ref %i32 = struct_access file.%x.var, element0
 // CHECK:STDOUT:   %.loc14_44.4: init %i32 = initialize_from %.loc14_44.2 to %.loc14_44.3 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %Convert.ref.loc14_44.2: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %impl.elem0.loc14_44.2: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
 // CHECK:STDOUT:   %bound_method.loc14_44.3: <bound method> = bound_method %int_2.loc14, %impl.elem0.loc14_44.2 [concrete = constants.%Convert.bound.ef9]
 // CHECK:STDOUT:   %specific_fn.loc14_44.2: <specific function> = specific_function %impl.elem0.loc14_44.2, @Convert.2(constants.%int_32) [concrete = constants.%Convert.specific_fn]

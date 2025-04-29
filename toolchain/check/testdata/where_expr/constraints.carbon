@@ -416,6 +416,8 @@ fn NotEmptyStruct() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %.Self: type = bind_symbolic_name .Self [symbolic_self]
 // CHECK:STDOUT:   %int_7: Core.IntLiteral = int_value 7 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %type_where: type = facet_type <type where TODO> [concrete]
 // CHECK:STDOUT:   %U: %type_where = bind_symbolic_name U, 0 [symbolic]
 // CHECK:STDOUT:   %pattern_type.344: type = pattern_type %type_where [concrete]
@@ -443,6 +445,7 @@ fn NotEmptyStruct() {
 // CHECK:STDOUT:     %.loc11_26.1: type = splice_block %.loc11_26.2 [concrete = constants.%type_where] {
 // CHECK:STDOUT:       %.Self: type = bind_symbolic_name .Self [symbolic_self = constants.%.Self]
 // CHECK:STDOUT:       %int_7: Core.IntLiteral = int_value 7 [concrete = constants.%int_7]
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:       %.loc11_32: type = converted %int_7, <error> [concrete = <error>]
 // CHECK:STDOUT:       %.loc11_26.2: type = where_expr %.Self [concrete = constants.%type_where] {
 // CHECK:STDOUT:         requirement_impls <error>, type
@@ -467,6 +470,8 @@ fn NotEmptyStruct() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %.Self: type = bind_symbolic_name .Self [symbolic_self]
 // CHECK:STDOUT:   %int_7: Core.IntLiteral = int_value 7 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.ce4: type = assoc_entity_type @ImplicitAs, @ImplicitAs(type) [concrete]
+// CHECK:STDOUT:   %assoc0.73f: %ImplicitAs.assoc_type.ce4 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %type_where: type = facet_type <type where TODO> [concrete]
 // CHECK:STDOUT:   %U: %type_where = bind_symbolic_name U, 0 [symbolic]
 // CHECK:STDOUT:   %pattern_type.344: type = pattern_type %type_where [concrete]
@@ -495,6 +500,7 @@ fn NotEmptyStruct() {
 // CHECK:STDOUT:       %.Self: type = bind_symbolic_name .Self [symbolic_self = constants.%.Self]
 // CHECK:STDOUT:       %.Self.ref: type = name_ref .Self, %.Self [symbolic_self = constants.%.Self]
 // CHECK:STDOUT:       %int_7: Core.IntLiteral = int_value 7 [concrete = constants.%int_7]
+// CHECK:STDOUT:       %Convert.ref: %ImplicitAs.assoc_type.ce4 = name_ref Convert, constants.%assoc0.73f [concrete = constants.%assoc0.73f]
 // CHECK:STDOUT:       %.loc11_44: type = converted %int_7, <error> [concrete = <error>]
 // CHECK:STDOUT:       %.loc11_26.2: type = where_expr %.Self [concrete = constants.%type_where] {
 // CHECK:STDOUT:         requirement_impls %.Self.ref, <error>

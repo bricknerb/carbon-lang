@@ -104,9 +104,12 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:   %Eq.facet: %Eq.type = facet_value %C, (%Eq.impl_witness) [concrete]
 // CHECK:STDOUT:   %TestEqual.type: type = fn_type @TestEqual [concrete]
 // CHECK:STDOUT:   %TestEqual: %TestEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Eq.assoc_type: type = assoc_entity_type @Eq [concrete]
+// CHECK:STDOUT:   %assoc0: %Eq.assoc_type = assoc_entity element0, imports.%Core.import_ref.e51 [concrete]
 // CHECK:STDOUT:   %.b8f: type = fn_type_with_self_type %Equal.type.79c, %Eq.facet [concrete]
 // CHECK:STDOUT:   %TestNotEqual.type: type = fn_type @TestNotEqual [concrete]
 // CHECK:STDOUT:   %TestNotEqual: %TestNotEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc1: %Eq.assoc_type = assoc_entity element1, imports.%Core.import_ref.ed4 [concrete]
 // CHECK:STDOUT:   %.9a6: type = fn_type_with_self_type %NotEqual.type.e6c, %Eq.facet [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -118,6 +121,8 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Eq: type = import_ref Core//prelude/operators/comparison, Eq, loaded [concrete = constants.%Eq.type]
+// CHECK:STDOUT:   %Core.import_ref.5cf: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc12_44, loaded [concrete = constants.%assoc0]
+// CHECK:STDOUT:   %Core.import_ref.75a: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc13_47, loaded [concrete = constants.%assoc1]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -244,6 +249,7 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %Equal.ref: %Eq.assoc_type = name_ref Equal, imports.%Core.import_ref.5cf [concrete = constants.%assoc0]
 // CHECK:STDOUT:   %impl.elem0: %.b8f = impl_witness_access constants.%Eq.impl_witness, element0 [concrete = constants.%Equal.f96]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
 // CHECK:STDOUT:   %Equal.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -256,6 +262,7 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %NotEqual.ref: %Eq.assoc_type = name_ref NotEqual, imports.%Core.import_ref.75a [concrete = constants.%assoc1]
 // CHECK:STDOUT:   %impl.elem1: %.9a6 = impl_witness_access constants.%Eq.impl_witness, element1 [concrete = constants.%NotEqual.c3f]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem1
 // CHECK:STDOUT:   %NotEqual.call: init bool = call %bound_method(%a.ref, %b.ref)
@@ -276,8 +283,11 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:   %pattern_type.831: type = pattern_type bool [concrete]
 // CHECK:STDOUT:   %TestEqual.type: type = fn_type @TestEqual [concrete]
 // CHECK:STDOUT:   %TestEqual: %TestEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Eq.assoc_type: type = assoc_entity_type @Eq [concrete]
+// CHECK:STDOUT:   %assoc0: %Eq.assoc_type = assoc_entity element0, imports.%Core.import_ref.e51 [concrete]
 // CHECK:STDOUT:   %TestNotEqual.type: type = fn_type @TestNotEqual [concrete]
 // CHECK:STDOUT:   %TestNotEqual: %TestNotEqual.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc1: %Eq.assoc_type = assoc_entity element1, imports.%Core.import_ref.ed4 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -287,6 +297,8 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.5cf: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc12_44, loaded [concrete = constants.%assoc0]
+// CHECK:STDOUT:   %Core.import_ref.75a: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc13_47, loaded [concrete = constants.%assoc1]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -353,6 +365,7 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Equal.ref: %Eq.assoc_type = name_ref Equal, imports.%Core.import_ref.5cf [concrete = constants.%assoc0]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -360,6 +373,7 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %NotEqual.ref: %Eq.assoc_type = name_ref NotEqual, imports.%Core.import_ref.75a [concrete = constants.%assoc1]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -385,9 +399,14 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:   %pattern_type.510: type = pattern_type %D [concrete]
 // CHECK:STDOUT:   %TestRhsBad.type: type = fn_type @TestRhsBad [concrete]
 // CHECK:STDOUT:   %TestRhsBad: %TestRhsBad.type = struct_value () [concrete]
+// CHECK:STDOUT:   %Eq.assoc_type: type = assoc_entity_type @Eq [concrete]
+// CHECK:STDOUT:   %assoc0.59f: %Eq.assoc_type = assoc_entity element0, imports.%Core.import_ref.e51 [concrete]
 // CHECK:STDOUT:   %.b8f: type = fn_type_with_self_type %Equal.type.79c, %Eq.facet [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.c42: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%C) [concrete]
+// CHECK:STDOUT:   %assoc0.e6d: %ImplicitAs.assoc_type.c42 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT:   %TestLhsBad.type: type = fn_type @TestLhsBad [concrete]
 // CHECK:STDOUT:   %TestLhsBad: %TestLhsBad.type = struct_value () [concrete]
+// CHECK:STDOUT:   %assoc1: %Eq.assoc_type = assoc_entity element1, imports.%Core.import_ref.ed4 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -399,6 +418,8 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Eq: type = import_ref Core//prelude/operators/comparison, Eq, loaded [concrete = constants.%Eq.type]
+// CHECK:STDOUT:   %Core.import_ref.5cf: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc12_44, loaded [concrete = constants.%assoc0.59f]
+// CHECK:STDOUT:   %Core.import_ref.75a: %Eq.assoc_type = import_ref Core//prelude/operators/comparison, loc13_47, loaded [concrete = constants.%assoc1]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -536,8 +557,10 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %C = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %D = name_ref b, %b
+// CHECK:STDOUT:   %Equal.ref: %Eq.assoc_type = name_ref Equal, imports.%Core.import_ref.5cf [concrete = constants.%assoc0.59f]
 // CHECK:STDOUT:   %impl.elem0: %.b8f = impl_witness_access constants.%Eq.impl_witness, element0 [concrete = constants.%Equal.f96]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %a.ref, %impl.elem0
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.c42 = name_ref Convert, constants.%assoc0.e6d [concrete = constants.%assoc0.e6d]
 // CHECK:STDOUT:   %.loc23_15: %C = converted %b.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %Equal.call: init bool = call %bound_method(%a.ref, <error>)
 // CHECK:STDOUT:   %.loc23_16.1: bool = value_of_initializer %Equal.call
@@ -549,6 +572,7 @@ fn TestLhsBad(a: D, b: C) -> bool {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %a.ref: %D = name_ref a, %a
 // CHECK:STDOUT:   %b.ref: %C = name_ref b, %b
+// CHECK:STDOUT:   %NotEqual.ref: %Eq.assoc_type = name_ref NotEqual, imports.%Core.import_ref.75a [concrete = constants.%assoc1]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

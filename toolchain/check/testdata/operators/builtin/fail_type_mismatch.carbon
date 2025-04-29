@@ -28,6 +28,8 @@ fn Main() {
 // CHECK:STDOUT:   %Bool: %Bool.type = struct_value () [concrete]
 // CHECK:STDOUT:   %pattern_type.831: type = pattern_type bool [concrete]
 // CHECK:STDOUT:   %int_12: Core.IntLiteral = int_value 12 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.97e: type = assoc_entity_type @ImplicitAs, @ImplicitAs(bool) [concrete]
+// CHECK:STDOUT:   %assoc0.59d: %ImplicitAs.assoc_type.97e = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -56,6 +58,7 @@ fn Main() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %x.var: ref bool = var x
 // CHECK:STDOUT:   %int_12: Core.IntLiteral = int_value 12 [concrete = constants.%int_12]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.97e = name_ref Convert, constants.%assoc0.59d [concrete = constants.%assoc0.59d]
 // CHECK:STDOUT:   %.loc19_17.1: bool = converted %int_12, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc19_17.2: <error> = not <error> [concrete = <error>]
 // CHECK:STDOUT:   assign %x.var, <error>

@@ -28,6 +28,8 @@ fn Main() -> i32 {
 // CHECK:STDOUT:   %Main.type: type = fn_type @Main [concrete]
 // CHECK:STDOUT:   %Main: %Main.type = struct_value () [concrete]
 // CHECK:STDOUT:   %float: f64 = float_literal 1 [concrete]
+// CHECK:STDOUT:   %ImplicitAs.assoc_type.3d9: type = assoc_entity_type @ImplicitAs, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %assoc0.af5: %ImplicitAs.assoc_type.3d9 = assoc_entity element0, imports.%Core.import_ref.1c7 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -59,6 +61,7 @@ fn Main() -> i32 {
 // CHECK:STDOUT: fn @Main() -> %i32 {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %float: f64 = float_literal 1 [concrete = constants.%float]
+// CHECK:STDOUT:   %Convert.ref: %ImplicitAs.assoc_type.3d9 = name_ref Convert, constants.%assoc0.af5 [concrete = constants.%assoc0.af5]
 // CHECK:STDOUT:   %.loc19: %i32 = converted %float, <error> [concrete = <error>]
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
