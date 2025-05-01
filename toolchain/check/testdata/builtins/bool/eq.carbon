@@ -70,6 +70,7 @@ var d: C(false == false) = True();
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.Bool: %Bool.type = import_ref Core//prelude/types/bool, Bool, loaded [concrete = constants.%Bool]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -291,8 +292,7 @@ var d: C(false == false) = True();
 // CHECK:STDOUT:   %False: %False.type = struct_value () [concrete]
 // CHECK:STDOUT:   %Eq.type: type = facet_type <@Eq> [concrete]
 // CHECK:STDOUT:   %Equal.type.79c: type = fn_type @Equal.1 [concrete]
-// CHECK:STDOUT:   %Eq.impl_witness_table = impl_witness_table (imports.%Core.import_ref.998, imports.%Core.import_ref.fb6), @impl.bb5 [concrete]
-// CHECK:STDOUT:   %Eq.impl_witness: <witness> = impl_witness %Eq.impl_witness_table [concrete]
+// CHECK:STDOUT:   %Eq.impl_witness: <witness> = impl_witness imports.%Eq.impl_witness_table [concrete]
 // CHECK:STDOUT:   %Eq.facet: %Eq.type = facet_value bool, (%Eq.impl_witness) [concrete]
 // CHECK:STDOUT:   %.7f7: type = fn_type_with_self_type %Equal.type.79c, %Eq.facet [concrete]
 // CHECK:STDOUT:   %Equal.type.aa3: type = fn_type @Equal.2 [concrete]
@@ -308,6 +308,11 @@ var d: C(false == false) = True();
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.Bool: %Bool.type = import_ref Core//prelude/types/bool, Bool, loaded [concrete = constants.%Bool]
+// CHECK:STDOUT:   %Core.Eq: type = import_ref Core//prelude/operators/comparison, Eq, loaded [concrete = constants.%Eq.type]
+// CHECK:STDOUT:   %Core.import_ref.998: %Equal.type.aa3 = import_ref Core//prelude/operators/comparison, loc29_45, loaded [concrete = constants.%Equal.6e2]
+// CHECK:STDOUT:   %Core.import_ref.fb6 = import_ref Core//prelude/operators/comparison, loc30_48, unloaded
+// CHECK:STDOUT:   %Eq.impl_witness_table = impl_witness_table (%Core.import_ref.998, %Core.import_ref.fb6), @impl.bb5 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {

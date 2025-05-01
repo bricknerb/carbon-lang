@@ -70,6 +70,7 @@ var d: C(false != false) = False();
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.Bool: %Bool.type = import_ref Core//prelude/types/bool, Bool, loaded [concrete = constants.%Bool]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -291,8 +292,7 @@ var d: C(false != false) = False();
 // CHECK:STDOUT:   %False: %False.type = struct_value () [concrete]
 // CHECK:STDOUT:   %Eq.type: type = facet_type <@Eq> [concrete]
 // CHECK:STDOUT:   %NotEqual.type.e6c: type = fn_type @NotEqual.1 [concrete]
-// CHECK:STDOUT:   %Eq.impl_witness_table = impl_witness_table (imports.%Core.import_ref.85b, imports.%Core.import_ref.67a), @impl.bb5 [concrete]
-// CHECK:STDOUT:   %Eq.impl_witness: <witness> = impl_witness %Eq.impl_witness_table [concrete]
+// CHECK:STDOUT:   %Eq.impl_witness: <witness> = impl_witness imports.%Eq.impl_witness_table [concrete]
 // CHECK:STDOUT:   %Eq.facet: %Eq.type = facet_value bool, (%Eq.impl_witness) [concrete]
 // CHECK:STDOUT:   %.f66: type = fn_type_with_self_type %NotEqual.type.e6c, %Eq.facet [concrete]
 // CHECK:STDOUT:   %NotEqual.type.c0e: type = fn_type @NotEqual.2 [concrete]
@@ -308,6 +308,11 @@ var d: C(false != false) = False();
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.Bool: %Bool.type = import_ref Core//prelude/types/bool, Bool, loaded [concrete = constants.%Bool]
+// CHECK:STDOUT:   %Core.Eq: type = import_ref Core//prelude/operators/comparison, Eq, loaded [concrete = constants.%Eq.type]
+// CHECK:STDOUT:   %Core.import_ref.85b = import_ref Core//prelude/operators/comparison, loc29_45, unloaded
+// CHECK:STDOUT:   %Core.import_ref.67a: %NotEqual.type.c0e = import_ref Core//prelude/operators/comparison, loc30_48, loaded [concrete = constants.%NotEqual.bf4]
+// CHECK:STDOUT:   %Eq.impl_witness_table = impl_witness_table (%Core.import_ref.85b, %Core.import_ref.67a), @impl.bb5 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
