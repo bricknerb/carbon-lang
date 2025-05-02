@@ -71,6 +71,10 @@ class Formatter {
     size_t index;
   };
 
+  // Fills `node_parents_` with parent information. Called at most once during
+  // construction.
+  auto ComputeNodeParents() -> void;
+
   // Flushes the buffered output to the current chunk.
   auto FlushChunk() -> void;
 
@@ -85,19 +89,16 @@ class Formatter {
   // is.
   auto IncludeChunkInOutput(size_t chunk) -> void;
 
-  // Returns true if the node subtree for the instruction or body overlaps with
-  // a dump range, or if there are no ranges.
-  auto OverlapsWithDumpSemIRRange(InstId inst_id,
-                                  llvm::ArrayRef<InstBlockId> body_block_ids)
-      -> bool;
-
   // Determines whether the specified entity should be included in the formatted
-  // output.
-  auto ShouldFormatEntity(InstId decl_id,
-                          llvm::ArrayRef<InstBlockId> body_block_ids) -> bool;
+  // output. `is_definition_start` should indicate whether, if `decl_id`'s
+  // `LocId` is a `NodeId`, it is expected to be a `DefinitionStart` kind.
+  auto ShouldFormatEntity(InstId decl_id, bool is_definition_start) -> bool;
 
-  auto ShouldFormatEntity(const EntityWithParamsBase& entity,
-                          llvm::ArrayRef<InstBlockId> body_block_ids) -> bool;
+  auto ShouldFormatEntity(const EntityWithParamsBase& entity) -> bool;
+
+  // Determines whether a single instruction should be included in the
+  // formatted output.
+  auto ShouldFormatInst(InstId inst_id) -> bool;
 
   // Begins a braced block. Writes an open brace, and prepares to insert a
   // newline after it if the braced block is non-empty.
@@ -369,6 +370,10 @@ class Formatter {
   // referenced, indexed by the instruction's index. This is resized in advance
   // to the correct size.
   llvm::SmallVector<size_t, 0> tentative_inst_chunks_;
+
+  // Maps nodes to their parents. Only set when dump ranges are in use, because
+  // the parents aren't used otherwise.
+  llvm::SmallVector<Parse::NodeId> node_parents_;
 };
 
 template <typename IdT>
