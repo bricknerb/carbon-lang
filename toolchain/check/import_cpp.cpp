@@ -407,7 +407,7 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
 static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
                                SemIR::NameScopeId scope_id,
                                SemIR::NameId name_id,
-                               const clang::FunctionDecl* clang_decl)
+                               clang::FunctionDecl* clang_decl)
     -> SemIR::InstId {
   if (clang_decl->isVariadic()) {
     context.TODO(loc_id, "Unsupported: Variadic function");
@@ -588,7 +588,7 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
 static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
                            SemIR::NameScopeId scope_id, SemIR::NameId name_id,
                            clang::NamedDecl* clang_decl) -> SemIR::InstId {
-  if (const auto* clang_function_decl =
+  if (auto* clang_function_decl =
           clang::dyn_cast<clang::FunctionDecl>(clang_decl)) {
     return ImportFunctionDecl(context, loc_id, scope_id, name_id,
                               clang_function_decl);

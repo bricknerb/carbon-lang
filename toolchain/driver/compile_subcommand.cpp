@@ -592,7 +592,7 @@ auto CompilationUnit::RunLower(
     // TODO: Consider disabling instruction naming by default if we're not
     // producing textual LLVM IR.
     SemIR::InstNamer inst_namer(&*sem_ir_);
-    module_ = Lower::LowerToLLVM(*llvm_context_,
+    module_ = Lower::LowerToLLVM(*llvm_context_, driver_env_->fs,
                                  tree_and_subtrees_getters_for_debug_info,
                                  input_filename_, *sem_ir_, sem_ir_->cpp_ast(),
                                  &inst_namer, vlog_stream_);
