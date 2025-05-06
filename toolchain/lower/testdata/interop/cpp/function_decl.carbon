@@ -33,6 +33,7 @@ library "[[@TEST_NAME]]";
 import Cpp library "inline_function_decl.h";
 
 fn MyF() {
+  // TODO: This should generate the definition of the inline function `foo()`.
   Cpp.foo();
 }
 
@@ -80,5 +81,5 @@ fn MyF() {
 // CHECK:STDOUT: !4 = distinct !DISubprogram(name: "MyF", linkageName: "_CMyF.Main", scope: null, file: !3, line: 6, type: !5, spFlags: DISPFlagDefinition, unit: !2)
 // CHECK:STDOUT: !5 = !DISubroutineType(types: !6)
 // CHECK:STDOUT: !6 = !{}
-// CHECK:STDOUT: !7 = !DILocation(line: 7, column: 3, scope: !4)
+// CHECK:STDOUT: !7 = !DILocation(line: 8, column: 3, scope: !4)
 // CHECK:STDOUT: !8 = !DILocation(line: 6, column: 1, scope: !4)
