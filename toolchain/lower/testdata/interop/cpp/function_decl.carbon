@@ -8,6 +8,10 @@
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/lower/testdata/interop/cpp/function_decl.carbon
 
+// ============================================================================
+// function_decl
+// ============================================================================
+
 // --- function_decl.h
 
 void foo();
@@ -21,6 +25,10 @@ import Cpp library "function_decl.h";
 fn MyF() {
   Cpp.foo();
 }
+
+// ============================================================================
+// inline_function_decl
+// ============================================================================
 
 // --- inline_function_decl.h
 
