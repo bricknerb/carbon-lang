@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "clang/CodeGen/ModuleBuilder.h"
+#include "clang/Sema/EnterExpressionEvaluationContext.h"
 #include "common/check.h"
 #include "common/vlog.h"
 #include "llvm/ADT/STLExtras.h"
@@ -129,10 +130,19 @@ auto FileContext::Run() -> std::unique_ptr<llvm::Module> {
 
   if (cpp_code_generator_) {
     cpp_code_generator_->HandleTranslationUnit(cpp_ast()->getASTContext());
+    llvm::errs() << "Clang Module Dump Start\n";
+    cpp_code_generator_->GetModule()->dump();
+    llvm::errs() << "Clang Module Dump End\n";
+    llvm::errs() << "Carbon Module Dump Start\n";
+    llvm_module_->dump();
+    llvm::errs() << "Carbon Module Dump End\n";
     CARBON_CHECK(!llvm::Linker::linkModules(
         /*Dest=*/*llvm_module_,
         /*Src=*/std::unique_ptr<llvm::Module>(
             cpp_code_generator_->ReleaseModule())));
+    llvm::errs() << "Linked Module Dump Start\n";
+    llvm_module_->dump();
+    llvm::errs() << "Linked Module Dump End\n";
   }
 
   return std::move(llvm_module_);
@@ -425,15 +435,19 @@ auto FileContext::BuildFunctionBody(SemIR::FunctionId function_id,
   CARBON_DCHECK(llvm_function, "LLVM Function not found when lowering body.");
 
   if (function.cpp_decl) {
+    clang::EnterExpressionEvaluationContext eval_context(
+        sem_ir().cpp_ast()->getSema(),
+        clang::Sema::ExpressionEvaluationContext::PotentiallyEvaluated);
+
     clang::FunctionDecl* cpp_def = function.cpp_decl->getDefinition();
     CARBON_DCHECK(cpp_def, "No Clang function body found during lowering");
 
     // We manually add `__attribute__((used))` to make sure LLVM IR is generated
     // for the definition code.
-    if (!cpp_def->hasAttr<clang::UsedAttr>()) {
-      cpp_def->addAttr(
-          clang::UsedAttr::CreateImplicit(cpp_ast()->getASTContext()));
-    }
+    // if (!cpp_def->hasAttr<clang::UsedAttr>()) {
+    //   cpp_def->addAttr(
+    //       clang::UsedAttr::CreateImplicit(cpp_ast()->getASTContext()));
+    // }
 
     cpp_code_generator_->HandleTopLevelDecl(clang::DeclGroupRef(cpp_def));
     return;

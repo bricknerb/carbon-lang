@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "clang/Frontend/TextDiagnostic.h"
+#include "clang/Sema/EnterExpressionEvaluationContext.h"
 #include "clang/Sema/Lookup.h"
 #include "clang/Tooling/Tooling.h"
 #include "common/raw_string_ostream.h"
@@ -588,8 +589,13 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
 static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
                            SemIR::NameScopeId scope_id, SemIR::NameId name_id,
                            clang::NamedDecl* clang_decl) -> SemIR::InstId {
+  clang_decl->markUsed(clang_decl->getASTContext());
+
   if (auto* clang_function_decl =
           clang::dyn_cast<clang::FunctionDecl>(clang_decl)) {
+    context.sem_ir().cpp_ast()->getSema().MarkFunctionReferenced(
+        clang_function_decl->getSourceRange().getBegin(), clang_function_decl);
+    clang_decl->setReferenced();
     return ImportFunctionDecl(context, loc_id, scope_id, name_id,
                               clang_function_decl);
   }
@@ -613,6 +619,10 @@ static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
 auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                        SemIR::NameScopeId scope_id, SemIR::NameId name_id)
     -> SemIR::InstId {
+  clang::EnterExpressionEvaluationContext eval_context(
+      context.sem_ir().cpp_ast()->getSema(),
+      clang::Sema::ExpressionEvaluationContext::PotentiallyEvaluated);
+
   Diagnostics::AnnotationScope annotate_diagnostics(
       &context.emitter(), [&](auto& builder) {
         CARBON_DIAGNOSTIC(InCppNameLookup, Note,
