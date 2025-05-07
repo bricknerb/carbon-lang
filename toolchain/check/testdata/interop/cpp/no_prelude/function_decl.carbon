@@ -176,17 +176,32 @@ fn F() {
   Cpp.foo();
 }
 
-// --- inline_function_decl.h
+// --- inline_function_decl_with_definition.h
 
 inline void foo() {}
 
-// --- import_inline_function_decl.carbon
+// --- import_inline_function_decl_with_definition.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "inline_function_decl.h";
+import Cpp library "inline_function_decl_with_definition.h";
 
 fn MyF() {
+  Cpp.foo();
+}
+
+// --- inline_function_decl_without_definition.h
+
+inline void foo();
+
+// --- todo_import_inline_function_decl_without_definition.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "inline_function_decl_without_definition.h";
+
+fn MyF() {
+  // TODO: Warn on using an inline function without definition.
   Cpp.foo();
 }
 
@@ -493,7 +508,7 @@ fn MyF() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_inline_function_decl.carbon
+// CHECK:STDOUT: --- import_inline_function_decl_with_definition.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %MyF.type: type = fn_type @MyF [concrete]
@@ -516,7 +531,46 @@ fn MyF() {
 // CHECK:STDOUT:     .MyF = %MyF.decl
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "inline_function_decl.h"
+// CHECK:STDOUT:     import Cpp "inline_function_decl_with_definition.h"
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %MyF.decl: %MyF.type = fn_decl @MyF [concrete = constants.%MyF] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @MyF() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
+// CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
+// CHECK:STDOUT:   %foo.call: init %empty_tuple.type = call %foo.ref()
+// CHECK:STDOUT:   return
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- todo_import_inline_function_decl_without_definition.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %MyF.type: type = fn_type @MyF [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %MyF: %MyF.type = struct_value () [concrete]
+// CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
+// CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .foo = @MyF.%foo.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: file {
+// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
+// CHECK:STDOUT:     .Cpp = imports.%Cpp
+// CHECK:STDOUT:     .MyF = %MyF.decl
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
+// CHECK:STDOUT:     import Cpp "inline_function_decl_without_definition.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %MyF.decl: %MyF.type = fn_decl @MyF [concrete = constants.%MyF] {} {}
 // CHECK:STDOUT: }
