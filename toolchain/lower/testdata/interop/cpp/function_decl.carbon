@@ -105,8 +105,6 @@ fn MyF() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z3foov = comdat any
 // CHECK:STDOUT:
-// CHECK:STDOUT: @llvm.compiler.used = appending global [1 x ptr] [ptr @_Z3foov], section "llvm.metadata"
-// CHECK:STDOUT:
 // CHECK:STDOUT: define void @_CMyF.Main() !dbg !8 {
 // CHECK:STDOUT: entry:
 // CHECK:STDOUT:   call void @_Z3foov(), !dbg !11
@@ -118,9 +116,6 @@ fn MyF() {
 // CHECK:STDOUT: entry:
 // CHECK:STDOUT:   ret void
 // CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: ; uselistorder directives
-// CHECK:STDOUT: uselistorder ptr @_Z3foov, { 1, 0 }
 // CHECK:STDOUT:
 // CHECK:STDOUT: attributes #0 = { mustprogress noinline nounwind optnone "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="0" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 // CHECK:STDOUT:
@@ -195,8 +190,6 @@ fn MyF() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z4foo3v = comdat any
 // CHECK:STDOUT:
-// CHECK:STDOUT: @llvm.compiler.used = appending global [3 x ptr] [ptr @_Z4foo1v, ptr @_Z4foo2v, ptr @_Z4foo3v], section "llvm.metadata"
-// CHECK:STDOUT:
 // CHECK:STDOUT: define void @_CMyF.Main() !dbg !8 {
 // CHECK:STDOUT: entry:
 // CHECK:STDOUT:   call void @_Z4foo1v(), !dbg !11
@@ -222,11 +215,6 @@ fn MyF() {
 // CHECK:STDOUT: entry:
 // CHECK:STDOUT:   ret void
 // CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: ; uselistorder directives
-// CHECK:STDOUT: uselistorder ptr @_Z4foo1v, { 1, 0 }
-// CHECK:STDOUT: uselistorder ptr @_Z4foo2v, { 1, 0 }
-// CHECK:STDOUT: uselistorder ptr @_Z4foo3v, { 1, 0 }
 // CHECK:STDOUT:
 // CHECK:STDOUT: attributes #0 = { mustprogress noinline nounwind optnone "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="0" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 // CHECK:STDOUT:

@@ -428,13 +428,15 @@ auto FileContext::BuildFunctionBody(SemIR::FunctionId function_id,
     clang::FunctionDecl* cpp_def = function.cpp_decl->getDefinition();
     CARBON_DCHECK(cpp_def, "No Clang function body found during lowering");
 
-    // We manually add `__attribute__((used))` to make sure LLVM IR is generated
-    // for the definition code.
-    if (!cpp_def->hasAttr<clang::UsedAttr>()) {
-      cpp_def->addAttr(
-          clang::UsedAttr::CreateImplicit(cpp_ast()->getASTContext()));
-    }
+    // Create the LLVM function (`CodeGenModule::GetOrCreateLLVMFunction()`) so
+    // that code generation (`CodeGenModule::EmitGlobal()`) would see this
+    // function name (`CodeGenModule::getMangledName()`), and will generate its
+    // definition.
+    CARBON_DCHECK(
+        cpp_code_generator_->GetAddrOfGlobal(clang::GlobalDecl(cpp_def),
+                                             /*isForDefinition=*/false));
 
+    // Emit the function code.
     cpp_code_generator_->HandleTopLevelDecl(clang::DeclGroupRef(cpp_def));
     return;
   }
