@@ -34,17 +34,17 @@ fn MyF() {
 
 inline void foo();
 
-// --- todo_import_inline_function_decl_without_definition.carbon
+// --- todo_fail_import_inline_function_decl_without_definition.carbon
 
 library "[[@TEST_NAME]]";
 
 import Cpp library "inline_function_decl_without_definition.h";
 
 fn MyF() {
-  // TODO: Warn on using an inline function without definition.
+  // TODO: Error on using an inline function without definition.
   Cpp.foo();
 
-  // Don't warn on repeated calls.
+  // Don't error on repeated calls.
   Cpp.foo();
 }
 
@@ -87,7 +87,7 @@ fn MyF() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- todo_import_inline_function_decl_without_definition.carbon
+// CHECK:STDOUT: --- todo_fail_import_inline_function_decl_without_definition.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %MyF.type: type = fn_type @MyF [concrete]
