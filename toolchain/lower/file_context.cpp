@@ -129,10 +129,19 @@ auto FileContext::Run() -> std::unique_ptr<llvm::Module> {
 
   if (cpp_code_generator_) {
     cpp_code_generator_->HandleTranslationUnit(cpp_ast()->getASTContext());
+    std::unique_ptr<llvm::Module> clang_module(
+        cpp_code_generator_->ReleaseModule());
+
+    // Manually clear target triple and data layout to avoid target specific
+    // code generation.
+    // TODO: Avoid generating this instead of clearing it afterwards or generate
+    // it and ignore it in the tests.
+    clang_module->setTargetTriple(llvm::Triple());
+    clang_module->setDataLayout("");
+
     bool link_error = llvm::Linker::linkModules(
         /*Dest=*/*llvm_module_,
-        /*Src=*/std::unique_ptr<llvm::Module>(
-            cpp_code_generator_->ReleaseModule()));
+        /*Src=*/std::move(clang_module));
     CARBON_CHECK(!link_error);
   }
 
