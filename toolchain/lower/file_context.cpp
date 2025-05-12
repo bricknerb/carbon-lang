@@ -426,6 +426,10 @@ auto FileContext::BuildFunctionBody(SemIR::FunctionId function_id,
   CARBON_DCHECK(llvm_function, "LLVM Function not found when lowering body.");
 
   if (function.cpp_decl) {
+    // TODO: To support recursive inline functions, collect all calls to
+    // `HandleTopLevelDecl()` in a custom `ASTConsumer` configured in the
+    // `ASTUnit`, and replay them in lowering in the `CodeGenerator`. See
+    // https://discord.com/channels/655572317891461132/768530752592805919/1370509111585935443
     clang::FunctionDecl* cpp_def = function.cpp_decl->getDefinition();
     CARBON_DCHECK(cpp_def, "No Clang function body found during lowering");
 
