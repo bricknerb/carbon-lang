@@ -432,9 +432,10 @@ auto FileContext::BuildFunctionBody(SemIR::FunctionId function_id,
     // that code generation (`CodeGenModule::EmitGlobal()`) would see this
     // function name (`CodeGenModule::getMangledName()`), and will generate its
     // definition.
-    CARBON_DCHECK(
+    llvm::Constant* function_address =
         cpp_code_generator_->GetAddrOfGlobal(clang::GlobalDecl(cpp_def),
-                                             /*isForDefinition=*/false));
+                                             /*isForDefinition=*/false);
+    CARBON_DCHECK(function_address);
 
     // Emit the function code.
     cpp_code_generator_->HandleTopLevelDecl(clang::DeclGroupRef(cpp_def));
