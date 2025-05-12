@@ -106,6 +106,8 @@ fn MyF() {
 
 // CHECK:STDOUT: ; ModuleID = 'import_function_decl.carbon'
 // CHECK:STDOUT: source_filename = "import_function_decl.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
 // CHECK:STDOUT:
 // CHECK:STDOUT: define void @_CMyF.Main() !dbg !8 {
 // CHECK:STDOUT: entry:
@@ -134,6 +136,8 @@ fn MyF() {
 // CHECK:STDOUT: !12 = !DILocation(line: 6, column: 1, scope: !8)
 // CHECK:STDOUT: ; ModuleID = 'import_inline_function_decl.carbon'
 // CHECK:STDOUT: source_filename = "import_inline_function_decl.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z3foov = comdat any
 // CHECK:STDOUT:
@@ -170,6 +174,8 @@ fn MyF() {
 // CHECK:STDOUT: !12 = !DILocation(line: 6, column: 1, scope: !8)
 // CHECK:STDOUT: ; ModuleID = 'import_inline_used_function_decl.carbon'
 // CHECK:STDOUT: source_filename = "import_inline_used_function_decl.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z3foov = comdat any
 // CHECK:STDOUT:
@@ -211,6 +217,8 @@ fn MyF() {
 // CHECK:STDOUT: !12 = !DILocation(line: 6, column: 1, scope: !8)
 // CHECK:STDOUT: ; ModuleID = 'import_multiple_inline_function_decls.carbon'
 // CHECK:STDOUT: source_filename = "import_multiple_inline_function_decls.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z4foo1v = comdat any
 // CHECK:STDOUT:
@@ -267,6 +275,8 @@ fn MyF() {
 // CHECK:STDOUT: !14 = !DILocation(line: 6, column: 1, scope: !8)
 // CHECK:STDOUT: ; ModuleID = 'todo_import_inline_recursive_function_decl.carbon'
 // CHECK:STDOUT: source_filename = "todo_import_inline_recursive_function_decl.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
 // CHECK:STDOUT:
 // CHECK:STDOUT: $_Z4foo2v = comdat any
 // CHECK:STDOUT:
