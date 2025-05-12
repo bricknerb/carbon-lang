@@ -119,13 +119,15 @@ template <typename... Ts>
 struct StdVariantTypeMap<std::variant<Ts...>> {
   // The number here should match the number of arguments in the largest
   // `CARBON_INTERNAL_KIND_TYPE_MAP` invocation below.
-  static_assert(sizeof...(Ts) <= 12,
-                "CARBON_KIND_SWITCH supports std::variant with up to 12 types. "
+  static_assert(sizeof...(Ts) <= 24,
+                "CARBON_KIND_SWITCH supports std::variant with up to 24 types. "
                 "Add more if needed.");
 };
 
 // Generate StdVariantTypeMap specializations for each number of types in the
-// std::variant<...> type list.
+// std::variant<...> type list. The numbers here represent which number is
+// printed in diagnostics stating a type in the variant has no matching case
+// statement. Duplicate numbers would create an error.
 CARBON_INTERNAL_KIND_TYPE_MAP(0);
 CARBON_INTERNAL_KIND_TYPE_MAP(0, 1);
 CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2);
@@ -138,6 +140,27 @@ CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8);
 CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18, 19);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18, 19, 20);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18, 19, 20, 21);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18, 19, 20, 21, 22);
+CARBON_INTERNAL_KIND_TYPE_MAP(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+                              15, 16, 17, 18, 19, 20, 21, 22, 23);
 
 #undef CARBON_INTERNAL_KIND_IDENTIFIER
 #undef CARBON_INTERNAL_KIND_IDENTIFIERS
