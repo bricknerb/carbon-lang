@@ -84,6 +84,26 @@ fn MyF() {
   Cpp.foo3();
 }
 
+// ============================================================================
+// inline_recursive_function_decl
+// ============================================================================
+
+// --- inline_recursive_function_decl.h
+
+inline void foo1() {}
+inline void foo2() { foo1(); }
+
+// --- todo_import_inline_recursive_function_decl.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "inline_recursive_function_decl.h";
+
+fn MyF() {
+  // TODO: This should generate the definition of the inline function `foo1()`.
+  Cpp.foo2();
+}
+
 // CHECK:STDOUT: ; ModuleID = 'import_function_decl.carbon'
 // CHECK:STDOUT: source_filename = "import_function_decl.carbon"
 // CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
@@ -253,3 +273,45 @@ fn MyF() {
 // CHECK:STDOUT: !12 = !DILocation(line: 8, column: 3, scope: !8)
 // CHECK:STDOUT: !13 = !DILocation(line: 9, column: 3, scope: !8)
 // CHECK:STDOUT: !14 = !DILocation(line: 6, column: 1, scope: !8)
+// CHECK:STDOUT: ; ModuleID = 'todo_import_inline_recursive_function_decl.carbon'
+// CHECK:STDOUT: source_filename = "todo_import_inline_recursive_function_decl.carbon"
+// CHECK:STDOUT: target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
+// CHECK:STDOUT: target triple = "x86_64-unknown-linux-gnu"
+// CHECK:STDOUT:
+// CHECK:STDOUT: $_Z4foo2v = comdat any
+// CHECK:STDOUT:
+// CHECK:STDOUT: define void @_CMyF.Main() !dbg !8 {
+// CHECK:STDOUT: entry:
+// CHECK:STDOUT:   call void @_Z4foo2v(), !dbg !11
+// CHECK:STDOUT:   ret void, !dbg !12
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: ; Function Attrs: mustprogress noinline optnone
+// CHECK:STDOUT: define linkonce_odr dso_local void @_Z4foo2v() #0 comdat {
+// CHECK:STDOUT: entry:
+// CHECK:STDOUT:   call void @_Z4foo1v()
+// CHECK:STDOUT:   ret void
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: declare void @_Z4foo1v() #1
+// CHECK:STDOUT:
+// CHECK:STDOUT: attributes #0 = { mustprogress noinline optnone "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="0" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+// CHECK:STDOUT: attributes #1 = { "no-trapping-math"="true" "stack-protector-buffer-size"="0" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+// CHECK:STDOUT:
+// CHECK:STDOUT: !llvm.module.flags = !{!0, !1, !2, !3, !4}
+// CHECK:STDOUT: !llvm.dbg.cu = !{!5}
+// CHECK:STDOUT: !llvm.ident = !{!7}
+// CHECK:STDOUT:
+// CHECK:STDOUT: !0 = !{i32 7, !"Dwarf Version", i32 5}
+// CHECK:STDOUT: !1 = !{i32 2, !"Debug Info Version", i32 3}
+// CHECK:STDOUT: !2 = !{i32 1, !"wchar_size", i32 4}
+// CHECK:STDOUT: !3 = !{i32 8, !"PIC Level", i32 0}
+// CHECK:STDOUT: !4 = !{i32 7, !"PIE Level", i32 2}
+// CHECK:STDOUT: !5 = distinct !DICompileUnit(language: DW_LANG_C, file: !6, producer: "carbon", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug)
+// CHECK:STDOUT: !6 = !DIFile(filename: "todo_import_inline_recursive_function_decl.carbon", directory: "")
+// CHECK:STDOUT: !7 = !{!"clang version 21.0.0git"}
+// CHECK:STDOUT: !8 = distinct !DISubprogram(name: "MyF", linkageName: "_CMyF.Main", scope: null, file: !6, line: 6, type: !9, spFlags: DISPFlagDefinition, unit: !5)
+// CHECK:STDOUT: !9 = !DISubroutineType(types: !10)
+// CHECK:STDOUT: !10 = !{}
+// CHECK:STDOUT: !11 = !DILocation(line: 8, column: 3, scope: !8)
+// CHECK:STDOUT: !12 = !DILocation(line: 6, column: 1, scope: !8)
