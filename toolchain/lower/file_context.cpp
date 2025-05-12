@@ -129,10 +129,11 @@ auto FileContext::Run() -> std::unique_ptr<llvm::Module> {
 
   if (cpp_code_generator_) {
     cpp_code_generator_->HandleTranslationUnit(cpp_ast()->getASTContext());
-    CARBON_CHECK(!llvm::Linker::linkModules(
+    bool link_error = llvm::Linker::linkModules(
         /*Dest=*/*llvm_module_,
         /*Src=*/std::unique_ptr<llvm::Module>(
-            cpp_code_generator_->ReleaseModule())));
+            cpp_code_generator_->ReleaseModule()));
+    CARBON_CHECK(!link_error);
   }
 
   return std::move(llvm_module_);
