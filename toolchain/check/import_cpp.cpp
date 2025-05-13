@@ -28,6 +28,7 @@
 #include "toolchain/check/name_lookup.h"
 #include "toolchain/check/pattern.h"
 #include "toolchain/check/pattern_match.h"
+// #include "toolchain/check/pattern_match.h"
 #include "toolchain/check/type.h"
 #include "toolchain/diagnostics/diagnostic.h"
 #include "toolchain/diagnostics/format_providers.h"
@@ -548,6 +549,11 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   auto decl_id =
       AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
   context.imports().push_back(decl_id);
+
+  // auto call_params_id =
+  //     CalleePatternMatch(context, SemIR::InstBlockId::None,
+  //     param_patterns_id,
+  //                        return_slot_pattern_id);
 
   auto function_info = SemIR::Function{
       {.name_id = name_id,
