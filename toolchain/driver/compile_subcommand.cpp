@@ -924,6 +924,7 @@ auto CompileSubcommand::Run(DriverEnv& driver_env) -> DriverResult {
   CARBON_VLOG_TO(driver_env.vlog_stream, "*** Check::CheckParseTrees ***\n");
   Check::CheckParseTrees(check_units, cache.tree_and_subtrees_getters(),
                          options_.prelude_import, driver_env.fs,
+                         options_.codegen_options.target,
                          driver_env.vlog_stream, driver_env.fuzzing);
   CARBON_VLOG_TO(driver_env.vlog_stream,
                  "*** Check::CheckParseTrees done ***\n");
