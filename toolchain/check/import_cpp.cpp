@@ -25,6 +25,7 @@
 #include "toolchain/check/import.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/literal.h"
+// #include "toolchain/check/pattern_match.h"
 #include "toolchain/check/type.h"
 #include "toolchain/diagnostics/diagnostic.h"
 #include "toolchain/diagnostics/format_providers.h"
@@ -352,6 +353,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   params.reserve(clang_decl.parameters().size());
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
+
     SemIR::TypeId type_id =
         GetPatternType(context, MapType(context, param_type).type_id);
     if (type_id == SemIR::ErrorInst::TypeId) {
@@ -369,11 +371,11 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
                  : SemIR::NameId::ForIdentifier(
                        context.sem_ir().identifiers().Add(param_name)),
          .parent_scope_id = SemIR::NameScopeId::None});
-    SemIR::InstId binding_pattern_id = AddInstInNoBlock(
+    SemIR::InstId binding_pattern_id = AddPatternInst(
         // TODO: Fill in a location once available.
         context, SemIR::LocIdAndInst::NoLoc(SemIR::BindingPattern(
                      {.type_id = type_id, .entity_name_id = entity_name_id})));
-    SemIR::InstId var_pattern_id = AddInstInNoBlock(
+    SemIR::InstId var_pattern_id = AddPatternInst(
         context,
         // TODO: Fill in a location once available.
         SemIR::LocIdAndInst::NoLoc(SemIR::ValueParamPattern(
@@ -436,11 +438,14 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     context.TODO(loc_id, "Unsupported: Template function");
     return SemIR::ErrorInst::InstId;
   }
+  context.pattern_block_stack().Push();
   auto param_patterns_id =
       MakeParamPatternsBlockId(context, loc_id, *clang_decl);
+  auto pattern_block_id = context.pattern_block_stack().Pop();
   if (!param_patterns_id.has_value()) {
     return SemIR::ErrorInst::InstId;
   }
+
   auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
     return SemIR::ErrorInst::InstId;
@@ -451,13 +456,18 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   auto decl_id =
       AddPlaceholderInst(context, Parse::NodeId::None, function_decl);
 
+  // auto call_params_id =
+  //     CalleePatternMatch(context, SemIR::InstBlockId::None,
+  //     param_patterns_id,
+  //                        return_slot_pattern_id);
+
   auto function_info = SemIR::Function{
       {.name_id = name_id,
        .parent_scope_id = scope_id,
        .generic_id = SemIR::GenericId::None,
        .first_param_node_id = Parse::NodeId::None,
        .last_param_node_id = Parse::NodeId::None,
-       .pattern_block_id = SemIR::InstBlockId::Empty,
+       .pattern_block_id = pattern_block_id,
        .implicit_param_patterns_id = SemIR::InstBlockId::Empty,
        .param_patterns_id = param_patterns_id,
        .is_extern = false,
