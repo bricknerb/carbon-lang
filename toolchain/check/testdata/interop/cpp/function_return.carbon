@@ -8,29 +8,37 @@
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function_return.carbon
 
-// --- short_return_function_decl.h
+// ============================================================================
+// short
+// ============================================================================
+
+// --- short.h
 
 auto foo_short() -> short;
 
-// --- import_short_return_function_decl.carbon
+// --- import_short.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_return_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
   let x: i16 = Cpp.foo_short();
 }
 
-// --- int_return_function_decl.h
+// ============================================================================
+// int
+// ============================================================================
+
+// --- int.h
 
 auto foo_int() -> int;
 
-// --- import_int_return_function_decl.carbon
+// --- import_int.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "int_return_function_decl.h";
+import Cpp library "int.h";
 
 fn Carbon_foo(val: i32);
 
@@ -38,28 +46,32 @@ fn F() {
   Carbon_foo(Cpp.foo_int());
 }
 
-// --- float_return_function_decl.h
+// ============================================================================
+// float
+// ============================================================================
+
+// --- float.h
 
 auto foo_float() -> float;
 
-// --- fail_todo_import_float_return_function_decl.carbon
+// --- fail_todo_import_float.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "float_return_function_decl.h";
+import Cpp library "float.h";
 
 fn F() {
-  // CHECK:STDERR: fail_todo_import_float_return_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: float` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_float.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: float` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo_float();
   // CHECK:STDERR:   ^~~~~~~~~~~~~
-  // CHECK:STDERR: fail_todo_import_float_return_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo_float` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_float.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo_float` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo_float();
   // CHECK:STDERR:   ^~~~~~~~~~~~~
   // CHECK:STDERR:
   Cpp.foo_float();
 }
 
-// CHECK:STDOUT: --- import_short_return_function_decl.carbon
+// CHECK:STDOUT: --- import_short.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -94,7 +106,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_return_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -122,7 +134,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo_short();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_int_return_function_decl.carbon
+// CHECK:STDOUT: --- import_int.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
@@ -161,7 +173,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "int_return_function_decl.h"
+// CHECK:STDOUT:     import Cpp "int.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Carbon_foo.decl: %Carbon_foo.type = fn_decl @Carbon_foo [concrete = constants.%Carbon_foo] {
 // CHECK:STDOUT:     %val.patt: %pattern_type.7ce = binding_pattern val [concrete]
@@ -196,7 +208,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo_int();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_float_return_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_float.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -222,7 +234,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "float_return_function_decl.h"
+// CHECK:STDOUT:     import Cpp "float.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }

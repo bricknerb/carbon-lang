@@ -7,49 +7,58 @@
 // TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/interop/cpp/function_param_unsupported.carbon
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function_param_unsupported.carbon
-// --- unsupported_primitive_type_param_function_decl.h
+
+// ============================================================================
+// unsupported_primitive_type
+// ============================================================================
+
+// --- unsupported_primitive_type.h
 
 auto foo(float a) -> void;
 
-// --- fail_todo_import_unsupported_primitive_type_param_function_decl.carbon
+// --- fail_todo_import_unsupported_primitive_type.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "unsupported_primitive_type_param_function_decl.h";
+import Cpp library "unsupported_primitive_type.h";
 
 fn F() {
-  // CHECK:STDERR: fail_todo_import_unsupported_primitive_type_param_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: float` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_unsupported_primitive_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: float` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(1.1);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_unsupported_primitive_type_param_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_unsupported_primitive_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(1.1);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(1.1);
 }
 
-// --- unsupported_type_among_params_function_decl.h
+// ============================================================================
+// unsupported_primitive_type_among_params
+// ============================================================================
+
+// --- unsupported_primitive_type_among_params.h
 
 auto foo(int a, float b) -> void;
 
-// --- fail_import_unsupported_type_among_params_function_decl.carbon
+// --- fail_import_unsupported_primitive_type_among_params.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "unsupported_type_among_params_function_decl.h";
+import Cpp library "unsupported_primitive_type_among_params.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_unsupported_type_among_params_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: float` [SemanticsTodo]
+  // CHECK:STDERR: fail_import_unsupported_primitive_type_among_params.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: float` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(1, 2.0);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_import_unsupported_type_among_params_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_import_unsupported_primitive_type_among_params.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(1, 2.0);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(1, 2.0);
 }
 
-// CHECK:STDOUT: --- fail_todo_import_unsupported_primitive_type_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_unsupported_primitive_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -76,7 +85,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "unsupported_primitive_type_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "unsupported_primitive_type.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -89,7 +98,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_unsupported_type_among_params_function_decl.carbon
+// CHECK:STDOUT: --- fail_import_unsupported_primitive_type_among_params.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -123,7 +132,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "unsupported_type_among_params_function_decl.h"
+// CHECK:STDOUT:     import Cpp "unsupported_primitive_type_among_params.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
