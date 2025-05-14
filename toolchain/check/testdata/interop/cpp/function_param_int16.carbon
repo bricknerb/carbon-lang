@@ -8,63 +8,83 @@
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function_param_int16.carbon
 
-// --- short_param_function_decl.h
+// ============================================================================
+// short
+// ============================================================================
+
+// --- short.h
 
 auto foo(short a) -> void;
 
-// --- import_short_param_function_decl.carbon
+// --- import_short.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- short_int_param_function_decl.h
+// ============================================================================
+// short_int
+// ============================================================================
+
+// --- short_int.h
 
 auto foo(short int a) -> void;
 
-// --- import_short_int_param_function_decl.carbon
+// --- import_short_int.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_int_param_function_decl.h";
+import Cpp library "short_int.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- signed_short_param_function_decl.h
+// ============================================================================
+// signed_short
+// ============================================================================
+
+// --- signed_short.h
 
 auto foo(signed short a) -> void;
 
-// --- import_signed_short_param_function_decl.carbon
+// --- import_signed_short.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "signed_short_param_function_decl.h";
+import Cpp library "signed_short.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- signed_short_int_param_function_decl.h
+// ============================================================================
+// signed_short_int
+// ============================================================================
+
+// --- signed_short_int.h
 
 auto foo(signed short int a) -> void;
 
-// --- import_signed_short_int_param_function_decl.carbon
+// --- import_signed_short_int.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "signed_short_int_param_function_decl.h";
+import Cpp library "signed_short_int.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- int16_t_param_function_decl.h
+// ============================================================================
+// int16_t
+// ============================================================================
+
+// --- int16_t.h
 
 namespace std {
   // Mimicking glibc definition for int16_t: https://codebrowser.dev/glibc/glibc/posix/bits/types.h.html#__int16_t
@@ -73,207 +93,207 @@ namespace std {
 
 auto foo(std::int16_t a) -> void;
 
-// --- import_int16_t_param_function_decl.carbon
+// --- import_int16_t.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "int16_t_param_function_decl.h";
+import Cpp library "int16_t.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- short_max_param_function_decl.h
-
-auto foo(short a) -> void;
-
-// --- import_short_max_param_function_decl.carbon
+// --- import_short_max.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_max_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
   Cpp.foo(0x7FFF);
 }
 
-// --- overflow_short_max_param_function_decl.h
-
-auto foo(short a) -> void;
-
-// --- fail_overflow_short_max_param_function_decl.carbon
+// --- fail_import_short_overflow_max.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "overflow_short_max_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
-  // CHECK:STDERR: fail_overflow_short_max_param_function_decl.carbon:[[@LINE+5]]:11: error: integer value 32768 too large for type `i16` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_short_overflow_max.carbon:[[@LINE+5]]:11: error: integer value 32768 too large for type `i16` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(0x8000);
   // CHECK:STDERR:           ^~~~~~
-  // CHECK:STDERR: fail_overflow_short_max_param_function_decl.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_overflow_max.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(0x8000);
 }
 
-// --- short_min_param_function_decl.h
-
-auto foo(short a) -> void;
-
-// --- import_short_min_param_function_decl.carbon
+// --- import_short_min.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_min_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
   Cpp.foo(-0x8000);
 }
 
-// --- overflow_short_min_param_function_decl.h
-
-auto foo(short a) -> void;
-
-// --- fail_overflow_short_min_param_function_decl.carbon
+// --- fail_import_short_overflow_min.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "overflow_short_min_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
-  // CHECK:STDERR: fail_overflow_short_min_param_function_decl.carbon:[[@LINE+5]]:11: error: integer value -32769 too large for type `i16` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_short_overflow_min.carbon:[[@LINE+5]]:11: error: integer value -32769 too large for type `i16` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(-0x8001);
   // CHECK:STDERR:           ^~~~~~~
-  // CHECK:STDERR: fail_overflow_short_min_param_function_decl.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_overflow_min.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(-0x8001);
 }
 
-// --- int32_arg_short_param_function_decl.h
-
-auto foo(short a) -> void;
-
-// --- fail_int32_arg_short_param_function_decl.carbon
+// --- fail_import_short_int32_arg.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "int32_arg_short_param_function_decl.h";
+import Cpp library "short.h";
 
 fn F() {
-  // CHECK:STDERR: fail_int32_arg_short_param_function_decl.carbon:[[@LINE+8]]:11: error: cannot implicitly convert expression of type `i32` to `i16` [ConversionFailure]
+  // CHECK:STDERR: fail_import_short_int32_arg.carbon:[[@LINE+8]]:11: error: cannot implicitly convert expression of type `i32` to `i16` [ConversionFailure]
   // CHECK:STDERR:   Cpp.foo(1 as i32);
   // CHECK:STDERR:           ^~~~~~~~
-  // CHECK:STDERR: fail_int32_arg_short_param_function_decl.carbon:[[@LINE+5]]:11: note: type `i32` does not implement interface `Core.ImplicitAs(i16)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR: fail_import_short_int32_arg.carbon:[[@LINE+5]]:11: note: type `i32` does not implement interface `Core.ImplicitAs(i16)` [MissingImplInMemberAccessNote]
   // CHECK:STDERR:   Cpp.foo(1 as i32);
   // CHECK:STDERR:           ^~~~~~~~
-  // CHECK:STDERR: fail_int32_arg_short_param_function_decl.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_int32_arg.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(1 as i32);
 }
 
-// --- short_const_param_function_decl.h
+// ============================================================================
+// const_short
+// ============================================================================
+
+// --- const_short.h
 
 auto foo(const short a) -> void;
 
-// --- import_short_const_param_function_decl.carbon
+// --- import_const_short.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_const_param_function_decl.h";
+import Cpp library "const_short.h";
 
 fn F() {
   Cpp.foo(1 as i16);
 }
 
-// --- short_ref_param_function_decl.h
+// ============================================================================
+// short_ref
+// ============================================================================
+
+// --- short_ref.h
 
 auto foo(short& a) -> void;
 
-// --- fail_todo_short_ref_param_function_decl.carbon
+// --- fail_todo_import_short_ref.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_ref_param_function_decl.h";
+import Cpp library "short_ref.h";
 
 fn F() {
   var a: i16 = 1;
-  // CHECK:STDERR: fail_todo_short_ref_param_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short &` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_short_ref.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short &` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_short_ref_param_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_short_ref.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(a);
 }
 
-// --- short_const_ref_param_function_decl.h
+// ============================================================================
+// const_short_ref
+// ============================================================================
+
+// --- const_short_ref.h
 
 auto foo(const short& a) -> void;
 
-// --- fail_todo_short_const_ref_param_function_decl.carbon
+// --- fail_todo_import_const_short_ref.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_const_ref_param_function_decl.h";
+import Cpp library "const_short_ref.h";
 
 fn F() {
   var a: i16 = 1;
-  // CHECK:STDERR: fail_todo_short_const_ref_param_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short &` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_const_short_ref.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short &` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_short_const_ref_param_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_const_short_ref.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(a);
 }
 
-// --- short_pointer_param_function_decl.h
+// ============================================================================
+// short_pointer
+// ============================================================================
+
+// --- short_pointer.h
 
 auto foo(short* a) -> void;
 
-// --- fail_todo_short_pointer_param_function_decl.carbon
+// --- fail_todo_import_short_pointer.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_pointer_param_function_decl.h";
+import Cpp library "short_pointer.h";
 
 fn F() {
   var a: i16 = 1;
-  // CHECK:STDERR: fail_todo_short_pointer_param_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_short_pointer.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short *` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_short_pointer_param_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_short_pointer.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(&a);
 }
 
-// --- short_const_pointer_param_function_decl.h
+// ============================================================================
+// const_short_pointer
+// ============================================================================
+
+// --- const_short_pointer.h
 
 auto foo(const short* a) -> void;
 
-// --- fail_todo_short_const_pointer_param_function_decl.carbon
+// --- fail_todo_import_const_short_pointer.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_const_pointer_param_function_decl.h";
+import Cpp library "const_short_pointer.h";
 
 fn F() {
   var a: i16 = 1;
-  // CHECK:STDERR: fail_todo_short_const_pointer_param_function_decl.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_const_short_pointer.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short *` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_short_const_pointer_param_function_decl.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_const_short_pointer.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo(&a);
 }
 
-// CHECK:STDOUT: --- import_short_param_function_decl.carbon
+// CHECK:STDOUT: --- import_short.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -329,7 +349,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -357,7 +377,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_int_param_function_decl.carbon
+// CHECK:STDOUT: --- import_short_int.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -413,7 +433,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_int_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short_int.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -441,7 +461,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_signed_short_param_function_decl.carbon
+// CHECK:STDOUT: --- import_signed_short.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -497,7 +517,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "signed_short_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "signed_short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -525,7 +545,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_signed_short_int_param_function_decl.carbon
+// CHECK:STDOUT: --- import_signed_short_int.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -581,7 +601,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "signed_short_int_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "signed_short_int.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -609,7 +629,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_int16_t_param_function_decl.carbon
+// CHECK:STDOUT: --- import_int16_t.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -665,7 +685,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "int16_t_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "int16_t.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -693,7 +713,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_max_param_function_decl.carbon
+// CHECK:STDOUT: --- import_short_max.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -749,7 +769,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_max_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -775,7 +795,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_overflow_short_max_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_import_short_overflow_max.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -831,7 +851,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "overflow_short_max_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -857,7 +877,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_min_param_function_decl.carbon
+// CHECK:STDOUT: --- import_short_min.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -926,7 +946,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_min_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -957,7 +977,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_overflow_short_min_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_import_short_overflow_min.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1026,7 +1046,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "overflow_short_min_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1057,7 +1077,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_int32_arg_short_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_import_short_int32_arg.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1119,7 +1139,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "int32_arg_short_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1148,7 +1168,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_const_param_function_decl.carbon
+// CHECK:STDOUT: --- import_const_short.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1204,7 +1224,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_const_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "const_short.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1232,7 +1252,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @foo();
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_short_ref_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_short_ref.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1286,7 +1306,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_ref_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short_ref.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1317,7 +1337,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_short_const_ref_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_const_short_ref.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1371,7 +1391,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_const_ref_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "const_short_ref.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1402,7 +1422,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_short_pointer_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_short_pointer.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1457,7 +1477,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_pointer_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "short_pointer.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
@@ -1489,7 +1509,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_short_const_pointer_param_function_decl.carbon
+// CHECK:STDOUT: --- fail_todo_import_const_short_pointer.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
@@ -1544,7 +1564,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "short_const_pointer_param_function_decl.h"
+// CHECK:STDOUT:     import Cpp "const_short_pointer.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
