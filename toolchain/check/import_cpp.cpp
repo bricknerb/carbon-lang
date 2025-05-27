@@ -28,6 +28,7 @@
 #include "toolchain/check/pattern.h"
 #include "toolchain/check/pattern_match.h"
 #include "toolchain/check/type.h"
+#include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/diagnostic.h"
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
@@ -650,6 +651,9 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
                          /*vtable_contents=*/{},
                          // TODO: Set block.
                          /*body=*/{});
+
+  CompleteTypeOrCheckFail(context,
+                          context.classes().Get(class_id).self_type_id);
 
   return class_def_id;
 }
