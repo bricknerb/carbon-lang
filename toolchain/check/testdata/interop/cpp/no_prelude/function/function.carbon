@@ -156,6 +156,116 @@ fn F() {
 
 // TODO: Add a test per unsupported param type. See https://github.com/carbon-language/carbon-lang/pull/5477/files/4321e21ed27d987fd71be182d292973fd9849df8#r2094655176
 
+// ============================================================================
+// Struct declaration param type
+// ============================================================================
+
+// --- struct_decl_param_type.h
+
+struct S;
+
+auto foo(S) -> void;
+
+// --- fail_todo_import_struct_decl_param_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "struct_decl_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_struct_decl_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_struct_decl_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo({});
+}
+
+// ============================================================================
+// Struct definition param type
+// ============================================================================
+
+// --- struct_definition_param_type.h
+
+struct S {};
+
+auto foo(S) -> void;
+
+// --- fail_todo_import_struct_definition_param_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "struct_definition_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_struct_definition_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_struct_definition_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo({});
+}
+
+// TODO: Add a test per unsupported param type. See https://github.com/carbon-language/carbon-lang/pull/5477/files/4321e21ed27d987fd71be182d292973fd9849df8#r2094655176
+
+// ============================================================================
+// Struct declaration return type
+// ============================================================================
+
+// --- struct_decl_return_type.h
+
+struct F;
+
+F foo();
+
+// --- fail_todo_import_struct_decl_return_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "struct_decl_return_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_struct_decl_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct F` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_struct_decl_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo();
+}
+
+// ============================================================================
+// Struct definition return type
+// ============================================================================
+
+// --- struct_definition_return_type.h
+
+struct F {};
+
+F foo();
+
+// --- fail_todo_import_struct_definition_return_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "struct_definition_return_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_struct_definition_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct F` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_struct_definition_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo();
+}
+
 // TODO: Add a test per unsupported return type. See https://github.com/carbon-language/carbon-lang/pull/5477/files/4321e21ed27d987fd71be182d292973fd9849df8#r2094655176
 
 // CHECK:STDOUT: --- import_global.carbon
