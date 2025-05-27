@@ -25,6 +25,7 @@
 #include "toolchain/check/import.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/literal.h"
+#include "toolchain/check/name_lookup.h"
 #include "toolchain/check/type.h"
 #include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/diagnostic.h"
@@ -321,23 +322,19 @@ static auto MakeIntType(Context& context, IntId size_id) -> TypeExpr {
   return ExprAsType(context, Parse::NodeId::None, type_inst_id);
 }
 
-// Maps a C++ type to a Carbon type.
-// TODO: Support more types.
-static auto MapType(Context& context, clang::QualType type) -> TypeExpr {
-  const auto* builtin_type = dyn_cast<clang::BuiltinType>(type);
-  if (!builtin_type) {
-    return {.inst_id = SemIR::ErrorInst::TypeInstId,
-            .type_id = SemIR::ErrorInst::TypeId};
-  }
+// Maps a C++ builtin type to a Carbon type.
+// TODO: Support more builtin types.
+static auto MapBuiltinType(Context& context, const clang::BuiltinType& type)
+    -> TypeExpr {
   // TODO: Refactor to avoid duplication.
-  switch (builtin_type->getKind()) {
+  switch (type.getKind()) {
     case clang::BuiltinType::Short:
-      if (context.ast_context().getTypeSize(type) == 16) {
+      if (context.ast_context().getTypeSize(&type) == 16) {
         return MakeIntType(context, context.ints().Add(16));
       }
       break;
     case clang::BuiltinType::Int:
-      if (context.ast_context().getTypeSize(type) == 32) {
+      if (context.ast_context().getTypeSize(&type) == 32) {
         return MakeIntType(context, context.ints().Add(32));
       }
       break;
@@ -348,11 +345,60 @@ static auto MapType(Context& context, clang::QualType type) -> TypeExpr {
           .type_id = SemIR::ErrorInst::TypeId};
 }
 
+// Maps a C++ record type to a Carbon type.
+// TODO: Support more record types.
+static auto MapRecordType(Context& context, SemIR::LocId loc_id,
+                          SemIR::NameScopeId scope_id,
+                          const clang::RecordType& type) -> TypeExpr {
+  const clang::RecordDecl* record_decl = type.getDecl();
+  if (record_decl && record_decl->isStruct()) {
+    LookupResult result = LookupQualifiedName(
+        context, loc_id,
+        SemIR::NameId::ForIdentifier(
+            context.identifiers().Add(record_decl->getName())),
+        LookupScope{.name_scope_id = scope_id,
+                    .specific_id = SemIR::SpecificId::None});
+    if (result.scope_result.is_found()) {
+      SemIR::InstId inst_id = result.scope_result.target_inst_id();
+      if (inst_id != SemIR::ErrorInst::InstId) {
+        return {.inst_id = context.types().GetAsTypeInstId(inst_id),
+                .type_id = context.classes()
+                               .Get(context.insts()
+                                        .Get(inst_id)
+                                        .As<SemIR::ClassDecl>()
+                                        .class_id)
+                               .self_type_id};
+      }
+    }
+  }
+
+  return {.inst_id = SemIR::ErrorInst::TypeInstId,
+          .type_id = SemIR::ErrorInst::TypeId};
+}
+
+// Maps a C++ type to a Carbon type.
+// TODO: Support more types.
+static auto MapType(Context& context, SemIR::LocId loc_id,
+                    SemIR::NameScopeId scope_id, clang::QualType type)
+    -> TypeExpr {
+  if (const auto* builtin_type = dyn_cast<clang::BuiltinType>(type)) {
+    return MapBuiltinType(context, *builtin_type);
+  }
+
+  if (const auto* record_type = clang::dyn_cast<clang::RecordType>(type)) {
+    return MapRecordType(context, loc_id, scope_id, *record_type);
+  }
+
+  return {.inst_id = SemIR::ErrorInst::TypeInstId,
+          .type_id = SemIR::ErrorInst::TypeId};
+}
+
 // Returns a block id for the explicit parameters of the given function
 // declaration. If the function declaration has no parameters, it returns
 // `SemIR::InstBlockId::Empty`. In the case of an unsupported parameter type, it
 // returns `SemIR::InstBlockId::None`.
 static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
+                                     SemIR::NameScopeId scope_id,
                                      const clang::FunctionDecl& clang_decl)
     -> SemIR::InstBlockId {
   if (clang_decl.parameters().empty()) {
@@ -363,8 +409,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   params.reserve(clang_decl.parameters().size());
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
-    SemIR::TypeId type_id =
-        GetPatternType(context, MapType(context, param_type).type_id);
+    SemIR::TypeId type_id = GetPatternType(
+        context, MapType(context, loc_id, scope_id, param_type).type_id);
     if (type_id == SemIR::ErrorInst::TypeId) {
       context.TODO(loc_id, llvm::formatv("Unsupported: parameter type: {0}",
                                          param_type.getAsString()));
@@ -401,18 +447,26 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
 // Currently only void and 32-bit int are supported.
 // TODO: Support more return types.
 static auto GetReturnType(Context& context, SemIR::LocId loc_id,
+                          SemIR::NameScopeId scope_id,
                           const clang::FunctionDecl* clang_decl)
     -> SemIR::InstId {
   clang::QualType ret_type = clang_decl->getReturnType().getCanonicalType();
   if (ret_type->isVoidType()) {
     return SemIR::InstId::None;
   }
-  auto [type_inst_id, type_id] = MapType(context, ret_type);
+  auto [type_inst_id, type_id] = MapType(context, loc_id, scope_id, ret_type);
   if (type_id == SemIR::ErrorInst::TypeId) {
     context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
                                        ret_type.getAsString()));
     return SemIR::ErrorInst::InstId;
   }
+  if (SemIR::InitRepr::ForType(context.sem_ir(), type_id).kind ==
+      SemIR::InitRepr::InPlace) {
+    context.TODO(loc_id, llvm::formatv("Unsupported: in place return type: {0}",
+                                       ret_type.getAsString()));
+    return SemIR::ErrorInst::InstId;
+  }
+
   auto pattern_type_id = GetPatternType(context, type_id);
   SemIR::InstId return_slot_pattern_id = AddInstInNoBlock(
       // TODO: Fill in a location for the return type once available.
@@ -448,11 +502,12 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     return SemIR::ErrorInst::InstId;
   }
   auto param_patterns_id =
-      MakeParamPatternsBlockId(context, loc_id, *clang_decl);
+      MakeParamPatternsBlockId(context, loc_id, scope_id, *clang_decl);
   if (!param_patterns_id.has_value()) {
     return SemIR::ErrorInst::InstId;
   }
-  auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
+  auto return_slot_pattern_id =
+      GetReturnType(context, loc_id, scope_id, clang_decl);
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
     return SemIR::ErrorInst::InstId;
   }
