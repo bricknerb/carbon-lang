@@ -248,7 +248,7 @@ F foo();
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "struct_decl_return_type.h";
+import Cpp library "struct_definition_return_type.h";
 
 fn F() {
   // CHECK:STDERR: fail_todo_import_struct_definition_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct F` [SemanticsTodo]
@@ -620,7 +620,7 @@ fn F() {
 // CHECK:STDOUT:     .F = %F.decl
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "struct_decl_return_type.h"
+// CHECK:STDOUT:     import Cpp "struct_definition_return_type.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
