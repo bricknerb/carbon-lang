@@ -1564,6 +1564,12 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver, SemIR::Call inst)
        .args_id = GetLocalCanonicalInstBlockId(resolver, inst.args_id, args)});
 }
 
+static auto AddPlaceholderNameScope(ImportContext& context)
+    -> SemIR::NameScopeId {
+  return context.local_name_scopes().Add(
+      SemIR::InstId::None, SemIR::NameId::None, SemIR::NameScopeId::None);
+}
+
 // Makes an incomplete class. This is necessary even with classes with a
 // complete declaration, because things such as `Self` may refer back to the
 // type.
@@ -1582,7 +1588,10 @@ static auto MakeIncompleteClass(ImportContext& context,
       {GetIncompleteLocalEntityBase(context, class_decl_id, import_class),
        {.self_type_id = SemIR::TypeId::None,
         .inheritance_kind = import_class.inheritance_kind,
-        .is_dynamic = import_class.is_dynamic}});
+        .is_dynamic = import_class.is_dynamic,
+        .scope_id = import_class.is_complete()
+                        ? AddPlaceholderNameScope(context)
+                        : SemIR::NameScopeId::None}});
 
   if (import_class.has_parameters()) {
     class_decl.type_id = GetGenericClassType(
@@ -1606,15 +1615,14 @@ static auto AddClassDefinition(ImportContext& context,
 
   new_class.complete_type_witness_id = complete_type_witness_id;
 
-  new_class.scope_id = context.local_name_scopes().Add(
-      new_class.first_owning_decl_id, SemIR::NameId::None,
-      new_class.parent_scope_id);
   auto& new_scope = context.local_name_scopes().Get(new_class.scope_id);
   const auto& import_scope =
       context.import_name_scopes().Get(import_class.scope_id);
 
   // Push a block so that we can add scoped instructions to it.
   context.local_context().inst_block_stack().Push();
+  new_scope.Set(new_class.first_owning_decl_id, SemIR::NameId::None,
+                new_class.parent_scope_id);
   AddNameScopeImportRefs(context, import_scope, new_scope);
   new_class.body_block_id = context.local_context().inst_block_stack().Pop();
 
