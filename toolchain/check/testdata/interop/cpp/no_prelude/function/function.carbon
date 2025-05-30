@@ -7,9 +7,9 @@
 //
 // AUTOUPDATE
 // TIP: To test this file alone, run:
-// TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/interop/cpp/no_prelude/function.carbon
+// TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/interop/cpp/no_prelude/function/function.carbon
 // TIP: To dump output, run:
-// TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/no_prelude/function.carbon
+// TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/no_prelude/function/function.carbon
 
 // ============================================================================
 // Global
@@ -154,61 +154,7 @@ fn F() {
 // TODO: Test that template functions are unsupported.
 //       This is not tested because template functions are not considered a single result when doing lookup.
 
-// ============================================================================
-// Struct param type
-// ============================================================================
-
-// --- struct_param_type.h
-
-struct S {};
-
-auto foo(S) -> void;
-
-// --- fail_todo_import_struct_param_type.carbon
-
-library "[[@TEST_NAME]]";
-
-import Cpp library "struct_param_type.h";
-
-fn F() {
-  // CHECK:STDERR: fail_todo_import_struct_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S` [SemanticsTodo]
-  // CHECK:STDERR:   Cpp.foo({});
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_struct_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   Cpp.foo({});
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR:
-  Cpp.foo({});
-}
-
 // TODO: Add a test per unsupported param type. See https://github.com/carbon-language/carbon-lang/pull/5477/files/4321e21ed27d987fd71be182d292973fd9849df8#r2094655176
-
-// ============================================================================
-// Struct return type
-// ============================================================================
-
-// --- struct_return_type.h
-
-struct F;
-
-auto foo() -> F;
-
-// --- fail_todo_import_struct_return_type.carbon
-
-library "[[@TEST_NAME]]";
-
-import Cpp library "struct_return_type.h";
-
-fn F() {
-  // CHECK:STDERR: fail_todo_import_struct_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct F` [SemanticsTodo]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_struct_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR:
-  Cpp.foo();
-}
 
 // TODO: Add a test per unsupported return type. See https://github.com/carbon-language/carbon-lang/pull/5477/files/4321e21ed27d987fd71be182d292973fd9849df8#r2094655176
 
@@ -438,72 +384,6 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "static.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: fn @F() {
-// CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   return
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_struct_param_type.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
-// CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
-// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = <error>
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:     .F = %F.decl
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "struct_param_type.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: fn @F() {
-// CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   %.loc14: %empty_struct_type = struct_literal ()
-// CHECK:STDOUT:   return
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_struct_return_type.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
-// CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = <error>
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:     .F = %F.decl
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "struct_return_type.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
 // CHECK:STDOUT: }
