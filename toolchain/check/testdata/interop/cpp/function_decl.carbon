@@ -717,7 +717,13 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
-// CHECK:STDOUT:   %foo_short.decl: %foo_short.type = fn_decl @foo_short [concrete = constants.%foo_short] {} {}
+// CHECK:STDOUT:   %foo_short.decl: %foo_short.type = fn_decl @foo_short [concrete = constants.%foo_short] {
+// CHECK:STDOUT:     %return.patt: %pattern_type.2f8 = return_slot_pattern [concrete]
+// CHECK:STDOUT:     %return.param_patt: %pattern_type.2f8 = out_param_pattern %return.patt, call_param0 [concrete]
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %return.param: ref %i16 = out_param call_param0
+// CHECK:STDOUT:     %return: ref %i16 = return_slot %return.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo_short.ref: %foo_short.type = name_ref foo_short, %foo_short.decl [concrete = constants.%foo_short]
 // CHECK:STDOUT:   %foo_short.call: init %i16 = call %foo_short.ref()
 // CHECK:STDOUT:   %.loc7_10: type = splice_block %i16.loc7 [concrete = constants.%i16] {
@@ -730,7 +736,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo_short();
+// CHECK:STDOUT: fn @foo_short() -> %i16;
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int_return_function_decl.carbon
 // CHECK:STDOUT:
@@ -795,7 +801,13 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
-// CHECK:STDOUT:   %foo_int.decl: %foo_int.type = fn_decl @foo_int [concrete = constants.%foo_int] {} {}
+// CHECK:STDOUT:   %foo_int.decl: %foo_int.type = fn_decl @foo_int [concrete = constants.%foo_int] {
+// CHECK:STDOUT:     %return.patt: %pattern_type.7ce = return_slot_pattern [concrete]
+// CHECK:STDOUT:     %return.param_patt: %pattern_type.7ce = out_param_pattern %return.patt, call_param0 [concrete]
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %return.param: ref %i32 = out_param call_param0
+// CHECK:STDOUT:     %return: ref %i32 = return_slot %return.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo_int.ref: %foo_int.type = name_ref foo_int, %foo_int.decl [concrete = constants.%foo_int]
 // CHECK:STDOUT:   %foo_int.call: init %i32 = call %foo_int.ref()
 // CHECK:STDOUT:   %.loc9_26.1: %i32 = value_of_initializer %foo_int.call
@@ -804,7 +816,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo_int();
+// CHECK:STDOUT: fn @foo_int() -> %i32;
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_import_float_return_function_decl.carbon
 // CHECK:STDOUT:
@@ -909,12 +921,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -928,7 +948,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_signed_int_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -995,12 +1015,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1014,7 +1042,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_signed_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1081,12 +1109,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1100,7 +1136,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int32_t_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1167,12 +1203,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1186,7 +1230,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_multiple_int_params_function_decl.carbon
 // CHECK:STDOUT:
@@ -1260,13 +1304,28 @@ fn F() {
 // CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.1: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.3: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.2: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.4: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
 // CHECK:STDOUT:     %b.patt: %pattern_type.7ce = binding_pattern b [concrete]
 // CHECK:STDOUT:     %b.param_patt: %pattern_type.7ce = value_param_pattern %b.patt, call_param1 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32.1 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.1: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:     %b.param: %i32 = value_param call_param1
+// CHECK:STDOUT:     %.2: type = splice_block @F.%i32.2 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.4: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.2: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %b: %i32 = bind_name b, %b.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
@@ -1288,7 +1347,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32, %b.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_multiple_functions_with_int_params.carbon
 // CHECK:STDOUT:
@@ -1373,13 +1432,28 @@ fn F() {
 // CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.1: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.3: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.2: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.4: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo1.decl: %foo1.type = fn_decl @foo1 [concrete = constants.%foo1] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
 // CHECK:STDOUT:     %b.patt: %pattern_type.7ce = binding_pattern b [concrete]
 // CHECK:STDOUT:     %b.param_patt: %pattern_type.7ce = value_param_pattern %b.patt, call_param1 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32.1 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.1: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:     %b.param: %i32 = value_param call_param1
+// CHECK:STDOUT:     %.2: type = splice_block @F.%i32.2 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.4: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.2: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %b: %i32 = bind_name b, %b.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo1.ref: %foo1.type = name_ref foo1, %foo1.decl [concrete = constants.%foo1]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_2: Core.IntLiteral = int_value 2 [concrete = constants.%int_2.ecc]
@@ -1399,16 +1473,31 @@ fn F() {
 // CHECK:STDOUT:   %.loc7_15.2: %i32 = converted %int_2, %.loc7_15.1 [concrete = constants.%int_2.ef8]
 // CHECK:STDOUT:   %foo1.call: init %empty_tuple.type = call %foo1.ref(%.loc7_12.2, %.loc7_15.2)
 // CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32.3: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.5: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.3: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
-// CHECK:STDOUT:   %int_32.4: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.6: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.7: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32.4: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.8: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo2.decl: %foo2.type = fn_decl @foo2 [concrete = constants.%foo2] {
 // CHECK:STDOUT:     %c.patt: %pattern_type.7ce = binding_pattern c [concrete]
 // CHECK:STDOUT:     %c.param_patt: %pattern_type.7ce = value_param_pattern %c.patt, call_param0 [concrete]
 // CHECK:STDOUT:     %b.patt: %pattern_type.7ce = binding_pattern b [concrete]
 // CHECK:STDOUT:     %b.param_patt: %pattern_type.7ce = value_param_pattern %b.patt, call_param1 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %c.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32.3 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.6: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.3: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %c: %i32 = bind_name c, %c.param
+// CHECK:STDOUT:     %b.param: %i32 = value_param call_param1
+// CHECK:STDOUT:     %.2: type = splice_block @F.%i32.4 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.8: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32.4: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %b: %i32 = bind_name b, %b.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo2.ref: %foo2.type = name_ref foo2, %foo2.decl [concrete = constants.%foo2]
 // CHECK:STDOUT:   %int_3: Core.IntLiteral = int_value 3 [concrete = constants.%int_3.1ba]
 // CHECK:STDOUT:   %int_4: Core.IntLiteral = int_value 4 [concrete = constants.%int_4.0c1]
@@ -1430,9 +1519,9 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo1();
+// CHECK:STDOUT: fn @foo1(%a.param: %i32, %b.param: %i32);
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo2();
+// CHECK:STDOUT: fn @foo2(%c.param: %i32, %b.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_unnamed_int_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1499,12 +1588,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %_.patt: %pattern_type.7ce = binding_pattern _ [concrete]
 // CHECK:STDOUT:     %_.param_patt: %pattern_type.7ce = value_param_pattern %_.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %_.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %_: %i32 = bind_name _, %_.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1518,7 +1615,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%_.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_int_default_param_parameterless_call.carbon
 // CHECK:STDOUT:
@@ -1563,17 +1660,25 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int_max_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1640,12 +1745,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_2147483647: Core.IntLiteral = int_value 2147483647 [concrete = constants.%int_2147483647.d89]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1659,7 +1772,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_overflow_int_max_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1726,12 +1839,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_2147483648: Core.IntLiteral = int_value 2147483648 [concrete = constants.%int_2147483648.1db]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -1745,7 +1866,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int_min_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1825,12 +1946,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_2147483648: Core.IntLiteral = int_value 2147483648 [concrete = constants.%int_2147483648]
 // CHECK:STDOUT:   %impl.elem0.loc7_11.1: %.63a = impl_witness_access constants.%Negate.impl_witness.561, element0 [concrete = constants.%Op.bba]
@@ -1849,7 +1978,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_overflow_int_min_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -1929,12 +2058,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_2147483649: Core.IntLiteral = int_value 2147483649 [concrete = constants.%int_2147483649]
 // CHECK:STDOUT:   %impl.elem0.loc12_11.1: %.63a = impl_witness_access constants.%Negate.impl_witness.561, element0 [concrete = constants.%Op.bba]
@@ -1953,7 +2090,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int_default_param_sucessful_call_function_decl.carbon
 // CHECK:STDOUT:
@@ -2020,12 +2157,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -2039,7 +2184,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int_const_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2106,12 +2251,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.7ce = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.7ce = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i32 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i32 [concrete = constants.%i32] {
+// CHECK:STDOUT:       @F.%int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:       @F.%i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i32 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Convert.956]
@@ -2125,7 +2278,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i32);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_int_ref_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2538,10 +2691,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -2557,7 +2718,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_short_int_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2626,10 +2787,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -2645,7 +2814,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_signed_short_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2714,10 +2883,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -2733,7 +2910,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_signed_short_int_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2802,10 +2979,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -2821,7 +3006,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_int16_t_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2890,10 +3075,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -2909,7 +3102,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_short_max_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -2976,12 +3169,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_32767: Core.IntLiteral = int_value 32767 [concrete = constants.%int_32767.f4b]
 // CHECK:STDOUT:   %impl.elem0: %.236 = impl_witness_access constants.%ImplicitAs.impl_witness.97b, element0 [concrete = constants.%Convert.d0a]
@@ -2995,7 +3196,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_overflow_short_max_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3062,12 +3263,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_32768: Core.IntLiteral = int_value 32768 [concrete = constants.%int_32768.4d0]
 // CHECK:STDOUT:   %impl.elem0: %.236 = impl_witness_access constants.%ImplicitAs.impl_witness.97b, element0 [concrete = constants.%Convert.d0a]
@@ -3081,7 +3290,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_short_min_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3161,12 +3370,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_32768: Core.IntLiteral = int_value 32768 [concrete = constants.%int_32768]
 // CHECK:STDOUT:   %impl.elem0.loc7_11.1: %.63a = impl_witness_access constants.%Negate.impl_witness.561, element0 [concrete = constants.%Op.bba]
@@ -3185,7 +3402,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_overflow_short_min_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3265,12 +3482,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_32769: Core.IntLiteral = int_value 32769 [concrete = constants.%int_32769]
 // CHECK:STDOUT:   %impl.elem0.loc12_11.1: %.63a = impl_witness_access constants.%Negate.impl_witness.561, element0 [concrete = constants.%Op.bba]
@@ -3289,7 +3514,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_int32_arg_short_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3362,12 +3587,20 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
@@ -3384,7 +3617,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_short_const_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3453,10 +3686,18 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %int_16.1: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   %int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     %a.patt: %pattern_type.2f8 = binding_pattern a [concrete]
 // CHECK:STDOUT:     %a.param_patt: %pattern_type.2f8 = value_param_pattern %a.patt, call_param0 [concrete]
-// CHECK:STDOUT:   } {}
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %a.param: %i16 = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block @F.%i16.1 [concrete = constants.%i16] {
+// CHECK:STDOUT:       @F.%int_16.2: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:       @F.%i16.1: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %a: %i16 = bind_name a, %a.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_16.loc7: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
@@ -3472,7 +3713,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%a.param: %i16);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_short_ref_param_function_decl.carbon
 // CHECK:STDOUT:
@@ -3900,8 +4141,9 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
+// CHECK:STDOUT:   %int_32.1: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
+// CHECK:STDOUT:   %int_32.2: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
 // CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1]
 // CHECK:STDOUT:   %float: f64 = float_literal 2 [concrete = constants.%float]
