@@ -1158,7 +1158,7 @@ auto Formatter::FormatCallRhs(Call inst) -> void {
 auto Formatter::FormatImportCppDeclRhs() -> void {
   out_ << " ";
   OpenBrace();
-  for (ImportCpp import_cpp : sem_ir_->import_cpps().array_ref()) {
+  for (ImportCpp import_cpp : sem_ir_->import_cpps().values()) {
     Indent();
     out_ << "import Cpp \""
          << FormatEscaped(

@@ -90,7 +90,7 @@ auto FileContext::PrepareToLower() -> void {
 
 // TODO: Move this to lower.cpp.
 auto FileContext::LowerDefinitions() -> void {
-  for (const auto& class_info : sem_ir_->classes().array_ref()) {
+  for (const auto& class_info : sem_ir_->classes().values()) {
     if (auto* llvm_vtable = BuildVtable(class_info)) {
       global_variables_.Insert(class_info.vtable_id, llvm_vtable);
     }
