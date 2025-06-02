@@ -2,6 +2,8 @@
 // Exceptions. See /LICENSE for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
+// TODO: Add ranges and switch to "--dump-sem-ir-ranges=only".
+// EXTRA-ARGS: --dump-sem-ir-ranges=if-present
 // INCLUDE-FILE: toolchain/testing/min_prelude/destroy.carbon
 //
 // AUTOUPDATE
@@ -691,7 +693,7 @@ fn G() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @F(%.param: <error>);
+// CHECK:STDOUT: fn @F();
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- var_self.carbon
 // CHECK:STDOUT:
