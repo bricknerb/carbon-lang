@@ -34,6 +34,7 @@
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/ids.h"
+#include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/name_scope.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
@@ -400,6 +401,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   }
   llvm::SmallVector<SemIR::InstId> params;
   params.reserve(clang_decl.parameters().size());
+
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
 
@@ -549,11 +551,6 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   auto decl_id =
       AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
   context.imports().push_back(decl_id);
-
-  // auto call_params_id =
-  //     CalleePatternMatch(context, SemIR::InstBlockId::None,
-  //     param_patterns_id,
-  //                        return_slot_pattern_id);
 
   auto function_info = SemIR::Function{
       {.name_id = name_id,
