@@ -32,7 +32,6 @@
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/ids.h"
-#include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/name_scope.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
@@ -362,14 +361,19 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   }
   llvm::SmallVector<SemIR::InstId> params;
   params.reserve(clang_decl.parameters().size());
-
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
 
+    // Marks the start a region of insts, needed for the type
+    // expression created later with the call of EndSubpatternAsExpr.
     BeginSubpattern(context);
     auto [type_inst_id, type_id] = MapType(context, param_type);
+    // Type expression of the binding pattern - a single-entry/single-exit
+    // region that allows control flow in the type expression e.g. fn F(x: if C
+    // then i32 else i64).
     SemIR::ExprRegionId type_expr_region_id =
         EndSubpatternAsExpr(context, type_inst_id);
+
     if (type_id == SemIR::ErrorInst::TypeId) {
       context.TODO(loc_id, llvm::formatv("Unsupported: parameter type: {0}",
                                          param_type.getAsString()));
@@ -394,7 +398,6 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
         AddBindingPattern(context, SemIR::LocId::None, name_id, type_id,
                           type_expr_region_id, is_generic, is_template)
             .pattern_id;
-
     SemIR::InstId var_pattern_id = AddPatternInst(
         context,
         // TODO: Fill in a location once available.
@@ -417,6 +420,7 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
   if (ret_type->isVoidType()) {
     return SemIR::InstId::None;
   }
+
   auto [type_inst_id, type_id] = MapType(context, ret_type);
   if (type_id == SemIR::ErrorInst::TypeId) {
     context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
@@ -464,7 +468,6 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     context.pattern_block_stack().Pop();
     return SemIR::ErrorInst::InstId;
   }
-
   auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
   auto pattern_block_id = context.pattern_block_stack().Pop();
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
