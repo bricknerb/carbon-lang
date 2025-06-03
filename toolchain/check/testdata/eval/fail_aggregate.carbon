@@ -88,16 +88,16 @@ var array_index: array(i32, 1) = (0,) as array(i32, ((5, 7, 1, 9) as array(i32, 
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %array_index.patt: %pattern_type.a98 = binding_pattern array_index [concrete]
-// CHECK:STDOUT:     %.loc17_1: %pattern_type.a98 = var_pattern %array_index.patt [concrete]
+// CHECK:STDOUT:     %array_index.var_patt: %pattern_type.a98 = var_pattern %array_index.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %array_index.var: ref %array_type.0cb = var array_index
-// CHECK:STDOUT:   %.loc17_30: type = splice_block %array_type [concrete = constants.%array_type.0cb] {
+// CHECK:STDOUT:   %array_index.var: ref %array_type.0cb = var %array_index.var_patt [concrete]
+// CHECK:STDOUT:   %.loc17: type = splice_block %array_type [concrete = constants.%array_type.0cb] {
 // CHECK:STDOUT:     %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
 // CHECK:STDOUT:     %i32: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:     %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:     %array_type: type = array_type %int_1, %i32 [concrete = constants.%array_type.0cb]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %array_index: ref %array_type.0cb = bind_name array_index, %array_index.var
+// CHECK:STDOUT:   %array_index: ref %array_type.0cb = bind_name array_index, %array_index.var [concrete = %array_index.var]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @__global_init() {

@@ -180,6 +180,7 @@ class EvalContext {
   auto facet_types() -> CanonicalValueStore<SemIR::FacetTypeId>& {
     return sem_ir().facet_types();
   }
+  auto generics() -> const SemIR::GenericStore& { return sem_ir().generics(); }
   auto specifics() -> const SemIR::SpecificStore& {
     return sem_ir().specifics();
   }
@@ -542,29 +543,21 @@ static auto GetConstantValue(EvalContext& eval_context,
     return SemIR::SpecificId::None;
   }
 
+  // Generally, when making a new specific, it's done through MakeSpecific(),
+  // which will ensure the declaration is resolved.
+  //
+  // However, the SpecificId returned here is intentionally left without its
+  // declaration resolved. Imported instructions with SpecificIds should not
+  // have the specific's declaration resolved, but other instructions which
+  // include a new SpecificId should.
+  //
+  // The resolving of the specific's declaration will be ensured later when
+  // evaluating the instruction containing the SpecificId.
   if (args_id == specific.args_id) {
-    const auto& specific = eval_context.specifics().Get(specific_id);
-    // A constant specific_id should always have a resolved declaration. The
-    // specific_id from the instruction may coincidentally be canonical, and so
-    // constant evaluation gives the same value. In that case, we still need to
-    // ensure its declaration is resolved.
-    //
-    // However, don't resolve the declaration if the generic's eval block hasn't
-    // been set yet. This happens when building the eval block during import.
-    //
-    // TODO: Change importing of generic eval blocks to be less fragile and
-    // remove this `if` so we unconditionally call `ResolveSpecificDeclaration`.
-    if (!specific.decl_block_id.has_value() && eval_context.context()
-                                                   .generics()
-                                                   .Get(specific.generic_id)
-                                                   .decl_block_id.has_value()) {
-      ResolveSpecificDeclaration(eval_context.context(),
-                                 eval_context.fallback_loc_id(), specific_id);
-    }
     return specific_id;
   }
-  return MakeSpecific(eval_context.context(), eval_context.fallback_loc_id(),
-                      specific.generic_id, args_id);
+  return eval_context.context().specifics().GetOrAdd(specific.generic_id,
+                                                     args_id);
 }
 
 static auto GetConstantValue(EvalContext& eval_context,
@@ -676,35 +669,28 @@ static constexpr bool HasGetConstantValueOverload = requires {
 using ArgHandlerFnT = auto(EvalContext& context, int32_t arg, Phase* phase)
     -> int32_t;
 
-// Returns a lookup table to get constants by Id::Kind. Requires a null IdKind
-// as a parameter in order to get the type pack.
+// Returns the arg handler for an `IdKind`.
 template <typename... Types>
-static constexpr auto MakeArgHandlerTable(
-    SemIR::TypeEnum<Types...>* /*id_kind*/)
-    -> std::array<ArgHandlerFnT*, SemIR::IdKind::NumValues> {
-  std::array<ArgHandlerFnT*, SemIR::IdKind::NumValues> table = {};
-  ((table[SemIR::IdKind::template For<Types>.ToIndex()] =
-        [](EvalContext& eval_context, int32_t arg, Phase* phase) -> int32_t {
-     auto id = SemIR::Inst::FromRaw<Types>(arg);
-     if constexpr (HasGetConstantValueOverload<Types>) {
-       // If we have a custom `GetConstantValue` overload, call it.
-       return SemIR::Inst::ToRaw(GetConstantValue(eval_context, id, phase));
-     } else {
-       // Otherwise, we assume the value is already constant.
-       return arg;
-     }
-   }),
-   ...);
-  table[SemIR::IdKind::Invalid.ToIndex()] = [](EvalContext& /*context*/,
-                                               int32_t /*arg*/,
-                                               Phase* /*phase*/) -> int32_t {
-    CARBON_FATAL("Instruction has argument with invalid IdKind");
-  };
-  table[SemIR::IdKind::None.ToIndex()] =
-      [](EvalContext& /*context*/, int32_t arg, Phase* /*phase*/) -> int32_t {
-    return arg;
-  };
-  return table;
+static auto GetArgHandlerFn(TypeEnum<Types...> id_kind) -> ArgHandlerFnT* {
+  static constexpr std::array<ArgHandlerFnT*, SemIR::IdKind::NumValues> Table =
+      {
+          [](EvalContext& eval_context, int32_t arg, Phase* phase) -> int32_t {
+            auto id = SemIR::Inst::FromRaw<Types>(arg);
+            if constexpr (HasGetConstantValueOverload<Types>) {
+              // If we have a custom `GetConstantValue` overload, call it.
+              return SemIR::Inst::ToRaw(
+                  GetConstantValue(eval_context, id, phase));
+            } else {
+              // Otherwise, we assume the value is already constant.
+              return arg;
+            }
+          }...,
+          // Invalid and None handling (ordering-sensitive).
+          [](auto...) -> int32_t { CARBON_FATAL("Unexpected invalid IdKind"); },
+          [](EvalContext& /*context*/, int32_t arg,
+             Phase* /*phase*/) -> int32_t { return arg; },
+      };
+  return Table[id_kind.ToIndex()];
 }
 
 // Given the stored value `arg` of an instruction field and its corresponding
@@ -715,9 +701,7 @@ static constexpr auto MakeArgHandlerTable(
 static auto GetConstantValueForArg(EvalContext& eval_context,
                                    SemIR::Inst::ArgAndKind arg_and_kind,
                                    Phase* phase) -> int32_t {
-  static constexpr auto Table =
-      MakeArgHandlerTable(static_cast<SemIR::IdKind*>(nullptr));
-  return Table[arg_and_kind.kind().ToIndex()](eval_context,
+  return GetArgHandlerFn(arg_and_kind.kind())(eval_context,
                                               arg_and_kind.value(), phase);
 }
 
@@ -769,25 +753,101 @@ static auto ReplaceTypeWithConstantValue(EvalContext& eval_context,
   return IsConstant(*phase);
 }
 
+template <typename... Types>
+static auto KindHasGetConstantValueOverload(TypeEnum<Types...> e) -> bool {
+  static constexpr std::array<bool, SemIR::IdKind::NumTypes> Values = {
+      (HasGetConstantValueOverload<Types>)...};
+  return Values[e.ToIndex()];
+}
+
+static auto ResolveSpecificDeclForSpecificId(EvalContext& eval_context,
+                                             SemIR::SpecificId specific_id)
+    -> void {
+  if (!specific_id.has_value()) {
+    return;
+  }
+
+  const auto& specific = eval_context.specifics().Get(specific_id);
+  const auto& generic = eval_context.generics().Get(specific.generic_id);
+  if (specific_id == generic.self_specific_id) {
+    // Impl witness table construction happens before its generic decl is
+    // finish, in order to make the table's instructions dependent
+    // instructions of the Impl's generic. But those instructions can refer to
+    // the generic's self specific. We can not resolve the specific
+    // declaration for the self specific until the generic is finished, but it
+    // is explicitly resolved at that time in `FinishGenericDecl()`.
+    return;
+  }
+  ResolveSpecificDecl(eval_context.context(), eval_context.fallback_loc_id(),
+                      specific_id);
+}
+
+// Resolves the specific declarations for a specific id in any field of the
+// `inst` instruction.
+static auto ResolveSpecificDeclForInst(EvalContext& eval_context,
+                                       const SemIR::Inst& inst) -> void {
+  for (auto arg_and_kind : {inst.arg0_and_kind(), inst.arg1_and_kind()}) {
+    // This switch must handle any field type that has a GetConstantValue()
+    // overload which canonicalizes a specific (and thus potentially forms a new
+    // specific) as part of forming its constant value.
+    CARBON_KIND_SWITCH(arg_and_kind) {
+      case CARBON_KIND(SemIR::FacetTypeId facet_type_id): {
+        const auto& info =
+            eval_context.context().facet_types().Get(facet_type_id);
+        for (const auto& interface : info.extend_constraints) {
+          ResolveSpecificDeclForSpecificId(eval_context, interface.specific_id);
+        }
+        for (const auto& interface : info.self_impls_constraints) {
+          ResolveSpecificDeclForSpecificId(eval_context, interface.specific_id);
+        }
+        break;
+      }
+      case CARBON_KIND(SemIR::SpecificId specific_id): {
+        ResolveSpecificDeclForSpecificId(eval_context, specific_id);
+        break;
+      }
+      case CARBON_KIND(SemIR::SpecificInterfaceId specific_interface_id): {
+        ResolveSpecificDeclForSpecificId(eval_context,
+                                         eval_context.specific_interfaces()
+                                             .Get(specific_interface_id)
+                                             .specific_id);
+        break;
+      }
+
+        // These id types have a GetConstantValue() overload but that overload
+        // does not canonicalize any SpecificId in the value type.
+      case SemIR::IdKind::For<SemIR::DestInstId>:
+      case SemIR::IdKind::For<SemIR::EntityNameId>:
+      case SemIR::IdKind::For<SemIR::InstBlockId>:
+      case SemIR::IdKind::For<SemIR::InstId>:
+      case SemIR::IdKind::For<SemIR::MetaInstId>:
+      case SemIR::IdKind::For<SemIR::StructTypeFieldsId>:
+      case SemIR::IdKind::For<SemIR::TypeInstId>:
+        break;
+
+      case SemIR::IdKind::None:
+        // No arg.
+        break;
+
+      default:
+        CARBON_CHECK(
+            !KindHasGetConstantValueOverload(arg_and_kind.kind()),
+            "Missing case for {0} which has a GetConstantValue() overload",
+            arg_and_kind.kind());
+        break;
+    }
+  }
+}
+
 auto AddImportedConstant(Context& context, SemIR::Inst inst)
     -> SemIR::ConstantId {
   EvalContext eval_context(&context, SemIR::LocId::None);
-  Phase phase = Phase::Concrete;
-  switch (inst.kind().value_kind()) {
-    case SemIR::InstValueKind::Typed: {
-      phase = GetPhase(context.constant_values(),
-                       context.types().GetConstantId(inst.type_id()));
-      // TODO: Can we avoid doing this replacement? It may do things that are
-      // undesirable during importing, such as resolving specifics.
-      if (!ReplaceAllFieldsWithConstantValues(eval_context, &inst, &phase)) {
-        return SemIR::ConstantId::NotConstant;
-      }
-      break;
-    }
-    case SemIR::InstValueKind::None: {
-      // Instructions without a type_id are not evaluated.
-      break;
-    }
+  CARBON_CHECK(inst.kind().has_type(), "Can't import untyped instructions: {0}",
+               inst.kind());
+  Phase phase = GetPhase(context.constant_values(),
+                         context.types().GetConstantId(inst.type_id()));
+  if (!ReplaceAllFieldsWithConstantValues(eval_context, &inst, &phase)) {
+    return SemIR::ConstantId::NotConstant;
   }
   return MakeConstantResult(context, inst, phase);
 }
@@ -841,8 +901,8 @@ static auto PerformArrayIndex(EvalContext& eval_context, SemIR::ArrayIndex inst)
   auto aggregate =
       eval_context.insts().TryGetAs<SemIR::AnyAggregateValue>(aggregate_id);
   if (!aggregate) {
-    CARBON_CHECK(phase != Phase::Concrete,
-                 "Unexpected representation for template constant aggregate");
+    // TODO: Consider forming a symbolic constant or reference constant array
+    // index in this case.
     return MakeNonConstantResult(phase);
   }
 
@@ -1743,9 +1803,9 @@ static auto ConvertEvalResultToConstantId(Context& context,
 // instruction:
 //
 //  -  InstConstantKind::Never: returns ConstantId::NotConstant.
-//  -  InstConstantKind::Indirect, SymbolicOnly, Conditional: evaluates all the
-//     operands of the instruction, and calls `EvalConstantInst` to evaluate the
-//     resulting constant instruction.
+//  -  InstConstantKind::Indirect, SymbolicOnly, SymbolicOrReference,
+//     Conditional: evaluates all the operands of the instruction, and calls
+//     `EvalConstantInst` to evaluate the resulting constant instruction.
 //  -  InstConstantKind::WheneverPossible, Always: evaluates all the operands of
 //     the instruction, and produces the resulting constant instruction as the
 //     result.
@@ -1763,7 +1823,7 @@ static auto TryEvalTypedInst(EvalContext& eval_context, SemIR::InstId inst_id,
   constexpr auto ConstantKind = InstT::Kind.constant_kind();
   if constexpr (ConstantKind == SemIR::InstConstantKind::Never) {
     return SemIR::ConstantId::NotConstant;
-  } else if constexpr (ConstantKind == SemIR::InstConstantKind::Unique) {
+  } else if constexpr (ConstantKind == SemIR::InstConstantKind::AlwaysUnique) {
     CARBON_CHECK(inst_id.has_value());
     return SemIR::ConstantId::ForConcreteConstant(inst_id);
   } else {
@@ -1778,6 +1838,12 @@ static auto TryEvalTypedInst(EvalContext& eval_context, SemIR::InstId inst_id,
       }
       return MakeNonConstantResult(phase);
     }
+
+    // When canonicalizing a SpecificId, we defer resolving the specific's
+    // declaration until here, to avoid resolving declarations from imported
+    // specifics. (Imported instructions are not evaluated.)
+    ResolveSpecificDeclForInst(eval_context, inst);
+
     if constexpr (ConstantKind == SemIR::InstConstantKind::Always ||
                   ConstantKind == SemIR::InstConstantKind::WheneverPossible) {
       return MakeConstantResult(eval_context.context(), inst, phase);

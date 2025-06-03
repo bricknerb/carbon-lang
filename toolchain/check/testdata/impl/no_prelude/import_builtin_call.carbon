@@ -2,6 +2,9 @@
 // Exceptions. See /LICENSE for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
+// TODO: Add ranges and switch to "--dump-sem-ir-ranges=only".
+// EXTRA-ARGS: --dump-sem-ir-ranges=if-present
+//
 // AUTOUPDATE
 // TIP: To test this file alone, run:
 // TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/impl/no_prelude/import_builtin_call.carbon
@@ -699,12 +702,6 @@ var n: Int(64) = MakeFromClass(FromLiteral(64) as OtherInt);
 // CHECK:STDOUT:   %pattern_type => constants.%pattern_type.a71
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: specific @Op.1(constants.%Add.facet.5a7) {
-// CHECK:STDOUT:   %Self => constants.%Add.facet.5a7
-// CHECK:STDOUT:   %Self.as_type => constants.%MyInt.09f
-// CHECK:STDOUT:   %pattern_type => constants.%pattern_type.a71
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
 // CHECK:STDOUT: specific @Double(constants.%int_64) {
 // CHECK:STDOUT:   %N => constants.%int_64
 // CHECK:STDOUT:   %MyInt => constants.%MyInt.f30
@@ -1091,9 +1088,9 @@ var n: Int(64) = MakeFromClass(FromLiteral(64) as OtherInt);
 // CHECK:STDOUT:   %default.import = import <none>
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %m.patt: %pattern_type.e13 = binding_pattern m [concrete]
-// CHECK:STDOUT:     %.loc6_1: %pattern_type.e13 = var_pattern %m.patt [concrete]
+// CHECK:STDOUT:     %m.var_patt: %pattern_type.e13 = var_pattern %m.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %m.var: ref %i64.builtin = var m
+// CHECK:STDOUT:   %m.var: ref %i64.builtin = var %m.var_patt [concrete]
 // CHECK:STDOUT:   %.loc6_14.1: type = splice_block %.loc6_14.3 [concrete = constants.%i64.builtin] {
 // CHECK:STDOUT:     %Int.ref.loc6: %Int.type = name_ref Int, imports.%Main.Int [concrete = constants.%Int]
 // CHECK:STDOUT:     %int_64.loc6: Core.IntLiteral = int_value 64 [concrete = constants.%int_64.fab]
@@ -1101,12 +1098,12 @@ var n: Int(64) = MakeFromClass(FromLiteral(64) as OtherInt);
 // CHECK:STDOUT:     %.loc6_14.2: type = value_of_initializer %int.make_type_signed.loc6 [concrete = constants.%i64.builtin]
 // CHECK:STDOUT:     %.loc6_14.3: type = converted %int.make_type_signed.loc6, %.loc6_14.2 [concrete = constants.%i64.builtin]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %m: ref %i64.builtin = bind_name m, %m.var
+// CHECK:STDOUT:   %m: ref %i64.builtin = bind_name m, %m.var [concrete = %m.var]
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %n.patt: %pattern_type.e13 = binding_pattern n [concrete]
-// CHECK:STDOUT:     %.loc7_1: %pattern_type.e13 = var_pattern %n.patt [concrete]
+// CHECK:STDOUT:     %n.var_patt: %pattern_type.e13 = var_pattern %n.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n.var: ref %i64.builtin = var n
+// CHECK:STDOUT:   %n.var: ref %i64.builtin = var %n.var_patt [concrete]
 // CHECK:STDOUT:   %.loc7_14.1: type = splice_block %.loc7_14.3 [concrete = constants.%i64.builtin] {
 // CHECK:STDOUT:     %Int.ref.loc7: %Int.type = name_ref Int, imports.%Main.Int [concrete = constants.%Int]
 // CHECK:STDOUT:     %int_64.loc7: Core.IntLiteral = int_value 64 [concrete = constants.%int_64.fab]
@@ -1114,7 +1111,7 @@ var n: Int(64) = MakeFromClass(FromLiteral(64) as OtherInt);
 // CHECK:STDOUT:     %.loc7_14.2: type = value_of_initializer %int.make_type_signed.loc7 [concrete = constants.%i64.builtin]
 // CHECK:STDOUT:     %.loc7_14.3: type = converted %int.make_type_signed.loc7, %.loc7_14.2 [concrete = constants.%i64.builtin]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n: ref %i64.builtin = bind_name n, %n.var
+// CHECK:STDOUT:   %n: ref %i64.builtin = bind_name n, %n.var [concrete = %n.var]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @OtherInt [from "convert_symbolic.carbon"] {

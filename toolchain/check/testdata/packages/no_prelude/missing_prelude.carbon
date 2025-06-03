@@ -2,6 +2,9 @@
 // Exceptions. See /LICENSE for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
+// TODO: Add ranges and switch to "--dump-sem-ir-ranges=only".
+// EXTRA-ARGS: --dump-sem-ir-ranges=if-present
+//
 // AUTOUPDATE
 // TIP: To test this file alone, run:
 // TIP:   bazel test //toolchain/testing:file_test --test_arg=--file_tests=toolchain/check/testdata/packages/no_prelude/missing_prelude.carbon
@@ -112,11 +115,11 @@ var n: {} = i32;
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %n.patt: <error> = binding_pattern n [concrete]
-// CHECK:STDOUT:     %.loc8: <error> = var_pattern %n.patt [concrete]
+// CHECK:STDOUT:     %n.var_patt: <error> = var_pattern %n.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n.var: ref <error> = var n
+// CHECK:STDOUT:   %n.var: ref <error> = var %n.var_patt [concrete = <error>]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
-// CHECK:STDOUT:   %n: <error> = bind_name n, <error>
+// CHECK:STDOUT:   %n: <error> = bind_name n, <error> [concrete = <error>]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- prelude_empty.carbon
@@ -146,11 +149,11 @@ var n: {} = i32;
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %n.patt: <error> = binding_pattern n [concrete]
-// CHECK:STDOUT:     %.loc10: <error> = var_pattern %n.patt [concrete]
+// CHECK:STDOUT:     %n.var_patt: <error> = var_pattern %n.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n.var: ref <error> = var n
+// CHECK:STDOUT:   %n.var: ref <error> = var %n.var_patt [concrete = <error>]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
-// CHECK:STDOUT:   %n: <error> = bind_name n, <error>
+// CHECK:STDOUT:   %n: <error> = bind_name n, <error> [concrete = <error>]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- prelude_fake_int.carbon
@@ -242,14 +245,14 @@ var n: {} = i32;
 // CHECK:STDOUT:   %Core.import = import Core
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %n.patt: %pattern_type.a96 = binding_pattern n [concrete]
-// CHECK:STDOUT:     %.loc6_1: %pattern_type.a96 = var_pattern %n.patt [concrete]
+// CHECK:STDOUT:     %n.var_patt: %pattern_type.a96 = var_pattern %n.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n.var: ref %empty_struct_type = var n
+// CHECK:STDOUT:   %n.var: ref %empty_struct_type = var %n.var_patt [concrete]
 // CHECK:STDOUT:   %.loc6_9.1: type = splice_block %.loc6_9.3 [concrete = constants.%empty_struct_type] {
 // CHECK:STDOUT:     %.loc6_9.2: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:     %.loc6_9.3: type = converted %.loc6_9.2, constants.%empty_struct_type [concrete = constants.%empty_struct_type]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n: ref %empty_struct_type = bind_name n, %n.var
+// CHECK:STDOUT:   %n: ref %empty_struct_type = bind_name n, %n.var [concrete = %n.var]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: generic fn @Int(imports.%Core.import_ref.5ab: type, imports.%Core.import_ref.34c: @Int.%T (%T)) [from "prelude_fake_int.carbon"] {
@@ -323,14 +326,14 @@ var n: {} = i32;
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %n.patt: %pattern_type.cb1 = binding_pattern n [concrete]
-// CHECK:STDOUT:     %.loc10_1: %pattern_type.cb1 = var_pattern %n.patt [concrete]
+// CHECK:STDOUT:     %n.var_patt: %pattern_type.cb1 = var_pattern %n.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n.var: ref %empty_tuple.type = var n
+// CHECK:STDOUT:   %n.var: ref %empty_tuple.type = var %n.var_patt [concrete]
 // CHECK:STDOUT:   %.loc10_9.1: type = splice_block %.loc10_9.3 [concrete = constants.%empty_tuple.type] {
 // CHECK:STDOUT:     %.loc10_9.2: %empty_tuple.type = tuple_literal ()
 // CHECK:STDOUT:     %.loc10_9.3: type = converted %.loc10_9.2, constants.%empty_tuple.type [concrete = constants.%empty_tuple.type]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %n: ref %empty_tuple.type = bind_name n, %n.var
+// CHECK:STDOUT:   %n: ref %empty_tuple.type = bind_name n, %n.var [concrete = %n.var]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: generic fn @Int(%T.loc8_8.1: type, %N.loc8_18.1: @Int.%T.loc8_8.2 (%T)) {
@@ -374,9 +377,5 @@ var n: {} = i32;
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_prelude_as_namespace.carbon
 // CHECK:STDOUT:
-// CHECK:STDOUT: file {}
-// CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_prelude_as_class.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {}
 // CHECK:STDOUT:
