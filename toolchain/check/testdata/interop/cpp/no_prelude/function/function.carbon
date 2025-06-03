@@ -203,7 +203,7 @@ struct S {};
 
 auto foo(S) -> void;
 
-// --- todo_import_struct_definition_param_type.carbon
+// --- import_struct_definition_param_type.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -661,7 +661,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- todo_import_struct_definition_param_type.carbon
+// CHECK:STDOUT: --- import_struct_definition_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
