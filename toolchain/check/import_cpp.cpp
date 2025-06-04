@@ -15,6 +15,7 @@
 #include "clang/Tooling/Tooling.h"
 #include "common/raw_string_ostream.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
+#include "llvm/ADT/ScopeExit.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/raw_ostream.h"
 #include "toolchain/check/class.h"
@@ -364,8 +365,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   for (const clang::ParmVarDecl* param : clang_decl.parameters()) {
     clang::QualType param_type = param->getType().getCanonicalType();
 
-    // Marks the start a region of insts, needed for the type
-    // expression created later with the call of EndSubpatternAsExpr.
+    // Mark the start of a region of insts, needed for the type expression
+    // created later with the call of `EndSubpatternAsExpr()`.
     BeginSubpattern(context);
     auto [type_inst_id, type_id] = MapType(context, param_type);
     // Type expression of the binding pattern - a single-entry/single-exit
@@ -391,7 +392,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
 
     // TODO: Fix this once templates are supported.
     bool is_template = false;
-    // TODO: Fix this once templates are supported.
+    // TODO: Fix this once generics are supported.
     bool is_generic = false;
     SemIR::InstId binding_pattern_id =
         // TODO: Fill in a location once available.
@@ -461,20 +462,24 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     context.TODO(loc_id, "Unsupported: Template function");
     return SemIR::ErrorInst::InstId;
   }
+  context.inst_block_stack().Push();
   context.pattern_block_stack().Push();
+  auto pop_blocks_and_exit = [&context]() {
+    context.inst_block_stack().Pop();
+    context.pattern_block_stack().Pop();
+    return SemIR::ErrorInst::InstId;
+  };
   auto param_patterns_id =
       MakeParamPatternsBlockId(context, loc_id, *clang_decl);
   if (!param_patterns_id.has_value()) {
-    context.pattern_block_stack().Pop();
-    return SemIR::ErrorInst::InstId;
+    return pop_blocks_and_exit();
   }
   auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
-  auto pattern_block_id = context.pattern_block_stack().Pop();
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
-    return SemIR::ErrorInst::InstId;
+    return pop_blocks_and_exit();
   }
+  auto pattern_block_id = context.pattern_block_stack().Pop();
 
-  context.inst_block_stack().Push();
   auto call_params_id =
       CalleePatternMatch(context, SemIR::InstBlockId::None, param_patterns_id,
                          return_slot_pattern_id);
