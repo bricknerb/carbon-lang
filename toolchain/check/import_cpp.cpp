@@ -68,8 +68,8 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
  public:
   // Creates an instance with the location that triggers calling Clang.
   // `context` must not be null.
-  explicit CarbonClangDiagnosticConsumer(Context* context, SemIR::LocId loc_id)
-      : context_(context), loc_id_(loc_id) {}
+  explicit CarbonClangDiagnosticConsumer(Context* context)
+      : context_(context) {}
 
   // Generates a Carbon warning for each Clang warning and a Carbon error for
   // each Clang error or fatal.
@@ -121,23 +121,17 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
         case clang::DiagnosticsEngine::Warning:
         case clang::DiagnosticsEngine::Error:
         case clang::DiagnosticsEngine::Fatal: {
-          // TODO: Adjust diagnostics to drop the Carbon file here, and then
-          // remove the "C++:\n" prefix.
-          CARBON_DIAGNOSTIC(CppInteropParseWarning, Warning, "C++:\n{0}",
+          // TODO: Parse the message to select the relevant C++ import and add
+          // that information to the location.
+          CARBON_DIAGNOSTIC(CppInteropParseWarning, Warning, "{0}",
                             std::string);
-          CARBON_DIAGNOSTIC(CppInteropParseError, Error, "C++:\n{0}",
-                            std::string);
-          // TODO: This should be part of the location, instead of added as a
-          // note here.
-          CARBON_DIAGNOSTIC(InCppImport, Note, "in `Cpp` import");
-          context_->emitter()
-              .Build(SemIR::LocId(info.import_ir_inst_id),
-                     info.level == clang::DiagnosticsEngine::Warning
-                         ? CppInteropParseWarning
-                         : CppInteropParseError,
-                     info.message)
-              .Note(loc_id_, InCppImport)
-              .Emit();
+          CARBON_DIAGNOSTIC(CppInteropParseError, Error, "{0}", std::string);
+          context_->emitter().Emit(
+              SemIR::LocId(info.import_ir_inst_id),
+              info.level == clang::DiagnosticsEngine::Warning
+                  ? CppInteropParseWarning
+                  : CppInteropParseError,
+              info.message);
           break;
         }
       }
@@ -147,9 +141,6 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
  private:
   // The type-checking context in which we're running Clang.
   Context* context_;
-
-  // The location that triggered calling Clang.
-  SemIR::LocId loc_id_;
 
   // Information on a Clang diagnostic that can be converted to a Carbon
   // diagnostic.
@@ -182,11 +173,7 @@ static auto GenerateAst(Context& context, llvm::StringRef importing_file_path,
                         llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs,
                         llvm::StringRef target)
     -> std::pair<std::unique_ptr<clang::ASTUnit>, bool> {
-  // TODO: Use all import locations by referring each Clang diagnostic to the
-  // relevant import.
-  SemIR::LocId loc_id = imports.back().node_id;
-
-  CarbonClangDiagnosticConsumer diagnostics_consumer(&context, loc_id);
+  CarbonClangDiagnosticConsumer diagnostics_consumer(&context);
 
   // TODO: Share compilation flags with ClangRunner.
   auto ast = clang::tooling::buildASTFromCodeWithArgs(
@@ -253,15 +240,16 @@ auto ImportCppFiles(Context& context, llvm::StringRef importing_file_path,
 
   CARBON_CHECK(!context.sem_ir().cpp_ast());
 
-  auto [generated_ast, ast_has_error] =
-      GenerateAst(context, importing_file_path, imports, fs, target);
-
   PackageNameId package_id = imports.front().package_id;
   CARBON_CHECK(
       llvm::all_of(imports, [&](const Parse::Tree::PackagingNames& import) {
         return import.package_id == package_id;
       }));
   auto name_scope_id = AddNamespace(context, package_id, imports);
+
+  auto [generated_ast, ast_has_error] =
+      GenerateAst(context, importing_file_path, imports, fs, target);
+
   SemIR::NameScope& name_scope = context.name_scopes().Get(name_scope_id);
   name_scope.set_is_closed_import(true);
   name_scope.set_cpp_decl_context(

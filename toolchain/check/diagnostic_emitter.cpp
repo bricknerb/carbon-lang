@@ -11,6 +11,7 @@
 #include "common/raw_string_ostream.h"
 #include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/sem_ir/absolute_node_id.h"
+#include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/stringify.h"
 
 namespace Carbon::Check {
@@ -55,8 +56,7 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIR::LocId loc_id, bool is_token_only,
     // TODO: Include the name of the imported library in the diagnostic.
     auto diag_loc =
         ConvertLocInFile(absolute_node_id, is_token_only, context_fn);
-    CARBON_DIAGNOSTIC(InImport, LocationInfo, "in import");
-    context_fn(diag_loc.loc, InImport);
+    InImport(diag_loc.loc, context_fn);
   }
 
   return ConvertLocInFile(final_node_id, is_token_only, context_fn);
@@ -64,12 +64,22 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIR::LocId loc_id, bool is_token_only,
 
 auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
                                          bool token_only,
-                                         ContextFnT /*context_fn*/) const
+                                         ContextFnT context_fn) const
     -> Diagnostics::ConvertedLoc {
   if (absolute_node_id.check_ir_id() == SemIR::CheckIRId::Cpp) {
     // Special handling of Clang source locations.
-    // TODO: Refactor to add an `InImport` pointing at the `Cpp` import, and
-    // eliminate `InCppImport`.
+    CARBON_CHECK(sem_ir_->import_cpps().size() > 0);
+    // TODO: Use information on the specific C++ import extract from Clang error
+    // message and propagated here instead of using first C++ import
+    // arbitrarily.
+    Parse::NodeId import_node_id =
+        sem_ir_->import_cpps().values().begin()->node_id;
+    InImport(ConvertLocInFile(
+                 SemIR::AbsoluteNodeId(sem_ir_->check_ir_id(), import_node_id),
+                 false, context_fn)
+                 .loc,
+             context_fn);
+
     clang::SourceLocation clang_loc = sem_ir_->clang_source_locs().Get(
         absolute_node_id.clang_source_loc_id());
 
@@ -159,6 +169,13 @@ auto DiagnosticEmitter::ConvertArg(llvm::Any arg) const -> llvm::Any {
     return StringifySpecificInterface(*sem_ir_, specific_interface);
   }
   return DiagnosticEmitterBase::ConvertArg(arg);
+}
+
+// static
+auto DiagnosticEmitter::InImport(Diagnostics::Loc loc, ContextFnT context_fn)
+    -> void {
+  CARBON_DIAGNOSTIC(InImport, LocationInfo, "in import");
+  context_fn(loc, InImport);
 }
 
 }  // namespace Carbon::Check
