@@ -25,9 +25,9 @@
 #include "toolchain/check/import.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/literal.h"
+#include "toolchain/check/name_lookup.h"
 #include "toolchain/check/pattern.h"
 #include "toolchain/check/pattern_match.h"
-#include "toolchain/check/name_lookup.h"
 #include "toolchain/check/type.h"
 #include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/diagnostic.h"
@@ -416,7 +416,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
     // Mark the start of a region of insts, needed for the type expression
     // created later with the call of `EndSubpatternAsExpr()`.
     BeginSubpattern(context);
-    auto [type_inst_id, type_id] = MapType(context, loc_id, scope_id, param_type);
+    auto [type_inst_id, type_id] =
+        MapType(context, loc_id, scope_id, param_type);
     // Type expression of the binding pattern - a single-entry/single-exit
     // region that allows control flow in the type expression e.g. fn F(x: if C
     // then i32 else i64).
@@ -503,15 +504,17 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
 // call parameters block id for the given function declaration.
 // Returns false if the function declaration has an unsupported parameter type.
 static auto GetFunctionParams(Context& context, SemIR::LocId loc_id,
+                              SemIR::NameScopeId scope_id,
                               clang::FunctionDecl* clang_decl,
                               SemIR::InstBlockId& param_patterns_id,
                               SemIR::InstId& return_slot_pattern_id,
                               SemIR::InstBlockId& call_params_id) -> bool {
-  param_patterns_id = MakeParamPatternsBlockId(context, loc_id, *clang_decl);
+  param_patterns_id =
+      MakeParamPatternsBlockId(context, loc_id, scope_id, *clang_decl);
   if (!param_patterns_id.has_value()) {
     return false;
   }
-  return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
+  return_slot_pattern_id = GetReturnType(context, loc_id, scope_id, clang_decl);
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
     return false;
   }
@@ -547,9 +550,9 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   auto param_patterns_id = SemIR::InstBlockId::Empty;
   auto return_slot_pattern_id = SemIR::InstId::None;
   auto call_params_id = SemIR::InstBlockId::Empty;
-  auto success =
-      GetFunctionParams(context, loc_id, clang_decl, param_patterns_id,
-                        return_slot_pattern_id, call_params_id);
+  auto success = GetFunctionParams(context, loc_id, scope_id, clang_decl,
+                                   param_patterns_id, return_slot_pattern_id,
+                                   call_params_id);
 
   auto decl_block_id = context.inst_block_stack().Pop();
   auto pattern_block_id = context.pattern_block_stack().Pop();
@@ -705,9 +708,6 @@ static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
                          /*vtable_contents=*/{},
                          // TODO: Set block.
                          /*body=*/{});
-
-  CompleteTypeOrCheckFail(context,
-                          context.classes().Get(class_id).self_type_id);
 
   return class_def_id;
 }

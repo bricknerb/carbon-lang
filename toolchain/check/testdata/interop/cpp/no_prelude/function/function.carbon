@@ -316,20 +316,13 @@ struct F {};
 
 F foo();
 
-// --- fail_todo_import_struct_definition_return_type.carbon
+// --- import_struct_definition_return_type.carbon
 
 library "[[@TEST_NAME]]";
 
 import Cpp library "struct_definition_return_type.h";
 
 fn F() {
-  // CHECK:STDERR: fail_todo_import_struct_definition_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: in place return type: struct F` [SemanticsTodo]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_struct_definition_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR:
   Cpp.foo();
 }
 
@@ -670,6 +663,7 @@ fn F() {
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete]
+// CHECK:STDOUT:   %pattern_type: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
@@ -678,7 +672,7 @@ fn F() {
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
 // CHECK:STDOUT:     .foo = @F.%foo.decl
-// CHECK:STDOUT:     .S = @F.%S.decl
+// CHECK:STDOUT:     .S = @foo.%S.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
@@ -695,7 +689,7 @@ fn F() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @S {
-// CHECK:STDOUT:   complete_type_witness = @F.%complete_type
+// CHECK:STDOUT:   complete_type_witness = @foo.%complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%S
@@ -705,10 +699,18 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
+// CHECK:STDOUT:     %_.patt: %pattern_type = binding_pattern _ [concrete]
+// CHECK:STDOUT:     %_.param_patt: %pattern_type = value_param_pattern %_.patt, call_param0 [concrete]
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %_.param: %S = value_param call_param0
+// CHECK:STDOUT:     %.1: type = splice_block %S.decl [concrete = constants.%S] {
+// CHECK:STDOUT:       %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
+// CHECK:STDOUT:       %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:       %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
+// CHECK:STDOUT:     }
+// CHECK:STDOUT:     %_: %S = bind_name _, %_.param
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %.loc7_12.1: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   %.loc7_12.2: ref %S = temporary_storage
@@ -720,7 +722,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @foo();
+// CHECK:STDOUT: fn @foo(%_.param: %S);
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_import_class_decl_param_type.carbon
 // CHECK:STDOUT:
@@ -823,7 +825,7 @@ fn F() {
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_struct_definition_return_type.carbon
+// CHECK:STDOUT: --- import_struct_definition_return_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %F.type: type = fn_type @F.1 [concrete]
@@ -831,12 +833,15 @@ fn F() {
 // CHECK:STDOUT:   %F.c5a: type = class_type @F.2 [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete]
+// CHECK:STDOUT:   %pattern_type: type = pattern_type %F.c5a [concrete]
+// CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
+// CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = <error>
-// CHECK:STDOUT:     .F = @F.1.%F.decl
+// CHECK:STDOUT:     .foo = @F.1.%foo.decl
+// CHECK:STDOUT:     .F = @foo.%F.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
@@ -853,7 +858,7 @@ fn F() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @F.2 {
-// CHECK:STDOUT:   complete_type_witness = @F.1.%complete_type
+// CHECK:STDOUT:   complete_type_witness = @foo.%complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%F.c5a
@@ -863,12 +868,24 @@ fn F() {
 // CHECK:STDOUT: fn @F.1() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %F.decl: type = class_decl @F.2 [concrete = constants.%F.c5a] {} {}
-// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
+// CHECK:STDOUT:     %return.patt: %pattern_type = return_slot_pattern [concrete]
+// CHECK:STDOUT:     %return.param_patt: %pattern_type = out_param_pattern %return.patt, call_param0 [concrete]
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     %F.decl: type = class_decl @F.2 [concrete = constants.%F.c5a] {} {}
+// CHECK:STDOUT:     %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:     %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
+// CHECK:STDOUT:     %return.param: ref %F.c5a = out_param call_param0
+// CHECK:STDOUT:     %return: ref %F.c5a = return_slot %return.param
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, %foo.decl [concrete = constants.%foo]
+// CHECK:STDOUT:   %.loc7_11.1: ref %F.c5a = temporary_storage
+// CHECK:STDOUT:   %foo.call: init %F.c5a = call %foo.ref() to %.loc7_11.1
+// CHECK:STDOUT:   %.loc7_11.2: ref %F.c5a = temporary %.loc7_11.1, %foo.call
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @foo() -> %return.param: %F.c5a;
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- fail_todo_import_class_decl_return_type.carbon
 // CHECK:STDOUT:
