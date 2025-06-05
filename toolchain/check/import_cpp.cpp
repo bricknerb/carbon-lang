@@ -15,7 +15,6 @@
 #include "clang/Tooling/Tooling.h"
 #include "common/raw_string_ostream.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
-#include "llvm/ADT/ScopeExit.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/raw_ostream.h"
 #include "toolchain/check/class.h"
@@ -413,8 +412,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   return context.inst_blocks().Add(params);
 }
 
-// Returns the return type of the given function declaration.
-// Currently only void and 32-bit int are supported.
+// Returns the return type of the given function declaration. In case of an
+// unsupported return type, it returns `SemIR::ErrorInst::InstId`.
 // TODO: Support more return types.
 static auto GetReturnType(Context& context, SemIR::LocId loc_id,
                           const clang::FunctionDecl* clang_decl)
@@ -445,6 +444,28 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
   return param_pattern_id;
 }
 
+// Returns parameter patterns block id, the return slot pattern id, and the
+// call parameters block id for the given function declaration.
+// Returns false if the function declaration has an unsupported parameter type.
+static auto GetFunctionParams(Context& context, SemIR::LocId loc_id,
+                              clang::FunctionDecl* clang_decl,
+                              SemIR::InstBlockId& param_patterns_id,
+                              SemIR::InstId& return_slot_pattern_id,
+                              SemIR::InstBlockId& call_params_id) -> bool {
+  param_patterns_id = MakeParamPatternsBlockId(context, loc_id, *clang_decl);
+  if (!param_patterns_id.has_value()) {
+    return false;
+  }
+  return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
+  if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
+    return false;
+  }
+  call_params_id =
+      CalleePatternMatch(context, SemIR::InstBlockId::None, param_patterns_id,
+                         return_slot_pattern_id);
+  return true;
+}
+
 // Imports a function declaration from Clang to Carbon. If successful, returns
 // the new Carbon function declaration `InstId`.
 static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
@@ -464,30 +485,22 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     context.TODO(loc_id, "Unsupported: Template function");
     return SemIR::ErrorInst::InstId;
   }
+
   context.inst_block_stack().Push();
   context.pattern_block_stack().Push();
 
-  auto decl_block_id = SemIR::InstBlockId::Empty;
-  auto pattern_block_id = SemIR::InstBlockId::Empty;
   auto param_patterns_id = SemIR::InstBlockId::Empty;
   auto return_slot_pattern_id = SemIR::InstId::None;
   auto call_params_id = SemIR::InstBlockId::Empty;
-  {
-    auto scope_exit = llvm::make_scope_exit([&] {
-      decl_block_id = context.inst_block_stack().Pop();
-      pattern_block_id = context.pattern_block_stack().Pop();
-    });
-    param_patterns_id = MakeParamPatternsBlockId(context, loc_id, *clang_decl);
-    if (!param_patterns_id.has_value()) {
-      return SemIR::ErrorInst::InstId;
-    }
-    return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
-    if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
-      return SemIR::ErrorInst::InstId;
-    }
-    call_params_id =
-        CalleePatternMatch(context, SemIR::InstBlockId::None, param_patterns_id,
-                           return_slot_pattern_id);
+  auto success =
+      GetFunctionParams(context, loc_id, clang_decl, param_patterns_id,
+                        return_slot_pattern_id, call_params_id);
+
+  auto decl_block_id = context.inst_block_stack().Pop();
+  auto pattern_block_id = context.pattern_block_stack().Pop();
+
+  if (!success) {
+    return SemIR::ErrorInst::InstId;
   }
   auto function_decl = SemIR::FunctionDecl{
       SemIR::TypeId::None, SemIR::FunctionId::None, decl_block_id};
