@@ -15,6 +15,7 @@
 #include "clang/Tooling/Tooling.h"
 #include "common/raw_string_ostream.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
+#include "llvm/ADT/ScopeExit.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/raw_ostream.h"
 #include "toolchain/check/class.h"
@@ -465,27 +466,29 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   }
   context.inst_block_stack().Push();
   context.pattern_block_stack().Push();
-  auto pop_blocks_and_exit = [&context]() {
-    context.inst_block_stack().Pop();
-    context.pattern_block_stack().Pop();
-    return SemIR::ErrorInst::InstId;
-  };
-  auto param_patterns_id =
-      MakeParamPatternsBlockId(context, loc_id, *clang_decl);
-  if (!param_patterns_id.has_value()) {
-    return pop_blocks_and_exit();
-  }
-  auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
-  if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
-    return pop_blocks_and_exit();
-  }
-  auto pattern_block_id = context.pattern_block_stack().Pop();
 
-  auto call_params_id =
-      CalleePatternMatch(context, SemIR::InstBlockId::None, param_patterns_id,
-                         return_slot_pattern_id);
-  auto decl_block_id = context.inst_block_stack().Pop();
-
+  auto decl_block_id = SemIR::InstBlockId::Empty;
+  auto pattern_block_id = SemIR::InstBlockId::Empty;
+  auto param_patterns_id = SemIR::InstBlockId::Empty;
+  auto return_slot_pattern_id = SemIR::InstId::None;
+  auto call_params_id = SemIR::InstBlockId::Empty;
+  {
+    auto scope_exit = llvm::make_scope_exit([&] {
+      decl_block_id = context.inst_block_stack().Pop();
+      pattern_block_id = context.pattern_block_stack().Pop();
+    });
+    param_patterns_id = MakeParamPatternsBlockId(context, loc_id, *clang_decl);
+    if (!param_patterns_id.has_value()) {
+      return SemIR::ErrorInst::InstId;
+    }
+    return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
+    if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
+      return SemIR::ErrorInst::InstId;
+    }
+    call_params_id =
+        CalleePatternMatch(context, SemIR::InstBlockId::None, param_patterns_id,
+                           return_slot_pattern_id);
+  }
   auto function_decl = SemIR::FunctionDecl{
       SemIR::TypeId::None, SemIR::FunctionId::None, decl_block_id};
   auto decl_id =
