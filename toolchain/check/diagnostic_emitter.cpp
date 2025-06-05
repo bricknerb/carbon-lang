@@ -62,6 +62,9 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIR::LocId loc_id, bool is_token_only,
   return ConvertLocInFile(final_node_id, is_token_only, context_fn);
 }
 
+// Recursion is allowed since in C++ locations, we also convert the location of
+// the C++ import.
+// NOLINTNEXTLINE(misc-no-recursion)
 auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
                                          bool token_only,
                                          ContextFnT context_fn) const
@@ -76,7 +79,7 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
         sem_ir_->import_cpps().values().begin()->node_id;
     InImport(ConvertLocInFile(
                  SemIR::AbsoluteNodeId(sem_ir_->check_ir_id(), import_node_id),
-                 false, context_fn)
+                 /*token_only=*/false, context_fn)
                  .loc,
              context_fn);
 
