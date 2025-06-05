@@ -477,12 +477,6 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
                                        ret_type.getAsString()));
     return SemIR::ErrorInst::InstId;
   }
-  if (SemIR::InitRepr::ForType(context.sem_ir(), type_id).kind ==
-      SemIR::InitRepr::InPlace) {
-    context.TODO(loc_id, llvm::formatv("Unsupported: in place return type: {0}",
-                                       ret_type.getAsString()));
-    return SemIR::ErrorInst::InstId;
-  }
 
   auto pattern_type_id = GetPatternType(context, type_id);
   SemIR::InstId return_slot_pattern_id = AddPatternInst(
