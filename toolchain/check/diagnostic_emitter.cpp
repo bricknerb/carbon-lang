@@ -62,13 +62,17 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIR::LocId loc_id, bool is_token_only,
   return ConvertLocInFile(final_node_id, is_token_only, context_fn);
 }
 
-// Recursion is allowed since in C++ locations, we also convert the location of
-// the C++ import.
-// NOLINTNEXTLINE(misc-no-recursion)
 auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
                                          bool token_only,
                                          ContextFnT context_fn) const
     -> Diagnostics::ConvertedLoc {
+  auto convert_node_id = [&](SemIR::CheckIRId check_ir_id,
+                             Parse::NodeId node_id, bool token_only) {
+    const auto& tree_and_subtrees =
+        tree_and_subtrees_getters_[check_ir_id.index]();
+    return tree_and_subtrees.NodeToDiagnosticLoc(node_id, token_only);
+  };
+
   if (absolute_node_id.check_ir_id() == SemIR::CheckIRId::Cpp) {
     // Special handling of Clang source locations.
     CARBON_CHECK(sem_ir_->import_cpps().size() > 0);
@@ -77,9 +81,8 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
     // arbitrarily.
     Parse::NodeId import_node_id =
         sem_ir_->import_cpps().values().begin()->node_id;
-    InImport(ConvertLocInFile(
-                 SemIR::AbsoluteNodeId(sem_ir_->check_ir_id(), import_node_id),
-                 /*token_only=*/false, context_fn)
+    InImport(convert_node_id(sem_ir_->check_ir_id(), import_node_id,
+                             /*token_only=*/false)
                  .loc,
              context_fn);
 
@@ -97,10 +100,8 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
         .last_byte_offset = 0};
   }
 
-  const auto& tree_and_subtrees =
-      tree_and_subtrees_getters_[absolute_node_id.check_ir_id().index]();
-  return tree_and_subtrees.NodeToDiagnosticLoc(absolute_node_id.node_id(),
-                                               token_only);
+  return convert_node_id(absolute_node_id.check_ir_id(),
+                         absolute_node_id.node_id(), token_only);
 }
 
 auto DiagnosticEmitter::ConvertArg(llvm::Any arg) const -> llvm::Any {
