@@ -64,7 +64,7 @@ class DiagnosticEmitter : public DiagnosticEmitterBase {
       -> Diagnostics::ConvertedLoc;
 
   // Adds `in import` note.
-  static auto InImport(Diagnostics::Loc loc, ContextFnT context_fn) -> void;
+  static auto AddInImport(Diagnostics::Loc loc, ContextFnT context_fn) -> void;
 
   // Converters for each SemIR.
   llvm::ArrayRef<Parse::GetTreeAndSubtreesFn> tree_and_subtrees_getters_;

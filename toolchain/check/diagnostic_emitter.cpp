@@ -56,7 +56,7 @@ auto DiagnosticEmitter::ConvertLocImpl(SemIR::LocId loc_id, bool is_token_only,
     // TODO: Include the name of the imported library in the diagnostic.
     auto diag_loc =
         ConvertLocInFile(absolute_node_id, is_token_only, context_fn);
-    InImport(diag_loc.loc, context_fn);
+    AddInImport(diag_loc.loc, context_fn);
   }
 
   return ConvertLocInFile(final_node_id, is_token_only, context_fn);
@@ -74,10 +74,10 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
     // arbitrarily.
     Parse::NodeId import_node_id =
         sem_ir_->import_cpps().values().begin()->node_id;
-    InImport(ConvertLocInCarbonFile(sem_ir_->check_ir_id(), import_node_id,
-                                    /*token_only=*/false)
-                 .loc,
-             context_fn);
+    AddInImport(ConvertLocInCarbonFile(sem_ir_->check_ir_id(), import_node_id,
+                                       /*token_only=*/false)
+                    .loc,
+                context_fn);
 
     clang::SourceLocation clang_loc = sem_ir_->clang_source_locs().Get(
         absolute_node_id.clang_source_loc_id());
@@ -178,7 +178,7 @@ auto DiagnosticEmitter::ConvertArg(llvm::Any arg) const -> llvm::Any {
   return DiagnosticEmitterBase::ConvertArg(arg);
 }
 
-auto DiagnosticEmitter::InImport(Diagnostics::Loc loc, ContextFnT context_fn)
+auto DiagnosticEmitter::AddInImport(Diagnostics::Loc loc, ContextFnT context_fn)
     -> void {
   CARBON_DIAGNOSTIC(InImport, LocationInfo, "in import");
   context_fn(loc, InImport);
