@@ -66,13 +66,6 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
                                          bool token_only,
                                          ContextFnT context_fn) const
     -> Diagnostics::ConvertedLoc {
-  auto convert_node_id = [&](SemIR::CheckIRId check_ir_id,
-                             Parse::NodeId node_id, bool token_only) {
-    const auto& tree_and_subtrees =
-        tree_and_subtrees_getters_[check_ir_id.index]();
-    return tree_and_subtrees.NodeToDiagnosticLoc(node_id, token_only);
-  };
-
   if (absolute_node_id.check_ir_id() == SemIR::CheckIRId::Cpp) {
     // Special handling of Clang source locations.
     CARBON_CHECK(sem_ir_->import_cpps().size() > 0);
@@ -81,8 +74,8 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
     // arbitrarily.
     Parse::NodeId import_node_id =
         sem_ir_->import_cpps().values().begin()->node_id;
-    InImport(convert_node_id(sem_ir_->check_ir_id(), import_node_id,
-                             /*token_only=*/false)
+    InImport(ConvertLocInCarbonFile(sem_ir_->check_ir_id(), import_node_id,
+                                    /*token_only=*/false)
                  .loc,
              context_fn);
 
@@ -100,8 +93,18 @@ auto DiagnosticEmitter::ConvertLocInFile(SemIR::AbsoluteNodeId absolute_node_id,
         .last_byte_offset = 0};
   }
 
-  return convert_node_id(absolute_node_id.check_ir_id(),
-                         absolute_node_id.node_id(), token_only);
+  return ConvertLocInCarbonFile(absolute_node_id.check_ir_id(),
+                                absolute_node_id.node_id(), token_only);
+}
+
+auto DiagnosticEmitter::ConvertLocInCarbonFile(SemIR::CheckIRId check_ir_id,
+                                               Parse::NodeId node_id,
+                                               bool token_only) const
+    -> Diagnostics::ConvertedLoc {
+  CARBON_CHECK(check_ir_id != SemIR::CheckIRId::Cpp);
+  const auto& tree_and_subtrees =
+      tree_and_subtrees_getters_[check_ir_id.index]();
+  return tree_and_subtrees.NodeToDiagnosticLoc(node_id, token_only);
 }
 
 auto DiagnosticEmitter::ConvertArg(llvm::Any arg) const -> llvm::Any {
