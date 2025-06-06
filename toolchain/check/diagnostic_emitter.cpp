@@ -178,7 +178,6 @@ auto DiagnosticEmitter::ConvertArg(llvm::Any arg) const -> llvm::Any {
   return DiagnosticEmitterBase::ConvertArg(arg);
 }
 
-// static
 auto DiagnosticEmitter::InImport(Diagnostics::Loc loc, ContextFnT context_fn)
     -> void {
   CARBON_DIAGNOSTIC(InImport, LocationInfo, "in import");
