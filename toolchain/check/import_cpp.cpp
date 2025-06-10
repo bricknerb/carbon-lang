@@ -421,7 +421,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
 
     llvm::StringRef param_name = param->getName();
     SemIR::NameId name_id =
-        (param_name.empty())
+        param_name.empty()
             // Translate an unnamed parameter to an underscore to
             // match Carbon's naming of unnamed/unused function params.
             ? SemIR::NameId::Underscore
@@ -557,7 +557,7 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
        .last_param_node_id = Parse::NodeId::None,
        .pattern_block_id = pattern_block_id,
        .implicit_param_patterns_id = SemIR::InstBlockId::Empty,
-       .param_patterns_id = param_patterns_id,
+       .param_patterns_id = function_params_insts->param_patterns_id,
        .is_extern = false,
        .extern_library_id = SemIR::LibraryNameId::None,
        .non_owning_decl_id = SemIR::InstId::None,
