@@ -117,6 +117,21 @@ cc_library(
 )
 
 cc_library(
+    name = "emplace_by_calling",
+    hdrs = ["emplace_by_calling.h"],
+)
+
+cc_test(
+    name = "emplace_by_calling_test",
+    srcs = ["emplace_by_calling_test.cpp"],
+    deps = [
+        ":emplace_by_calling",
+        "//testing/base:gtest_main",
+        "@googletest//:gtest",
+    ],
+)
+
+cc_library(
     name = "enum_base",
     hdrs = ["enum_base.h"],
     deps = [
