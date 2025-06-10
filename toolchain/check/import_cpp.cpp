@@ -252,8 +252,8 @@ auto ImportCppFiles(Context& context, llvm::StringRef importing_file_path,
 
   SemIR::NameScope& name_scope = context.name_scopes().Get(name_scope_id);
   name_scope.set_is_closed_import(true);
-  name_scope.set_cpp_decl_context(
-      generated_ast->getASTContext().getTranslationUnitDecl());
+  name_scope.set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
+      generated_ast->getASTContext().getTranslationUnitDecl()));
 
   if (ast_has_error) {
     name_scope.set_has_error();
@@ -291,7 +291,9 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
   lookup.suppressDiagnostics();
 
   bool found = sema.LookupQualifiedName(
-      lookup, context.name_scopes().Get(scope_id).cpp_decl_context());
+      lookup,
+      clang::dyn_cast<clang::DeclContext>(context.sem_ir().clang_decls().Get(
+          context.name_scopes().Get(scope_id).clang_decl_context_id())));
 
   if (!found) {
     return std::nullopt;
@@ -468,7 +470,7 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
        .return_slot_pattern_id = return_slot_pattern_id,
        .virtual_modifier = SemIR::FunctionFields::VirtualModifier::None,
        .self_param_id = SemIR::InstId::None,
-       .cpp_decl = clang_decl}};
+       .clang_decl_id = context.sem_ir().clang_decls().Add(clang_decl)}};
 
   function_decl.function_id = context.functions().Add(function_info);
 
@@ -492,7 +494,8 @@ static auto ImportNamespaceDecl(Context& context,
       name_id, parent_scope_id, /*import_id=*/SemIR::InstId::None);
   context.name_scopes()
       .Get(result.name_scope_id)
-      .set_cpp_decl_context(clang_decl);
+      .set_clang_decl_context_id(
+          context.sem_ir().clang_decls().Add(clang_decl));
   return result.inst_id;
 }
 
@@ -555,7 +558,8 @@ static auto BuildClassDefinition(Context& context,
 
   context.name_scopes()
       .Get(class_info.scope_id)
-      .set_cpp_decl_context(clang_decl);
+      .set_clang_decl_context_id(
+          context.sem_ir().clang_decls().Add(clang_decl));
 
   return {class_id, class_decl_id};
 }
