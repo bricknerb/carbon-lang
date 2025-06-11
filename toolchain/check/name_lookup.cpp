@@ -33,7 +33,9 @@ auto AddNameToLookup(Context& context, SemIR::NameId name_id,
 auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
                       SemIR::NameId name_id, SemIR::NameScopeId scope_id,
                       ScopeIndex scope_index) -> SemIR::ScopeLookupResult {
+  // llvm::errs() << "C1\n";
   if (!scope_id.has_value()) {
+    // llvm::errs() << "C2\n";
     // Look for a name in the specified scope or a scope nested within it only.
     // There are two cases where the name would be in an outer scope:
     //
@@ -72,6 +74,7 @@ auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
         context.scope_stack().LookupInLexicalScopesWithin(name_id, scope_index),
         SemIR::AccessKind::Public);
   } else {
+    // llvm::errs() << "C3\n";
     // We do not look into `extend`ed scopes here. A qualified name in a
     // declaration must specify the exact scope in which the name was originally
     // introduced:
@@ -85,6 +88,7 @@ auto LookupNameInDecl(Context& context, SemIR::LocId loc_id,
                                   context.name_scopes().Get(scope_id),
                                   /*is_being_declared=*/true);
   }
+  // llvm::errs() << "C4\n";
 }
 
 auto LookupUnqualifiedName(Context& context, SemIR::LocId loc_id,

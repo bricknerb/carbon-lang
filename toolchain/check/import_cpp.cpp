@@ -338,21 +338,38 @@ static auto MapBuiltinType(Context& context, const clang::BuiltinType& type)
 }
 
 // Maps a C++ record type to a Carbon type.
+// static auto ImportDeclContextIfMissing(const clang::DeclContext*
+// decl_context)
+//     -> void {
+//   CARBON_CHECK(decl_context);
+//   std::vector <
+//       const while (!llvm::isa<clang::TranslationUnitDecl>(decl_context)) {
+//     if (const auto* namespace_decl =
+//             clang::dyn_cast<clang::NamespaceDecl>(decl_context)) {
+//       // Found the namespace
+//       break;
+//     }
+//   }
+
 // TODO: Support more record types.
 static auto MapRecordType(Context& context, SemIR::LocId loc_id,
                           SemIR::NameScopeId scope_id,
                           const clang::RecordType& type) -> TypeExpr {
   const clang::RecordDecl* record_decl = type.getDecl();
+  llvm::errs() << "B1\n";
   if (record_decl && record_decl->isStruct()) {
-    LookupResult result = LookupQualifiedName(
-        context, loc_id,
-        SemIR::NameId::ForIdentifier(
-            context.identifiers().Add(record_decl->getName())),
-        LookupScope{.name_scope_id = scope_id,
-                    .specific_id = SemIR::SpecificId::None});
-    if (result.scope_result.is_found()) {
-      SemIR::InstId inst_id = result.scope_result.target_inst_id();
+    // ImportDeclContextIfMissing(record_decl->getDeclContext());
+    llvm::errs() << "B2\n";
+    SemIR::ScopeLookupResult result =
+        LookupNameInDecl(context, loc_id,
+                         SemIR::NameId::ForIdentifier(
+                             context.identifiers().Add(record_decl->getName())),
+                         scope_id, ScopeIndex::None);
+    if (result.is_found()) {
+      llvm::errs() << "B3\n";
+      SemIR::InstId inst_id = result.target_inst_id();
       if (inst_id != SemIR::ErrorInst::InstId) {
+        llvm::errs() << "B4\n";
         return {.inst_id = context.types().GetAsTypeInstId(inst_id),
                 .type_id = context.classes()
                                .Get(context.insts()
@@ -361,8 +378,11 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
                                         .class_id)
                                .self_type_id};
       }
+      llvm::errs() << "B5\n";
     }
+    llvm::errs() << "B6\n";
   }
+  llvm::errs() << "B7\n";
 
   return {.inst_id = SemIR::ErrorInst::TypeInstId,
           .type_id = SemIR::ErrorInst::TypeId};
@@ -373,13 +393,18 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
 static auto MapType(Context& context, SemIR::LocId loc_id,
                     SemIR::NameScopeId scope_id, clang::QualType type)
     -> TypeExpr {
+  // llvm::errs() << "A1\n";
   if (const auto* builtin_type = dyn_cast<clang::BuiltinType>(type)) {
+    // llvm::errs() << "A2\n";
     return MapBuiltinType(context, *builtin_type);
   }
 
+  llvm::errs() << "A3\n";
   if (const auto* record_type = clang::dyn_cast<clang::RecordType>(type)) {
+    llvm::errs() << "A4\n";
     return MapRecordType(context, loc_id, scope_id, *record_type);
   }
+  llvm::errs() << "A4\n";
 
   return {.inst_id = SemIR::ErrorInst::TypeInstId,
           .type_id = SemIR::ErrorInst::TypeId};
@@ -531,19 +556,16 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
   context.inst_block_stack().Push();
   context.pattern_block_stack().Push();
 
-  auto param_patterns_id = SemIR::InstBlockId::Empty;
-  auto return_slot_pattern_id = SemIR::InstId::None;
-  auto call_params_id = SemIR::InstBlockId::Empty;
-  auto success = GetFunctionParams(context, loc_id, scope_id, clang_decl,
-                                   param_patterns_id, return_slot_pattern_id,
-                                   call_params_id);
+  auto function_params_insts =
+      CreateFunctionParamsInsts(context, loc_id, scope_id, clang_decl);
 
-  auto decl_block_id = context.inst_block_stack().Pop();
   auto pattern_block_id = context.pattern_block_stack().Pop();
+  auto decl_block_id = context.inst_block_stack().Pop();
 
-  if (!success) {
+  if (!function_params_insts.has_value()) {
     return SemIR::ErrorInst::InstId;
   }
+
   auto function_decl = SemIR::FunctionDecl{
       SemIR::TypeId::None, SemIR::FunctionId::None, decl_block_id};
   auto decl_id =

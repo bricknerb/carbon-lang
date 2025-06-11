@@ -11,20 +11,22 @@
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/struct.carbon
 
 // ============================================================================
-// Forward-declared struct as parameter type
+// Defined struct in outer scope as parameter type
 // ============================================================================
 
-// --- decl_value_param_type.h
+// --- definition_outer_scope_value_param_type.h
 
-struct S;
+struct S {};
 
+namespace N1 {
 auto foo(S) -> void;
+}  // namespace N1
 
-// --- fail_todo_import_decl_value_param_type.carbon
+// --- import_definition_outer_scope_value_param_type.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "decl_value_param_type.h";
+import Cpp library "definition_outer_scope_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -607,6 +609,7 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %N1.ref: <namespace> = name_ref N1, imports.%N1 [concrete = imports.%N1]
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
