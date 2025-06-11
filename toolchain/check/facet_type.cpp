@@ -5,10 +5,12 @@
 #include "toolchain/check/facet_type.h"
 
 #include "toolchain/check/convert.h"
+#include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/check/generic.h"
 #include "toolchain/check/import_ref.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/interface.h"
+#include "toolchain/check/subst.h"
 #include "toolchain/check/type.h"
 #include "toolchain/check/type_completion.h"
 #include "toolchain/sem_ir/ids.h"
@@ -281,44 +283,152 @@ auto IsPeriodSelf(Context& context, SemIR::InstId inst_id) -> bool {
   return false;
 }
 
-auto ResolveRewriteConstraintsAndCanonicalize(Context& context,
-                                              SemIR::LocId loc_id,
-                                              SemIR::FacetTypeInfo& facet_type)
-    -> void {
+// If `inst_id` is the ID of an `ImplWitnessAccess` into `.Self`, return it.
+// Otherwise, returns `nullopt`.
+static auto TryGetImplWitnessAccessOfPeriodSelf(Context& context,
+                                                SemIR::InstId inst_id)
+    -> std::optional<SemIR::ImplWitnessAccess> {
+  auto lhs_access = context.insts().TryGetAs<SemIR::ImplWitnessAccess>(inst_id);
+  if (!lhs_access) {
+    return std::nullopt;
+  }
+  auto lhs_lookup = context.insts().TryGetAs<SemIR::LookupImplWitness>(
+      lhs_access->witness_id);
+  if (!lhs_lookup) {
+    return std::nullopt;
+  }
+  if (!IsPeriodSelf(context, lhs_lookup->query_self_inst_id)) {
+    return std::nullopt;
+  }
+  return lhs_access;
+}
+
+// To be used for substituting into the RHS of a rewrite constraint.
+//
+// It will substitute any `ImplWitnessAccess` into `.Self` (a reference to an
+// associated constant) with the RHS of another rewrite constraint that writes
+// to the same associated constant. For example:
+// ```
+// Z where .X = () and .Y = .X
+// ```
+// Here the second `.X` is an `ImplWitnessAccess` which would be substituted by
+// finding the first rewrite constraint, where the LHS is for the same
+// associated constant and using its RHS. So the substitution would produce:
+// ```
+// Z where .X = () and .Y = ()
+// ```
+//
+// This additionally diagnoses cycles when the `ImplWitnessAccess` is reading
+// from the same rewrite constraint, and is thus assigning to the associated
+// constant a value that refers to the same associated constant, such as with
+// `Z where .X = C(.X)`. In the event of a cycle, the `ImplWitnessAccess` is
+// replaced with `ErrorInst` so that further evaluation of the
+// `ImplWitnessAccess` will not loop infinitely.
+class SubstImplWitnessAccessCallbacks : public SubstInstCallbacks {
+ public:
+  // The `facet_type_info` is for the facet whose rewrite constraints are being
+  // substituted, and where it looks for rewritten values to substitute from.
+  //
+  // The `substituting_constraint` is the rewrite constraint for which the RHS
+  // is being substituted with the value from another rewrite constraint, if
+  // possible. That is, `.Y = .X` in the example in the class docs.
+  explicit SubstImplWitnessAccessCallbacks(
+      Context* context, SemIR::LocId loc_id,
+      const SemIR::FacetTypeInfo* facet_type_info,
+      const SemIR::FacetTypeInfo::RewriteConstraint* substituting_constraint)
+      : SubstInstCallbacks(context),
+        loc_id_(loc_id),
+        facet_type_info_(*facet_type_info),
+        substituting_constraint_(substituting_constraint) {}
+
+  auto Subst(SemIR::InstId& rhs_inst_id) const -> bool override {
+    if (context().constant_values().Get(rhs_inst_id).is_concrete()) {
+      return true;
+    }
+
+    auto rhs_access =
+        TryGetImplWitnessAccessOfPeriodSelf(context(), rhs_inst_id);
+    if (!rhs_access) {
+      return false;
+    }
+
+    // TODO: We could consider replacing this loop, which makes for an O(N^2)
+    // algorithm with something more efficient for searching, such as a map.
+    // However that would probably require heap allocations which may be worse
+    // overall since the number of rewrite constraints is generally low.
+    for (const auto& search_constraint : facet_type_info_.rewrite_constraints) {
+      auto search_lhs_access = TryGetImplWitnessAccessOfPeriodSelf(
+          context(), search_constraint.lhs_id);
+      if (!search_lhs_access) {
+        continue;
+      }
+
+      if (search_lhs_access->witness_id == rhs_access->witness_id &&
+          search_lhs_access->index == rhs_access->index) {
+        if (&search_constraint == substituting_constraint_) {
+          if (search_constraint.rhs_id != SemIR::ErrorInst::InstId) {
+            CARBON_DIAGNOSTIC(FacetTypeConstraintCycle, Error,
+                              "found cycle in facet type constraint for {0}",
+                              InstIdAsConstant);
+            // TODO: It would be nice to note the places where the values are
+            // assigned but rewrite constraint instructions are from canonical
+            // constant values, and have no locations. We'd need to store a
+            // location along with them in the rewrite constraints, and track
+            // propagation of locations here, which may imply heap allocations.
+            context().emitter().Emit(loc_id_, FacetTypeConstraintCycle,
+                                     substituting_constraint_->lhs_id);
+            rhs_inst_id = SemIR::ErrorInst::InstId;
+          }
+        } else {
+          rhs_inst_id = search_constraint.rhs_id;
+        }
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  auto Rebuild(SemIR::InstId /*orig_inst_id*/, SemIR::Inst new_inst) const
+      -> SemIR::InstId override {
+    return RebuildNewInst(loc_id_, new_inst);
+  }
+
+ private:
+  SemIR::LocId loc_id_;
+  const SemIR::FacetTypeInfo& facet_type_info_;
+  const SemIR::FacetTypeInfo::RewriteConstraint* substituting_constraint_;
+};
+
+auto ResolveRewriteConstraintsAndCanonicalize(
+    Context& context, SemIR::LocId loc_id,
+    SemIR::FacetTypeInfo& facet_type_info) -> void {
   // This operation sorts and dedupes the rewrite constraints. They are sorted
   // primarily by the `lhs_id`, then by the `rhs_id`.
-  facet_type.Canonicalize();
+  facet_type_info.Canonicalize();
 
-  if (facet_type.rewrite_constraints.empty()) {
+  if (facet_type_info.rewrite_constraints.empty()) {
     return;
   }
 
-  for (size_t i = 0; i < facet_type.rewrite_constraints.size() - 1; ++i) {
-    auto& constraint = facet_type.rewrite_constraints[i];
+  for (size_t i = 0; i < facet_type_info.rewrite_constraints.size() - 1; ++i) {
+    auto& constraint = facet_type_info.rewrite_constraints[i];
     if (constraint.lhs_id == SemIR::ErrorInst::InstId ||
         constraint.rhs_id == SemIR::ErrorInst::InstId) {
       continue;
     }
 
     auto lhs_access =
-        context.insts().TryGetAs<SemIR::ImplWitnessAccess>(constraint.lhs_id);
+        TryGetImplWitnessAccessOfPeriodSelf(context, constraint.lhs_id);
     if (!lhs_access) {
-      continue;
-    }
-    auto lhs_lookup = context.insts().TryGetAs<SemIR::LookupImplWitness>(
-        lhs_access->witness_id);
-    if (!lhs_lookup) {
-      continue;
-    }
-    if (!IsPeriodSelf(context, lhs_lookup->query_self_inst_id)) {
       continue;
     }
 
     // This loop moves `i` to the last position with the same LHS value, so that
     // we don't diagnose more than once within the same contiguous range of
     // assignments to a single LHS value.
-    for (; i < facet_type.rewrite_constraints.size() - 1; ++i) {
-      auto& next = facet_type.rewrite_constraints[i + 1];
+    for (; i < facet_type_info.rewrite_constraints.size() - 1; ++i) {
+      auto& next = facet_type_info.rewrite_constraints[i + 1];
       if (constraint.lhs_id != next.lhs_id) {
         break;
       }
@@ -345,9 +455,46 @@ auto ResolveRewriteConstraintsAndCanonicalize(Context& context,
     }
   }
 
+  while (true) {
+    bool applied_rewrite = false;
+
+    for (auto& constraint : facet_type_info.rewrite_constraints) {
+      if (constraint.lhs_id == SemIR::ErrorInst::InstId ||
+          constraint.rhs_id == SemIR::ErrorInst::InstId) {
+        continue;
+      }
+
+      auto lhs_access =
+          TryGetImplWitnessAccessOfPeriodSelf(context, constraint.lhs_id);
+      if (!lhs_access) {
+        continue;
+      }
+
+      // Replace any `ImplWitnessAccess` in the RHS of this constraint with the
+      // RHS of another constraint that sets the value of the associated
+      // constant being accessed in the RHS.
+      auto subst_inst_id =
+          SubstInst(context, constraint.rhs_id,
+                    SubstImplWitnessAccessCallbacks(
+                        &context, loc_id, &facet_type_info, &constraint));
+      if (subst_inst_id != constraint.rhs_id) {
+        constraint.rhs_id = subst_inst_id;
+        if (constraint.rhs_id != SemIR::ErrorInst::InstId) {
+          // If the RHS is replaced with a non-error value, we need to do
+          // another pass so that the new RHS value can continue to propagate.
+          applied_rewrite = true;
+        }
+      }
+    }
+
+    if (!applied_rewrite) {
+      break;
+    }
+  }
+
   // Canonicalize again, as we may have inserted errors into the rewrite
-  // constraints, and these could change sorting order.
-  facet_type.Canonicalize();
+  // constraints, and these could change sorting order and need to be deduped.
+  facet_type_info.Canonicalize();
 }
 
 }  // namespace Carbon::Check
