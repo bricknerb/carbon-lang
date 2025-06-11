@@ -2,8 +2,7 @@
 // Exceptions. See /LICENSE for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-// TODO: Add ranges and switch to "--dump-sem-ir-ranges=only".
-// EXTRA-ARGS: --no-prelude-import --dump-sem-ir-ranges=if-present
+// EXTRA-ARGS: --no-prelude-import --dump-sem-ir-ranges=only
 //
 // AUTOUPDATE
 // TIP: To test this file alone, run:
@@ -73,6 +72,7 @@ import Cpp library "multiple_errors.h";
 
 library "[[@TEST_NAME]]";
 
+//@dump-sem-ir-begin
 // CHECK:STDERR: import_cpp_file_with_one_warning.carbon:[[@LINE+7]]:1: in import [InImport]
 // CHECK:STDERR: ./one_warning.h:2: warning: In file included from import_cpp_file_with_one_warning.carbon.generated.cpp_imports.h:1:
 // CHECK:STDERR: ./one_warning.h:2:2: warning: "warning1"
@@ -81,6 +81,7 @@ library "[[@TEST_NAME]]";
 // CHECK:STDERR:  [CppInteropParseWarning]
 // CHECK:STDERR:
 import Cpp library "one_warning.h";
+//@dump-sem-ir-end
 
 // ============================================================================
 // Multiple warnings
@@ -96,6 +97,7 @@ import Cpp library "one_warning.h";
 
 library "[[@TEST_NAME]]";
 
+//@dump-sem-ir-begin
 // CHECK:STDERR: import_cpp_file_with_multiple_warnings.carbon:[[@LINE+21]]:1: in import [InImport]
 // CHECK:STDERR: ./multiple_warnings.h:2: warning: In file included from import_cpp_file_with_multiple_warnings.carbon.generated.cpp_imports.h:1:
 // CHECK:STDERR: ./multiple_warnings.h:2:2: warning: "warning1"
@@ -118,6 +120,7 @@ library "[[@TEST_NAME]]";
 // CHECK:STDERR:  [CppInteropParseWarning]
 // CHECK:STDERR:
 import Cpp library "multiple_warnings.h";
+//@dump-sem-ir-end
 
 // ============================================================================
 // One error and one warning
@@ -209,6 +212,7 @@ import Cpp library "multiple_errors_and_multiple_warnings.h";
 
 library "[[@TEST_NAME]]";
 
+//@dump-sem-ir-begin
 // CHECK:STDERR: import_multiple_cpp_files_with_warnings.carbon:[[@LINE+28]]:1: in import [InImport]
 // CHECK:STDERR: ./one_warning.h:2: warning: In file included from import_multiple_cpp_files_with_warnings.carbon.generated.cpp_imports.h:1:
 // CHECK:STDERR: ./one_warning.h:2:2: warning: "warning1"
@@ -239,6 +243,7 @@ library "[[@TEST_NAME]]";
 // CHECK:STDERR:
 import Cpp library "one_warning.h";
 import Cpp library "multiple_warnings.h";
+//@dump-sem-ir-end
 
 // ============================================================================
 // Multiple files with errors and warnings
@@ -338,6 +343,7 @@ library "[[@TEST_NAME]]";
 
 // TODO: The `In file included from` line should not be prefixed. See
 // https://github.com/carbon-language/carbon-lang/pull/5614#pullrequestreview-2900939411
+//@dump-sem-ir-begin
 // CHECK:STDERR: todo_import_indirect_warning.carbon:[[@LINE+8]]:1: in import [InImport]
 // CHECK:STDERR: ./one_warning.h:2: warning: In file included from todo_import_indirect_warning.carbon.generated.cpp_imports.h:1:
 // CHECK:STDERR: In file included from ./indirect_warning.h:2:
@@ -347,6 +353,7 @@ library "[[@TEST_NAME]]";
 // CHECK:STDERR:  [CppInteropParseWarning]
 // CHECK:STDERR:
 import Cpp library "indirect_warning.h";
+//@dump-sem-ir-end
 
 // ============================================================================
 // Lexer error before import
@@ -396,55 +403,12 @@ fn F() {
   Cpp.foo();
 }
 
-
-// CHECK:STDOUT: --- fail_import_cpp_file_with_one_error.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "one_error.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_cpp_file_with_multiple_errors.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "multiple_errors.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
 // CHECK:STDOUT: --- import_cpp_file_with_one_warning.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_warning.h"
 // CHECK:STDOUT:   }
@@ -453,175 +417,34 @@ fn F() {
 // CHECK:STDOUT: --- import_cpp_file_with_multiple_warnings.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "multiple_warnings.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_cpp_file_with_one_error_and_one_warning.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "one_error_and_one_warning.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_cpp_file_with_multiple_errors_and_multiple_warnings.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "multiple_errors_and_multiple_warnings.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- import_multiple_cpp_files_with_warnings.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "one_warning.h"
 // CHECK:STDOUT:     import Cpp "multiple_warnings.h"
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_multiple_cpp_files_with_errors_and_warnings.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "one_error_and_one_warning.h"
-// CHECK:STDOUT:     import Cpp "multiple_errors_and_multiple_warnings.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_indirect_error.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "indirect_error.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
 // CHECK:STDOUT: --- todo_import_indirect_warning.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
 // CHECK:STDOUT:     import Cpp "indirect_warning.h"
 // CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_cpp_library_lexer_error.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "one_warning.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_import_fix_it_hints.carbon
-// CHECK:STDOUT:
-// CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
-// CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = <poisoned>
-// CHECK:STDOUT:     import Cpp//...
-// CHECK:STDOUT:     has_error
-// CHECK:STDOUT:   }
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: file {
-// CHECK:STDOUT:   package: <namespace> = namespace [concrete] {
-// CHECK:STDOUT:     .Cpp = imports.%Cpp
-// CHECK:STDOUT:     .F = %F.decl
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.import_cpp = import_cpp {
-// CHECK:STDOUT:     import Cpp "fix_it_hints.h"
-// CHECK:STDOUT:   }
-// CHECK:STDOUT:   %F.decl: %F.type = fn_decl @F [concrete = constants.%F] {} {}
-// CHECK:STDOUT: }
-// CHECK:STDOUT:
-// CHECK:STDOUT: fn @F() {
-// CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
