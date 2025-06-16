@@ -304,6 +304,126 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
   return lookup;
 }
 
+// Imports a namespace declaration from Clang to Carbon. If successful, returns
+// the new Carbon namespace declaration `InstId`.
+static auto ImportNamespaceDecl(Context& context,
+                                SemIR::NameScopeId parent_scope_id,
+                                SemIR::NameId name_id,
+                                clang::NamespaceDecl* clang_decl)
+    -> SemIR::InstId {
+  auto result = AddImportNamespace(
+      context, GetSingletonType(context, SemIR::NamespaceType::TypeInstId),
+      name_id, parent_scope_id, /*import_id=*/SemIR::InstId::None);
+  context.name_scopes()
+      .Get(result.name_scope_id)
+      .set_clang_decl_context_id(
+          context.sem_ir().clang_decls().Add(clang_decl));
+  return result.inst_id;
+}
+
+// Creates a class declaration for the given class name in the given scope.
+// Returns the `InstId` for the declaration.
+static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
+                           SemIR::NameId name_id)
+    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
+  // Add the class declaration.
+  auto class_decl = SemIR::ClassDecl{.type_id = SemIR::TypeType::TypeId,
+                                     .class_id = SemIR::ClassId::None,
+                                     .decl_block_id = SemIR::InstBlockId::None};
+  // TODO: Consider setting a proper location.
+  auto class_decl_id = AddPlaceholderInstInNoBlock(
+      context, SemIR::LocIdAndInst::NoLoc(class_decl));
+  context.imports().push_back(class_decl_id);
+
+  SemIR::Class class_info = {
+      {.name_id = name_id,
+       .parent_scope_id = parent_scope_id,
+       .generic_id = SemIR::GenericId::None,
+       .first_param_node_id = Parse::NodeId::None,
+       .last_param_node_id = Parse::NodeId::None,
+       .pattern_block_id = SemIR::InstBlockId::None,
+       .implicit_param_patterns_id = SemIR::InstBlockId::None,
+       .param_patterns_id = SemIR::InstBlockId::None,
+       .is_extern = false,
+       .extern_library_id = SemIR::LibraryNameId::None,
+       .non_owning_decl_id = SemIR::InstId::None,
+       .first_owning_decl_id = class_decl_id},
+      {// `.self_type_id` depends on the ClassType, so is set below.
+       .self_type_id = SemIR::TypeId::None,
+       // TODO: Support Dynamic classes.
+       // TODO: Support Final classes.
+       .inheritance_kind = SemIR::Class::Base}};
+
+  class_decl.class_id = context.classes().Add(class_info);
+
+  // Write the class ID into the ClassDecl.
+  ReplaceInstBeforeConstantUse(context, class_decl_id, class_decl);
+
+  SetClassSelfType(context, class_decl.class_id);
+
+  return {class_decl.class_id, class_decl_id};
+}
+
+// Creates a class definition for the given class name in the given scope based
+// on the information in the given Clang declaration. Returns the `InstId` for
+// the declaration, which is assumed to be for a class definition. Returns the
+// new class id and instruction id.
+static auto BuildClassDefinition(Context& context,
+                                 SemIR::NameScopeId parent_scope_id,
+                                 SemIR::NameId name_id,
+                                 clang::CXXRecordDecl* clang_decl)
+    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
+  auto [class_id, class_decl_id] =
+      BuildClassDecl(context, parent_scope_id, name_id);
+  auto& class_info = context.classes().Get(class_id);
+  StartClassDefinition(context, class_info, class_decl_id);
+
+  context.name_scopes()
+      .Get(class_info.scope_id)
+      .set_clang_decl_context_id(
+          context.sem_ir().clang_decls().Add(clang_decl));
+
+  return {class_id, class_decl_id};
+}
+
+// Imports a record declaration from Clang to Carbon. If successful, returns
+// the new Carbon class declaration `InstId`.
+// TODO: Change `clang_decl` to `const &` when lookup is using `clang::DeclID`
+// and we don't need to store the decl for lookup context.
+static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
+                                SemIR::NameScopeId parent_scope_id,
+                                SemIR::NameId name_id,
+                                clang::CXXRecordDecl* clang_decl)
+    -> SemIR::InstId {
+  clang::CXXRecordDecl* clang_def = clang_decl->getDefinition();
+  if (!clang_def) {
+    context.TODO(loc_id,
+                 "Unsupported: Record declarations without a definition");
+    return SemIR::ErrorInst::InstId;
+  }
+
+  if (clang_def->isDynamicClass()) {
+    context.TODO(loc_id, "Unsupported: Dynamic Class");
+    return SemIR::ErrorInst::InstId;
+  }
+
+  auto [class_id, class_def_id] =
+      BuildClassDefinition(context, parent_scope_id, name_id, clang_def);
+
+  // The class type is now fully defined. Compute its object representation.
+  ComputeClassObjectRepr(context,
+                         // TODO: Consider having a proper location here.
+                         Parse::ClassDefinitionId::None, class_id,
+                         // TODO: Set fields.
+                         /*field_decls=*/{},
+                         // TODO: Set vtable.
+                         /*vtable_contents=*/{},
+                         // TODO: Set block.
+                         /*body=*/{});
+
+  return class_def_id;
+}
+
 // Creates an integer type of the given size.
 static auto MakeIntType(Context& context, IntId size_id) -> TypeExpr {
   // TODO: Fill in a location for the type once available.
@@ -542,127 +662,6 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
 
   return decl_id;
 }
-
-// Imports a namespace declaration from Clang to Carbon. If successful, returns
-// the new Carbon namespace declaration `InstId`.
-static auto ImportNamespaceDecl(Context& context,
-                                SemIR::NameScopeId parent_scope_id,
-                                SemIR::NameId name_id,
-                                clang::NamespaceDecl* clang_decl)
-    -> SemIR::InstId {
-  auto result = AddImportNamespace(
-      context, GetSingletonType(context, SemIR::NamespaceType::TypeInstId),
-      name_id, parent_scope_id, /*import_id=*/SemIR::InstId::None);
-  context.name_scopes()
-      .Get(result.name_scope_id)
-      .set_clang_decl_context_id(
-          context.sem_ir().clang_decls().Add(clang_decl));
-  return result.inst_id;
-}
-
-// Creates a class declaration for the given class name in the given scope.
-// Returns the `InstId` for the declaration.
-static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
-                           SemIR::NameId name_id)
-    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
-  // Add the class declaration.
-  auto class_decl = SemIR::ClassDecl{.type_id = SemIR::TypeType::TypeId,
-                                     .class_id = SemIR::ClassId::None,
-                                     .decl_block_id = SemIR::InstBlockId::None};
-  // TODO: Consider setting a proper location.
-  auto class_decl_id = AddPlaceholderInstInNoBlock(
-      context, SemIR::LocIdAndInst::NoLoc(class_decl));
-  context.imports().push_back(class_decl_id);
-
-  SemIR::Class class_info = {
-      {.name_id = name_id,
-       .parent_scope_id = parent_scope_id,
-       .generic_id = SemIR::GenericId::None,
-       .first_param_node_id = Parse::NodeId::None,
-       .last_param_node_id = Parse::NodeId::None,
-       .pattern_block_id = SemIR::InstBlockId::None,
-       .implicit_param_patterns_id = SemIR::InstBlockId::None,
-       .param_patterns_id = SemIR::InstBlockId::None,
-       .is_extern = false,
-       .extern_library_id = SemIR::LibraryNameId::None,
-       .non_owning_decl_id = SemIR::InstId::None,
-       .first_owning_decl_id = class_decl_id},
-      {// `.self_type_id` depends on the ClassType, so is set below.
-       .self_type_id = SemIR::TypeId::None,
-       // TODO: Support Dynamic classes.
-       // TODO: Support Final classes.
-       .inheritance_kind = SemIR::Class::Base}};
-
-  class_decl.class_id = context.classes().Add(class_info);
-
-  // Write the class ID into the ClassDecl.
-  ReplaceInstBeforeConstantUse(context, class_decl_id, class_decl);
-
-  SetClassSelfType(context, class_decl.class_id);
-
-  return {class_decl.class_id, class_decl_id};
-}
-
-// Creates a class definition for the given class name in the given scope based
-// on the information in the given Clang declaration. Returns the `InstId` for
-// the declaration, which is assumed to be for a class definition. Returns the
-// new class id and instruction id.
-static auto BuildClassDefinition(Context& context,
-                                 SemIR::NameScopeId parent_scope_id,
-                                 SemIR::NameId name_id,
-                                 clang::CXXRecordDecl* clang_decl)
-    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
-  auto [class_id, class_decl_id] =
-      BuildClassDecl(context, parent_scope_id, name_id);
-  auto& class_info = context.classes().Get(class_id);
-  StartClassDefinition(context, class_info, class_decl_id);
-
-  context.name_scopes()
-      .Get(class_info.scope_id)
-      .set_clang_decl_context_id(
-          context.sem_ir().clang_decls().Add(clang_decl));
-
-  return {class_id, class_decl_id};
-}
-
-// Imports a record declaration from Clang to Carbon. If successful, returns
-// the new Carbon class declaration `InstId`.
-// TODO: Change `clang_decl` to `const &` when lookup is using `clang::DeclID`
-// and we don't need to store the decl for lookup context.
-static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
-                                SemIR::NameScopeId parent_scope_id,
-                                SemIR::NameId name_id,
-                                clang::CXXRecordDecl* clang_decl)
-    -> SemIR::InstId {
-  clang::CXXRecordDecl* clang_def = clang_decl->getDefinition();
-  if (!clang_def) {
-    context.TODO(loc_id,
-                 "Unsupported: Record declarations without a definition");
-    return SemIR::ErrorInst::InstId;
-  }
-
-  if (clang_def->isDynamicClass()) {
-    context.TODO(loc_id, "Unsupported: Dynamic Class");
-    return SemIR::ErrorInst::InstId;
-  }
-
-  auto [class_id, class_def_id] =
-      BuildClassDefinition(context, parent_scope_id, name_id, clang_def);
-
-  // The class type is now fully defined. Compute its object representation.
-  ComputeClassObjectRepr(context,
-                         // TODO: Consider having a proper location here.
-                         Parse::ClassDefinitionId::None, class_id,
-                         // TODO: Set fields.
-                         /*field_decls=*/{},
-                         // TODO: Set vtable.
-                         /*vtable_contents=*/{},
-                         // TODO: Set block.
-                         /*body=*/{});
-
-  return class_def_id;
-}
-
 // Imports a declaration from Clang to Carbon. If successful, returns the
 // instruction for the new Carbon declaration.
 static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
