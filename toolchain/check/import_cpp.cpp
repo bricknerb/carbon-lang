@@ -54,6 +54,11 @@ static auto GenerateCppIncludesHeaderCode(
 
 namespace {
 
+// Maps a Clang name to a Carbon `NameId`.
+static auto MapNameId(Context& context, llvm::StringRef name) -> SemIR::NameId {
+  return SemIR::NameId::ForIdentifier(context.identifiers().Add(name));
+}
+
 // Adds the given source location and an `ImportIRInst` referring to it in
 // `ImportIRId::Cpp`.
 static auto AddImportIRInst(Context& context,
@@ -255,7 +260,8 @@ auto ImportCppFiles(Context& context, llvm::StringRef importing_file_path,
   SemIR::NameScope& name_scope = context.name_scopes().Get(name_scope_id);
   name_scope.set_is_closed_import(true);
   name_scope.set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
-      generated_ast->getASTContext().getTranslationUnitDecl()));
+      {.decl = generated_ast->getASTContext().getTranslationUnitDecl(),
+       .inst_id = name_scope.inst_id()}));
 
   if (ast_has_error) {
     name_scope.set_has_error();
@@ -294,8 +300,11 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
 
   bool found = sema.LookupQualifiedName(
       lookup,
-      clang::dyn_cast<clang::DeclContext>(context.sem_ir().clang_decls().Get(
-          context.name_scopes().Get(scope_id).clang_decl_context_id())));
+      clang::dyn_cast<clang::DeclContext>(
+          context.sem_ir()
+              .clang_decls()
+              .Get(context.name_scopes().Get(scope_id).clang_decl_context_id())
+              .decl));
 
   if (!found) {
     return std::nullopt;
@@ -316,9 +325,58 @@ static auto ImportNamespaceDecl(Context& context,
       name_id, parent_scope_id, /*import_id=*/SemIR::InstId::None);
   context.name_scopes()
       .Get(result.name_scope_id)
-      .set_clang_decl_context_id(
-          context.sem_ir().clang_decls().Add(clang_decl));
+      .set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
+          {.decl = clang_decl, .inst_id = result.inst_id}));
   return result.inst_id;
+}
+
+// Maps a C++ declaration context to a Carbon namespace.
+static auto MapDeclContext(Context& context, clang::DeclContext* decl_context)
+    -> SemIR::InstId {
+  CARBON_CHECK(decl_context);
+  auto& clang_decls = context.sem_ir().clang_decls();
+
+  // Check if the decl context is already mapped to a Carbon namespace.
+  auto context_clang_decl_id =
+      clang_decls.Lookup({.decl = clang::dyn_cast<clang::Decl>(decl_context),
+                          .inst_id = SemIR::InstId::None});
+  if (context_clang_decl_id.has_value()) {
+    return clang_decls.Get(context_clang_decl_id).inst_id;
+  }
+
+  // We know we have at least one context to map, add all decl contexts we need
+  // to map.
+  llvm::SmallVector<clang::DeclContext*> decl_contexts;
+  auto parent_decl_id = SemIR::ClangDeclId::None;
+  do {
+    decl_contexts.push_back(decl_context);
+    decl_context = decl_context->getParent();
+    parent_decl_id =
+        clang_decls.Lookup({.decl = clang::dyn_cast<clang::Decl>(decl_context),
+                            .inst_id = SemIR::InstId::None});
+  } while (!parent_decl_id.has_value());
+
+  // We know the parent of the last decl context is mapped, map the rest.
+  auto namespace_inst_id = SemIR::InstId::None;
+  do {
+    decl_context = decl_contexts.back();
+    decl_contexts.pop_back();
+    auto parent_inst_id = clang_decls.Get(parent_decl_id).inst_id;
+    auto parent_namespace =
+        context.insts().Get(parent_inst_id).TryAs<SemIR::Namespace>();
+    CARBON_CHECK(parent_namespace.has_value());
+    namespace_inst_id = ImportNamespaceDecl(
+        context, parent_namespace->name_scope_id,
+        MapNameId(context,
+                  llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName()),
+        clang::dyn_cast<clang::NamespaceDecl>(decl_context));
+    parent_decl_id = clang_decls.Add({
+        .decl = clang::dyn_cast<clang::Decl>(decl_context),
+        .inst_id = namespace_inst_id,
+    });
+  } while (!decl_contexts.empty());
+
+  return namespace_inst_id;
 }
 
 // Creates a class declaration for the given class name in the given scope.
@@ -373,17 +431,17 @@ static auto BuildClassDefinition(Context& context,
                                  SemIR::NameId name_id,
                                  clang::CXXRecordDecl* clang_decl)
     -> std::tuple<SemIR::ClassId, SemIR::InstId> {
-  auto [class_id, class_decl_id] =
+  auto [class_id, class_inst_id] =
       BuildClassDecl(context, parent_scope_id, name_id);
   auto& class_info = context.classes().Get(class_id);
-  StartClassDefinition(context, class_info, class_decl_id);
+  StartClassDefinition(context, class_info, class_inst_id);
 
   context.name_scopes()
       .Get(class_info.scope_id)
-      .set_clang_decl_context_id(
-          context.sem_ir().clang_decls().Add(clang_decl));
+      .set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
+          {.decl = clang_decl, .inst_id = class_inst_id}));
 
-  return {class_id, class_decl_id};
+  return {class_id, class_inst_id};
 }
 
 // Imports a record declaration from Clang to Carbon. If successful, returns
@@ -432,29 +490,71 @@ static auto MakeIntType(Context& context, IntId size_id) -> TypeExpr {
   return ExprAsType(context, Parse::NodeId::None, type_inst_id);
 }
 
-// Maps a C++ type to a Carbon type.
-// TODO: Support more types.
-static auto MapType(Context& context, clang::QualType type) -> TypeExpr {
-  const auto* builtin_type = dyn_cast<clang::BuiltinType>(type);
-  if (!builtin_type) {
-    return {.inst_id = SemIR::ErrorInst::TypeInstId,
-            .type_id = SemIR::ErrorInst::TypeId};
-  }
+// Maps a C++ builtin type to a Carbon type.
+// TODO: Support more builtin types.
+static auto MapBuiltinType(Context& context, const clang::BuiltinType& type)
+    -> TypeExpr {
   // TODO: Refactor to avoid duplication.
-  switch (builtin_type->getKind()) {
+  switch (type.getKind()) {
     case clang::BuiltinType::Short:
-      if (context.ast_context().getTypeSize(type) == 16) {
+      if (context.ast_context().getTypeSize(&type) == 16) {
         return MakeIntType(context, context.ints().Add(16));
       }
       break;
     case clang::BuiltinType::Int:
-      if (context.ast_context().getTypeSize(type) == 32) {
+      if (context.ast_context().getTypeSize(&type) == 32) {
         return MakeIntType(context, context.ints().Add(32));
       }
       break;
     default:
       break;
   }
+  return {.inst_id = SemIR::ErrorInst::TypeInstId,
+          .type_id = SemIR::ErrorInst::TypeId};
+}
+
+// Maps a C++ record type to a Carbon type.
+// TODO: Support more record types.
+static auto MapRecordType(Context& context, SemIR::LocId loc_id,
+                          const clang::RecordType& type) -> TypeExpr {
+  auto* record_decl = clang::dyn_cast<clang::CXXRecordDecl>(type.getDecl());
+  if (record_decl && record_decl->isStruct()) {
+    auto& clang_decls = context.sem_ir().clang_decls();
+    auto struct_clang_decl_id = clang_decls.Lookup(
+        {.decl = record_decl, .inst_id = SemIR::InstId::None});
+    if (!struct_clang_decl_id.has_value()) {
+      auto parent_inst_id =
+          MapDeclContext(context, record_decl->getDeclContext());
+      auto parent_name_scope_id =
+          context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
+      SemIR::InstId struct_inst_id = ImportCXXRecordDecl(
+          context, loc_id, parent_name_scope_id,
+          MapNameId(context, record_decl->getName()), record_decl);
+      struct_clang_decl_id =
+          clang_decls.Add({.decl = record_decl, .inst_id = struct_inst_id});
+    }
+    SemIR::TypeInstId struct_inst_id = context.types().GetAsTypeInstId(
+        clang_decls.Get(struct_clang_decl_id).inst_id);
+    return {.inst_id = struct_inst_id,
+            .type_id = context.types().GetTypeIdForTypeInstId(struct_inst_id)};
+  }
+
+  return {.inst_id = SemIR::ErrorInst::TypeInstId,
+          .type_id = SemIR::ErrorInst::TypeId};
+}
+
+// Maps a C++ type to a Carbon type.
+// TODO: Support more types.
+static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
+    -> TypeExpr {
+  if (const auto* builtin_type = dyn_cast<clang::BuiltinType>(type)) {
+    return MapBuiltinType(context, *builtin_type);
+  }
+
+  if (const auto* record_type = clang::dyn_cast<clang::RecordType>(type)) {
+    return MapRecordType(context, loc_id, *record_type);
+  }
+
   return {.inst_id = SemIR::ErrorInst::TypeInstId,
           .type_id = SemIR::ErrorInst::TypeId};
 }
@@ -479,7 +579,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
     // Mark the start of a region of insts, needed for the type expression
     // created later with the call of `EndSubpatternAsExpr()`.
     BeginSubpattern(context);
-    auto [type_inst_id, type_id] = MapType(context, param_type);
+    auto [type_inst_id, type_id] = MapType(context, loc_id, param_type);
     // Type expression of the binding pattern - a single-entry/single-exit
     // region that allows control flow in the type expression e.g. fn F(x: if C
     // then i32 else i64).
@@ -498,8 +598,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
             // Translate an unnamed parameter to an underscore to
             // match Carbon's naming of unnamed/unused function params.
             ? SemIR::NameId::Underscore
-            : SemIR::NameId::ForIdentifier(
-                  context.sem_ir().identifiers().Add(param_name));
+            : MapNameId(context, param_name);
 
     // TODO: Fix this once templates are supported.
     bool is_template = false;
@@ -533,7 +632,7 @@ static auto GetReturnType(Context& context, SemIR::LocId loc_id,
     return SemIR::InstId::None;
   }
 
-  auto [type_inst_id, type_id] = MapType(context, ret_type);
+  auto [type_inst_id, type_id] = MapType(context, loc_id, ret_type);
   if (type_id == SemIR::ErrorInst::TypeId) {
     context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
                                        ret_type.getAsString()));
@@ -651,7 +750,8 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
        .return_slot_pattern_id = function_params_insts->return_slot_pattern_id,
        .virtual_modifier = SemIR::FunctionFields::VirtualModifier::None,
        .self_param_id = SemIR::InstId::None,
-       .clang_decl_id = context.sem_ir().clang_decls().Add(clang_decl)}};
+       .clang_decl_id = context.sem_ir().clang_decls().Add(
+           {.decl = clang_decl, .inst_id = decl_id})}};
 
   function_decl.function_id = context.functions().Add(function_info);
 
