@@ -197,6 +197,58 @@ fn F() {
 }
 
 // ============================================================================
+// Defined class and explicitly used
+// ============================================================================
+
+// --- definition_with_static_method.h
+
+class C {
+  static void bar();
+};
+
+auto foo(C) -> void;
+
+// --- import_definition_and_static_method_call_before.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "definition_with_static_method.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  Cpp.C.bar();
+  // CHECK:STDERR: import_definition_and_static_method_call_before.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: import_definition_and_static_method_call_before.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo({});
+  //@dump-sem-ir-end
+}
+
+// --- import_definition_and_static_method_call_after.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "definition_with_static_method.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  // CHECK:STDERR: import_definition_and_static_method_call_after.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: import_definition_and_static_method_call_after.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo({});
+  Cpp.C.bar();
+  //@dump-sem-ir-end
+}
+
+// ============================================================================
 // Pointer to forward-declared class as parameter type
 // ============================================================================
 
@@ -504,6 +556,72 @@ fn F() {
 // CHECK:STDOUT:   %N1.ref: <namespace> = name_ref N1, imports.%N1 [concrete = imports.%N1]
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
 // CHECK:STDOUT:   %.loc15: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_definition_and_static_method_call_before.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %C: type = class_type @C [concrete]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
+// CHECK:STDOUT:   %bar.type: type = fn_type @bar [concrete]
+// CHECK:STDOUT:   %bar: %bar.type = struct_value () [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
+// CHECK:STDOUT:   %bar.decl: %bar.type = fn_decl @bar [concrete = constants.%bar] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %C.ref: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %bar.ref: %bar.type = name_ref bar, imports.%bar.decl [concrete = constants.%bar]
+// CHECK:STDOUT:   %bar.call: init %empty_tuple.type = call %bar.ref()
+// CHECK:STDOUT:   %Cpp.ref.loc9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc9: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_definition_and_static_method_call_after.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
+// CHECK:STDOUT:   %C: type = class_type @C [concrete]
+// CHECK:STDOUT:   %bar.type: type = fn_type @bar [concrete]
+// CHECK:STDOUT:   %bar: %bar.type = struct_value () [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
+// CHECK:STDOUT:   %bar.decl: %bar.type = fn_decl @bar [concrete = constants.%bar] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc8: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   %Cpp.ref.loc9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %C.ref: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %bar.ref: %bar.type = name_ref bar, imports.%bar.decl [concrete = constants.%bar]
+// CHECK:STDOUT:   %bar.call: init %empty_tuple.type = call %bar.ref()
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
