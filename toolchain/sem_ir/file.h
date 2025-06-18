@@ -336,7 +336,8 @@ class File : public Printable<File> {
   clang::ASTUnit* cpp_ast_ = nullptr;
 
   // Clang AST declarations pointing to the AST and their mapped Carbon
-  // instructions. When calling `Lookup()`, `inst_id` is ignored.
+  // instructions. When calling `Lookup()`, `inst_id` is ignored. `Add()` will
+  // not add multiple entries with the same `decl` and different `inst_id`.
   CanonicalValueStore<ClangDeclId> clang_decls_;
 
   // All instructions. The first entries will always be the singleton
