@@ -55,7 +55,8 @@ static auto GenerateCppIncludesHeaderCode(
 namespace {
 
 // Maps a Clang name to a Carbon `NameId`.
-static auto MapNameId(Context& context, llvm::StringRef name) -> SemIR::NameId {
+static auto AddIdentifierName(Context& context, llvm::StringRef name)
+    -> SemIR::NameId {
   return SemIR::NameId::ForIdentifier(context.identifiers().Add(name));
 }
 
@@ -367,8 +368,8 @@ static auto AsCarbonNamespace(Context& context,
         context.insts().GetAs<SemIR::Namespace>(parent_inst_id);
     namespace_inst_id = ImportNamespaceDecl(
         context, parent_namespace.name_scope_id,
-        MapNameId(context,
-                  llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName()),
+        AddIdentifierName(
+            context, llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName()),
         clang::dyn_cast<clang::NamespaceDecl>(decl_context));
     parent_decl_id = clang_decls.Add({
         .decl = clang::dyn_cast<clang::Decl>(decl_context),
@@ -529,7 +530,7 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
       SemIR::InstId struct_inst_id = ImportCXXRecordDecl(
           context, loc_id, parent_name_scope_id,
-          MapNameId(context, record_decl->getName()), record_decl);
+          AddIdentifierName(context, record_decl->getName()), record_decl);
       struct_clang_decl_id =
           clang_decls.Add({.decl = record_decl, .inst_id = struct_inst_id});
     }
@@ -598,7 +599,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
             // Translate an unnamed parameter to an underscore to
             // match Carbon's naming of unnamed/unused function params.
             ? SemIR::NameId::Underscore
-            : MapNameId(context, param_name);
+            : AddIdentifierName(context, param_name);
 
     // TODO: Fix this once templates are supported.
     bool is_template = false;
