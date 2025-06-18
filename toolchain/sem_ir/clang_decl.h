@@ -30,6 +30,12 @@ struct ClangDecl : public Printable<ClangDecl> {
     return HashtableEq(lhs.decl, rhs.decl);
   }
 
+  // Hashing for ClangDecl. See common/hashing.h.
+  friend auto CarbonHashValue(const ClangDecl& value, uint64_t seed)
+      -> HashCode {
+    return HashValue(value.decl, seed);
+  }
+
   // The Clang declaration pointing to the Clang AST.
   // TODO: Ensure we can easily serialize/deserialize this. Consider
   // `clang::LazyDeclPtr`.
@@ -38,11 +44,6 @@ struct ClangDecl : public Printable<ClangDecl> {
   // The instruction the Clang declaration is mapped to.
   InstId inst_id;
 };
-
-// Hashing for ClangDecl. See common/hashing.h.
-inline auto CarbonHashValue(const ClangDecl& value, uint64_t seed) -> HashCode {
-  return HashValue(value.decl, seed);
-}
 
 // The ID of a `ClangDecl`.
 struct ClangDeclId : public IdBase<ClangDeclId> {
