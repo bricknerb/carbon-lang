@@ -331,7 +331,8 @@ static auto ImportNamespaceDecl(Context& context,
 }
 
 // Maps a C++ declaration context to a Carbon namespace.
-static auto MapDeclContext(Context& context, clang::DeclContext* decl_context)
+static auto AsCarbonNamespace(Context& context,
+                              clang::DeclContext* decl_context)
     -> SemIR::InstId {
   CARBON_CHECK(decl_context);
   auto& clang_decls = context.sem_ir().clang_decls();
@@ -522,7 +523,7 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
         {.decl = record_decl, .inst_id = SemIR::InstId::None});
     if (!struct_clang_decl_id.has_value()) {
       auto parent_inst_id =
-          MapDeclContext(context, record_decl->getDeclContext());
+          AsCarbonNamespace(context, record_decl->getDeclContext());
       auto parent_name_scope_id =
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
       SemIR::InstId struct_inst_id = ImportCXXRecordDecl(
