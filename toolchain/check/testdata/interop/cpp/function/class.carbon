@@ -208,7 +208,7 @@ class C {
 
 auto foo(C) -> void;
 
-// --- import_definition_and_static_method_call_before.carbon
+// --- fail_todo_import_definition_and_static_method_call_before.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -217,10 +217,10 @@ import Cpp library "definition_with_static_method.h";
 fn F() {
   //@dump-sem-ir-begin
   Cpp.C.bar();
-  // CHECK:STDERR: import_definition_and_static_method_call_before.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_before.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: import_definition_and_static_method_call_before.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_before.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -228,7 +228,7 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- import_definition_and_static_method_call_after.carbon
+// --- fail_todo_import_definition_and_static_method_call_after.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -236,10 +236,10 @@ import Cpp library "definition_with_static_method.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: import_definition_and_static_method_call_after.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_after.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: class C` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: import_definition_and_static_method_call_after.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_after.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -559,7 +559,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_definition_and_static_method_call_before.carbon
+// CHECK:STDOUT: --- fail_todo_import_definition_and_static_method_call_before.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -586,13 +586,13 @@ fn F() {
 // CHECK:STDOUT:   %C.ref: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   %bar.ref: %bar.type = name_ref bar, imports.%bar.decl [concrete = constants.%bar]
 // CHECK:STDOUT:   %bar.call: init %empty_tuple.type = call %bar.ref()
-// CHECK:STDOUT:   %Cpp.ref.loc9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %Cpp.ref.loc16: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   %.loc9: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   %.loc16: %empty_struct_type = struct_literal ()
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_definition_and_static_method_call_after.carbon
+// CHECK:STDOUT: --- fail_todo_import_definition_and_static_method_call_after.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -614,10 +614,10 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %Cpp.ref.loc15: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   %.loc8: %empty_struct_type = struct_literal ()
-// CHECK:STDOUT:   %Cpp.ref.loc9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %.loc15: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   %Cpp.ref.loc16: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %C.ref: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   %bar.ref: %bar.type = name_ref bar, imports.%bar.decl [concrete = constants.%bar]

@@ -531,9 +531,17 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
           AsCarbonNamespace(context, record_decl->getDeclContext());
       auto parent_name_scope_id =
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
+      SemIR::NameId struct_name_id =
+          AddIdentifierName(context, record_decl->getName());
       struct_inst_id = ImportCXXRecordDecl(
-          context, loc_id, parent_name_scope_id,
-          AddIdentifierName(context, record_decl->getName()), record_decl);
+          context, loc_id, parent_name_scope_id, struct_name_id, record_decl);
+      if (struct_inst_id.has_value()) {
+        SemIR::ScopeLookupResult result = SemIR::ScopeLookupResult::MakeFound(
+            struct_inst_id, SemIR::AccessKind::Public);
+        context.name_scopes()
+            .Get(parent_name_scope_id)
+            .AddRequired({.name_id = struct_name_id, .result = result});
+      }
     }
     SemIR::TypeInstId struct_type_inst_id =
         context.types().GetAsTypeInstId(struct_inst_id);
