@@ -337,10 +337,10 @@ static auto MapDeclContext(Context& context, clang::DeclContext* decl_context)
   auto& clang_decls = context.sem_ir().clang_decls();
 
   // Check if the decl context is already mapped to a Carbon namespace.
-  auto context_clang_decl_id =
-      clang_decls.Lookup({.decl = clang::dyn_cast<clang::Decl>(decl_context),
-                          .inst_id = SemIR::InstId::None});
-  if (context_clang_decl_id.has_value()) {
+  if (auto context_clang_decl_id = clang_decls.Lookup(
+          {.decl = clang::dyn_cast<clang::Decl>(decl_context),
+           .inst_id = SemIR::InstId::None});
+      context_clang_decl_id.has_value()) {
     return clang_decls.Get(context_clang_decl_id).inst_id;
   }
 
