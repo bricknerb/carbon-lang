@@ -52,7 +52,11 @@ static auto GenerateCppIncludesHeaderCode(
   return code;
 }
 
-namespace {
+static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
+                                    SemIR::NameScopeId scope_id,
+                                    SemIR::NameId name_id,
+                                    clang::NamedDecl* clang_decl)
+    -> SemIR::InstId;
 
 // Maps a Clang name to a Carbon `NameId`.
 static auto AddIdentifierName(Context& context, llvm::StringRef name)
@@ -70,6 +74,8 @@ static auto AddImportIRInst(Context& context,
   return context.import_ir_insts().Add(
       SemIR::ImportIRInst(clang_source_loc_id));
 }
+
+namespace {
 
 // Used to convert Clang diagnostics to Carbon diagnostics.
 class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
@@ -533,15 +539,8 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
       SemIR::NameId struct_name_id =
           AddIdentifierName(context, record_decl->getName());
-      struct_inst_id = ImportCXXRecordDecl(
+      struct_inst_id = ImportNameDeclIntoScope(
           context, loc_id, parent_name_scope_id, struct_name_id, record_decl);
-      if (struct_inst_id.has_value()) {
-        SemIR::ScopeLookupResult result = SemIR::ScopeLookupResult::MakeFound(
-            struct_inst_id, SemIR::AccessKind::Public);
-        context.name_scopes()
-            .Get(parent_name_scope_id)
-            .AddRequired({.name_id = struct_name_id, .result = result});
-      }
     }
     SemIR::TypeInstId struct_type_inst_id =
         context.types().GetAsTypeInstId(struct_inst_id);
@@ -800,6 +799,19 @@ static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
   return SemIR::InstId::None;
 }
 
+static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
+                                    SemIR::NameScopeId scope_id,
+                                    SemIR::NameId name_id,
+                                    clang::NamedDecl* clang_decl)
+    -> SemIR::InstId {
+  SemIR::InstId inst_id =
+      ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
+  if (inst_id.has_value()) {
+    context.name_scopes().AddRequiredName(scope_id, name_id, inst_id);
+  }
+  return inst_id;
+}
+
 auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                        SemIR::NameScopeId scope_id, SemIR::NameId name_id)
     -> SemIR::InstId {
@@ -821,11 +833,13 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                                "find a single result; LookupResultKind: {0}",
                                static_cast<int>(lookup->getResultKind()))
                      .str());
+    context.name_scopes().AddRequiredName(scope_id, name_id,
+                                          SemIR::ErrorInst::InstId);
     return SemIR::ErrorInst::InstId;
   }
 
-  return ImportNameDecl(context, loc_id, scope_id, name_id,
-                        lookup->getFoundDecl());
+  return ImportNameDeclIntoScope(context, loc_id, scope_id, name_id,
+                                 lookup->getFoundDecl());
 }
 
 }  // namespace Carbon::Check
