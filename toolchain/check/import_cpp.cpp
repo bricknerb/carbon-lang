@@ -521,23 +521,25 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
   auto* record_decl = clang::dyn_cast<clang::CXXRecordDecl>(type.getDecl());
   if (record_decl && record_decl->isStruct()) {
     auto& clang_decls = context.sem_ir().clang_decls();
-    auto struct_clang_decl_id = clang_decls.Lookup(
-        {.decl = record_decl, .inst_id = SemIR::InstId::None});
-    if (!struct_clang_decl_id.has_value()) {
+    SemIR::InstId struct_inst_id = SemIR::InstId::None;
+    if (auto struct_clang_decl_id = clang_decls.Lookup(
+            {.decl = record_decl, .inst_id = SemIR::InstId::None});
+        struct_clang_decl_id.has_value()) {
+      struct_inst_id = clang_decls.Get(struct_clang_decl_id).inst_id;
+    } else {
       auto parent_inst_id =
           AsCarbonNamespace(context, record_decl->getDeclContext());
       auto parent_name_scope_id =
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
-      SemIR::InstId struct_inst_id = ImportCXXRecordDecl(
+      struct_inst_id = ImportCXXRecordDecl(
           context, loc_id, parent_name_scope_id,
           AddIdentifierName(context, record_decl->getName()), record_decl);
-      struct_clang_decl_id =
-          clang_decls.Add({.decl = record_decl, .inst_id = struct_inst_id});
     }
-    SemIR::TypeInstId struct_inst_id = context.types().GetAsTypeInstId(
-        clang_decls.Get(struct_clang_decl_id).inst_id);
-    return {.inst_id = struct_inst_id,
-            .type_id = context.types().GetTypeIdForTypeInstId(struct_inst_id)};
+    SemIR::TypeInstId struct_type_inst_id =
+        context.types().GetAsTypeInstId(struct_inst_id);
+    return {
+        .inst_id = struct_type_inst_id,
+        .type_id = context.types().GetTypeIdForTypeInstId(struct_type_inst_id)};
   }
 
   return {.inst_id = SemIR::ErrorInst::TypeInstId,
