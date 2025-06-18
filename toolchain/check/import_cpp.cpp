@@ -298,13 +298,14 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
   // `TextDiagnosticPrinter` assumes we're processing a C++ source file.
   lookup.suppressDiagnostics();
 
+  auto scope_clang_decl_context_id =
+      context.name_scopes().Get(scope_id).clang_decl_context_id();
   bool found = sema.LookupQualifiedName(
       lookup,
-      clang::dyn_cast<clang::DeclContext>(
-          context.sem_ir()
-              .clang_decls()
-              .Get(context.name_scopes().Get(scope_id).clang_decl_context_id())
-              .decl));
+      clang::dyn_cast<clang::DeclContext>(context.sem_ir()
+                                              .clang_decls()
+                                              .Get(scope_clang_decl_context_id)
+                                              .decl));
 
   if (!found) {
     return std::nullopt;
