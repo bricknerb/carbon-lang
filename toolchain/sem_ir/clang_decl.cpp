@@ -11,7 +11,7 @@ namespace Carbon::SemIR {
 auto ClangDecl::Print(llvm::raw_ostream& out) const -> void {
   out << "{decl: ";
   decl->print(out);
-  out << ", inst: " << inst_id << "}";
+  out << ", inst_id: " << inst_id << "}";
 }
 
 }  // namespace Carbon::SemIR
