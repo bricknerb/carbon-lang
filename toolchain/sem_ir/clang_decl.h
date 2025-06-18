@@ -44,8 +44,7 @@ inline auto CarbonHashValue(const ClangDecl& value, uint64_t seed) -> HashCode {
   return HashValue(value.decl, seed);
 }
 
-// The ID of a Clang declaration mapping, pointing to the Clang AST and the
-// mapped Carbon instruction.
+// The ID of a `ClangDecl`.
 struct ClangDeclId : public IdBase<ClangDeclId> {
   static constexpr llvm::StringLiteral Label = "clang_decl_id";
 
