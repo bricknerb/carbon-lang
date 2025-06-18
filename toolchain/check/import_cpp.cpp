@@ -359,8 +359,7 @@ static auto MapDeclContext(Context& context, clang::DeclContext* decl_context)
   // We know the parent of the last decl context is mapped, map the rest.
   auto namespace_inst_id = SemIR::InstId::None;
   do {
-    decl_context = decl_contexts.back();
-    decl_contexts.pop_back();
+    decl_context = decl_contexts.pop_back_val();
     auto parent_inst_id = clang_decls.Get(parent_decl_id).inst_id;
     auto parent_namespace =
         context.insts().GetAs<SemIR::Namespace>(parent_inst_id);
