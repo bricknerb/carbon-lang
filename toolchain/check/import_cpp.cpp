@@ -363,10 +363,9 @@ static auto MapDeclContext(Context& context, clang::DeclContext* decl_context)
     decl_contexts.pop_back();
     auto parent_inst_id = clang_decls.Get(parent_decl_id).inst_id;
     auto parent_namespace =
-        context.insts().Get(parent_inst_id).TryAs<SemIR::Namespace>();
-    CARBON_CHECK(parent_namespace.has_value());
+        context.insts().GetAs<SemIR::Namespace>(parent_inst_id);
     namespace_inst_id = ImportNamespaceDecl(
-        context, parent_namespace->name_scope_id,
+        context, parent_namespace.name_scope_id,
         MapNameId(context,
                   llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName()),
         clang::dyn_cast<clang::NamespaceDecl>(decl_context));
