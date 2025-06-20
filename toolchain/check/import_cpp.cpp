@@ -52,11 +52,15 @@ static auto GenerateCppIncludesHeaderCode(
   return code;
 }
 
-static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
-                                    SemIR::NameScopeId scope_id,
-                                    SemIR::NameId name_id,
-                                    clang::NamedDecl* clang_decl)
-    -> SemIR::InstId;
+// Adds the name to the scope with the given `inst_id`, if the `inst_id` is not
+// `None`.
+static auto AddNameToScope(Context& context, SemIR::NameScopeId scope_id,
+                           SemIR::NameId name_id, SemIR::InstId inst_id)
+    -> void {
+  if (inst_id.has_value()) {
+    context.name_scopes().AddRequiredName(scope_id, name_id, inst_id);
+  }
+}
 
 // Maps a Clang name to a Carbon `NameId`.
 static auto AddIdentifierName(Context& context, llvm::StringRef name)
@@ -539,8 +543,10 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
       SemIR::NameId struct_name_id =
           AddIdentifierName(context, record_decl->getName());
-      struct_inst_id = ImportNameDeclIntoScope(
+      struct_inst_id = ImportCXXRecordDecl(
           context, loc_id, parent_name_scope_id, struct_name_id, record_decl);
+      AddNameToScope(context, parent_name_scope_id, struct_name_id,
+                     struct_inst_id);
     }
     SemIR::TypeInstId struct_type_inst_id =
         context.types().GetAsTypeInstId(struct_inst_id);
@@ -799,6 +805,8 @@ static auto ImportNameDecl(Context& context, SemIR::LocId loc_id,
   return SemIR::InstId::None;
 }
 
+// Imports a `clang::NamedDecl` into Carbon and adds that name into the
+// `NameScope`.
 static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
                                     SemIR::NameScopeId scope_id,
                                     SemIR::NameId name_id,
@@ -806,9 +814,7 @@ static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
     -> SemIR::InstId {
   SemIR::InstId inst_id =
       ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
-  if (inst_id.has_value()) {
-    context.name_scopes().AddRequiredName(scope_id, name_id, inst_id);
-  }
+  AddNameToScope(context, scope_id, name_id, inst_id);
   return inst_id;
 }
 
