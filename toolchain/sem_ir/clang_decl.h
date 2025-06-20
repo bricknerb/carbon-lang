@@ -22,6 +22,9 @@ namespace Carbon::SemIR {
 // A Clang declaration mapped to a Carbon instruction.
 // Using custom hashing since the declaration is keyed by the `decl` member for
 // lookup.
+// TODO: Avoid custom hashing by either having the data structure support keying
+// or create a dedicated mapping. See
+// https://discord.com/channels/655572317891461132/768530752592805919/1384999468293947537
 struct ClangDecl : public Printable<ClangDecl> {
   auto Print(llvm::raw_ostream& out) const -> void;
 
