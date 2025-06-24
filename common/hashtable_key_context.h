@@ -109,9 +109,15 @@ struct DefaultKeyContext {
 //
 // Derived types should publicly inherit from this mixin and define overloads of
 // the `TranslateKey` method as indicated below in its comment.
-template <typename DerivedT>
+template <typename DerivedT, typename InputKeyContextT = DefaultKeyContext>
 class TranslatingKeyContext {
+ protected:
+  using BaseKeyContextT = InputKeyContextT;
+
  public:
+  explicit TranslatingKeyContext(
+      BaseKeyContextT base_key_context = BaseKeyContextT())
+      : base_key_context_(base_key_context) {}
   // Derived types should provide one or more overloads that hide this function
   // and perform translation for the key types which need it.
   //
@@ -141,6 +147,9 @@ class TranslatingKeyContext {
 
   template <typename AnyKeyT, typename TableKeyT>
   auto KeyEq(const AnyKeyT& lhs_key, const TableKeyT& rhs_key) const -> bool;
+
+ private:
+  BaseKeyContextT base_key_context_;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -197,36 +206,36 @@ auto DefaultKeyContext::KeyEq(const AnyKeyT& lhs_key,
   return HashtableEq(lhs_key, rhs_key);
 }
 
-template <typename DerivedT>
+template <typename DerivedT, typename InputKeyContextT>
 template <typename AnyKeyT>
-auto TranslatingKeyContext<DerivedT>::HashKey(const AnyKeyT& key,
-                                              uint64_t seed) const -> HashCode {
+auto TranslatingKeyContext<DerivedT, InputKeyContextT>::HashKey(
+    const AnyKeyT& key, uint64_t seed) const -> HashCode {
   const DerivedT& self = *static_cast<const DerivedT*>(this);
   if constexpr (requires { self.TranslateKey(key); }) {
-    return HashValue(self.TranslateKey(key), seed);
+    return base_key_context_.HashKey(self.TranslateKey(key), seed);
   } else {
-    return HashValue(key, seed);
+    return base_key_context_.HashKey(key, seed);
   }
 }
 
-template <typename DerivedT>
+template <typename DerivedT, typename InputKeyContextT>
 template <typename AnyKeyT, typename TableKeyT>
-auto TranslatingKeyContext<DerivedT>::KeyEq(const AnyKeyT& lhs_key,
-                                            const TableKeyT& rhs_key) const
-    -> bool {
+auto TranslatingKeyContext<DerivedT, InputKeyContextT>::KeyEq(
+    const AnyKeyT& lhs_key, const TableKeyT& rhs_key) const -> bool {
   const DerivedT& self = *static_cast<const DerivedT*>(this);
   // Because we don't want to make no-op calls and potentially struggle with
   // temporary lifetimes at runtime we have to fully expand the 4 states.
   constexpr bool TranslateLhs = requires { self.TranslateKey(lhs_key); };
   constexpr bool TranslateRhs = requires { self.TranslateKey(rhs_key); };
   if constexpr (TranslateLhs && TranslateRhs) {
-    return HashtableEq(self.TranslateKey(lhs_key), self.TranslateKey(rhs_key));
+    return base_key_context_.KeyEq(self.TranslateKey(lhs_key),
+                                   self.TranslateKey(rhs_key));
   } else if constexpr (TranslateLhs) {
-    return HashtableEq(self.TranslateKey(lhs_key), rhs_key);
+    return base_key_context_.KeyEq(self.TranslateKey(lhs_key), rhs_key);
   } else if constexpr (TranslateRhs) {
-    return HashtableEq(lhs_key, self.TranslateKey(rhs_key));
+    return base_key_context_.KeyEq(lhs_key, self.TranslateKey(rhs_key));
   } else {
-    return HashtableEq(lhs_key, rhs_key);
+    return base_key_context_.KeyEq(lhs_key, rhs_key);
   }
 }
 

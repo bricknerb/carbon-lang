@@ -222,25 +222,27 @@ class ValueStoreRange {
 // to later retrieve the value.
 //
 // IdT::ValueType must represent the type being indexed.
-template <typename IdT>
+template <typename IdT, typename InputKeyContextT = DefaultKeyContext>
 class CanonicalValueStore {
  public:
+  using KeyContextT = InputKeyContextT;
   using ValueType = ValueStoreTypes<IdT>::ValueType;
   using RefType = ValueStoreTypes<IdT>::RefType;
   using ConstRefType = ValueStoreTypes<IdT>::ConstRefType;
 
   // Stores a canonical copy of the value and returns an ID to reference it.
-  auto Add(ValueType value) -> IdT;
+  auto Add(ValueType value, KeyContextT key_context = KeyContextT()) -> IdT;
 
   // Returns the value for an ID.
   auto Get(IdT id) const -> ConstRefType { return values_.Get(id); }
 
   // Looks up the canonical ID for a value, or returns `None` if not in the
   // store.
-  auto Lookup(ValueType value) const -> IdT;
+  auto Lookup(ValueType value, KeyContextT key_context = KeyContextT()) const
+      -> IdT;
 
   // Reserves space.
-  auto Reserve(size_t size) -> void;
+  auto Reserve(size_t size, KeyContextT key_context = KeyContextT()) -> void;
 
   // These are to support printable structures, and are not guaranteed.
   auto OutputYaml() const -> Yaml::OutputMapping {
@@ -253,10 +255,11 @@ class CanonicalValueStore {
   auto size() const -> size_t { return values_.size(); }
 
   // Collects memory usage of the values and deduplication set.
-  auto CollectMemUsage(MemUsage& mem_usage, llvm::StringRef label) const
-      -> void {
+  auto CollectMemUsage(MemUsage& mem_usage, llvm::StringRef label,
+                       KeyContextT key_context = KeyContextT()) const -> void {
     mem_usage.Collect(MemUsage::ConcatLabel(label, "values_"), values_);
-    auto bytes = set_.ComputeMetrics(KeyContext(&values_)).storage_bytes;
+    auto bytes =
+        set_.ComputeMetrics(KeyContext(&values_, key_context)).storage_bytes;
     mem_usage.Add(MemUsage::ConcatLabel(label, "set_"), bytes, bytes);
   }
 
@@ -267,11 +270,13 @@ class CanonicalValueStore {
   Set<IdT, /*SmallSize=*/0, KeyContext> set_;
 };
 
-template <typename IdT>
-class CanonicalValueStore<IdT>::KeyContext
-    : public TranslatingKeyContext<KeyContext> {
+template <typename IdT, typename InputKeyContextT>
+class CanonicalValueStore<IdT, InputKeyContextT>::KeyContext
+    : public TranslatingKeyContext<KeyContext, InputKeyContextT> {
  public:
-  explicit KeyContext(const ValueStore<IdT>* values) : values_(values) {}
+  explicit KeyContext(const ValueStore<IdT>* values, KeyContextT key_context)
+      : TranslatingKeyContext<KeyContext, InputKeyContextT>(key_context),
+        values_(values) {}
 
   // Note that it is safe to return a `const` reference here as the underlying
   // object's lifetime is provided by the `ValueStore`.
@@ -283,26 +288,31 @@ class CanonicalValueStore<IdT>::KeyContext
   const ValueStore<IdT>* values_;
 };
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Add(ValueType value) -> IdT {
+template <typename IdT, typename InputKeyContextT>
+auto CanonicalValueStore<IdT, InputKeyContextT>::Add(ValueType value,
+                                                     KeyContextT key_context)
+    -> IdT {
   auto make_key = [&] { return IdT(values_.Add(std::move(value))); };
-  return set_.Insert(value, make_key, KeyContext(&values_)).key();
+  return set_.Insert(value, make_key, KeyContext(&values_, key_context)).key();
 }
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Lookup(ValueType value) const -> IdT {
-  if (auto result = set_.Lookup(value, KeyContext(&values_))) {
+template <typename IdT, typename InputKeyContextT>
+auto CanonicalValueStore<IdT, InputKeyContextT>::Lookup(
+    ValueType value, KeyContextT key_context) const -> IdT {
+  if (auto result = set_.Lookup(value, KeyContext(&values_, key_context))) {
     return result.key();
   }
   return IdT::None;
 }
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Reserve(size_t size) -> void {
+template <typename IdT, typename InputKeyContextT>
+auto CanonicalValueStore<IdT, InputKeyContextT>::Reserve(
+    size_t size, KeyContextT key_context) -> void {
   // Compute the resulting new insert count using the size of values -- the
   // set doesn't have a fast to compute current size.
   if (size > values_.size()) {
-    set_.GrowForInsertCount(size - values_.size(), KeyContext(&values_));
+    set_.GrowForInsertCount(size - values_.size(),
+                            KeyContext(&values_, key_context));
   }
   values_.Reserve(size);
 }

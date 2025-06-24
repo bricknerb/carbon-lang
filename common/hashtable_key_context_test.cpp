@@ -171,6 +171,8 @@ TEST(HashtableKeyContextTest, DefaultKeyContext) {
 
 struct TestTranslatingKeyContext
     : TranslatingKeyContext<TestTranslatingKeyContext> {
+  explicit TestTranslatingKeyContext(llvm::ArrayRef<llvm::APInt> input_array)
+      : array(input_array) {}
   auto TranslateKey(int index) const -> const llvm::APInt& {
     return array[index];
   }
@@ -187,7 +189,7 @@ TEST(HashtableKeyContextTest, TranslatingKeyContext) {
   llvm::SmallVector<llvm::APInt> values = {one_64,  two_64, one_128,
                                            two_128, one_64, one_64};
 
-  TestTranslatingKeyContext context = {.array = values};
+  TestTranslatingKeyContext context(values);
 
   uint64_t seed = 1234;
   EXPECT_THAT(context.HashKey(0, seed), Eq(HashValue(one_64, seed)));

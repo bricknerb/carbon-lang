@@ -203,10 +203,22 @@ class File : public Printable<File> {
   // pointer in the constructor and remove this function. This is part of
   // https://github.com/carbon-language/carbon-lang/issues/4666
   auto set_cpp_ast(clang::ASTUnit* cpp_ast) -> void { cpp_ast_ = cpp_ast; }
-  auto clang_decls() -> CanonicalValueStore<ClangDeclId>& {
+
+  struct ClangDeclStoreKeyContext {
+    auto HashKey(const ClangDecl& key, uint64_t seed) const -> HashCode {
+      return HashValue(key.decl, seed);
+    }
+    auto KeyEq(const ClangDecl& lhs_key, const ClangDecl& rhs_key) const
+        -> bool {
+      return HashtableEq(lhs_key.decl, rhs_key.decl);
+    }
+  };
+  auto clang_decls()
+      -> CanonicalValueStore<ClangDeclId, ClangDeclStoreKeyContext>& {
     return clang_decls_;
   }
-  auto clang_decls() const -> const CanonicalValueStore<ClangDeclId>& {
+  auto clang_decls() const
+      -> const CanonicalValueStore<ClangDeclId, ClangDeclStoreKeyContext>& {
     return clang_decls_;
   }
   auto names() const -> NameStoreWrapper {
@@ -338,7 +350,7 @@ class File : public Printable<File> {
   // Clang AST declarations pointing to the AST and their mapped Carbon
   // instructions. When calling `Lookup()`, `inst_id` is ignored. `Add()` will
   // not add multiple entries with the same `decl` and different `inst_id`.
-  CanonicalValueStore<ClangDeclId> clang_decls_;
+  CanonicalValueStore<ClangDeclId, ClangDeclStoreKeyContext> clang_decls_;
 
   // All instructions. The first entries will always be the singleton
   // instructions.
