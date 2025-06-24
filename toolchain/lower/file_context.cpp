@@ -823,16 +823,18 @@ auto FileContext::BuildFunctionBody(SemIR::FunctionId function_id,
   // parameter order.
   auto lower_param = [&](SemIR::InstId param_id) {
     // Get the value of the parameter from the function argument.
-    auto param_inst = definition_ir.insts().GetAs<SemIR::AnyParam>(param_id);
     llvm::Value* param_value;
 
-    if (SemIR::ValueRepr::ForType(definition_ir, param_inst.type_id).kind !=
+    // The `type_id` of a parameter tracks the parameter's type.
+    CARBON_CHECK(definition_ir.insts().Is<SemIR::AnyParam>(param_id));
+    auto param_type = function_lowering.GetTypeIdOfInst(param_id);
+    if (function_lowering.GetValueRepr(param_type).repr.kind !=
         SemIR::ValueRepr::None) {
       param_value = llvm_function->getArg(param_index);
       ++param_index;
     } else {
-      param_value = llvm::PoisonValue::get(
-          function_lowering.GetTypeOfInstInSpecific(param_id));
+      param_value =
+          llvm::PoisonValue::get(function_lowering.GetType(param_type));
     }
     // The value of the parameter is the value of the argument.
     function_lowering.SetLocal(param_id, param_value);
