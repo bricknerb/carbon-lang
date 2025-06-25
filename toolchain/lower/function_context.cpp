@@ -16,7 +16,7 @@ namespace Carbon::Lower {
 FunctionContext::FunctionContext(
     FileContext& file_context, llvm::Function* function,
     FileContext& specific_file_context, SemIR::SpecificId specific_id,
-    FileContext::SpecificFunctionFingerprint* function_fingerprint,
+    SpecificCoalescer::SpecificFunctionFingerprint* function_fingerprint,
     llvm::DISubprogram* di_subprogram, llvm::raw_ostream* vlog_stream)
     : file_context_(&file_context),
       function_(function),
