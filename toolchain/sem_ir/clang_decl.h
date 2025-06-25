@@ -28,17 +28,6 @@ namespace Carbon::SemIR {
 struct ClangDecl : public Printable<ClangDecl> {
   auto Print(llvm::raw_ostream& out) const -> void;
 
-  friend auto CarbonHashtableEq(const ClangDecl& lhs, const ClangDecl& rhs)
-      -> bool {
-    return HashtableEq(lhs.decl, rhs.decl);
-  }
-
-  // Hashing for ClangDecl. See common/hashing.h.
-  friend auto CarbonHashValue(const ClangDecl& value, uint64_t seed)
-      -> HashCode {
-    return HashValue(value.decl, seed);
-  }
-
   // The Clang declaration pointing to the Clang AST.
   // TODO: Ensure we can easily serialize/deserialize this. Consider
   // `clang::LazyDeclPtr`.
@@ -53,6 +42,9 @@ struct ClangDeclId : public IdBase<ClangDeclId> {
   static constexpr llvm::StringLiteral Label = "clang_decl_id";
 
   using ValueType = ClangDecl;
+  static auto TranslateValueToKey(const ValueType& value) -> clang::Decl* {
+    return value.decl;
+  }
 
   using IdBase::IdBase;
 };

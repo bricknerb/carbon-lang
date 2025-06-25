@@ -267,6 +267,9 @@ class CanonicalValueStore {
   Set<IdT, /*SmallSize=*/0, KeyContext> set_;
 };
 
+template <typename T>
+concept HasTranslateValueToKey = requires { &T::TranslateValueToKey; };
+
 template <typename IdT>
 class CanonicalValueStore<IdT>::KeyContext
     : public TranslatingKeyContext<KeyContext> {
@@ -275,8 +278,18 @@ class CanonicalValueStore<IdT>::KeyContext
 
   // Note that it is safe to return a `const` reference here as the underlying
   // object's lifetime is provided by the `ValueStore`.
-  auto TranslateKey(IdT id) const -> ValueStore<IdT>::ConstRefType {
-    return values_->Get(id);
+  auto TranslateKey(IdT id) const {
+    if constexpr (requires { IdT::TranslateValueToKey(values_->Get(id)); }) {
+      return IdT::TranslateValueToKey(values_->Get(id));
+    } else {
+      return values_->Get(id);
+    }
+  }
+
+  auto TranslateKey(ValueType value) const
+    requires HasTranslateValueToKey<IdT>
+  {
+    return IdT::TranslateValueToKey(value);
   }
 
  private:
