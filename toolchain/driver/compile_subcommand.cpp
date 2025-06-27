@@ -606,8 +606,11 @@ auto CompilationUnit::RunLex() -> void {
 
   CARBON_VLOG("*** SourceBuffer ***\n```\n{0}\n```\n", source_->text());
 
-  LogCall("Lex::Lex", "lex",
-          [&] { tokens_ = Lex::Lex(value_stores_, *source_, *consumer_); });
+  LogCall("Lex::Lex", "lex", [&] {
+    Lex::LexOptions options;
+    options.consumer = consumer_;
+    tokens_ = Lex::Lex(value_stores_, *source_, options);
+  });
   if (options_->dump_tokens && IncludeInDumps()) {
     consumer_->Flush();
     tokens_->Print(*driver_env_->output_stream,
@@ -624,7 +627,10 @@ auto CompilationUnit::RunLex() -> void {
 
 auto CompilationUnit::RunParse() -> void {
   LogCall("Parse::Parse", "parse", [&] {
-    parse_tree_ = Parse::Parse(*tokens_, *consumer_, vlog_stream_);
+    Parse::ParseOptions options;
+    options.consumer = consumer_;
+    options.vlog_stream = vlog_stream_;
+    parse_tree_ = Parse::Parse(*tokens_, options);
   });
   if (options_->dump_parse_tree && IncludeInDumps()) {
     consumer_->Flush();
@@ -717,16 +723,14 @@ auto CompilationUnit::PostCheck() -> void {
 auto CompilationUnit::RunLower() -> void {
   LogCall("Lower::LowerToLLVM", "lower", [&] {
     llvm_context_ = std::make_unique<llvm::LLVMContext>();
-    // TODO: Consider disabling instruction naming by default if we're not
-    // producing textual LLVM IR.
-    SemIR::InstNamer inst_namer(&*sem_ir_);
-    llvm::ArrayRef<Parse::GetTreeAndSubtreesFn> subtrees =
-        cache_->tree_and_subtrees_getters();
-    module_ = Lower::LowerToLLVM(
-        *llvm_context_, driver_env_->fs,
-        options_->run_llvm_verifier ? driver_env_->error_stream : nullptr,
-        options_->include_debug_info, subtrees, input_filename_, *sem_ir_,
-        &inst_namer, vlog_stream_);
+    Lower::LowerToLLVMOptions options;
+    options.llvm_verifier_stream =
+        options_->run_llvm_verifier ? driver_env_->error_stream : nullptr;
+    options.want_debug_info = options_->include_debug_info;
+    options.vlog_stream = vlog_stream_;
+    module_ = Lower::LowerToLLVM(*llvm_context_, driver_env_->fs,
+                                 cache_->tree_and_subtrees_getters(), *sem_ir_,
+                                 options);
   });
   if (vlog_stream_) {
     CARBON_VLOG("*** llvm::Module ***\n");
@@ -977,10 +981,13 @@ auto CompileSubcommand::Run(DriverEnv& driver_env) -> DriverResult {
 
   // Execute the actual checking.
   CARBON_VLOG_TO(driver_env.vlog_stream, "*** Check::CheckParseTrees ***\n");
+  Check::CheckParseTreesOptions options;
+  options.prelude_import = options_.prelude_import;
+  options.vlog_stream = driver_env.vlog_stream;
+  options.fuzzing = driver_env.fuzzing;
   Check::CheckParseTrees(check_units, cache.tree_and_subtrees_getters(),
-                         options_.prelude_import, driver_env.fs,
-                         options_.codegen_options.target,
-                         driver_env.vlog_stream, driver_env.fuzzing);
+                         driver_env.fs, options_.codegen_options.target,
+                         options);
   CARBON_VLOG_TO(driver_env.vlog_stream,
                  "*** Check::CheckParseTrees done ***\n");
   for (auto& unit : units) {

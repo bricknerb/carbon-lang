@@ -17,11 +17,13 @@ auto HandleInvalid(Context& context) -> void {
                context.PopState());
 }
 
-auto Parse(Lex::TokenizedBuffer& tokens, Diagnostics::Consumer& consumer,
-           llvm::raw_ostream* vlog_stream) -> Tree {
+auto Parse(Lex::TokenizedBuffer& tokens, ParseOptions options) -> Tree {
+  auto* consumer =
+      options.consumer ? options.consumer : &Diagnostics::ConsoleConsumer();
+
   // Delegate to the parser.
   Tree tree(tokens);
-  Context context(&tree, &tokens, &consumer, vlog_stream);
+  Context context(&tree, &tokens, consumer, options.vlog_stream);
   PrettyStackTraceFunction context_dumper(
       [&](llvm::raw_ostream& output) { context.PrintForStackDump(output); });
 

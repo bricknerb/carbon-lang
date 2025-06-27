@@ -14,17 +14,26 @@
 
 namespace Carbon::Lower {
 
+struct LowerToLLVMOptions {
+  // Options must be set individually, not through initialization.
+  explicit LowerToLLVMOptions() = default;
+
+  // If set, enables LLVM IR verification.
+  llvm::raw_ostream* llvm_verifier_stream = nullptr;
+
+  // Whether to include debug info in lowered output.
+  bool want_debug_info = false;
+
+  // If set, enables verbose output.
+  llvm::raw_ostream* vlog_stream = nullptr;
+};
+
 // Lowers SemIR to LLVM IR.
-//
-// `llvm_verifier_stream` should be non-null when verification is desired.
-// TODO: Switch to a struct for parameters.
 auto LowerToLLVM(
     llvm::LLVMContext& llvm_context,
     llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs,
-    llvm::raw_ostream* llvm_verifier_stream, bool want_debug_info,
     llvm::ArrayRef<Parse::GetTreeAndSubtreesFn> tree_and_subtrees_getters,
-    llvm::StringRef module_name, const SemIR::File& sem_ir,
-    const SemIR::InstNamer* inst_namer, llvm::raw_ostream* vlog_stream)
+    const SemIR::File& sem_ir, const LowerToLLVMOptions& options)
     -> std::unique_ptr<llvm::Module>;
 
 }  // namespace Carbon::Lower

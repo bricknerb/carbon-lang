@@ -31,14 +31,28 @@ struct Unit {
   std::unique_ptr<clang::ASTUnit>* cpp_ast;
 };
 
+struct CheckParseTreesOptions {
+  // Options must be set individually, not through initialization.
+  explicit CheckParseTreesOptions() = default;
+
+  // Whether to import the prelude.
+  bool prelude_import = false;
+
+  // If set, enables verbose output.
+  llvm::raw_ostream* vlog_stream = nullptr;
+
+  // Whether fuzzing is being run. Used to disable features we don't want to
+  // fuzz.
+  bool fuzzing = false;
+};
+
 // Checks a group of parse trees. This will use imports to decide the order of
 // checking.
 auto CheckParseTrees(
     llvm::MutableArrayRef<Unit> units,
     llvm::ArrayRef<Parse::GetTreeAndSubtreesFn> tree_and_subtrees_getters,
-    bool prelude_import, llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs,
-    llvm::StringRef target, llvm::raw_ostream* vlog_stream, bool fuzzing)
-    -> void;
+    llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs, llvm::StringRef target,
+    const CheckParseTreesOptions& options) -> void;
 
 }  // namespace Carbon::Check
 
