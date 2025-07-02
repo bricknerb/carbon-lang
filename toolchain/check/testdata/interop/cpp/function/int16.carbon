@@ -11,18 +11,18 @@
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/int16.carbon
 
 // ============================================================================
-// short
+// short param
 // ============================================================================
 
-// --- short.h
+// --- short_param.h
 
 auto foo(short a) -> void;
 
-// --- import_short.carbon
+// --- import_short_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -30,11 +30,11 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- import_short_max.carbon
+// --- import_short_param_max.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -42,26 +42,26 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- fail_import_short_overflow_max.carbon
+// --- fail_import_short_param_overflow_max.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_short_overflow_max.carbon:[[@LINE+5]]:11: error: integer value 32768 too large for type `i16` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_short_param_overflow_max.carbon:[[@LINE+5]]:11: error: integer value 32768 too large for type `i16` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(0x8000);
   // CHECK:STDERR:           ^~~~~~
-  // CHECK:STDERR: fail_import_short_overflow_max.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_param_overflow_max.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(0x8000);
 }
 
-// --- import_short_min.carbon
+// --- import_short_param_min.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -69,52 +69,52 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- fail_import_short_overflow_min.carbon
+// --- fail_import_short_param_overflow_min.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_short_overflow_min.carbon:[[@LINE+5]]:11: error: integer value -32769 too large for type `i16` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_short_param_overflow_min.carbon:[[@LINE+5]]:11: error: integer value -32769 too large for type `i16` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(-0x8001);
   // CHECK:STDERR:           ^~~~~~~
-  // CHECK:STDERR: fail_import_short_overflow_min.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_param_overflow_min.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(-0x8001);
 }
 
-// --- fail_import_short_int32_arg.carbon
+// --- fail_import_short_param_int32_arg.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short.h";
+import Cpp library "short_param.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_short_int32_arg.carbon:[[@LINE+8]]:11: error: cannot implicitly convert expression of type `i32` to `i16` [ConversionFailure]
+  // CHECK:STDERR: fail_import_short_param_int32_arg.carbon:[[@LINE+8]]:11: error: cannot implicitly convert expression of type `i32` to `i16` [ConversionFailure]
   // CHECK:STDERR:   Cpp.foo(1 as i32);
   // CHECK:STDERR:           ^~~~~~~~
-  // CHECK:STDERR: fail_import_short_int32_arg.carbon:[[@LINE+5]]:11: note: type `i32` does not implement interface `Core.ImplicitAs(i16)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR: fail_import_short_param_int32_arg.carbon:[[@LINE+5]]:11: note: type `i32` does not implement interface `Core.ImplicitAs(i16)` [MissingImplInMemberAccessNote]
   // CHECK:STDERR:   Cpp.foo(1 as i32);
   // CHECK:STDERR:           ^~~~~~~~
-  // CHECK:STDERR: fail_import_short_int32_arg.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_short_param_int32_arg.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   Cpp.foo(1 as i32);
 }
 
 // ============================================================================
-// short int
+// short int param
 // ============================================================================
 
-// --- short_int.h
+// --- short_int_param.h
 
 auto foo(short int a) -> void;
 
-// --- import_short_int.carbon
+// --- import_short_int_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_int.h";
+import Cpp library "short_int_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -123,18 +123,18 @@ fn F() {
 }
 
 // ============================================================================
-// signed short
+// signed short param
 // ============================================================================
 
-// --- signed_short.h
+// --- signed_short_param.h
 
 auto foo(signed short a) -> void;
 
-// --- import_signed_short.carbon
+// --- import_signed_short_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "signed_short.h";
+import Cpp library "signed_short_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -143,18 +143,18 @@ fn F() {
 }
 
 // ============================================================================
-// signed short int
+// signed short int param
 // ============================================================================
 
-// --- signed_short_int.h
+// --- signed_short_int_param.h
 
 auto foo(signed short int a) -> void;
 
-// --- import_signed_short_int.carbon
+// --- import_signed_short_int_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "signed_short_int.h";
+import Cpp library "signed_short_int_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -163,10 +163,10 @@ fn F() {
 }
 
 // ============================================================================
-// typedef for short
+// typedef for short param
 // ============================================================================
 
-// --- int16_t.h
+// --- int16_t_param.h
 
 namespace std {
   // Mimicking glibc definition for int16_t: https://codebrowser.dev/glibc/glibc/posix/bits/types.h.html#__int16_t
@@ -175,11 +175,11 @@ namespace std {
 
 auto foo(std::int16_t a) -> void;
 
-// --- import_int16_t.carbon
+// --- import_int16_t_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "int16_t.h";
+import Cpp library "int16_t_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -188,18 +188,18 @@ fn F() {
 }
 
 // ============================================================================
-// const short
+// const short param
 // ============================================================================
 
-// --- const_short.h
+// --- const_short_param.h
 
 auto foo(const short a) -> void;
 
-// --- import_const_short.carbon
+// --- import_const_short_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_short.h";
+import Cpp library "const_short_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -208,26 +208,26 @@ fn F() {
 }
 
 // ============================================================================
-// short reference
+// short reference param
 // ============================================================================
 
-// --- short_ref.h
+// --- short_ref_param.h
 
 auto foo(short& a) -> void;
 
-// --- fail_todo_import_short_ref.carbon
+// --- fail_todo_import_short_ref_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_ref.h";
+import Cpp library "short_ref_param.h";
 
 fn F() {
   var a: i16 = 1;
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_short_ref.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short &` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_short_ref_param.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short &` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_short_ref.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_short_ref_param.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -236,26 +236,26 @@ fn F() {
 }
 
 // ============================================================================
-// const short reference
+// const short reference param
 // ============================================================================
 
-// --- const_short_ref.h
+// --- const_short_ref_param.h
 
 auto foo(const short& a) -> void;
 
-// --- fail_todo_import_const_short_ref.carbon
+// --- fail_todo_import_const_short_ref_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_short_ref.h";
+import Cpp library "const_short_ref_param.h";
 
 fn F() {
   var a: i16 = 1;
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_const_short_ref.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short &` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_const_short_ref_param.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short &` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_const_short_ref.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_const_short_ref_param.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -264,26 +264,26 @@ fn F() {
 }
 
 // ============================================================================
-// short pointer
+// short pointer param
 // ============================================================================
 
-// --- short_pointer.h
+// --- short_pointer_param.h
 
 auto foo(short* a) -> void;
 
-// --- fail_todo_import_short_pointer.carbon
+// --- fail_todo_import_short_pointer_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "short_pointer.h";
+import Cpp library "short_pointer_param.h";
 
 fn F() {
   var a: i16 = 1;
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_short_pointer.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_short_pointer_param.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: short *` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_short_pointer.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_short_pointer_param.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -292,26 +292,26 @@ fn F() {
 }
 
 // ============================================================================
-// const short pointer
+// const short pointer param
 // ============================================================================
 
-// --- const_short_pointer.h
+// --- const_short_pointer_param.h
 
 auto foo(const short* a) -> void;
 
-// --- fail_todo_import_const_short_pointer.carbon
+// --- fail_todo_import_const_short_pointer_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_short_pointer.h";
+import Cpp library "const_short_pointer_param.h";
 
 fn F() {
   var a: i16 = 1;
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_const_short_pointer.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_const_short_pointer_param.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: const short *` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_const_short_pointer.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_const_short_pointer_param.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   Cpp.foo(&a);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
@@ -319,7 +319,27 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// CHECK:STDOUT: --- import_short.carbon
+// ============================================================================
+// short return
+// ============================================================================
+
+// --- short_return.h
+
+auto foo_short() -> short;
+
+// --- import_short_return.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "short_return.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  let x: i16 = Cpp.foo_short();
+  //@dump-sem-ir-end
+}
+
+// CHECK:STDOUT: --- import_short_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -376,7 +396,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_max.carbon
+// CHECK:STDOUT: --- import_short_param_max.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -431,7 +451,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_min.carbon
+// CHECK:STDOUT: --- import_short_param_min.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -503,7 +523,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_short_int.carbon
+// CHECK:STDOUT: --- import_short_int_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -560,7 +580,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_signed_short.carbon
+// CHECK:STDOUT: --- import_signed_short_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -617,7 +637,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_signed_short_int.carbon
+// CHECK:STDOUT: --- import_signed_short_int_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -674,7 +694,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_int16_t.carbon
+// CHECK:STDOUT: --- import_int16_t_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -731,7 +751,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_const_short.carbon
+// CHECK:STDOUT: --- import_const_short_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -788,7 +808,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_short_ref.carbon
+// CHECK:STDOUT: --- fail_todo_import_short_ref_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
@@ -811,7 +831,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_const_short_ref.carbon
+// CHECK:STDOUT: --- fail_todo_import_const_short_ref_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
@@ -834,7 +854,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_short_pointer.carbon
+// CHECK:STDOUT: --- fail_todo_import_short_pointer_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
@@ -859,7 +879,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_const_short_pointer.carbon
+// CHECK:STDOUT: --- fail_todo_import_const_short_pointer_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
@@ -881,6 +901,46 @@ fn F() {
 // CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
 // CHECK:STDOUT:   %a.ref: ref %i16 = name_ref a, %a
 // CHECK:STDOUT:   %addr.loc16: %ptr.251 = addr_of %a.ref
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_short_return.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
+// CHECK:STDOUT:   %i16: type = class_type @Int, @Int(%int_16) [concrete]
+// CHECK:STDOUT:   %pattern_type.2f8: type = pattern_type %i16 [concrete]
+// CHECK:STDOUT:   %foo_short.type: type = fn_type @foo_short [concrete]
+// CHECK:STDOUT:   %foo_short: %foo_short.type = struct_value () [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .foo_short = %foo_short.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %foo_short.decl: %foo_short.type = fn_decl @foo_short [concrete = constants.%foo_short] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   name_binding_decl {
+// CHECK:STDOUT:     %x.patt: %pattern_type.2f8 = binding_pattern x [concrete]
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo_short.ref: %foo_short.type = name_ref foo_short, imports.%foo_short.decl [concrete = constants.%foo_short]
+// CHECK:STDOUT:   %foo_short.call: init %i16 = call %foo_short.ref()
+// CHECK:STDOUT:   %.loc8_10: type = splice_block %i16 [concrete = constants.%i16] {
+// CHECK:STDOUT:     %int_16: Core.IntLiteral = int_value 16 [concrete = constants.%int_16]
+// CHECK:STDOUT:     %i16: type = class_type @Int, @Int(constants.%int_16) [concrete = constants.%i16]
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %.loc8_30.1: %i16 = value_of_initializer %foo_short.call
+// CHECK:STDOUT:   %.loc8_30.2: %i16 = converted %foo_short.call, %.loc8_30.1
+// CHECK:STDOUT:   %x: %i16 = bind_name x, %.loc8_30.2
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
