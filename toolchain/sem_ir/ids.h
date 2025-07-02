@@ -16,10 +16,8 @@
 
 namespace Carbon::SemIR {
 
-// Forward declare indexed types, for integration with ValueStore.
+// TODO: This is in use, but not here.
 class File;
-struct FacetTypeInfo;
-struct SpecificInterface;
 
 // The ID of an `Inst`.
 struct InstId : public IdBase<InstId> {
@@ -288,10 +286,9 @@ struct AssociatedConstantId : public IdBase<AssociatedConstantId> {
   using IdBase::IdBase;
 };
 
-// The ID of an facet type value.
+// The ID of a `FacetTypeInfo`.
 struct FacetTypeId : public IdBase<FacetTypeId> {
   static constexpr llvm::StringLiteral Label = "facet_type";
-  using ValueType = FacetTypeInfo;
 
   using IdBase::IdBase;
 };
@@ -329,12 +326,11 @@ struct SpecificId : public IdBase<SpecificId> {
   using IdBase::IdBase;
 };
 
-// The ID of a SpecificInterface, which is an interface and a specific pair.
+// The ID of a `SpecificInterface`, which is an interface and a specific pair.
 struct SpecificInterfaceId : public IdBase<SpecificInterfaceId> {
   using DiagnosticType = Diagnostics::TypeInfo<std::string>;
 
   static constexpr llvm::StringLiteral Label = "specific_interface";
-  using ValueType = SpecificInterface;
 
   using IdBase::IdBase;
 };
@@ -947,22 +943,6 @@ struct AnyRawId : public AnyIdBase {
   constexpr explicit AnyRawId() : AnyIdBase(AnyIdBase::NoneIndex) {}
   constexpr explicit AnyRawId(int32_t id) : AnyIdBase(id) {}
 };
-
-// A pair of an interface and a specific for that interface.
-struct SpecificInterface {
-  using DiagnosticType = Diagnostics::TypeInfo<std::string>;
-
-  InterfaceId interface_id;
-  SpecificId specific_id;
-
-  static const SpecificInterface None;
-
-  friend auto operator==(const SpecificInterface& lhs,
-                         const SpecificInterface& rhs) -> bool = default;
-};
-
-constexpr SpecificInterface SpecificInterface::None = {
-    .interface_id = InterfaceId::None, .specific_id = SpecificId::None};
 
 }  // namespace Carbon::SemIR
 
