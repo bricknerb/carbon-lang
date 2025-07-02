@@ -293,7 +293,7 @@ fn G(holds_to: HoldsType((RuntimeConvertTo, ))) {
 // CHECK:STDOUT:   %.loc41_19.3: ref %RuntimeConvertTo = temporary %.loc41_19.1, %.loc41_19.2
 // CHECK:STDOUT:   %.loc41_19.4: %RuntimeConvertTo = bind_value %.loc41_19.3
 // CHECK:STDOUT:   %F.specific_fn: <specific function> = specific_function %F.ref, @F(constants.%tuple, <error>) [concrete = <error>]
-// CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %F.specific_fn(%holds_to.ref) [concrete = <error>]
+// CHECK:STDOUT:   %F.call: init %empty_tuple.type = call %F.specific_fn(%holds_to.ref)
 // CHECK:STDOUT:   %impl.elem0.loc41_19.2: %.79d = impl_witness_access constants.%Destroy.impl_witness.3c9, element0 [concrete = constants.%Op.d2d]
 // CHECK:STDOUT:   %bound_method.loc41_19.2: <bound method> = bound_method %.loc41_19.1, %impl.elem0.loc41_19.2
 // CHECK:STDOUT:   %specific_fn.loc41: <specific function> = specific_function %impl.elem0.loc41_19.2, @Op.2(constants.%RuntimeConvertTo) [concrete = constants.%Op.specific_fn.373]
