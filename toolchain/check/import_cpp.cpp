@@ -697,10 +697,14 @@ static auto CreateFunctionParamsInsts(Context& context, SemIR::LocId loc_id,
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
     return std::nullopt;
   }
+
+  context.scope_stack().PushForDeclName();
   // TODO: Add support for implicit parameters.
   auto call_params_id = CalleePatternMatch(
       context, /*implicit_param_patterns_id=*/SemIR::InstBlockId::None,
       param_patterns_id, return_slot_pattern_id);
+  context.scope_stack().Pop();
+
   return {{.param_patterns_id = param_patterns_id,
            .return_slot_pattern_id = return_slot_pattern_id,
            .call_params_id = call_params_id}};
