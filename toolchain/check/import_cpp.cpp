@@ -53,12 +53,17 @@ static auto GenerateCppIncludesHeaderCode(
 }
 
 // Adds the name to the scope with the given `inst_id`, if the `inst_id` is not
-// `None`.
+// `None`. For `ErrorInst`, add the `decl` to `clang_decls` to make sure import
+// failure declarations are mapped.
 static auto AddNameToScope(Context& context, SemIR::NameScopeId scope_id,
-                           SemIR::NameId name_id, SemIR::InstId inst_id)
-    -> void {
+                           SemIR::NameId name_id, SemIR::InstId inst_id,
+                           clang::Decl* decl) -> void {
   if (inst_id.has_value()) {
     context.name_scopes().AddRequiredName(scope_id, name_id, inst_id);
+    if (inst_id == SemIR::ErrorInst::InstId) {
+      context.sem_ir().clang_decls().Add(
+          {.decl = decl, .inst_id = SemIR::ErrorInst::InstId});
+    }
   }
 }
 
@@ -543,7 +548,7 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
       record_inst_id = ImportCXXRecordDecl(
           context, loc_id, parent_name_scope_id, record_name_id, record_decl);
       AddNameToScope(context, parent_name_scope_id, record_name_id,
-                     record_inst_id);
+                     record_inst_id, record_decl);
     }
     SemIR::TypeInstId record_type_inst_id =
         context.types().GetAsTypeInstId(record_inst_id);
@@ -810,7 +815,7 @@ static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
     -> SemIR::InstId {
   SemIR::InstId inst_id =
       ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
-  AddNameToScope(context, scope_id, name_id, inst_id);
+  AddNameToScope(context, scope_id, name_id, inst_id, clang_decl);
   return inst_id;
 }
 
