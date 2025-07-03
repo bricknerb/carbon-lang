@@ -51,14 +51,18 @@ library "[[@TEST_NAME]]";
 import Cpp library "decl_value_param_type.h";
 
 fn F() {
-  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+7]]:11: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
-  // CHECK:STDERR:   var s : Cpp.S;
-  // CHECK:STDERR:           ^~~~~
-  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:11: note: in `Cpp` name lookup for `S` [InCppNameLookup]
-  // CHECK:STDERR:   var s : Cpp.S;
-  // CHECK:STDERR:           ^~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+11]]:10: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:          ^~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+8]]:10: note: in `Cpp` name lookup for `S` [InCppNameLookup]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:          ^~~~~
   // CHECK:STDERR:
-  var s : Cpp.S;
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:15: error: expected `=`; `let` declaration must have an initializer [ExpectedInitializerAfterLet]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:               ^
+  // CHECK:STDERR:
+  let s: Cpp.S;
   // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(s);
   // CHECK:STDERR:   ^~~~~~~
