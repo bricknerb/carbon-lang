@@ -177,7 +177,7 @@ struct O {
 
 auto foo(O::S) -> void;
 
-// --- todo_import_definition_in_struct_value_param_type.carbon
+// --- fail_todo_import_definition_in_struct_value_param_type.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -185,7 +185,62 @@ import Cpp library "definition_in_struct_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
+  // CHECK:STDERR: fail_todo_import_definition_in_struct_value_param_type.carbon:[[@LINE+14]]:3: error: semantics TODO: `Unsupported mapping of a C++ record to a type within a declaration context that is not the translation unit or a namespace` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_definition_in_struct_value_param_type.carbon:[[@LINE+11]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_definition_in_struct_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct O::S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_definition_in_struct_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo({});
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
   Cpp.foo({});
+  //@dump-sem-ir-end
+}
+
+// ============================================================================
+// Pass outer struct after passing inner struct
+// ============================================================================
+
+// --- inner_and_outer_value_param_type.h
+
+struct O {
+ public:
+  struct S {};
+};
+
+auto foo1(O::S) -> void;
+auto foo2(O) -> void;
+
+// --- fail_todo_import_inner_and_outer_value_param_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "inner_and_outer_value_param_type.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  // CHECK:STDERR: fail_todo_import_inner_and_outer_value_param_type.carbon:[[@LINE+14]]:3: error: semantics TODO: `Unsupported mapping of a C++ record to a type within a declaration context that is not the translation unit or a namespace` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_inner_and_outer_value_param_type.carbon:[[@LINE+11]]:3: note: in `Cpp` name lookup for `foo1` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_inner_and_outer_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct O::S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_inner_and_outer_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo1` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo1({});
+  Cpp.foo2({});
   //@dump-sem-ir-end
 }
 
@@ -702,35 +757,59 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- todo_import_definition_in_struct_value_param_type.carbon
+// CHECK:STDOUT: --- fail_todo_import_definition_in_struct_value_param_type.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc22: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_todo_import_inner_and_outer_value_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
-// CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
-// CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
-// CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
+// CHECK:STDOUT:   %O: type = class_type @O [concrete]
+// CHECK:STDOUT:   %foo2.type: type = fn_type @foo2 [concrete]
+// CHECK:STDOUT:   %foo2: %foo2.type = struct_value () [concrete]
+// CHECK:STDOUT:   %O.val: %O = struct_value () [concrete]
 // CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
 // CHECK:STDOUT:   %Op.type.bae: type = fn_type @Op.1 [concrete]
 // CHECK:STDOUT:   %T: type = bind_symbolic_name T, 0 [symbolic]
 // CHECK:STDOUT:   %Op.type.bc9: type = fn_type @Op.2, @impl(%T) [symbolic]
 // CHECK:STDOUT:   %Op.46f: %Op.type.bc9 = struct_value () [symbolic]
-// CHECK:STDOUT:   %Destroy.impl_witness.e5c: <witness> = impl_witness imports.%Destroy.impl_witness_table, @impl(%S) [concrete]
-// CHECK:STDOUT:   %Op.type.625: type = fn_type @Op.2, @impl(%S) [concrete]
-// CHECK:STDOUT:   %Op.c41: %Op.type.625 = struct_value () [concrete]
-// CHECK:STDOUT:   %ptr.c84: type = ptr_type %S [concrete]
-// CHECK:STDOUT:   %Destroy.facet: %Destroy.type = facet_value %S, (%Destroy.impl_witness.e5c) [concrete]
-// CHECK:STDOUT:   %.049: type = fn_type_with_self_type %Op.type.bae, %Destroy.facet [concrete]
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.c41, @Op.2(%S) [concrete]
+// CHECK:STDOUT:   %Destroy.impl_witness.77f: <witness> = impl_witness imports.%Destroy.impl_witness_table, @impl(%O) [concrete]
+// CHECK:STDOUT:   %Op.type.1b8: type = fn_type @Op.2, @impl(%O) [concrete]
+// CHECK:STDOUT:   %Op.2df: %Op.type.1b8 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.820: type = ptr_type %O [concrete]
+// CHECK:STDOUT:   %Destroy.facet: %Destroy.type = facet_value %O, (%Destroy.impl_witness.77f) [concrete]
+// CHECK:STDOUT:   %.855: type = fn_type_with_self_type %Op.type.bae, %Destroy.facet [concrete]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.2df, @Op.2(%O) [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = %foo.decl
+// CHECK:STDOUT:     .foo1 = <error>
+// CHECK:STDOUT:     .foo2 = %foo2.decl
+// CHECK:STDOUT:     .O = %O.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
+// CHECK:STDOUT:   %O.decl: type = class_decl @O [concrete = constants.%O] {} {}
+// CHECK:STDOUT:   %foo2.decl: %foo2.type = fn_decl @foo2 [concrete = constants.%foo2] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
@@ -741,21 +820,24 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, imports.%foo.decl [concrete = constants.%foo]
-// CHECK:STDOUT:   %.loc8_12.1: %empty_struct_type = struct_literal ()
-// CHECK:STDOUT:   %.loc8_12.2: ref %S = temporary_storage
-// CHECK:STDOUT:   %.loc8_12.3: init %S = class_init (), %.loc8_12.2 [concrete = constants.%S.val]
-// CHECK:STDOUT:   %.loc8_12.4: ref %S = temporary %.loc8_12.2, %.loc8_12.3
-// CHECK:STDOUT:   %.loc8_12.5: ref %S = converted %.loc8_12.1, %.loc8_12.4
-// CHECK:STDOUT:   %.loc8_12.6: %S = bind_value %.loc8_12.5
-// CHECK:STDOUT:   %foo.call: init %empty_tuple.type = call %foo.ref(%.loc8_12.6)
-// CHECK:STDOUT:   %impl.elem0: %.049 = impl_witness_access constants.%Destroy.impl_witness.e5c, element0 [concrete = constants.%Op.c41]
-// CHECK:STDOUT:   %bound_method.loc8_12.1: <bound method> = bound_method %.loc8_12.2, %impl.elem0
-// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(constants.%S) [concrete = constants.%Op.specific_fn]
-// CHECK:STDOUT:   %bound_method.loc8_12.2: <bound method> = bound_method %.loc8_12.2, %specific_fn
-// CHECK:STDOUT:   %addr: %ptr.c84 = addr_of %.loc8_12.2
-// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc8_12.2(%addr)
+// CHECK:STDOUT:   %Cpp.ref.loc22: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo1.ref: <error> = name_ref foo1, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc22: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   %Cpp.ref.loc23: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo2.ref: %foo2.type = name_ref foo2, imports.%foo2.decl [concrete = constants.%foo2]
+// CHECK:STDOUT:   %.loc23_13.1: %empty_struct_type = struct_literal ()
+// CHECK:STDOUT:   %.loc23_13.2: ref %O = temporary_storage
+// CHECK:STDOUT:   %.loc23_13.3: init %O = class_init (), %.loc23_13.2 [concrete = constants.%O.val]
+// CHECK:STDOUT:   %.loc23_13.4: ref %O = temporary %.loc23_13.2, %.loc23_13.3
+// CHECK:STDOUT:   %.loc23_13.5: ref %O = converted %.loc23_13.1, %.loc23_13.4
+// CHECK:STDOUT:   %.loc23_13.6: %O = bind_value %.loc23_13.5
+// CHECK:STDOUT:   %foo2.call: init %empty_tuple.type = call %foo2.ref(%.loc23_13.6)
+// CHECK:STDOUT:   %impl.elem0: %.855 = impl_witness_access constants.%Destroy.impl_witness.77f, element0 [concrete = constants.%Op.2df]
+// CHECK:STDOUT:   %bound_method.loc23_13.1: <bound method> = bound_method %.loc23_13.2, %impl.elem0
+// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Op.2(constants.%O) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc23_13.2: <bound method> = bound_method %.loc23_13.2, %specific_fn
+// CHECK:STDOUT:   %addr: %ptr.820 = addr_of %.loc23_13.2
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc23_13.2(%addr)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

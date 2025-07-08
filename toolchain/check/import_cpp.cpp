@@ -534,8 +534,17 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
         record_clang_decl_id.has_value()) {
       record_inst_id = clang_decls.Get(record_clang_decl_id).inst_id;
     } else {
-      auto parent_inst_id =
-          AsCarbonNamespace(context, record_decl->getDeclContext());
+      clang::DeclContext* decl_context = record_decl->getDeclContext();
+      if (!clang::isa<clang::TranslationUnitDecl>(decl_context) &&
+          !clang::isa<clang::NamespaceDecl>(decl_context)) {
+        context.TODO(loc_id,
+                     "Unsupported mapping of a C++ record to a type within a "
+                     "declaration context that is not the translation unit or "
+                     "a namespace");
+        return {.inst_id = SemIR::ErrorInst::TypeInstId,
+                .type_id = SemIR::ErrorInst::TypeId};
+      }
+      auto parent_inst_id = AsCarbonNamespace(context, decl_context);
       auto parent_name_scope_id =
           context.insts().GetAs<SemIR::Namespace>(parent_inst_id).name_scope_id;
       SemIR::NameId record_name_id =
