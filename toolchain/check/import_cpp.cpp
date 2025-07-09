@@ -13,6 +13,7 @@
 #include "clang/Frontend/TextDiagnostic.h"
 #include "clang/Sema/Lookup.h"
 #include "clang/Tooling/Tooling.h"
+#include "common/ostream.h"
 #include "common/raw_string_ostream.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include "llvm/ADT/StringRef.h"
@@ -44,6 +45,15 @@ static auto GenerateCppIncludesHeaderCode(
   std::string code;
   llvm::raw_string_ostream code_stream(code);
   for (const Parse::Tree::PackagingNames& import : imports) {
+    // Add a line marker directive pointing at the location of the `import Cpp`
+    // declaration in the Carbon source file. This will cause Clang's
+    // diagnostics machinery to track and report the location in Carbon code
+    // where the import was written.
+    auto token = context.parse_tree().node_token(import.node_id);
+    code_stream << "# " << context.tokens().GetLineNumber(token) << " \""
+                << FormatEscaped(context.tokens().source().filename())
+                << "\"\n";
+
     code_stream << "#include \""
                 << FormatEscaped(
                        context.string_literal_values().Get(import.library_id))
@@ -108,6 +118,7 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
     // TODO: Consider allowing setting `DiagnosticOptions` or use
     // `ASTUnit::getDiagnostics().getLangOptions().getDiagnosticOptions()`.
     clang::DiagnosticOptions diagnostic_options;
+    diagnostic_options.ShowPresumedLoc = true;
     clang::TextDiagnostic text_diagnostic(diagnostics_stream, lang_options,
                                           diagnostic_options);
     text_diagnostic.emitDiagnostic(
@@ -139,8 +150,6 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
         case clang::DiagnosticsEngine::Warning:
         case clang::DiagnosticsEngine::Error:
         case clang::DiagnosticsEngine::Fatal: {
-          // TODO: Parse the message to select the relevant C++ import and add
-          // that information to the location.
           CARBON_DIAGNOSTIC(CppInteropParseWarning, Warning, "{0}",
                             std::string);
           CARBON_DIAGNOSTIC(CppInteropParseError, Error, "{0}", std::string);
