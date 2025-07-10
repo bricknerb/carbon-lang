@@ -510,15 +510,17 @@ static auto AsCarbonNamespace(Context& context,
     auto parent_inst_id = clang_decls.Get(parent_decl_id).inst_id;
     auto parent_namespace =
         context.insts().GetAs<SemIR::Namespace>(parent_inst_id);
+    SemIR::NameId namespace_name_id = AddIdentifierName(
+        context, llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName());
     namespace_inst_id = ImportNamespaceDecl(
-        context, parent_namespace.name_scope_id,
-        AddIdentifierName(
-            context, llvm::dyn_cast<clang::NamedDecl>(decl_context)->getName()),
+        context, parent_namespace.name_scope_id, namespace_name_id,
         clang::dyn_cast<clang::NamespaceDecl>(decl_context));
     parent_decl_id = clang_decls.Add({
         .decl = clang::dyn_cast<clang::Decl>(decl_context),
         .inst_id = namespace_inst_id,
     });
+    AddNameToScope(context, parent_namespace.name_scope_id, namespace_name_id,
+                   namespace_inst_id);
   } while (!decl_contexts.empty());
 
   return namespace_inst_id;

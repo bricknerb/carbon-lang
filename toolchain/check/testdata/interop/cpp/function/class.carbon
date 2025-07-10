@@ -202,7 +202,7 @@ namespace N { class C {}; }
 
 auto foo(N::C) -> void;
 
-// --- fail_todo_import_definition_in_namespace_value_param_type.carbon
+// --- import_definition_in_namespace_value_param_type.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -212,13 +212,6 @@ fn F() {
   //@dump-sem-ir-begin
   Cpp.foo({});
   // Check that the parameter type was imported correctly.
-  // CHECK:STDERR: fail_todo_import_definition_in_namespace_value_param_type.carbon:[[@LINE+7]]:10: error: semantics TODO: `Unsupported: Trying to import a Clang declaration that was already imported` [SemanticsTodo]
-  // CHECK:STDERR:   var x: Cpp.N.C;
-  // CHECK:STDERR:          ^~~~~
-  // CHECK:STDERR: fail_todo_import_definition_in_namespace_value_param_type.carbon:[[@LINE+4]]:10: note: in `Cpp` name lookup for `N` [InCppNameLookup]
-  // CHECK:STDERR:   var x: Cpp.N.C;
-  // CHECK:STDERR:          ^~~~~
-  // CHECK:STDERR:
   var x: Cpp.N.C;
   //@dump-sem-ir-end
 }
@@ -633,12 +626,13 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_definition_in_namespace_value_param_type.carbon
+// CHECK:STDOUT: --- import_definition_in_namespace_value_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
+// CHECK:STDOUT:   %pattern_type.69f: type = pattern_type %C [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %C.val: %C = struct_value () [concrete]
@@ -659,9 +653,14 @@ fn F() {
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
 // CHECK:STDOUT:     .foo = %foo.decl
-// CHECK:STDOUT:     .N = <error>
+// CHECK:STDOUT:     .N = %N
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %N: <namespace> = namespace [concrete] {
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -683,19 +682,28 @@ fn F() {
 // CHECK:STDOUT:   %.loc8_12.6: %C = bind_value %.loc8_12.5
 // CHECK:STDOUT:   %foo.call: init %empty_tuple.type = call %foo.ref(%.loc8_12.6)
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %x.patt: <error> = binding_pattern x [concrete]
-// CHECK:STDOUT:     %x.var_patt: <error> = var_pattern %x.patt [concrete]
+// CHECK:STDOUT:     %x.patt: %pattern_type.69f = binding_pattern x [concrete]
+// CHECK:STDOUT:     %x.var_patt: %pattern_type.69f = var_pattern %x.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %x.var: ref <error> = var %x.var_patt [concrete = <error>]
-// CHECK:STDOUT:   <elided>
-// CHECK:STDOUT:   %x: <error> = bind_name x, <error> [concrete = <error>]
-// CHECK:STDOUT:   %impl.elem0.loc17: <error> = impl_witness_access <error>, element0 [concrete = <error>]
+// CHECK:STDOUT:   %x.var: ref %C = var %x.var_patt
+// CHECK:STDOUT:   %.loc10: type = splice_block %C.ref [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc10: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %N.ref: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
+// CHECK:STDOUT:     %C.ref: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %x: ref %C = bind_name x, %x.var
+// CHECK:STDOUT:   %impl.elem0.loc10: %.268 = impl_witness_access constants.%Destroy.impl_witness.86f, element0 [concrete = constants.%Op.dbb]
+// CHECK:STDOUT:   %bound_method.loc10_3.1: <bound method> = bound_method %x.var, %impl.elem0.loc10
+// CHECK:STDOUT:   %specific_fn.loc10: <specific function> = specific_function %impl.elem0.loc10, @Op.2(constants.%C) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc10_3.2: <bound method> = bound_method %x.var, %specific_fn.loc10
+// CHECK:STDOUT:   %addr.loc10: %ptr.838 = addr_of %x.var
+// CHECK:STDOUT:   %no_op.loc10: init %empty_tuple.type = call %bound_method.loc10_3.2(%addr.loc10)
 // CHECK:STDOUT:   %impl.elem0.loc8: %.268 = impl_witness_access constants.%Destroy.impl_witness.86f, element0 [concrete = constants.%Op.dbb]
 // CHECK:STDOUT:   %bound_method.loc8_12.1: <bound method> = bound_method %.loc8_12.2, %impl.elem0.loc8
-// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0.loc8, @Op.2(constants.%C) [concrete = constants.%Op.specific_fn]
-// CHECK:STDOUT:   %bound_method.loc8_12.2: <bound method> = bound_method %.loc8_12.2, %specific_fn
-// CHECK:STDOUT:   %addr: %ptr.838 = addr_of %.loc8_12.2
-// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc8_12.2(%addr)
+// CHECK:STDOUT:   %specific_fn.loc8: <specific function> = specific_function %impl.elem0.loc8, @Op.2(constants.%C) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc8_12.2: <bound method> = bound_method %.loc8_12.2, %specific_fn.loc8
+// CHECK:STDOUT:   %addr.loc8: %ptr.838 = addr_of %.loc8_12.2
+// CHECK:STDOUT:   %no_op.loc8: init %empty_tuple.type = call %bound_method.loc8_12.2(%addr.loc8)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -729,8 +737,14 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %N1: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .foo = %foo.decl
+// CHECK:STDOUT:     .N2 = %N2
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %N2: <namespace> = namespace [concrete] {
+// CHECK:STDOUT:     .C = %C.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
