@@ -29,7 +29,7 @@ import Cpp library "decl_value_param_type.h";
 fn F() {
   //@dump-sem-ir-begin
   // TODO: This should fail on the fact `U` is declared and not defined.
-  // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -38,6 +38,71 @@ fn F() {
   // CHECK:STDERR:
   Cpp.foo({});
   //@dump-sem-ir-end
+}
+
+// --- fail_todo_import_decl_value_param_type_previously_imported.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "decl_value_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+11]]:10: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
+  // CHECK:STDERR:   let u: Cpp.U;
+  // CHECK:STDERR:          ^~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+8]]:10: note: in `Cpp` name lookup for `U` [InCppNameLookup]
+  // CHECK:STDERR:   let u: Cpp.U;
+  // CHECK:STDERR:          ^~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:15: error: expected `=`; `let` declaration must have an initializer [ExpectedInitializerAfterLet]
+  // CHECK:STDERR:   let u: Cpp.U;
+  // CHECK:STDERR:               ^
+  // CHECK:STDERR:
+  let u: Cpp.U;
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo(u);
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo(u);
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo(u);
+}
+
+// ============================================================================
+// Forward-declared union as parameter type imported twice
+// ============================================================================
+
+// --- double_decl_value_param_type.h
+
+union U;
+
+auto foo1(U) -> void;
+auto foo2(U) -> void;
+
+// --- fail_todo_import_double_decl_value_param_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "double_decl_value_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo1` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo1({});
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo2({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo2` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo2({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo2({});
 }
 
 // ============================================================================
@@ -58,7 +123,7 @@ import Cpp library "definition_no_data_members_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_no_data_members_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_no_data_members_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_no_data_members_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -91,7 +156,7 @@ import Cpp library "definition_single_data_member_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_single_data_member_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_single_data_member_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_single_data_member_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -126,7 +191,7 @@ import Cpp library "definition_multiple_data_members_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_multiple_data_members_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_multiple_data_members_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_multiple_data_members_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -155,7 +220,7 @@ import Cpp library "definition_in_namespace_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_in_namespace_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union N::U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_in_namespace_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: N::U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_in_namespace_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -185,7 +250,7 @@ import Cpp library "definition_in_relative_namespace_value_param_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_in_relative_namespace_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union N1::N2::U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_in_relative_namespace_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: N2::U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.N1.foo({});
   // CHECK:STDERR:   ^~~~~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_in_relative_namespace_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -290,7 +355,7 @@ import Cpp library "definition_with_static_method.h";
 fn F() {
   //@dump-sem-ir-begin
   Cpp.U.bar();
-  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_before.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_before.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_before.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -309,7 +374,7 @@ import Cpp library "definition_with_static_method.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_after.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_after.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_and_static_method_call_after.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -329,7 +394,7 @@ fn F() {
 
 union U;
 
-auto foo(U*) -> void;
+auto foo(U* _Nonnull) -> void;
 
 // --- fail_todo_import_decl_pointer_param_type.carbon
 
@@ -346,7 +411,7 @@ import Cpp library "decl_pointer_param_type.h";
 // CHECK:STDERR:
 fn F(u: Cpp.U*) {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U * _Nonnull` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(u);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -365,7 +430,7 @@ fn F(u: Cpp.U*) {
 
 union U {};
 
-auto foo(U*) -> void;
+auto foo(U* _Nonnull) -> void;
 
 // --- fail_todo_import_definition_pointer_param_type.carbon
 
@@ -375,7 +440,7 @@ import Cpp library "definition_pointer_param_type.h";
 
 fn F(u: Cpp.U*) {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: union U *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: U * _Nonnull` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(u);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_pointer_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -404,7 +469,7 @@ import Cpp library "decl_value_return_type.h";
 
 fn F() {
   // TODO: This should fail on the fact `U` is declared and not defined.
-  // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -432,7 +497,7 @@ import Cpp library "definition_value_return_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: union U` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: U` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_value_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -461,7 +526,14 @@ import Cpp library "decl_pointer_return_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: union U *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+14]]:3: error: semantics TODO: `Unsupported: nullable pointer: U *` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+11]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: U *` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -480,7 +552,7 @@ fn F() {
 
 union U {};
 
-auto foo() -> U*;
+auto foo() -> U* _Nonnull;
 
 // --- fail_todo_import_definition_pointer_return_type.carbon
 
@@ -490,7 +562,7 @@ import Cpp library "definition_pointer_return_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: union U *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_definition_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: U * _Nonnull` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_definition_pointer_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]

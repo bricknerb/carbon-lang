@@ -34,7 +34,7 @@ fn F() {
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
-  // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: S` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo({});
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -42,6 +42,78 @@ fn F() {
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
   Cpp.foo({});
+}
+
+// --- fail_todo_import_decl_value_param_type_previously_imported.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "decl_value_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+11]]:10: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:          ^~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+8]]:10: note: in `Cpp` name lookup for `S` [InCppNameLookup]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:          ^~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:15: error: expected `=`; `let` declaration must have an initializer [ExpectedInitializerAfterLet]
+  // CHECK:STDERR:   let s: Cpp.S;
+  // CHECK:STDERR:               ^
+  // CHECK:STDERR:
+  let s: Cpp.S;
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo(s);
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_decl_value_param_type_previously_imported.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo(s);
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo(s);
+}
+
+// ============================================================================
+// Forward-declared struct as parameter type imported twice
+// ============================================================================
+
+// --- double_decl_value_param_type.h
+
+struct S;
+
+auto foo1(S) -> void;
+auto foo2(S) -> void;
+
+// --- fail_todo_import_double_decl_value_param_type.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "double_decl_value_param_type.h";
+
+fn F() {
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+14]]:3: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+11]]:3: note: in `Cpp` name lookup for `foo1` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo1` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo1({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo1({});
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: S` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo2({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR: fail_todo_import_double_decl_value_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo2` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo2({});
+  // CHECK:STDERR:   ^~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo2({});
 }
 
 // ============================================================================
@@ -290,7 +362,7 @@ fn F() {
 
 struct S;
 
-auto foo(S*) -> void;
+auto foo(S* _Nonnull) -> void;
 
 // --- fail_todo_import_decl_pointer_param_type.carbon
 
@@ -307,7 +379,7 @@ import Cpp library "decl_pointer_param_type.h";
 // CHECK:STDERR:
 fn F(s: Cpp.S*) {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: S * _Nonnull` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo(s);
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_pointer_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -326,9 +398,9 @@ fn F(s: Cpp.S*) {
 
 struct S {};
 
-auto foo(S*) -> void;
+auto foo(S* _Nonnull) -> void;
 
-// --- fail_todo_import_definition_pointer_param_type.carbon
+// --- import_definition_pointer_param_type.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -336,13 +408,6 @@ import Cpp library "definition_pointer_param_type.h";
 
 fn F(s: Cpp.S*) {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_pointer_param_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: parameter type: struct S *` [SemanticsTodo]
-  // CHECK:STDERR:   Cpp.foo(s);
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_definition_pointer_param_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   Cpp.foo(s);
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR:
   Cpp.foo(s);
   //@dump-sem-ir-end
 }
@@ -371,7 +436,7 @@ fn F() {
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR:
-  // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct S` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: S` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_value_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -411,7 +476,7 @@ fn F() {
 
 struct S;
 
-auto foo() -> S*;
+auto foo() -> S* _Nonnull;
 
 // --- fail_todo_import_decl_pointer_return_type.carbon
 
@@ -421,7 +486,14 @@ import Cpp library "decl_pointer_return_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct S *` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+14]]:3: error: semantics TODO: `Unsupported: Record declarations without a definition` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+11]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo();
+  // CHECK:STDERR:   ^~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: S * _Nonnull` [SemanticsTodo]
   // CHECK:STDERR:   Cpp.foo();
   // CHECK:STDERR:   ^~~~~~~
   // CHECK:STDERR: fail_todo_import_decl_pointer_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
@@ -440,9 +512,9 @@ fn F() {
 
 struct S {};
 
-auto foo() -> S*;
+auto foo() -> S* _Nonnull;
 
-// --- fail_todo_import_definition_pointer_return_type.carbon
+// --- import_definition_pointer_return_type.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -450,13 +522,6 @@ import Cpp library "definition_pointer_return_type.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_definition_pointer_return_type.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: struct S *` [SemanticsTodo]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_definition_pointer_return_type.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   Cpp.foo();
-  // CHECK:STDERR:   ^~~~~~~
-  // CHECK:STDERR:
   Cpp.foo();
   //@dump-sem-ir-end
 }
@@ -995,27 +1060,36 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_definition_pointer_param_type.carbon
+// CHECK:STDOUT: --- import_definition_pointer_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %S [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
+// CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
 // CHECK:STDOUT:     .S = %S.decl
-// CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     .foo = %foo.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F(%s.param: %ptr) {
 // CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %Cpp.ref.loc15: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, imports.%foo.decl [concrete = constants.%foo]
 // CHECK:STDOUT:   %s.ref: %ptr = name_ref s, %s
+// CHECK:STDOUT:   %foo.call: init %empty_tuple.type = call %foo.ref(%s.ref)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -1080,6 +1154,7 @@ fn F() {
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
 // CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     .S = <error>
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
@@ -1091,22 +1166,34 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_definition_pointer_return_type.carbon
+// CHECK:STDOUT: --- import_definition_pointer_return_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %S: type = class_type @S [concrete]
+// CHECK:STDOUT:   %ptr: type = ptr_type %S [concrete]
+// CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
+// CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .foo = <error>
+// CHECK:STDOUT:     .foo = %foo.decl
+// CHECK:STDOUT:     .S = %S.decl
 // CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
+// CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
+// CHECK:STDOUT:   %foo.ref: %foo.type = name_ref foo, imports.%foo.decl [concrete = constants.%foo]
+// CHECK:STDOUT:   %foo.call: init %ptr = call %foo.ref()
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
