@@ -1011,8 +1011,15 @@ static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
                                     SemIR::NameId name_id,
                                     clang::NamedDecl* clang_decl)
     -> SemIR::InstId {
-  SemIR::InstId inst_id =
-      ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
+  SemIR::InstId inst_id = SemIR::InstId::None;
+  if (context.sem_ir().clang_decls().Lookup(clang_decl).has_value()) {
+    context.TODO(loc_id,
+                 "Unsupported: Trying to import a Clang declaration that was "
+                 "already imported");
+    inst_id = SemIR::ErrorInst::InstId;
+  } else {
+    inst_id = ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
+  }
   AddNameToScope(context, scope_id, name_id, inst_id);
   return inst_id;
 }
