@@ -337,6 +337,11 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %J.facet.67f: %J.type = facet_value %FDifferentReturnType, (%J.impl_witness.bc1) [concrete]
 // CHECK:STDOUT:   %F.type.d3b58f.2: type = fn_type @F.19 [concrete]
 // CHECK:STDOUT:   %F.be86c9.2: %F.type.d3b58f.2 = struct_value () [concrete]
+// CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
+// CHECK:STDOUT:   %Op.type.3d3: type = fn_type @Op.2, @impl.49c(%FDifferentReturnType) [concrete]
+// CHECK:STDOUT:   %Op.ddd: %Op.type.3d3 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.954: type = ptr_type %FDifferentReturnType [concrete]
+// CHECK:STDOUT:   %Op.specific_fn.b4b: <specific function> = specific_function %Op.ddd, @Op.2(%FDifferentReturnType) [concrete]
 // CHECK:STDOUT:   %SelfNested.type: type = facet_type <@SelfNested> [concrete]
 // CHECK:STDOUT:   %Self.2ff: %SelfNested.type = bind_symbolic_name Self, 0 [symbolic]
 // CHECK:STDOUT:   %Self.as_type.e1e: type = facet_access_type %Self.2ff [symbolic]
@@ -372,6 +377,10 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %pattern_type.a5c: type = pattern_type %tuple.type.9c9 [concrete]
 // CHECK:STDOUT:   %F.type.f90165.2: type = fn_type @F.22 [concrete]
 // CHECK:STDOUT:   %F.fa8d04.2: %F.type.f90165.2 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.f40: type = ptr_type %array_type.a41 [concrete]
+// CHECK:STDOUT:   %Op.type.ba3: type = fn_type @Op.2, @impl.49c(%array_type.a41) [concrete]
+// CHECK:STDOUT:   %Op.d25: %Op.type.ba3 = struct_value () [concrete]
+// CHECK:STDOUT:   %Op.specific_fn.235: <specific function> = specific_function %Op.d25, @Op.2(%array_type.a41) [concrete]
 // CHECK:STDOUT:   %SelfNestedBadReturnType: type = class_type @SelfNestedBadReturnType [concrete]
 // CHECK:STDOUT:   %SelfNested.impl_witness.d5e: <witness> = impl_witness @SelfNestedBadReturnType.%SelfNested.impl_witness_table [concrete]
 // CHECK:STDOUT:   %ptr.612: type = ptr_type %SelfNestedBadReturnType [concrete]
@@ -391,12 +400,14 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %Core: <namespace> = namespace file.%Core.import, [concrete] {
 // CHECK:STDOUT:     .Bool = %Core.Bool
 // CHECK:STDOUT:     .ImplicitAs = %Core.ImplicitAs
+// CHECK:STDOUT:     .Destroy = %Core.Destroy
 // CHECK:STDOUT:     .Int = %Core.Int
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Bool: %Bool.type = import_ref Core//prelude/parts/bool, Bool, loaded [concrete = constants.%Bool]
 // CHECK:STDOUT:   %Core.ImplicitAs: %ImplicitAs.type.cc7 = import_ref Core//prelude/parts/as, ImplicitAs, loaded [concrete = constants.%ImplicitAs.generic]
+// CHECK:STDOUT:   %Core.Destroy: type = import_ref Core//prelude/parts/destroy, Destroy, loaded [concrete = constants.%Destroy.type]
 // CHECK:STDOUT:   %Core.Int: %Int.type = import_ref Core//prelude/parts/int, Int, loaded [concrete = constants.%Int.generic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -1305,6 +1316,11 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %.loc200_38.1: ref %FDifferentReturnType = temporary_storage
 // CHECK:STDOUT:   %F.call: init %FDifferentReturnType = call %F.bound(%self.ref, %b.ref) to %.loc200_38.1
 // CHECK:STDOUT:   %.loc200_38.2: bool = converted %F.call, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc200_38.1, constants.%Op.ddd
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.ddd, @Op.2(constants.%FDifferentReturnType) [concrete = constants.%Op.specific_fn.b4b]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc200_38.1, %Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.954 = addr_of %.loc200_38.1
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -1334,6 +1350,11 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %.loc211_9.1: %SelfNestedBadParam = struct_access %tuple.elem1, element0
 // CHECK:STDOUT:   %.loc211_9.2: %i32 = converted %.loc211_9.1, <error> [concrete = <error>]
 // CHECK:STDOUT:   %F.call: init %array_type.a41 = call %F.ref(<error>) to %.loc211_41
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc211_41, constants.%Op.d25
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.d25, @Op.2(constants.%array_type.a41) [concrete = constants.%Op.specific_fn.235]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc211_41, %Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.f40 = addr_of %.loc211_41
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return %F.call to %return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -1347,6 +1368,11 @@ class SelfNestedBadReturnType {
 // CHECK:STDOUT:   %.loc239_112.1: ref %array_type.a41 = temporary_storage
 // CHECK:STDOUT:   %F.call: init %array_type.a41 = call %F.ref(%x.ref) to %.loc239_112.1
 // CHECK:STDOUT:   %.loc239_112.2: %array_type.126 = converted %F.call, <error> [concrete = <error>]
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc239_112.1, constants.%Op.d25
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.d25, @Op.2(constants.%array_type.a41) [concrete = constants.%Op.specific_fn.235]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc239_112.1, %Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.f40 = addr_of %.loc239_112.1
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return <error> to %return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

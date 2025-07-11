@@ -49,6 +49,7 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %Int.type: type = generic_class_type @Int [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %Int.generic: %Int.type = struct_value () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
@@ -76,6 +77,11 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT:   %Convert.bound.ab5: <bound method> = bound_method %int_1.5b8, %Convert.956 [concrete]
 // CHECK:STDOUT:   %bound_method.9a1: <bound method> = bound_method %int_1.5b8, %Convert.specific_fn [concrete]
 // CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
+// CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
+// CHECK:STDOUT:   %Op.type.a17: type = fn_type @Op.3, @impl.49c(%i32) [concrete]
+// CHECK:STDOUT:   %Op.e6a: %Op.type.a17 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.235: type = ptr_type %i32 [concrete]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.e6a, @Op.3(%i32) [concrete]
 // CHECK:STDOUT:   %DifferentScopes.type: type = fn_type @DifferentScopes [concrete]
 // CHECK:STDOUT:   %DifferentScopes: %DifferentScopes.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -84,6 +90,7 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT:   %Core: <namespace> = namespace file.%Core.import, [concrete] {
 // CHECK:STDOUT:     .Int = %Core.Int
 // CHECK:STDOUT:     .ImplicitAs = %Core.ImplicitAs
+// CHECK:STDOUT:     .Destroy = %Core.Destroy
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
@@ -91,6 +98,7 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT:   %Core.ImplicitAs: %ImplicitAs.type.cc7 = import_ref Core//prelude/parts/as, ImplicitAs, loaded [concrete = constants.%ImplicitAs.generic]
 // CHECK:STDOUT:   %Core.import_ref.a5b: @impl.4f9.%Convert.type (%Convert.type.0f9) = import_ref Core//prelude/parts/int, loc16_39, loaded [symbolic = @impl.4f9.%Convert (constants.%Convert.f06)]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.a2f = impl_witness_table (%Core.import_ref.a5b), @impl.4f9 [concrete]
+// CHECK:STDOUT:   %Core.Destroy: type = import_ref Core//prelude/parts/destroy, Destroy, loaded [concrete = constants.%Destroy.type]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -173,6 +181,16 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT:   %int.convert_checked.loc27: init %i32 = call %bound_method.loc27_11.2(%int_0.loc27) [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %.loc27_11.1: %i32 = value_of_initializer %int.convert_checked.loc27 [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %.loc27_11.2: %i32 = converted %int_0.loc27, %.loc27_11.1 [concrete = constants.%int_0.6a9]
+// CHECK:STDOUT:   %Op.bound.loc25: <bound method> = bound_method %w.var, constants.%Op.e6a
+// CHECK:STDOUT:   %Op.specific_fn.1: <specific function> = specific_function constants.%Op.e6a, @Op.3(constants.%i32) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc25_14.3: <bound method> = bound_method %w.var, %Op.specific_fn.1
+// CHECK:STDOUT:   %addr.loc25: %ptr.235 = addr_of %w.var
+// CHECK:STDOUT:   %no_op.loc25: init %empty_tuple.type = call %bound_method.loc25_14.3(%addr.loc25)
+// CHECK:STDOUT:   %Op.bound.loc17: <bound method> = bound_method %v.var, constants.%Op.e6a
+// CHECK:STDOUT:   %Op.specific_fn.2: <specific function> = specific_function constants.%Op.e6a, @Op.3(constants.%i32) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc17_14.3: <bound method> = bound_method %v.var, %Op.specific_fn.2
+// CHECK:STDOUT:   %addr.loc17: %ptr.235 = addr_of %v.var
+// CHECK:STDOUT:   %no_op.loc17: init %empty_tuple.type = call %bound_method.loc17_14.3(%addr.loc17)
 // CHECK:STDOUT:   return %.loc27_11.2
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -236,6 +254,16 @@ fn DifferentScopes() -> i32 {
 // CHECK:STDOUT:   %int.convert_checked.loc44: init %i32 = call %bound_method.loc44_11.2(%int_0.loc44) [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %.loc44_11.1: %i32 = value_of_initializer %int.convert_checked.loc44 [concrete = constants.%int_0.6a9]
 // CHECK:STDOUT:   %.loc44_11.2: %i32 = converted %int_0.loc44, %.loc44_11.1 [concrete = constants.%int_0.6a9]
+// CHECK:STDOUT:   %Op.bound.loc41: <bound method> = bound_method %w.var, constants.%Op.e6a
+// CHECK:STDOUT:   %Op.specific_fn.1: <specific function> = specific_function constants.%Op.e6a, @Op.3(constants.%i32) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc41_16.3: <bound method> = bound_method %w.var, %Op.specific_fn.1
+// CHECK:STDOUT:   %addr.loc41: %ptr.235 = addr_of %w.var
+// CHECK:STDOUT:   %no_op.loc41: init %empty_tuple.type = call %bound_method.loc41_16.3(%addr.loc41)
+// CHECK:STDOUT:   %Op.bound.loc32: <bound method> = bound_method %v.var, constants.%Op.e6a
+// CHECK:STDOUT:   %Op.specific_fn.2: <specific function> = specific_function constants.%Op.e6a, @Op.3(constants.%i32) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc32_14.3: <bound method> = bound_method %v.var, %Op.specific_fn.2
+// CHECK:STDOUT:   %addr.loc32: %ptr.235 = addr_of %v.var
+// CHECK:STDOUT:   %no_op.loc32: init %empty_tuple.type = call %bound_method.loc32_14.3(%addr.loc32)
 // CHECK:STDOUT:   return %.loc44_11.2
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

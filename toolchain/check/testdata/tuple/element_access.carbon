@@ -348,11 +348,15 @@ var b: i32 = a.({.index = 2}.index);
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %tuple.type.a1c: type = tuple_type (%i32) [concrete]
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
 // CHECK:STDOUT:   %int_0.5c6: Core.IntLiteral = int_value 0 [concrete]
+// CHECK:STDOUT:   %Op.type.438: type = fn_type @Op.3, @impl.49c(%tuple.type.a1c) [concrete]
+// CHECK:STDOUT:   %Op.c8e: %Op.type.438 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.0b7: type = ptr_type %tuple.type.a1c [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -367,6 +371,11 @@ var b: i32 = a.({.index = 2}.index);
 // CHECK:STDOUT:   %.loc7_12.2: ref %tuple.type.a1c = temporary %.loc7_12.1, %F.call
 // CHECK:STDOUT:   %tuple.elem0: ref %i32 = tuple_access %.loc7_12.2, element0
 // CHECK:STDOUT:   %.loc7_13: %i32 = bind_value %tuple.elem0
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc7_12.1, constants.%Op.c8e
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc7_12.1, %Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.0b7 = addr_of %.loc7_12.1
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return %.loc7_13
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

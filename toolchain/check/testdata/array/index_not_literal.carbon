@@ -50,11 +50,13 @@ fn F(a: array({}, 3)) -> {} {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %int_3.1ba: Core.IntLiteral = int_value 3 [concrete]
 // CHECK:STDOUT:   %array_type: type = array_type %int_3.1ba, %i32 [concrete]
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.f01: type = ptr_type %array_type [concrete]
 // CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %int_2.ecc: Core.IntLiteral = int_value 2 [concrete]
 // CHECK:STDOUT:   %tuple.type: type = tuple_type (Core.IntLiteral, Core.IntLiteral, Core.IntLiteral) [concrete]
@@ -80,6 +82,8 @@ fn F(a: array({}, 3)) -> {} {
 // CHECK:STDOUT:   %bound_method.047: <bound method> = bound_method %int_3.1ba, %Convert.specific_fn [concrete]
 // CHECK:STDOUT:   %int_3.822: %i32 = int_value 3 [concrete]
 // CHECK:STDOUT:   %array: %array_type = tuple_value (%int_1.5d2, %int_2.ef8, %int_3.822) [concrete]
+// CHECK:STDOUT:   %Op.type.1e4: type = fn_type @Op.3, @impl.49c(%array_type) [concrete]
+// CHECK:STDOUT:   %Op.f0b: %Op.type.1e4 = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -149,6 +153,11 @@ fn F(a: array({}, 3)) -> {} {
 // CHECK:STDOUT:   %F.call: init %i32 = call %F.ref(%.loc10_20.15, %.loc10_23.2)
 // CHECK:STDOUT:   %.loc10_25.1: %i32 = value_of_initializer %F.call
 // CHECK:STDOUT:   %.loc10_25.2: %i32 = converted %F.call, %.loc10_25.1
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc10_20.3, constants.%Op.f0b
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %bound_method.loc10_20.7: <bound method> = bound_method %.loc10_20.3, %Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.f01 = addr_of %.loc10_20.3
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc10_20.7(%addr)
 // CHECK:STDOUT:   return %.loc10_25.2
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
