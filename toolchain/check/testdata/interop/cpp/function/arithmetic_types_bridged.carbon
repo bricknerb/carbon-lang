@@ -339,6 +339,33 @@ fn F() {
   //@dump-sem-ir-end
 }
 
+// ============================================================================
+// float return
+// ============================================================================
+
+// --- float.h
+
+auto foo_float() -> float;
+
+// --- fail_todo_import_float.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "float.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  // CHECK:STDERR: fail_todo_import_float.carbon:[[@LINE+7]]:3: error: semantics TODO: `Unsupported: return type: float` [SemanticsTodo]
+  // CHECK:STDERR:   Cpp.foo_float();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~
+  // CHECK:STDERR: fail_todo_import_float.carbon:[[@LINE+4]]:3: note: in `Cpp` name lookup for `foo_float` [InCppNameLookup]
+  // CHECK:STDERR:   Cpp.foo_float();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~
+  // CHECK:STDERR:
+  Cpp.foo_float();
+  //@dump-sem-ir-end
+}
+
 // CHECK:STDOUT: --- import_short_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
@@ -941,6 +968,25 @@ fn F() {
 // CHECK:STDOUT:   %.loc8_30.1: %i16 = value_of_initializer %foo_short.call
 // CHECK:STDOUT:   %.loc8_30.2: %i16 = converted %foo_short.call, %.loc8_30.1
 // CHECK:STDOUT:   %x: %i16 = bind_name x, %.loc8_30.2
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- fail_todo_import_float.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .foo_float = <error>
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %foo_float.ref: <error> = name_ref foo_float, <error> [concrete = <error>]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
