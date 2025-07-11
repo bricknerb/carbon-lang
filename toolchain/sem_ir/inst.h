@@ -13,10 +13,10 @@
 #include "common/ostream.h"
 #include "common/raw_string_ostream.h"
 #include "common/struct_reflection.h"
+#include "toolchain/base/block_value_store.h"
 #include "toolchain/base/index_base.h"
 #include "toolchain/base/int.h"
 #include "toolchain/base/value_store.h"
-#include "toolchain/sem_ir/block_value_store.h"
 #include "toolchain/sem_ir/id_kind.h"
 #include "toolchain/sem_ir/inst_kind.h"
 #include "toolchain/sem_ir/singleton_insts.h"
@@ -592,7 +592,8 @@ class InstStore {
     mem_usage.Collect(MemUsage::ConcatLabel(label, "values_"), values_);
   }
 
-  auto values() const [[clang::lifetimebound]] -> ValueStoreRange<InstId> {
+  auto values() const [[clang::lifetimebound]]
+  -> ValueStore<InstId, Inst>::Range {
     return values_.values();
   }
   auto size() const -> int { return values_.size(); }
@@ -614,13 +615,13 @@ class InstStore {
 
   File* file_;
   llvm::SmallVector<LocId> loc_ids_;
-  ValueStore<InstId> values_;
+  ValueStore<InstId, Inst> values_;
 };
 
 // Adapts BlockValueStore for instruction blocks.
-class InstBlockStore : public BlockValueStore<InstBlockId> {
+class InstBlockStore : public BlockValueStore<InstBlockId, InstId> {
  public:
-  using BaseType = BlockValueStore<InstBlockId>;
+  using BaseType = BlockValueStore<InstBlockId, InstId>;
 
   explicit InstBlockStore(llvm::BumpPtrAllocator& allocator)
       : BaseType(allocator) {
@@ -641,7 +642,7 @@ class InstBlockStore : public BlockValueStore<InstBlockId> {
   // Reserves and returns a block ID. The contents of the block should be
   // specified by calling ReplacePlaceholder.
   auto AddPlaceholder() -> InstBlockId {
-    return values().Add(llvm::MutableArrayRef<ElementType>());
+    return values().Add(llvm::MutableArrayRef<InstId>());
   }
 
   // Sets the contents of a placeholder block to the given content.

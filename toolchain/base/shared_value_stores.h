@@ -5,6 +5,8 @@
 #ifndef CARBON_TOOLCHAIN_BASE_SHARED_VALUE_STORES_H_
 #define CARBON_TOOLCHAIN_BASE_SHARED_VALUE_STORES_H_
 
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/StringRef.h"
 #include "toolchain/base/canonical_value_store.h"
 #include "toolchain/base/int.h"
 #include "toolchain/base/mem_usage.h"
@@ -20,10 +22,11 @@ class SharedValueStores : public Yaml::Printable<SharedValueStores> {
  public:
   // Provide types that can be used by APIs to forward access to these stores.
   using IntStore = IntStore;
-  using RealStore = ValueStore<RealId>;
-  using FloatStore = CanonicalValueStore<FloatId>;
-  using IdentifierStore = CanonicalValueStore<IdentifierId>;
-  using StringLiteralStore = CanonicalValueStore<StringLiteralValueId>;
+  using RealStore = ValueStore<RealId, Real>;
+  using FloatStore = CanonicalValueStore<FloatId, llvm::APFloat>;
+  using IdentifierStore = CanonicalValueStore<IdentifierId, llvm::StringRef>;
+  using StringLiteralStore =
+      CanonicalValueStore<StringLiteralValueId, llvm::StringRef>;
 
   explicit SharedValueStores() = default;
 

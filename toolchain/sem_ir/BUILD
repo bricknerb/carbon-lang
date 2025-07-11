@@ -7,20 +7,6 @@ load("//bazel/cc_rules:defs.bzl", "cc_library", "cc_test")
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
-    name = "block_value_store",
-    hdrs = ["block_value_store.h"],
-    deps = [
-        "//common:check",
-        "//common:hashing",
-        "//common:set",
-        "//toolchain/base:mem_usage",
-        "//toolchain/base:value_store",
-        "//toolchain/base:yaml",
-        "@llvm-project//llvm:Support",
-    ],
-)
-
-cc_library(
     name = "typed_insts",
     srcs = [
         "ids.cpp",
@@ -32,6 +18,7 @@ cc_library(
         "inst_categories.h",
         "inst_kind.h",
         "singleton_insts.h",
+        "specific_interface.h",
         "typed_insts.h",
     ],
     textual_hdrs = ["inst_kind.def"],
@@ -40,6 +27,7 @@ cc_library(
         "//common:enum_base",
         "//common:ostream",
         "//common:type_enum",
+        "//toolchain/base:canonical_value_store",
         "//toolchain/base:index_base",
         "//toolchain/base:int",
         "//toolchain/base:value_ids",
@@ -67,6 +55,7 @@ cc_library(
         ":typed_insts",
         "//common:hashtable_key_context",
         "//common:ostream",
+        "//toolchain/base:canonical_value_store",
         "@llvm-project//clang:ast",
     ],
 )
@@ -121,7 +110,6 @@ cc_library(
         "builtin_function_kind.def",
     ],
     deps = [
-        ":block_value_store",
         ":clang_decl",
         ":typed_insts",
         "//common:check",
@@ -133,6 +121,7 @@ cc_library(
         "//common:raw_string_ostream",
         "//common:set",
         "//common:struct_reflection",
+        "//toolchain/base:block_value_store",
         "//toolchain/base:canonical_value_store",
         "//toolchain/base:index_base",
         "//toolchain/base:int",

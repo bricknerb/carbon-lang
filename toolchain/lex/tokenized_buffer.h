@@ -39,7 +39,7 @@ struct LineInfo {
   int32_t indent;
 };
 
-// A lightweight handle to a lexed line in a `TokenizedBuffer`.
+// A lightweight handle to a lexed `LineInfo` in a `TokenizedBuffer`.
 //
 // `LineIndex` objects are designed to be passed by value, not reference or
 // pointer. They are also designed to be small and efficient to store in data
@@ -51,8 +51,6 @@ struct LineInfo {
 //
 // All other APIs to query a `LineIndex` are on the `TokenizedBuffer`.
 struct LineIndex : public IndexBase<LineIndex> {
-  using ValueType = LineInfo;
-
   static constexpr llvm::StringLiteral Label = "line";
   static const LineIndex None;
   using IndexBase::IndexBase;
@@ -74,10 +72,8 @@ struct CommentData {
   int32_t length;
 };
 
-// Indices for comments within the buffer.
+// Indices for `CommentData` within the buffer.
 struct CommentIndex : public IndexBase<CommentIndex> {
-  using ValueType = CommentData;
-
   static constexpr llvm::StringLiteral Label = "comment";
   static const CommentIndex None;
   using IndexBase::IndexBase;
@@ -327,12 +323,12 @@ class TokenizedBuffer : public Printable<TokenizedBuffer> {
   SharedValueStores* value_stores_;
   SourceBuffer* source_;
 
-  ValueStore<TokenIndex> token_infos_;
+  ValueStore<TokenIndex, TokenInfo> token_infos_;
 
-  ValueStore<LineIndex> line_infos_;
+  ValueStore<LineIndex, LineInfo> line_infos_;
 
   // Comments in the file.
-  ValueStore<CommentIndex> comments_;
+  ValueStore<CommentIndex, CommentData> comments_;
 
   // A range of tokens marked by `//@dump-semir-[begin|end]`.
   //

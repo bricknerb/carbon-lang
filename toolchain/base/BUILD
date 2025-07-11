@@ -8,6 +8,20 @@ load("llvm_tools.bzl", "LLVM_MAIN_TOOLS", "generate_llvm_tools_def")
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
+    name = "block_value_store",
+    hdrs = ["block_value_store.h"],
+    deps = [
+        ":mem_usage",
+        ":value_store",
+        ":yaml",
+        "//common:check",
+        "//common:hashing",
+        "//common:set",
+        "@llvm-project//llvm:Support",
+    ],
+)
+
+cc_library(
     name = "canonical_value_store",
     hdrs = ["canonical_value_store.h"],
     deps = [
@@ -29,6 +43,7 @@ cc_test(
         ":value_ids",
         "//testing/base:gtest_main",
         "@googletest//:gtest",
+        "@llvm-project//llvm:Support",
     ],
 )
 
@@ -124,10 +139,7 @@ cc_library(
 
 cc_library(
     name = "value_store",
-    hdrs = [
-        "value_store.h",
-        "value_store_chunk.h",
-    ],
+    hdrs = ["value_store.h"],
     deps = [
         ":mem_usage",
         ":value_store_types",
@@ -233,6 +245,7 @@ cc_library(
         ":value_ids",
         ":value_store",
         ":yaml",
+        "@llvm-project//llvm:Support",
     ],
 )
 

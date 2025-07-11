@@ -2370,7 +2370,7 @@ fn F() {
 // CHECK:STDOUT:       %U.ref.loc24_13: %J.assoc_type = name_ref U, @U.%assoc0 [concrete = constants.%assoc0.411]
 // CHECK:STDOUT:       %.loc24_13: type = converted %U.ref.loc24_13, <error> [concrete = <error>]
 // CHECK:STDOUT:     }
-// CHECK:STDOUT:     %u: <error> = bind_name u, %u.param [concrete = <error>]
+// CHECK:STDOUT:     %u: <error> = bind_name u, %u.param
 // CHECK:STDOUT:     %return.param: ref <error> = out_param call_param1
 // CHECK:STDOUT:     %return: ref <error> = return_slot %return.param
 // CHECK:STDOUT:   }
@@ -2433,7 +2433,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F.2(%u.param: <error>) -> <error> {
 // CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %u.ref: <error> = name_ref u, %u [concrete = <error>]
+// CHECK:STDOUT:   %u.ref: <error> = name_ref u, %u
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -2583,7 +2583,7 @@ fn F() {
 // CHECK:STDOUT:     %self: @F.1.%Self.as_type.loc19_14.1 (%Self.as_type) = bind_name self, %self.param
 // CHECK:STDOUT:     %z.param: <error> = value_param call_param1
 // CHECK:STDOUT:     %Self.ref.loc19_23: %J2.type = name_ref Self, @J2.%Self [symbolic = %Self (constants.%Self)]
-// CHECK:STDOUT:     %z: <error> = bind_name z, %z.param [concrete = <error>]
+// CHECK:STDOUT:     %z: <error> = bind_name z, %z.param
 // CHECK:STDOUT:     %return.param: ref <error> = out_param call_param2
 // CHECK:STDOUT:     %return: ref <error> = return_slot %return.param
 // CHECK:STDOUT:   }
@@ -2710,8 +2710,8 @@ fn F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %F.ref: %F.type.f405c5.1 = name_ref F, @impl.4e9.%F.decl.loc30_33.1 [concrete = constants.%F.214a71.1]
 // CHECK:STDOUT:   %self.ref: %empty_tuple.type = name_ref self, %self.param
-// CHECK:STDOUT:   %.ref: <error> = name_ref <none>, %.param [concrete = <error>]
-// CHECK:STDOUT:   %return.ref: ref <error> = name_ref <return slot>, %return.param [concrete = <error>]
+// CHECK:STDOUT:   %.ref: <error> = name_ref <none>, %.param
+// CHECK:STDOUT:   %return.ref: ref <error> = name_ref <return slot>, %return.param
 // CHECK:STDOUT:   return <error>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -2725,8 +2725,8 @@ fn F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %F.ref: %F.type.05d6a0.1 = name_ref F, @impl.8b3.%F.decl.loc39_33.1 [concrete = constants.%F.bfa759.1]
 // CHECK:STDOUT:   %self.ref: %C2 = name_ref self, %self.param
-// CHECK:STDOUT:   %.ref: <error> = name_ref <none>, %.param [concrete = <error>]
-// CHECK:STDOUT:   %return.ref: ref <error> = name_ref <return slot>, %return.param [concrete = <error>]
+// CHECK:STDOUT:   %.ref: <error> = name_ref <none>, %.param
+// CHECK:STDOUT:   %return.ref: ref <error> = name_ref <return slot>, %return.param
 // CHECK:STDOUT:   %F.bound: <bound method> = bound_method %self.ref, %F.ref
 // CHECK:STDOUT:   %F.call: init %C2 = call %F.bound(%self.ref, <error>)
 // CHECK:STDOUT:   return <error>
@@ -3642,15 +3642,9 @@ fn F() {
 // CHECK:STDOUT:   %pattern_type.7f8: type = pattern_type %C.131 [concrete]
 // CHECK:STDOUT:   %C.val: %C.131 = struct_value () [concrete]
 // CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
-// CHECK:STDOUT:   %Op.type.bae: type = fn_type @Op.1 [concrete]
-// CHECK:STDOUT:   %Op.type.bc9: type = fn_type @Op.2, @impl.49c(%T) [symbolic]
-// CHECK:STDOUT:   %Op.46f: %Op.type.bc9 = struct_value () [symbolic]
-// CHECK:STDOUT:   %Destroy.impl_witness.ee0: <witness> = impl_witness imports.%Destroy.impl_witness_table, @impl.49c(%C.131) [concrete]
 // CHECK:STDOUT:   %Op.type.b84: type = fn_type @Op.2, @impl.49c(%C.131) [concrete]
 // CHECK:STDOUT:   %Op.e16: %Op.type.b84 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.aaa: type = ptr_type %C.131 [concrete]
-// CHECK:STDOUT:   %Destroy.facet: %Destroy.type = facet_value %C.131, (%Destroy.impl_witness.ee0) [concrete]
-// CHECK:STDOUT:   %.04b: type = fn_type_with_self_type %Op.type.bae, %Destroy.facet [concrete]
 // CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.e16, @Op.2(%C.131) [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -3661,8 +3655,6 @@ fn F() {
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.Destroy: type = import_ref Core//prelude/parts/destroy, Destroy, loaded [concrete = constants.%Destroy.type]
-// CHECK:STDOUT:   %Core.import_ref.0b9: @impl.49c.%Op.type (%Op.type.bc9) = import_ref Core//prelude/parts/destroy, loc8_29, loaded [symbolic = @impl.49c.%Op (constants.%Op.46f)]
-// CHECK:STDOUT:   %Destroy.impl_witness_table = impl_witness_table (%Core.import_ref.0b9), @impl.49c [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
@@ -3774,22 +3766,21 @@ fn F() {
 // CHECK:STDOUT:   %.loc12_21.3: init %C.131 = class_init (), %.loc12_21.2 [concrete = constants.%C.val]
 // CHECK:STDOUT:   %.loc12_21.4: ref %C.131 = temporary %.loc12_21.2, %.loc12_21.3
 // CHECK:STDOUT:   %.loc12_23.1: ref %C.131 = converted %.loc12_21.1, %.loc12_21.4
-// CHECK:STDOUT:   %.loc12_11.1: type = splice_block %impl.elem0.loc12_11 [concrete = constants.%C.131] {
+// CHECK:STDOUT:   %.loc12_11.1: type = splice_block %impl.elem0 [concrete = constants.%C.131] {
 // CHECK:STDOUT:     %D.ref.loc12_10: type = name_ref D, file.%D.decl [concrete = constants.%D]
 // CHECK:STDOUT:     %Z.ref: type = name_ref Z, file.%Z.decl [concrete = constants.%Z.type]
 // CHECK:STDOUT:     %X.ref: %Z.assoc_type = name_ref X, @X.%assoc0 [concrete = constants.%assoc0.659]
 // CHECK:STDOUT:     %Z.facet: %Z.type = facet_value constants.%D, (constants.%Z.impl_witness.19e) [concrete = constants.%Z.facet.f2a]
 // CHECK:STDOUT:     %.loc12_11.2: %Z.type = converted %D.ref.loc12_10, %Z.facet [concrete = constants.%Z.facet.f2a]
-// CHECK:STDOUT:     %impl.elem0.loc12_11: type = impl_witness_access constants.%Z.impl_witness.19e, element0 [concrete = constants.%C.131]
+// CHECK:STDOUT:     %impl.elem0: type = impl_witness_access constants.%Z.impl_witness.19e, element0 [concrete = constants.%C.131]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %.loc12_23.2: %C.131 = bind_value %.loc12_23.1
 // CHECK:STDOUT:   %a: %C.131 = bind_name a, %.loc12_23.2
-// CHECK:STDOUT:   %impl.elem0.loc12_21: %.04b = impl_witness_access constants.%Destroy.impl_witness.ee0, element0 [concrete = constants.%Op.e16]
-// CHECK:STDOUT:   %bound_method.loc12_21.1: <bound method> = bound_method %.loc12_21.2, %impl.elem0.loc12_21
-// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0.loc12_21, @Op.2(constants.%C.131) [concrete = constants.%Op.specific_fn]
-// CHECK:STDOUT:   %bound_method.loc12_21.2: <bound method> = bound_method %.loc12_21.2, %specific_fn
+// CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc12_21.2, constants.%Op.e16
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.e16, @Op.2(constants.%C.131) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc12_21.2, %Op.specific_fn
 // CHECK:STDOUT:   %addr: %ptr.aaa = addr_of %.loc12_21.2
-// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc12_21.2(%addr)
+// CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

@@ -17,18 +17,18 @@ namespace Carbon {
 // A wrapper for accumulating immutable values with deduplication, providing IDs
 // to later retrieve the value.
 //
-// `IdT::ValueType` must represent the type being indexed.
+// `ValueT` represents the type being stored.
 //
-// `IdT::KeyType` can optionally be present, and if so is used for the argument
-// to `Lookup`. It must be valid to use both `KeyType` and `ValueType` as lookup
-// types in the underlying `Set`.
-template <typename IdT>
+// `KeyT` can optionally be different from `ValueT`, and if so is used for the
+// argument to `Lookup`. It must be valid to use both `KeyT` and `ValueT` as
+// lookup types in the underlying `Set`.
+template <typename IdT, typename KeyT, typename ValueT = KeyT>
 class CanonicalValueStore {
  public:
-  using ValueType = ValueStoreTypes<IdT>::ValueType;
-  using KeyType = ValueStoreTypes<IdT>::KeyType;
-  using RefType = ValueStoreTypes<IdT>::RefType;
-  using ConstRefType = ValueStoreTypes<IdT>::ConstRefType;
+  using KeyType = std::remove_cvref_t<KeyT>;
+  using ValueType = ValueStoreTypes<ValueT>::ValueType;
+  using RefType = ValueStoreTypes<ValueT>::RefType;
+  using ConstRefType = ValueStoreTypes<ValueT>::ConstRefType;
 
   // Stores a canonical copy of the value and returns an ID to reference it.
   auto Add(ValueType value) -> IdT;
@@ -48,7 +48,8 @@ class CanonicalValueStore {
     return values_.OutputYaml();
   }
 
-  auto values() const [[clang::lifetimebound]] -> ValueStoreRange<IdT> {
+  auto values() const [[clang::lifetimebound]]
+  -> ValueStore<IdT, ValueType>::Range {
     return values_.values();
   }
   auto size() const -> size_t { return values_.size(); }
@@ -64,42 +65,41 @@ class CanonicalValueStore {
  private:
   class KeyContext;
 
-  ValueStore<IdT> values_;
+  ValueStore<IdT, ValueType> values_;
   Set<IdT, /*SmallSize=*/0, KeyContext> set_;
 };
 
-template <typename IdT>
-class CanonicalValueStore<IdT>::KeyContext
+template <typename IdT, typename KeyT, typename ValueT>
+class CanonicalValueStore<IdT, KeyT, ValueT>::KeyContext
     : public TranslatingKeyContext<KeyContext> {
  public:
-  explicit KeyContext(const ValueStore<IdT>* values) : values_(values) {}
+  explicit KeyContext(const ValueStore<IdT, ValueType>* values)
+      : values_(values) {}
 
   // Note that it is safe to return a `const` reference here as the underlying
   // object's lifetime is provided by the `ValueStore`.
-  auto TranslateKey(IdT id) const -> ValueStore<IdT>::ConstRefType {
-    return values_->Get(id);
-  }
+  auto TranslateKey(IdT id) const -> ConstRefType { return values_->Get(id); }
 
  private:
-  const ValueStore<IdT>* values_;
+  const ValueStore<IdT, ValueType>* values_;
 };
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Add(ValueType value) -> IdT {
+template <typename IdT, typename KeyT, typename ValueT>
+auto CanonicalValueStore<IdT, KeyT, ValueT>::Add(ValueType value) -> IdT {
   auto make_key = [&] { return IdT(values_.Add(std::move(value))); };
   return set_.Insert(value, make_key, KeyContext(&values_)).key();
 }
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Lookup(KeyType key) const -> IdT {
+template <typename IdT, typename KeyT, typename ValueT>
+auto CanonicalValueStore<IdT, KeyT, ValueT>::Lookup(KeyType key) const -> IdT {
   if (auto result = set_.Lookup(key, KeyContext(&values_))) {
     return result.key();
   }
   return IdT::None;
 }
 
-template <typename IdT>
-auto CanonicalValueStore<IdT>::Reserve(size_t size) -> void {
+template <typename IdT, typename KeyT, typename ValueT>
+auto CanonicalValueStore<IdT, KeyT, ValueT>::Reserve(size_t size) -> void {
   // Compute the resulting new insert count using the size of values -- the
   // set doesn't have a fast to compute current size.
   if (size > values_.size()) {
