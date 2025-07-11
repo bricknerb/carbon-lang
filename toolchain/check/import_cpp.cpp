@@ -37,6 +37,7 @@
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
+#include "toolchain/sem_ir/clang_decl.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/name_scope.h"
 #include "toolchain/sem_ir/typed_insts.h"
@@ -519,8 +520,6 @@ static auto AsCarbonNamespace(Context& context,
         .decl = clang::dyn_cast<clang::Decl>(decl_context),
         .inst_id = namespace_inst_id,
     });
-    AddNameToScope(context, parent_namespace.name_scope_id, namespace_name_id,
-                   namespace_inst_id);
   } while (!decl_contexts.empty());
 
   return namespace_inst_id;
@@ -1023,11 +1022,10 @@ static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
                                     clang::NamedDecl* clang_decl)
     -> SemIR::InstId {
   SemIR::InstId inst_id = SemIR::InstId::None;
-  if (context.sem_ir().clang_decls().Lookup(clang_decl).has_value()) {
-    context.TODO(loc_id,
-                 "Unsupported: Trying to import a Clang declaration that was "
-                 "already imported");
-    inst_id = SemIR::ErrorInst::InstId;
+  SemIR::ClangDeclStore& clang_decls = context.sem_ir().clang_decls();
+  if (SemIR::ClangDeclId clang_decl_id = clang_decls.Lookup(clang_decl);
+      clang_decl_id.has_value()) {
+    inst_id = clang_decls.Get(clang_decl_id).inst_id;
   } else {
     inst_id = ImportNameDecl(context, loc_id, scope_id, name_id, clang_decl);
   }
