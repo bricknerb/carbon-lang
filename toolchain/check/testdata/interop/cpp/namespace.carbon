@@ -311,7 +311,7 @@ fn MyF() {
 // CHECK:STDOUT:   %X: type = class_type @X [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.0e5: type = fn_type @Op.2, @Destroy.impl(%X) [concrete]
+// CHECK:STDOUT:   %Op.type.0e5: type = fn_type @Op.1, @Destroy.impl(%X) [concrete]
 // CHECK:STDOUT:   %Op.cbf: %Op.type.0e5 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.13d: type = ptr_type %X [concrete]
 // CHECK:STDOUT: }

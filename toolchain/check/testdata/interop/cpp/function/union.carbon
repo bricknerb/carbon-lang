@@ -481,7 +481,7 @@ fn F() {
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.2fa: %Op.type.0b7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -588,7 +588,7 @@ fn F() {
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.2e1: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.2e1: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.d5d: %Op.type.2e1 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.87e: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -656,7 +656,7 @@ fn F() {
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.ee1: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.ee1: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.28c: %Op.type.ee1 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.8c1: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -709,10 +709,10 @@ fn F() {
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
 // CHECK:STDOUT:   %pattern_type.cff: type = pattern_type %O [concrete]
-// CHECK:STDOUT:   %Op.type.1b8: type = fn_type @Op.2, @Destroy.impl(%O) [concrete]
+// CHECK:STDOUT:   %Op.type.1b8: type = fn_type @Op.1, @Destroy.impl(%O) [concrete]
 // CHECK:STDOUT:   %Op.2df: %Op.type.1b8 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.820: type = ptr_type %O [concrete]
-// CHECK:STDOUT:   %Op.type.8f9: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.8f9: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.f3b: %Op.type.8f9 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.a6c: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -777,7 +777,7 @@ fn F() {
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.2fa: %Op.type.0b7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -832,7 +832,7 @@ fn F() {
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
 // CHECK:STDOUT:   %bar.type: type = fn_type @bar [concrete]
 // CHECK:STDOUT:   %bar: %bar.type = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.2fa: %Op.type.0b7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }
@@ -946,7 +946,7 @@ fn F() {
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.2, @Destroy.impl(%U) [concrete]
+// CHECK:STDOUT:   %Op.type.0b7: type = fn_type @Op.1, @Destroy.impl(%U) [concrete]
 // CHECK:STDOUT:   %Op.2fa: %Op.type.0b7 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
 // CHECK:STDOUT: }

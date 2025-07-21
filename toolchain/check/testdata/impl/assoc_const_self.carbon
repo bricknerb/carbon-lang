@@ -621,7 +621,7 @@ fn CallF() {
 // CHECK:STDOUT:       %.loc4_33.2: type = value_of_initializer %int_literal.make_type [concrete = Core.IntLiteral]
 // CHECK:STDOUT:       %.loc4_33.3: type = converted %int_literal.make_type, %.loc4_33.2 [concrete = Core.IntLiteral]
 // CHECK:STDOUT:     }
-// CHECK:STDOUT:     %N.loc4_13.1: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic = %N.loc4_13.2 (constants.%N)]
+// CHECK:STDOUT:     %N.loc4_13.2: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic = %N.loc4_13.1 (constants.%N)]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   impl_decl @impl [concrete] {} {
 // CHECK:STDOUT:     %.loc15_7.1: %empty_struct_type = struct_literal ()
@@ -648,13 +648,13 @@ fn CallF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic interface @I(%N.loc4_13.1: Core.IntLiteral) {
-// CHECK:STDOUT:   %N.loc4_13.2: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic = %N.loc4_13.2 (constants.%N)]
+// CHECK:STDOUT: generic interface @I(%N.loc4_13.2: Core.IntLiteral) {
+// CHECK:STDOUT:   %N.loc4_13.1: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic = %N.loc4_13.1 (constants.%N)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(%N.loc4_13.2)> [symbolic = %I.type (constants.%I.type.8a1)]
+// CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(%N.loc4_13.1)> [symbolic = %I.type (constants.%I.type.8a1)]
 // CHECK:STDOUT:   %Self.2: @I.%I.type (%I.type.8a1) = bind_symbolic_name Self, 1 [symbolic = %Self.2 (constants.%Self.3a0)]
-// CHECK:STDOUT:   %I.assoc_type: type = assoc_entity_type @I, @I(%N.loc4_13.2) [symbolic = %I.assoc_type (constants.%I.assoc_type.9df)]
+// CHECK:STDOUT:   %I.assoc_type: type = assoc_entity_type @I, @I(%N.loc4_13.1) [symbolic = %I.assoc_type (constants.%I.assoc_type.9df)]
 // CHECK:STDOUT:   %assoc0: @I.%I.assoc_type (%I.assoc_type.9df) = assoc_entity element0, %V [symbolic = %assoc0 (constants.%assoc0.293)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   interface {
@@ -671,7 +671,7 @@ fn CallF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic assoc_const @V(@I.%N.loc4_13.1: Core.IntLiteral, @I.%Self.1: @I.%I.type (%I.type.8a1)) {
+// CHECK:STDOUT: generic assoc_const @V(@I.%N.loc4_13.2: Core.IntLiteral, @I.%Self.1: @I.%I.type (%I.type.8a1)) {
 // CHECK:STDOUT:   %N: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic = %N (constants.%N)]
 // CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(%N)> [symbolic = %I.type (constants.%I.type.8a1)]
 // CHECK:STDOUT:   %Self: @V.%I.type (%I.type.8a1) = bind_symbolic_name Self, 1 [symbolic = %Self (constants.%Self.3a0)]
@@ -688,7 +688,7 @@ fn CallF() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @I(constants.%N) {
-// CHECK:STDOUT:   %N.loc4_13.2 => constants.%N
+// CHECK:STDOUT:   %N.loc4_13.1 => constants.%N
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @V(constants.%N, constants.%Self.3a0) {
@@ -701,7 +701,7 @@ fn CallF() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @I(constants.%int_-1) {
-// CHECK:STDOUT:   %N.loc4_13.2 => constants.%int_-1
+// CHECK:STDOUT:   %N.loc4_13.1 => constants.%int_-1
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %I.type => constants.%I.type.057
@@ -793,7 +793,7 @@ fn CallF() {
 // CHECK:STDOUT:         requirement_rewrite %impl.elem0, %.loc8_60.2
 // CHECK:STDOUT:       }
 // CHECK:STDOUT:     }
-// CHECK:STDOUT:     %T.loc8_6.1: %I_where.type = bind_symbolic_name T, 0 [symbolic = %T.loc8_6.2 (constants.%T)]
+// CHECK:STDOUT:     %T.loc8_6.2: %I_where.type = bind_symbolic_name T, 0 [symbolic = %T.loc8_6.1 (constants.%T)]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %CallF.decl: %CallF.type = fn_decl @CallF [concrete = constants.%CallF] {} {}
 // CHECK:STDOUT: }
@@ -818,8 +818,8 @@ fn CallF() {
 // CHECK:STDOUT:   assoc_const V:! @V.%Self.as_type (%Self.as_type.b70);
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic fn @F(%T.loc8_6.1: %I_where.type) {
-// CHECK:STDOUT:   %T.loc8_6.2: %I_where.type = bind_symbolic_name T, 0 [symbolic = %T.loc8_6.2 (constants.%T)]
+// CHECK:STDOUT: generic fn @F(%T.loc8_6.2: %I_where.type) {
+// CHECK:STDOUT:   %T.loc8_6.1: %I_where.type = bind_symbolic_name T, 0 [symbolic = %T.loc8_6.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   fn();
 // CHECK:STDOUT: }
@@ -844,6 +844,6 @@ fn CallF() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @F(constants.%T) {
-// CHECK:STDOUT:   %T.loc8_6.2 => constants.%T
+// CHECK:STDOUT:   %T.loc8_6.1 => constants.%T
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

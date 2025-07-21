@@ -74,19 +74,19 @@ class Class(T:! type) {
 // CHECK:STDOUT:   %Class.decl: %Class.type = class_decl @Class [concrete = constants.%Class.generic] {
 // CHECK:STDOUT:     %T.patt: %pattern_type.98f = symbolic_binding_pattern T, 0 [concrete]
 // CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %T.loc15_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc15_13.2 (constants.%T)]
+// CHECK:STDOUT:     %T.loc15_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc15_13.1 (constants.%T)]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic class @Class(%T.loc15_13.1: type) {
-// CHECK:STDOUT:   %T.loc15_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc15_13.2 (constants.%T)]
+// CHECK:STDOUT: generic class @Class(%T.loc15_13.2: type) {
+// CHECK:STDOUT:   %T.loc15_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc15_13.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %MakeSelf.type: type = fn_type @MakeSelf, @Class(%T.loc15_13.2) [symbolic = %MakeSelf.type (constants.%MakeSelf.type)]
+// CHECK:STDOUT:   %MakeSelf.type: type = fn_type @MakeSelf, @Class(%T.loc15_13.1) [symbolic = %MakeSelf.type (constants.%MakeSelf.type)]
 // CHECK:STDOUT:   %MakeSelf: @Class.%MakeSelf.type (%MakeSelf.type) = struct_value () [symbolic = %MakeSelf (constants.%MakeSelf)]
-// CHECK:STDOUT:   %MakeClass.type: type = fn_type @MakeClass, @Class(%T.loc15_13.2) [symbolic = %MakeClass.type (constants.%MakeClass.type)]
+// CHECK:STDOUT:   %MakeClass.type: type = fn_type @MakeClass, @Class(%T.loc15_13.1) [symbolic = %MakeClass.type (constants.%MakeClass.type)]
 // CHECK:STDOUT:   %MakeClass: @Class.%MakeClass.type (%MakeClass.type) = struct_value () [symbolic = %MakeClass (constants.%MakeClass)]
-// CHECK:STDOUT:   %F.type: type = fn_type @F, @Class(%T.loc15_13.2) [symbolic = %F.type (constants.%F.type)]
+// CHECK:STDOUT:   %F.type: type = fn_type @F, @Class(%T.loc15_13.1) [symbolic = %F.type (constants.%F.type)]
 // CHECK:STDOUT:   %F: @Class.%F.type (%F.type) = struct_value () [symbolic = %F (constants.%F)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   class {
@@ -104,10 +104,10 @@ class Class(T:! type) {
 // CHECK:STDOUT:       %return.param_patt: @MakeClass.%pattern_type (%pattern_type.3c1) = out_param_pattern %return.patt, call_param0 [concrete]
 // CHECK:STDOUT:     } {
 // CHECK:STDOUT:       %Class.ref: %Class.type = name_ref Class, file.%Class.decl [concrete = constants.%Class.generic]
-// CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc15_13.1 [symbolic = %T (constants.%T)]
-// CHECK:STDOUT:       %Class.loc19_28.2: type = class_type @Class, @Class(constants.%T) [symbolic = %Class.loc19_28.1 (constants.%Class)]
-// CHECK:STDOUT:       %return.param: ref @MakeClass.%Class.loc19_28.1 (%Class) = out_param call_param0
-// CHECK:STDOUT:       %return: ref @MakeClass.%Class.loc19_28.1 (%Class) = return_slot %return.param
+// CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc15_13.2 [symbolic = %T (constants.%T)]
+// CHECK:STDOUT:       %Class.loc19_28.1: type = class_type @Class, @Class(constants.%T) [symbolic = %Class.loc19_28.2 (constants.%Class)]
+// CHECK:STDOUT:       %return.param: ref @MakeClass.%Class.loc19_28.2 (%Class) = out_param call_param0
+// CHECK:STDOUT:       %return: ref @MakeClass.%Class.loc19_28.2 (%Class) = return_slot %return.param
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %F.decl: @Class.%F.type (%F.type) = fn_decl @F [symbolic = @Class.%F (constants.%F)] {} {}
 // CHECK:STDOUT:     %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
@@ -124,7 +124,7 @@ class Class(T:! type) {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic fn @MakeSelf(@Class.%T.loc15_13.1: type) {
+// CHECK:STDOUT: generic fn @MakeSelf(@Class.%T.loc15_13.2: type) {
 // CHECK:STDOUT:   %T: type = bind_symbolic_name T, 0 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:   %Class: type = class_type @Class, @Class(%T) [symbolic = %Class (constants.%Class)]
 // CHECK:STDOUT:   %pattern_type: type = pattern_type %Class [symbolic = %pattern_type (constants.%pattern_type.3c1)]
@@ -142,25 +142,25 @@ class Class(T:! type) {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic fn @MakeClass(@Class.%T.loc15_13.1: type) {
+// CHECK:STDOUT: generic fn @MakeClass(@Class.%T.loc15_13.2: type) {
 // CHECK:STDOUT:   %T: type = bind_symbolic_name T, 0 [symbolic = %T (constants.%T)]
-// CHECK:STDOUT:   %Class.loc19_28.1: type = class_type @Class, @Class(%T) [symbolic = %Class.loc19_28.1 (constants.%Class)]
-// CHECK:STDOUT:   %pattern_type: type = pattern_type %Class.loc19_28.1 [symbolic = %pattern_type (constants.%pattern_type.3c1)]
+// CHECK:STDOUT:   %Class.loc19_28.2: type = class_type @Class, @Class(%T) [symbolic = %Class.loc19_28.2 (constants.%Class)]
+// CHECK:STDOUT:   %pattern_type: type = pattern_type %Class.loc19_28.2 [symbolic = %pattern_type (constants.%pattern_type.3c1)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %require_complete: <witness> = require_complete_type %Class.loc19_28.1 [symbolic = %require_complete (constants.%require_complete.4f8)]
-// CHECK:STDOUT:   %Class.val: @MakeClass.%Class.loc19_28.1 (%Class) = struct_value () [symbolic = %Class.val (constants.%Class.val)]
+// CHECK:STDOUT:   %require_complete: <witness> = require_complete_type %Class.loc19_28.2 [symbolic = %require_complete (constants.%require_complete.4f8)]
+// CHECK:STDOUT:   %Class.val: @MakeClass.%Class.loc19_28.2 (%Class) = struct_value () [symbolic = %Class.val (constants.%Class.val)]
 // CHECK:STDOUT:
-// CHECK:STDOUT:   fn() -> %return.param: @MakeClass.%Class.loc19_28.1 (%Class) {
+// CHECK:STDOUT:   fn() -> %return.param: @MakeClass.%Class.loc19_28.2 (%Class) {
 // CHECK:STDOUT:   !entry:
 // CHECK:STDOUT:     %.loc19_40.1: %empty_struct_type = struct_literal ()
-// CHECK:STDOUT:     %.loc19_40.2: init @MakeClass.%Class.loc19_28.1 (%Class) = class_init (), %return [symbolic = %Class.val (constants.%Class.val)]
-// CHECK:STDOUT:     %.loc19_41: init @MakeClass.%Class.loc19_28.1 (%Class) = converted %.loc19_40.1, %.loc19_40.2 [symbolic = %Class.val (constants.%Class.val)]
+// CHECK:STDOUT:     %.loc19_40.2: init @MakeClass.%Class.loc19_28.2 (%Class) = class_init (), %return [symbolic = %Class.val (constants.%Class.val)]
+// CHECK:STDOUT:     %.loc19_41: init @MakeClass.%Class.loc19_28.2 (%Class) = converted %.loc19_40.1, %.loc19_40.2 [symbolic = %Class.val (constants.%Class.val)]
 // CHECK:STDOUT:     return %.loc19_41 to %return
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic fn @F(@Class.%T.loc15_13.1: type) {
+// CHECK:STDOUT: generic fn @F(@Class.%T.loc15_13.2: type) {
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %T: type = bind_symbolic_name T, 0 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:   %Class.loc21_19.2: type = class_type @Class, @Class(%T) [symbolic = %Class.loc21_19.2 (constants.%Class)]
@@ -195,7 +195,7 @@ class Class(T:! type) {
 // CHECK:STDOUT:     assign %c.var, %MakeSelf.call
 // CHECK:STDOUT:     %.loc21_19: type = splice_block %Class.loc21_19.1 [symbolic = %Class.loc21_19.2 (constants.%Class)] {
 // CHECK:STDOUT:       %Class.ref: %Class.type = name_ref Class, file.%Class.decl [concrete = constants.%Class.generic]
-// CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc15_13.1 [symbolic = %T (constants.%T)]
+// CHECK:STDOUT:       %T.ref: type = name_ref T, @Class.%T.loc15_13.2 [symbolic = %T (constants.%T)]
 // CHECK:STDOUT:       %Class.loc21_19.1: type = class_type @Class, @Class(constants.%T) [symbolic = %Class.loc21_19.2 (constants.%Class)]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %c: ref @F.%Class.loc21_19.2 (%Class) = bind_name c, %c.var
@@ -244,7 +244,7 @@ class Class(T:! type) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @Class(constants.%T) {
-// CHECK:STDOUT:   %T.loc15_13.2 => constants.%T
+// CHECK:STDOUT:   %T.loc15_13.1 => constants.%T
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %MakeSelf.type => constants.%MakeSelf.type
@@ -267,7 +267,7 @@ class Class(T:! type) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @MakeClass(constants.%T) {
 // CHECK:STDOUT:   %T => constants.%T
-// CHECK:STDOUT:   %Class.loc19_28.1 => constants.%Class
+// CHECK:STDOUT:   %Class.loc19_28.2 => constants.%Class
 // CHECK:STDOUT:   %pattern_type => constants.%pattern_type.3c1
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:

@@ -74,9 +74,9 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT:   %TestIncNonRef: %TestIncNonRef.type = struct_value () [concrete]
 // CHECK:STDOUT:   %.bc7: type = fn_type_with_self_type %Op.type.e3a, %Inc.facet [concrete]
 // CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
-// CHECK:STDOUT:   %Op.type.153: type = fn_type @Op.9, @Destroy.impl(%C) [concrete]
+// CHECK:STDOUT:   %Op.type.153: type = fn_type @Op.3, @Destroy.impl(%C) [concrete]
 // CHECK:STDOUT:   %Op.5d7: %Op.type.153 = struct_value () [concrete]
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.5d7, @Op.9(%C) [concrete]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.5d7, @Op.3(%C) [concrete]
 // CHECK:STDOUT:   %TestAddAssignNonRef.type: type = fn_type @TestAddAssignNonRef [concrete]
 // CHECK:STDOUT:   %TestAddAssignNonRef: %TestAddAssignNonRef.type = struct_value () [concrete]
 // CHECK:STDOUT:   %.e2d: type = fn_type_with_self_type %Op.type.5af, %AddAssignWith.facet [concrete]
@@ -210,7 +210,7 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT:   %addr.loc34_5.1: %ptr.019 = addr_of %.loc34
 // CHECK:STDOUT:   %Op.call: init %empty_tuple.type = call %bound_method.loc34_3(%addr.loc34_5.1)
 // CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc34, constants.%Op.5d7
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.5d7, @Op.9(constants.%C) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.5d7, @Op.3(constants.%C) [concrete = constants.%Op.specific_fn]
 // CHECK:STDOUT:   %bound_method.loc34_5: <bound method> = bound_method %.loc34, %Op.specific_fn
 // CHECK:STDOUT:   %addr.loc34_5.2: %ptr.019 = addr_of %.loc34
 // CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc34_5(%addr.loc34_5.2)
@@ -227,7 +227,7 @@ fn TestAddAssignNonRef(a: C, b: C) {
 // CHECK:STDOUT:   %addr.loc45_3.1: %ptr.019 = addr_of %.loc45
 // CHECK:STDOUT:   %Op.call: init %empty_tuple.type = call %bound_method.loc45_5(%addr.loc45_3.1, %b.ref)
 // CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc45, constants.%Op.5d7
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.5d7, @Op.9(constants.%C) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.5d7, @Op.3(constants.%C) [concrete = constants.%Op.specific_fn]
 // CHECK:STDOUT:   %bound_method.loc45_3: <bound method> = bound_method %.loc45, %Op.specific_fn
 // CHECK:STDOUT:   %addr.loc45_3.2: %ptr.019 = addr_of %.loc45
 // CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method.loc45_3(%addr.loc45_3.2)

@@ -131,7 +131,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT:   %I.decl: %I.type.dac = interface_decl @I [concrete = constants.%I.generic] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
 // CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %T.loc5_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.2 (constants.%T)]
+// CHECK:STDOUT:     %T.loc5_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.1 (constants.%T)]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   impl_decl @I.impl.084 [concrete] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
@@ -167,11 +167,11 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT:   %I.impl_witness.loc12: <witness> = impl_witness %I.impl_witness_table.loc12, @I.impl.cd2(constants.%T) [symbolic = @I.impl.cd2.%I.impl_witness (constants.%I.impl_witness.6ad)]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic interface @I(%T.loc5_13.1: type) {
-// CHECK:STDOUT:   %T.loc5_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.2 (constants.%T)]
+// CHECK:STDOUT: generic interface @I(%T.loc5_13.2: type) {
+// CHECK:STDOUT:   %T.loc5_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(%T.loc5_13.2)> [symbolic = %I.type (constants.%I.type.325)]
+// CHECK:STDOUT:   %I.type: type = facet_type <@I, @I(%T.loc5_13.1)> [symbolic = %I.type (constants.%I.type.325)]
 // CHECK:STDOUT:   %Self.2: @I.%I.type (%I.type.325) = bind_symbolic_name Self, 1 [symbolic = %Self.2 (constants.%Self.209)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   interface {
@@ -222,7 +222,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @I(constants.%T) {
-// CHECK:STDOUT:   %T.loc5_13.2 => constants.%T
+// CHECK:STDOUT:   %T.loc5_13.1 => constants.%T
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %I.type => constants.%I.type.325
@@ -236,7 +236,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @I(constants.%ptr) {
-// CHECK:STDOUT:   %T.loc5_13.2 => constants.%ptr
+// CHECK:STDOUT:   %T.loc5_13.1 => constants.%ptr
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
 // CHECK:STDOUT:   %I.type => constants.%I.type.0e2
@@ -507,7 +507,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT:   %J.decl: %J.type.2b8 = interface_decl @J [concrete = constants.%J.generic] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
 // CHECK:STDOUT:   } {
-// CHECK:STDOUT:     %T.loc5_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.2 (constants.%T)]
+// CHECK:STDOUT:     %T.loc5_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.1 (constants.%T)]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   impl_decl @J.impl.199 [concrete] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
@@ -534,11 +534,11 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT:   %J.impl_witness.loc17: <witness> = impl_witness %J.impl_witness_table.loc17, @J.impl.dfd(constants.%T) [symbolic = @J.impl.dfd.%J.impl_witness (constants.%J.impl_witness.5a8)]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: generic interface @J(%T.loc5_13.1: type) {
-// CHECK:STDOUT:   %T.loc5_13.2: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.2 (constants.%T)]
+// CHECK:STDOUT: generic interface @J(%T.loc5_13.2: type) {
+// CHECK:STDOUT:   %T.loc5_13.1: type = bind_symbolic_name T, 0 [symbolic = %T.loc5_13.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %J.type: type = facet_type <@J, @J(%T.loc5_13.2)> [symbolic = %J.type (constants.%J.type.b72)]
+// CHECK:STDOUT:   %J.type: type = facet_type <@J, @J(%T.loc5_13.1)> [symbolic = %J.type (constants.%J.type.b72)]
 // CHECK:STDOUT:   %Self.2: @J.%J.type (%J.type.b72) = bind_symbolic_name Self, 1 [symbolic = %Self.2 (constants.%Self)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   interface {
@@ -577,7 +577,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @J(constants.%T) {
-// CHECK:STDOUT:   %T.loc5_13.2 => constants.%T
+// CHECK:STDOUT:   %T.loc5_13.1 => constants.%T
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @J.impl.199(constants.%T) {
@@ -587,7 +587,7 @@ impl forall [T:! type] D as J(T*) {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @J(constants.%ptr) {
-// CHECK:STDOUT:   %T.loc5_13.2 => constants.%ptr
+// CHECK:STDOUT:   %T.loc5_13.1 => constants.%ptr
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: specific @J.impl.dfd(constants.%T) {

@@ -187,10 +187,10 @@ fn F() {
 // CHECK:STDOUT:   %Point.val: %Point = struct_value () [concrete]
 // CHECK:STDOUT:   %.766: type = fn_type_with_self_type %Zero.type.822, %Z.facet [concrete]
 // CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
-// CHECK:STDOUT:   %Op.type.003: type = fn_type @Op.2, @Destroy.impl(%Point) [concrete]
+// CHECK:STDOUT:   %Op.type.003: type = fn_type @Op.1, @Destroy.impl(%Point) [concrete]
 // CHECK:STDOUT:   %Op.d2d: %Op.type.003 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.536: type = ptr_type %Point [concrete]
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.d2d, @Op.2(%Point) [concrete]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function %Op.d2d, @Op.1(%Point) [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -301,7 +301,7 @@ fn F() {
 // CHECK:STDOUT:   %impl.elem0: %.766 = impl_witness_access constants.%Z.impl_witness, element0 [concrete = constants.%Zero.dec]
 // CHECK:STDOUT:   %Zero.call: init %empty_tuple.type = call %impl.elem0()
 // CHECK:STDOUT:   %Op.bound: <bound method> = bound_method %.loc25_5.2, constants.%Op.d2d
-// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.d2d, @Op.2(constants.%Point) [concrete = constants.%Op.specific_fn]
+// CHECK:STDOUT:   %Op.specific_fn: <specific function> = specific_function constants.%Op.d2d, @Op.1(constants.%Point) [concrete = constants.%Op.specific_fn]
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc25_5.2, %Op.specific_fn
 // CHECK:STDOUT:   %addr: %ptr.536 = addr_of %.loc25_5.2
 // CHECK:STDOUT:   %no_op: init %empty_tuple.type = call %bound_method(%addr)
