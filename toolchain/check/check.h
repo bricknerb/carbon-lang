@@ -13,6 +13,7 @@
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/parse/tree_and_subtrees.h"
 #include "toolchain/sem_ir/file.h"
+#include "toolchain/sem_ir/ids.h"
 
 namespace Carbon::Check {
 
@@ -49,7 +50,7 @@ struct CheckParseTreesOptions {
   // Whether to include each unit in dumps. This is required when dumping
   // (either of `dump_stream` or `raw_dump_stream`), and must have entries based
   // on CheckIRId.
-  llvm::ArrayRef<bool> include_in_dumps = {};
+  const FixedSizeValueStore<SemIR::CheckIRId, bool>* include_in_dumps = nullptr;
 
   // If set, SemIR will be dumped to this.
   llvm::raw_ostream* dump_stream = nullptr;
@@ -72,9 +73,12 @@ struct CheckParseTreesOptions {
 
 // Checks a group of parse trees. This will use imports to decide the order of
 // checking.
+//
+// `units` will only contain units which should be checked, and is not indexed
+// by `CheckIRId`.
 auto CheckParseTrees(
     llvm::MutableArrayRef<Unit> units,
-    llvm::ArrayRef<Parse::GetTreeAndSubtreesFn> tree_and_subtrees_getters,
+    const Parse::GetTreeAndSubtreesStore& tree_and_subtrees_getters,
     llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem> fs,
     const CheckParseTreesOptions& options,
     std::shared_ptr<clang::CompilerInvocation> clang_invocation) -> void;
