@@ -10,6 +10,8 @@
 #include <tuple>
 #include <utility>
 
+#include "clang/AST/ASTContext.h"
+#include "clang/AST/RecordLayout.h"
 #include "clang/Basic/FileManager.h"
 #include "clang/Frontend/ASTUnit.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -42,6 +44,7 @@
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/clang_decl.h"
 #include "toolchain/sem_ir/ids.h"
+#include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/name_scope.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
@@ -105,9 +108,9 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
  public:
   // Creates an instance with the location that triggers calling Clang.
   // `context` must not be null.
-  explicit CarbonClangDiagnosticConsumer(Context* context,
-                                         clang::CompilerInvocation* invocation)
-      : context_(context), invocation_(invocation) {}
+  explicit CarbonClangDiagnosticConsumer(
+      Context* context, std::shared_ptr<clang::CompilerInvocation> invocation)
+      : context_(context), invocation_(std::move(invocation)) {}
 
   // Generates a Carbon warning for each Clang warning and a Carbon error for
   // each Clang error or fatal.
@@ -185,7 +188,7 @@ class CarbonClangDiagnosticConsumer : public clang::DiagnosticConsumer {
   Context* context_;
 
   // The compiler invocation that is producing the diagnostics.
-  clang::CompilerInvocation* invocation_;
+  std::shared_ptr<clang::CompilerInvocation> invocation_;
 
   // Information on a Clang diagnostic that can be converted to a Carbon
   // diagnostic.
@@ -219,11 +222,11 @@ static auto GenerateAst(Context& context,
                         std::shared_ptr<clang::CompilerInvocation> invocation)
     -> std::pair<std::unique_ptr<clang::ASTUnit>, bool> {
   // Build a diagnostics engine.
-  CarbonClangDiagnosticConsumer diagnostics_consumer(&context,
-                                                     invocation.get());
+  auto diagnostics_consumer =
+      std::make_unique<CarbonClangDiagnosticConsumer>(&context, invocation);
   llvm::IntrusiveRefCntPtr<clang::DiagnosticsEngine> diags(
       clang::CompilerInstance::createDiagnostics(
-          *fs, invocation->getDiagnosticOpts(), &diagnostics_consumer,
+          *fs, invocation->getDiagnosticOpts(), diagnostics_consumer.get(),
           /*ShouldOwnClient=*/false));
 
   // Extract the input from the frontend invocation and make sure it makes
@@ -247,9 +250,6 @@ static auto GenerateAst(Context& context,
       invocation, std::make_shared<clang::PCHContainerOperations>(), nullptr,
       diags, new clang::FileManager(invocation->getFileSystemOpts(), fs));
 
-  // Remove link to the diagnostics consumer before its destruction.
-  ast->getDiagnostics().setClient(nullptr);
-
   // Remove remapped file before its underlying storage is destroyed.
   invocation->getPreprocessorOpts().clearRemappedFiles();
 
@@ -259,9 +259,15 @@ static auto GenerateAst(Context& context,
   context.sem_ir().set_cpp_ast(ast.get());
 
   // Emit any diagnostics we queued up while building the AST.
-  diagnostics_consumer.EmitDiagnostics();
+  diagnostics_consumer->EmitDiagnostics();
+  bool any_errors = diagnostics_consumer->getNumErrors() > 0;
 
-  return {std::move(ast), !ast || diagnostics_consumer.getNumErrors() > 0};
+  // Transfer ownership of the consumer to the AST unit, in case more
+  // diagnostics are produced by AST queries.
+  ast->getDiagnostics().setClient(diagnostics_consumer.release(),
+                                  /*ShouldOwnClient=*/true);
+
+  return {std::move(ast), !ast || any_errors};
 }
 
 // Adds a namespace for the `Cpp` import and returns its `NameScopeId`.
@@ -373,7 +379,10 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
 // Returns whether `decl` already mapped to an instruction.
 static auto IsClangDeclImported(const Context& context, clang::Decl* decl)
     -> bool {
-  return context.sem_ir().clang_decls().Lookup(decl).has_value();
+  return context.sem_ir()
+      .clang_decls()
+      .Lookup(decl->getCanonicalDecl())
+      .has_value();
 }
 
 // If `decl` already mapped to an instruction, returns that instruction.
@@ -381,7 +390,7 @@ static auto IsClangDeclImported(const Context& context, clang::Decl* decl)
 static auto LookupClangDeclInstId(const Context& context, clang::Decl* decl)
     -> SemIR::InstId {
   const auto& clang_decls = context.sem_ir().clang_decls();
-  if (auto context_clang_decl_id = clang_decls.Lookup(decl);
+  if (auto context_clang_decl_id = clang_decls.Lookup(decl->getCanonicalDecl());
       context_clang_decl_id.has_value()) {
     return clang_decls.Get(context_clang_decl_id).inst_id;
   }
@@ -442,22 +451,27 @@ static auto ImportNamespaceDecl(Context& context,
   context.name_scopes()
       .Get(result.name_scope_id)
       .set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
-          {.decl = clang_decl, .inst_id = result.inst_id}));
+          {.decl = clang_decl->getCanonicalDecl(), .inst_id = result.inst_id}));
   return result.inst_id;
 }
 
+static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
+    -> TypeExpr;
+
 // Creates a class declaration for the given class name in the given scope.
 // Returns the `InstId` for the declaration.
-static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
+static auto BuildClassDecl(Context& context,
+                           SemIR::ImportIRInstId import_ir_inst_id,
+                           SemIR::NameScopeId parent_scope_id,
                            SemIR::NameId name_id)
-    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
+    -> std::tuple<SemIR::ClassId, SemIR::TypeInstId> {
   // Add the class declaration.
   auto class_decl = SemIR::ClassDecl{.type_id = SemIR::TypeType::TypeId,
                                      .class_id = SemIR::ClassId::None,
                                      .decl_block_id = SemIR::InstBlockId::None};
-  // TODO: Consider setting a proper location.
   auto class_decl_id = AddPlaceholderInstInNoBlock(
-      context, SemIR::LocIdAndInst::NoLoc(class_decl));
+      context,
+      SemIR::LocIdAndInst::UncheckedLoc(import_ir_inst_id, class_decl));
   context.imports().push_back(class_decl_id);
 
   SemIR::Class class_info = {
@@ -486,76 +500,159 @@ static auto BuildClassDecl(Context& context, SemIR::NameScopeId parent_scope_id,
 
   SetClassSelfType(context, class_decl.class_id);
 
-  return {class_decl.class_id, class_decl_id};
+  return {class_decl.class_id, context.types().GetAsTypeInstId(class_decl_id)};
+}
+
+// Checks that the specified finished class definition is valid and builds and
+// returns a corresponding complete type witness instruction.
+// TODO: Remove recursion into mapping field types.
+// NOLINTNEXTLINE(misc-no-recursion)
+static auto ImportClassObjectRepr(Context& context,
+                                  SemIR::ImportIRInstId import_ir_inst_id,
+                                  SemIR::TypeInstId class_type_inst_id,
+                                  const clang::CXXRecordDecl* clang_def)
+    -> SemIR::TypeInstId {
+  // For now, if the class is empty, produce an empty struct as the object
+  // representation. This allows our tests to continue to pass while we don't
+  // properly support initializing imported C++ classes.
+  // TODO: Remove this.
+  if (clang_def->isEmpty()) {
+    return context.types().GetAsTypeInstId(AddInst(
+        context,
+        MakeImportedLocIdAndInst(
+            context, import_ir_inst_id,
+            SemIR::StructType{.type_id = SemIR::TypeType::TypeId,
+                              .fields_id = SemIR::StructTypeFieldsId::Empty})));
+  }
+
+  const auto& clang_layout =
+      context.ast_context().getASTRecordLayout(clang_def);
+
+  llvm::SmallVector<uint64_t> layout;
+  llvm::SmallVector<SemIR::StructTypeField> fields;
+
+  static_assert(SemIR::CustomLayoutId::SizeIndex == 0);
+  layout.push_back(clang_layout.getSize().getQuantity());
+
+  static_assert(SemIR::CustomLayoutId::AlignIndex == 1);
+  layout.push_back(clang_layout.getAlignment().getQuantity());
+
+  static_assert(SemIR::CustomLayoutId::FirstFieldIndex == 2);
+
+  // TODO: Import vptr(s).
+  // TODO: Import bases.
+
+  // Import fields.
+  for (auto* field : clang_def->fields()) {
+    if (field->isBitField()) {
+      // TODO: Add a representation for named bitfield members.
+      continue;
+    }
+    if (field->isAnonymousStructOrUnion()) {
+      // TODO: Visit IndirectFieldDecls and add them to the layout.
+      continue;
+    }
+
+    auto field_name_id = AddIdentifierName(context, field->getName());
+    auto [field_type_inst_id, field_type_id] =
+        MapType(context, import_ir_inst_id, field->getType());
+
+    // Create a field now, as we know the index to use.
+    // TODO: Consider doing this lazily instead.
+    auto field_decl_id = AddInst(
+        context, MakeImportedLocIdAndInst(
+                     context, import_ir_inst_id,
+                     SemIR::FieldDecl{
+                         .type_id = GetUnboundElementType(
+                             context, class_type_inst_id, field_type_inst_id),
+                         .name_id = field_name_id,
+                         .index = SemIR::ElementIndex(fields.size())}));
+    context.sem_ir().clang_decls().Add(
+        {.decl = field->getCanonicalDecl(), .inst_id = field_decl_id});
+
+    layout.push_back(context.ast_context()
+                         .toCharUnitsFromBits(clang_layout.getFieldOffset(
+                             field->getFieldIndex()))
+                         .getQuantity());
+    fields.push_back(
+        {.name_id = field_name_id, .type_inst_id = field_type_inst_id});
+  }
+
+  // TODO: Add a field to prevent tail padding reuse if necessary.
+
+  return AddTypeInst<SemIR::CustomLayoutType>(
+      context, import_ir_inst_id,
+      {.type_id = SemIR::TypeType::TypeId,
+       .fields_id = context.struct_type_fields().Add(fields),
+       .layout_id = context.custom_layouts().Add(layout)});
 }
 
 // Creates a class definition based on the information in the given Clang
-// declaration, which is assumed to be for a class definition. Returns the new
-// class id and instruction id.
+// declaration, which is assumed to be for a class definition.
+// TODO: Remove recursion into mapping field types.
+// NOLINTNEXTLINE(misc-no-recursion)
 static auto BuildClassDefinition(Context& context,
-                                 clang::CXXRecordDecl* clang_decl)
-    -> std::tuple<SemIR::ClassId, SemIR::InstId> {
-  auto [class_id, class_inst_id] =
-      BuildClassDecl(context, GetParentNameScopeId(context, clang_decl),
-                     AddIdentifierName(context, clang_decl->getName()));
+                                 SemIR::ImportIRInstId import_ir_inst_id,
+                                 SemIR::ClassId class_id,
+                                 SemIR::TypeInstId class_inst_id,
+                                 SemIR::ClangDeclId clang_decl_id,
+                                 clang::CXXRecordDecl* clang_def) -> void {
   auto& class_info = context.classes().Get(class_id);
   StartClassDefinition(context, class_info, class_inst_id);
 
+  // Name lookup into the Carbon class looks in the C++ class definition.
   context.name_scopes()
       .Get(class_info.scope_id)
-      .set_clang_decl_context_id(context.sem_ir().clang_decls().Add(
-          {.decl = clang_decl, .inst_id = class_inst_id}));
+      .set_clang_decl_context_id(clang_decl_id);
 
-  return {class_id, class_inst_id};
+  context.inst_block_stack().Push();
+
+  // Compute the class's object representation.
+  auto object_repr_id = ImportClassObjectRepr(context, import_ir_inst_id,
+                                              class_inst_id, clang_def);
+  class_info.complete_type_witness_id = AddInst<SemIR::CompleteTypeWitness>(
+      context, import_ir_inst_id,
+      {.type_id = GetSingletonType(context, SemIR::WitnessType::TypeInstId),
+       .object_repr_type_inst_id = object_repr_id});
+
+  class_info.body_block_id = context.inst_block_stack().Pop();
 }
 
 // Mark the given `Decl` as failed in `clang_decls`.
 static auto MarkFailedDecl(Context& context, clang::Decl* clang_decl) {
-  context.sem_ir().clang_decls().Add(
-      {.decl = clang_decl, .inst_id = SemIR::ErrorInst::InstId});
+  context.sem_ir().clang_decls().Add({.decl = clang_decl->getCanonicalDecl(),
+                                      .inst_id = SemIR::ErrorInst::InstId});
 }
 
 // Imports a record declaration from Clang to Carbon. If successful, returns
 // the new Carbon class declaration `InstId`.
 // TODO: Change `clang_decl` to `const &` when lookup is using `clang::DeclID`
 // and we don't need to store the decl for lookup context.
-static auto ImportCXXRecordDecl(Context& context, SemIR::LocId loc_id,
+// TODO: Remove recursion into mapping field types.
+// NOLINTNEXTLINE(misc-no-recursion)
+static auto ImportCXXRecordDecl(Context& context,
                                 clang::CXXRecordDecl* clang_decl)
     -> SemIR::InstId {
   clang::CXXRecordDecl* clang_def = clang_decl->getDefinition();
-  if (!clang_def) {
-    context.TODO(loc_id,
-                 "Unsupported: Record declarations without a definition");
-    MarkFailedDecl(context, clang_decl);
-    return SemIR::ErrorInst::InstId;
+  if (clang_def) {
+    clang_decl = clang_def;
+  }
+  auto import_ir_inst_id = AddImportIRInst(context, clang_decl->getLocation());
+
+  auto [class_id, class_inst_id] = BuildClassDecl(
+      context, import_ir_inst_id, GetParentNameScopeId(context, clang_decl),
+      AddIdentifierName(context, clang_decl->getName()));
+
+  // TODO: The caller does the same lookup. Avoid doing it twice.
+  auto clang_decl_id = context.sem_ir().clang_decls().Add(
+      {.decl = clang_decl->getCanonicalDecl(), .inst_id = class_inst_id});
+
+  if (clang_def) {
+    BuildClassDefinition(context, import_ir_inst_id, class_id, class_inst_id,
+                         clang_decl_id, clang_def);
   }
 
-  if (clang_def->isDynamicClass()) {
-    context.TODO(loc_id, "Unsupported: Dynamic Class");
-    MarkFailedDecl(context, clang_decl);
-    return SemIR::ErrorInst::InstId;
-  }
-
-  if (clang_def->isUnion() && !clang_def->fields().empty()) {
-    context.TODO(loc_id, "Unsupported: Non-empty union");
-    MarkFailedDecl(context, clang_decl);
-    return SemIR::ErrorInst::InstId;
-  }
-
-  auto [class_id, class_def_id] = BuildClassDefinition(context, clang_def);
-
-  // The class type is now fully defined. Compute its object representation.
-  ComputeClassObjectRepr(context,
-                         // TODO: Consider having a proper location here.
-                         Parse::ClassDefinitionId::None, class_id,
-                         // TODO: Set fields.
-                         /*field_decls=*/{},
-                         // TODO: Set vtable.
-                         /*vtable_contents=*/{},
-                         // TODO: Set block.
-                         /*body=*/{});
-
-  return class_def_id;
+  return class_inst_id;
 }
 
 // Creates an integer type of the given size.
@@ -587,8 +684,10 @@ static auto MapBuiltinType(Context& context, clang::QualType qual_type,
 
 // Maps a C++ record type to a Carbon type.
 // TODO: Support more record types.
-static auto MapRecordType(Context& context, SemIR::LocId loc_id,
-                          const clang::RecordType& type) -> TypeExpr {
+// TODO: Remove recursion mapping fields of class types.
+// NOLINTNEXTLINE(misc-no-recursion)
+static auto MapRecordType(Context& context, const clang::RecordType& type)
+    -> TypeExpr {
   auto* record_decl = clang::dyn_cast<clang::CXXRecordDecl>(type.getDecl());
   if (!record_decl) {
     return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
@@ -597,7 +696,7 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
   // Check if the declaration is already mapped.
   SemIR::InstId record_inst_id = LookupClangDeclInstId(context, record_decl);
   if (!record_inst_id.has_value()) {
-    record_inst_id = ImportCXXRecordDecl(context, loc_id, record_decl);
+    record_inst_id = ImportCXXRecordDecl(context, record_decl);
   }
   SemIR::TypeInstId record_type_inst_id =
       context.types().GetAsTypeInstId(record_inst_id);
@@ -609,14 +708,16 @@ static auto MapRecordType(Context& context, SemIR::LocId loc_id,
 // Maps a C++ type that is not a wrapper type such as a pointer to a Carbon
 // type.
 // TODO: Support more types.
-static auto MapNonWrapperType(Context& context, SemIR::LocId loc_id,
-                              clang::QualType type) -> TypeExpr {
+// TODO: Remove recursion mapping fields of class types.
+// NOLINTNEXTLINE(misc-no-recursion)
+static auto MapNonWrapperType(Context& context, clang::QualType type)
+    -> TypeExpr {
   if (const auto* builtin_type = type->getAs<clang::BuiltinType>()) {
     return MapBuiltinType(context, type, *builtin_type);
   }
 
   if (const auto* record_type = type->getAs<clang::RecordType>()) {
-    return MapRecordType(context, loc_id, *record_type);
+    return MapRecordType(context, *record_type);
   }
 
   CARBON_CHECK(!type.hasQualifiers() && !type->isPointerType(),
@@ -673,6 +774,8 @@ static auto MapPointerType(Context& context, SemIR::LocId loc_id,
 // Maps a C++ type to a Carbon type. `type` should not be canonicalized because
 // we check for pointer nullability and nullability will be lost by
 // canonicalization.
+// TODO: Remove recursion mapping fields of class types.
+// NOLINTNEXTLINE(misc-no-recursion)
 static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
     -> TypeExpr {
   // Unwrap any type modifiers and wrappers.
@@ -689,7 +792,7 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
     wrapper_types.push_back(orig_type);
   }
 
-  auto mapped = MapNonWrapperType(context, loc_id, type);
+  auto mapped = MapNonWrapperType(context, type);
 
   for (auto wrapper : llvm::reverse(wrapper_types)) {
     if (!mapped.inst_id.has_value() ||
@@ -961,11 +1064,20 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     MarkFailedDecl(context, clang_decl);
     return SemIR::ErrorInst::InstId;
   }
+
   if (clang_decl->getTemplatedKind() ==
       clang::FunctionDecl::TK_FunctionTemplate) {
     context.TODO(loc_id, "Unsupported: Template function");
     MarkFailedDecl(context, clang_decl);
     return SemIR::ErrorInst::InstId;
+  }
+
+  if (auto* method_decl = dyn_cast<clang::CXXMethodDecl>(clang_decl)) {
+    if (method_decl->isVirtual()) {
+      context.TODO(loc_id, "Unsupported: Virtual function");
+      MarkFailedDecl(context, clang_decl);
+      return SemIR::ErrorInst::InstId;
+    }
   }
 
   context.scope_stack().PushForDeclName();
@@ -1047,6 +1159,7 @@ static auto GetDependentUnimportedTypeDecls(const Context& context,
       if (!IsClangDeclImported(context, record_decl)) {
         return {record_decl};
       }
+      // TODO: Also collect field types.
     }
   }
 
@@ -1114,6 +1227,16 @@ static auto ImportDeclAfterDependencies(Context& context, SemIR::LocId loc_id,
       return SemIR::ErrorInst::InstId;
     }
     return type_inst_id;
+  }
+  if (clang::isa<clang::FieldDecl>(clang_decl)) {
+    // Usable fields get imported as a side effect of importing the class.
+    if (SemIR::InstId existing_inst_id =
+            LookupClangDeclInstId(context, clang_decl);
+        existing_inst_id.has_value()) {
+      return existing_inst_id;
+    }
+    context.TODO(loc_id, "Unsupported: Unhandled kind of field declaration");
+    return SemIR::InstId::None;
   }
 
   context.TODO(loc_id, llvm::formatv("Unsupported: Declaration type {0}",

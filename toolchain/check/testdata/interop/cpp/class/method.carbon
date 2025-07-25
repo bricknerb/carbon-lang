@@ -226,8 +226,6 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT:     %v.param: %HasQualifiers = value_param call_param0
 // CHECK:STDOUT:     %.loc6_12: type = splice_block %HasQualifiers.ref.loc6_12 [concrete = constants.%HasQualifiers] {
 // CHECK:STDOUT:       %Cpp.ref.loc6_9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:       %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:       %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
 // CHECK:STDOUT:       %HasQualifiers.ref.loc6_12: type = name_ref HasQualifiers, imports.%HasQualifiers.decl [concrete = constants.%HasQualifiers]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v: %HasQualifiers = bind_name v, %v.param
@@ -242,7 +240,9 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @HasQualifiers {
-// CHECK:STDOUT:   complete_type_witness = @F.%complete_type
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
+// CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%HasQualifiers
@@ -378,8 +378,6 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT:     %v.param: %HasQualifiers = value_param call_param0
 // CHECK:STDOUT:     %.loc6: type = splice_block %HasQualifiers.ref [concrete = constants.%HasQualifiers] {
 // CHECK:STDOUT:       %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:       %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:       %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type.357]
 // CHECK:STDOUT:       %HasQualifiers.ref: type = name_ref HasQualifiers, imports.%HasQualifiers.decl [concrete = constants.%HasQualifiers]
 // CHECK:STDOUT:     }
 // CHECK:STDOUT:     %v: %HasQualifiers = bind_name v, %v.param
@@ -387,7 +385,9 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @HasQualifiers {
-// CHECK:STDOUT:   complete_type_witness = @Value.%complete_type
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type.357]
+// CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%HasQualifiers
@@ -500,8 +500,6 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT:     %p.param: %ptr.ec3 = value_param call_param0
 // CHECK:STDOUT:     %.loc6: type = splice_block %ptr [concrete = constants.%ptr.ec3] {
 // CHECK:STDOUT:       %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:       %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:       %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
 // CHECK:STDOUT:       %HasQualifiers.ref: type = name_ref HasQualifiers, imports.%HasQualifiers.decl [concrete = constants.%HasQualifiers]
 // CHECK:STDOUT:       %ptr: type = ptr_type %HasQualifiers.ref [concrete = constants.%ptr.ec3]
 // CHECK:STDOUT:     }
@@ -510,7 +508,9 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @HasQualifiers {
-// CHECK:STDOUT:   complete_type_witness = @Ref.%complete_type
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
+// CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%HasQualifiers
@@ -572,8 +572,6 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT:     %p.param: %ptr.ec3 = value_param call_param0
 // CHECK:STDOUT:     %.loc6: type = splice_block %ptr [concrete = constants.%ptr.ec3] {
 // CHECK:STDOUT:       %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:       %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
-// CHECK:STDOUT:       %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
 // CHECK:STDOUT:       %HasQualifiers.ref: type = name_ref HasQualifiers, imports.%HasQualifiers.decl [concrete = constants.%HasQualifiers]
 // CHECK:STDOUT:       %ptr: type = ptr_type %HasQualifiers.ref [concrete = constants.%ptr.ec3]
 // CHECK:STDOUT:     }
@@ -582,7 +580,9 @@ fn Ref(p: Cpp.HasQualifiers*) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: class @HasQualifiers {
-// CHECK:STDOUT:   complete_type_witness = @Ref.%complete_type
+// CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete = constants.%empty_struct_type]
+// CHECK:STDOUT:   %complete_type: <witness> = complete_type_witness %empty_struct_type [concrete = constants.%complete_type]
+// CHECK:STDOUT:   complete_type_witness = %complete_type
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%HasQualifiers
