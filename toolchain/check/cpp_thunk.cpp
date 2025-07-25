@@ -363,17 +363,17 @@ auto PerformCppThunkCall(Context& context, SemIR::LocId loc_id,
 
       // TODO: Don't create storage if it's already in a storage (depends on
       // expression category).
-      SemIR::InstId var_storage_inst_id = AddInstWithCleanup(
+      SemIR::InstId temporary_storage_inst_id = AddInstWithCleanup(
           context, loc_id,
           SemIR::TemporaryStorage{.type_id = callee_param_type_id});
       AddInst(context, loc_id,
               SemIR::InitializeFrom{.type_id = callee_param_type_id,
                                     .src_id = arg_id,
-                                    .dest_id = var_storage_inst_id});
+                                    .dest_id = temporary_storage_inst_id});
 
       arg_id = AddInst(context, loc_id,
                        SemIR::AddrOf{.type_id = thunk_param_type_id,
-                                     .lvalue_id = var_storage_inst_id});
+                                     .lvalue_id = temporary_storage_inst_id});
     }
     thunk_arg_ids.push_back(arg_id);
   }
