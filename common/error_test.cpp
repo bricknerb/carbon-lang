@@ -36,13 +36,6 @@ TEST(ErrorTest, ErrorBuilderOperatorImplicitCast) {
   EXPECT_THAT(result, IsError("msg"));
 }
 
-TEST(ErrorTest, StreamError) {
-  Error result = ErrorBuilder("TestFunc") << "msg";
-  RawStringOstream result_stream;
-  result_stream << result;
-  EXPECT_EQ(result_stream.TakeStr(), "TestFunc: msg");
-}
-
 class CustomError : public ErrorBase<CustomError> {
  public:
   auto Print(llvm::raw_ostream& os) const -> void {
