@@ -79,6 +79,7 @@ fn F() {
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %Y.ref: type = name_ref Y, imports.%X.decl [concrete = constants.%X]
+// CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %f.ref: %X.f.type = name_ref f, imports.%X.f.decl [concrete = constants.%X.f]
 // CHECK:STDOUT:   %int_42: Core.IntLiteral = int_value 42 [concrete = constants.%int_42.20e]
 // CHECK:STDOUT:   %impl.elem0: %.9c3 = impl_witness_access constants.%ImplicitAs.impl_witness.c75, element0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.956]

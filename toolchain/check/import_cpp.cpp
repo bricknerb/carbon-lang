@@ -27,6 +27,7 @@
 #include "toolchain/check/class.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/convert.h"
+#include "toolchain/check/cpp_thunk.h"
 #include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/check/eval.h"
 #include "toolchain/check/function.h"
@@ -967,6 +968,9 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     MarkFailedDecl(context, clang_decl);
     return SemIR::ErrorInst::InstId;
   }
+  // TODO: Convert to context.TODO() when we have a test case.
+  CARBON_CHECK(!clang_decl->getFunctionType()->isFunctionNoProtoType(),
+               "No Prototype function");
 
   context.scope_stack().PushForDeclName();
   context.inst_block_stack().Push();
@@ -1012,6 +1016,12 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
            context, function_params_insts->implicit_param_patterns_id),
        .clang_decl_id = context.sem_ir().clang_decls().Add(
            {.decl = clang_decl, .inst_id = decl_id})}};
+
+  if (IsCppThunkRequired(context, function_info)) {
+    clang::FunctionDecl* thunk_decl = BuildCppThunk(context, function_info);
+    function_info.SetCppThunkRequired(
+        ImportFunctionDecl(context, loc_id, thunk_decl));
+  }
 
   function_decl.function_id = context.functions().Add(function_info);
 
