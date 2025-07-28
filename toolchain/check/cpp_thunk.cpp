@@ -122,7 +122,7 @@ auto IsCppThunkRequired(Context& context, const SemIR::Function& function)
 }
 
 // Returns whether the type is a pointer or a signed int of 32 or 64 bits.
-static auto IsTrivialType(clang::ASTContext& ast_context, clang::QualType type)
+static auto IsScalarType(clang::ASTContext& ast_context, clang::QualType type)
     -> bool {
   if (type->isPointerType()) {
     return true;
@@ -156,13 +156,13 @@ static auto BuildThunkParameterTypes(
   for (const clang::ParmVarDecl* callee_param :
        callee_function_decl.parameters()) {
     clang::QualType param_type = callee_param->getType();
-    bool trivial_type = IsTrivialType(ast_context, param_type);
-    if (!trivial_type) {
+    bool is_scalar_type = IsScalarType(ast_context, param_type);
+    if (!is_scalar_type) {
       clang::QualType pointer_type = ast_context.getPointerType(param_type);
       param_type = ast_context.getAttributedType(
           clang::NullabilityKind::NonNull, pointer_type, pointer_type);
     }
-    param_type_changed.push_back(!trivial_type);
+    param_type_changed.push_back(!is_scalar_type);
     thunk_param_types.push_back(param_type);
   }
 
