@@ -13,7 +13,6 @@
 // Tests for the case where we need a thunk when calling a C++ function from
 // Carbon, because the parameter and return types might have a non-trivial
 // calling convention.
-// TODO: Create thunks for these cases.
 
 // ============================================================================
 // short param
