@@ -18,11 +18,31 @@ class SubstInstCallbacks {
 
   auto context() const -> Context& { return *context_; }
 
+  // How further substitution should or should not be applied to the instruction
+  // after Subst is done.
+  //
+  // Rebuild or ReuseUnchaged will always be called when SubstAgain or
+  // SubstOperands is returned, after processing anything inside the instruction
+  // after Subst.
+  enum SubstResult {
+    // Don't substitute into the operands of the instruction.
+    FullySubstituted,
+    // Attempt to substitute into the operands of the instruction.
+    SubstOperands,
+    // Attempt to substitute again on the resulting instruction, acting like
+    // recursion on the instruction itself.
+    SubstAgain,
+  };
+
   // Performs any needed substitution into an instruction. The instruction ID
   // should be updated as necessary to represent the new instruction. Returns
-  // true if the resulting instruction ID is fully-substituted, or false if
-  // substitution may be needed into operands of the instruction.
-  virtual auto Subst(SemIR::InstId& inst_id) const -> bool = 0;
+  // FullySubstituted if the resulting instruction ID is fully-substituted.
+  // Return SubstOperands if substitution may be needed into operands of the
+  // instruction, or SubstAgain if the replaced instruction itself should have
+  // substitution applied to it again. When SubstOperands or SubstAgain is
+  // returned, it results in a call back to Rebuild or ReuseUnchanged when that
+  // instruction is done being substituted.
+  virtual auto Subst(SemIR::InstId& inst_id) -> SubstResult = 0;
 
   // Rebuilds the type of an instruction from the substituted type instruction.
   // By default this builds the unattached type described by the given type ID.
@@ -33,15 +53,14 @@ class SubstInstCallbacks {
   // `orig_inst_id` is the instruction prior to substitution, and `new_inst` is
   // the substituted instruction. Returns the new instruction ID to use to refer
   // to `new_inst`.
-  virtual auto Rebuild(SemIR::InstId orig_inst_id, SemIR::Inst new_inst) const
+  virtual auto Rebuild(SemIR::InstId orig_inst_id, SemIR::Inst new_inst)
       -> SemIR::InstId = 0;
 
   // Performs any work needed when no substitutions were performed into an
   // instruction for which `Subst` returned `false`. Provides an opportunity to
   // perform any necessary updates to the instruction beyond updating its
   // operands. Returns the new instruction ID to use to refer to `orig_inst_id`.
-  virtual auto ReuseUnchanged(SemIR::InstId orig_inst_id) const
-      -> SemIR::InstId {
+  virtual auto ReuseUnchanged(SemIR::InstId orig_inst_id) -> SemIR::InstId {
     return orig_inst_id;
   }
 
@@ -63,9 +82,9 @@ class SubstInstCallbacks {
 // which are substituted recursively, and if any of them change then `Rebuild`
 // is used to build a new instruction with the substituted operands.
 auto SubstInst(Context& context, SemIR::InstId inst_id,
-               const SubstInstCallbacks& callbacks) -> SemIR::InstId;
+               SubstInstCallbacks& callbacks) -> SemIR::InstId;
 auto SubstInst(Context& context, SemIR::TypeInstId inst_id,
-               const SubstInstCallbacks& callbacks) -> SemIR::TypeInstId;
+               SubstInstCallbacks& callbacks) -> SemIR::TypeInstId;
 
 // A substitution that is being performed.
 struct Substitution {
