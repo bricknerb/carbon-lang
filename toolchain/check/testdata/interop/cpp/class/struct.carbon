@@ -82,20 +82,20 @@ fn MyF(bar: Cpp.Bar*);
 //@dump-sem-ir-end
 
 // ============================================================================
-// Public static member function
+// Static member function
 // ============================================================================
 
-// --- public_static_member_function.h
+// --- static_member_function.h
 
 struct Bar {
   static auto foo() -> void;
 };
 
-// --- import_public_static_member_function.carbon
+// --- import_static_member_function.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "public_static_member_function.h";
+import Cpp library "static_member_function.h";
 
 fn MyF() {
   //@dump-sem-ir-begin
@@ -104,53 +104,31 @@ fn MyF() {
 }
 
 // ============================================================================
-// Private static member function
+// Static data member
 // ============================================================================
 
-// --- private_static_member_function.h
-
-struct Bar {
- private:
-  static auto foo() -> void;
-};
-
-// --- todo_fail_import_private_static_member_function.carbon
-
-library "[[@TEST_NAME]]";
-
-import Cpp library "private_static_member_function.h";
-
-fn MyF() {
-  // TODO: Should fail because `foo` is inaccessible.
-  Cpp.Bar.foo();
-}
-
-// ============================================================================
-// Public static data member
-// ============================================================================
-
-// --- public_static_data_member.h
+// --- static_data_member.h
 
 struct Bar {
   static Bar* _Nonnull foo;
 };
 
-// --- fail_todo_import_public_static_data_member.carbon
+// --- fail_todo_import_static_data_member.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "public_static_data_member.h";
+import Cpp library "static_data_member.h";
 
 fn MyF() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_public_static_data_member.carbon:[[@LINE+11]]:23: error: semantics TODO: `Unsupported: Declaration type Var` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_import_static_data_member.carbon:[[@LINE+11]]:23: error: semantics TODO: `Unsupported: Declaration type Var` [SemanticsTodo]
   // CHECK:STDERR:   let bar: Cpp.Bar* = Cpp.Bar.foo();
   // CHECK:STDERR:                       ^~~~~~~~~~~
-  // CHECK:STDERR: fail_todo_import_public_static_data_member.carbon:[[@LINE+8]]:23: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
+  // CHECK:STDERR: fail_todo_import_static_data_member.carbon:[[@LINE+8]]:23: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
   // CHECK:STDERR:   let bar: Cpp.Bar* = Cpp.Bar.foo();
   // CHECK:STDERR:                       ^~~~~~~~~~~
   // CHECK:STDERR:
-  // CHECK:STDERR: fail_todo_import_public_static_data_member.carbon:[[@LINE+4]]:23: error: member name `foo` not found in `Cpp.Bar` [MemberNameNotFoundInInstScope]
+  // CHECK:STDERR: fail_todo_import_static_data_member.carbon:[[@LINE+4]]:23: error: member name `foo` not found in `Cpp.Bar` [MemberNameNotFoundInInstScope]
   // CHECK:STDERR:   let bar: Cpp.Bar* = Cpp.Bar.foo();
   // CHECK:STDERR:                       ^~~~~~~~~~~
   // CHECK:STDERR:
@@ -159,20 +137,20 @@ fn MyF() {
 }
 
 // ============================================================================
-// Public data member
+// Data member
 // ============================================================================
 
-// --- public_data_member.h
+// --- data_member.h
 
 struct Bar {
   Bar* _Nonnull foo;
 };
 
-// --- import_public_data_member.carbon
+// --- import_data_member.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "public_data_member.h";
+import Cpp library "data_member.h";
 
 //@dump-sem-ir-begin
 fn MyF(bar : Cpp.Bar*) {
@@ -254,7 +232,7 @@ struct Bar {
   static auto foo() -> void;
 };
 
-// --- todo_fail_to_inherit_private.carbon
+// --- fail_to_inherit_private.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -265,7 +243,11 @@ class Derived {
 }
 
 fn MyF() {
-  // TODO: Should fail because `foo` is inaccessible.
+  // CHECK:STDERR: fail_to_inherit_private.carbon:[[@LINE+5]]:3: error: cannot access private member `foo` of type `Cpp.Bar` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Derived.foo();
+  // CHECK:STDERR:   ^~~~~~~~~~~
+  // CHECK:STDERR: fail_to_inherit_private.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
   Derived.foo();
 }
 
@@ -404,7 +386,7 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @MyF(%bar.param: %ptr);
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_public_static_member_function.carbon
+// CHECK:STDOUT: --- import_static_member_function.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -431,7 +413,7 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_public_static_data_member.carbon
+// CHECK:STDOUT: --- fail_todo_import_static_data_member.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Bar: type = class_type @Bar [concrete]
@@ -464,7 +446,7 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_public_data_member.carbon
+// CHECK:STDOUT: --- import_data_member.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Bar: type = class_type @Bar [concrete]
