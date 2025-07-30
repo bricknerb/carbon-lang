@@ -43,6 +43,7 @@
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/clang_decl.h"
+#include "toolchain/sem_ir/class.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/name_scope.h"
@@ -335,8 +336,8 @@ auto ImportCppFiles(Context& context,
 
 // Look ups the given name in the Clang AST in a specific scope. Returns the
 // lookup result if lookup was successful.
-static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
-                        SemIR::NameId name_id)
+static auto ClangLookupName(Context& context, SemIR::NameScopeId scope_id,
+                            SemIR::NameId name_id)
     -> std::optional<clang::LookupResult> {
   std::optional<llvm::StringRef> name =
       context.names().GetAsStringIfIdentifier(name_id);
@@ -371,6 +372,74 @@ static auto ClangLookup(Context& context, SemIR::NameScopeId scope_id,
   }
 
   return lookup;
+}
+
+// The name of the Carbon function a C++ constructor is mapped to.
+static constexpr llvm::StringLiteral CarbonConstructorFunctionMame = "Make";
+
+// If the name is not of a constructor function returns `nullopt` or the scope
+// is not a class. Otherwise, looks up for constructors in the class and returns
+// the lookup result.
+static auto ClangConstructorLookup(Context& context,
+                                   SemIR::NameScopeId scope_id,
+                                   SemIR::NameId name_id)
+    -> std::optional<clang::DeclContextLookupResult> {
+  SemIR::NameScope& scope = context.name_scopes().Get(scope_id);
+  // TODO: Support translating constructors to `fn <type name>`, and not just
+  // `fn Make`.
+  if (context.names().GetAsStringIfIdentifier(name_id) !=
+          CarbonConstructorFunctionMame ||
+      !context.insts().Is<SemIR::ClassDecl>(scope.inst_id())) {
+    return std::nullopt;
+  }
+
+  clang::Sema& sema = context.sem_ir().cpp_ast()->getSema();
+  clang::Decl* decl =
+      context.sem_ir().clang_decls().Get(scope.clang_decl_context_id()).decl;
+  return sema.LookupConstructors(clang::cast<clang::CXXRecordDecl>(decl));
+}
+
+// Look ups the given name in the Clang AST in a specific scope, falling back to
+// a constructor function. If not found, returns `nullopt`. If there's not a
+// single result, returns `nullptr`. Otherwise, returns the single declaration.
+static auto ClangLookup(Context& context, SemIR::LocId loc_id,
+                        SemIR::NameScopeId scope_id, SemIR::NameId name_id)
+    -> std::optional<clang::NamedDecl*> {
+  auto lookup = ClangLookupName(context, scope_id, name_id);
+  if (lookup) {
+    if (!lookup->isSingleResult()) {
+      context.TODO(loc_id,
+                   llvm::formatv("Unsupported: Lookup succeeded but couldn't "
+                                 "find a single result; LookupResultKind: {0}",
+                                 static_cast<int>(lookup->getResultKind()))
+                       .str());
+      return nullptr;
+    }
+    return lookup->getFoundDecl();
+  }
+
+  auto constructors_lookup = ClangConstructorLookup(context, scope_id, name_id);
+  if (!constructors_lookup) {
+    return std::nullopt;
+  }
+
+  llvm::SmallVector<clang::CXXConstructorDecl*> constructors;
+  for (clang::Decl* decl : *constructors_lookup) {
+    auto* constructor = clang::cast<clang::CXXConstructorDecl>(decl);
+    if (constructor->isDeleted() || constructor->isCopyOrMoveConstructor()) {
+      continue;
+    }
+    constructors.push_back(constructor);
+  }
+  if (constructors.size() != 1) {
+    context.TODO(
+        loc_id,
+        llvm::formatv("Unsupported: Constructors lookup succeeded but couldn't "
+                      "find a single result; Found {0} constructors",
+                      constructors.size()));
+    return nullptr;
+  }
+  return constructors[0];
 }
 
 // Returns whether `decl` already mapped to an instruction.
@@ -946,7 +1015,8 @@ static auto MakeImplicitParamPatternsBlockId(
     Context& context, SemIR::LocId loc_id,
     const clang::FunctionDecl& clang_decl) -> SemIR::InstBlockId {
   const auto* method_decl = dyn_cast<clang::CXXMethodDecl>(&clang_decl);
-  if (!method_decl || method_decl->isStatic()) {
+  if (!method_decl || method_decl->isStatic() ||
+      clang::isa<clang::CXXConstructorDecl>(clang_decl)) {
     return SemIR::InstBlockId::Empty;
   }
 
@@ -1086,22 +1156,54 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
   return context.inst_blocks().Add(params);
 }
 
-// Returns the return type of the given function declaration. In case of an
-// unsupported return type, it produces a diagnostic and returns
-// `SemIR::ErrorInst::InstId`.
+// Returns the return `TypeExpr` of the given function declaration. In case of
+// an unsupported return type, returns `SemIR::ErrorInst::InstId`. Constructors
+// are treated as returning a class instance.
 // TODO: Support more return types.
-static auto GetReturnType(Context& context, SemIR::LocId loc_id,
-                          const clang::FunctionDecl* clang_decl)
-    -> SemIR::InstId {
+static auto GetReturnTypeExpr(Context& context, SemIR::LocId loc_id,
+                              clang::FunctionDecl* clang_decl) -> TypeExpr {
   clang::QualType ret_type = clang_decl->getReturnType();
-  if (ret_type->isVoidType()) {
-    return SemIR::InstId::None;
+  if (!ret_type->isVoidType()) {
+    TypeExpr mapped_type = MapType(context, loc_id, ret_type);
+    if (!mapped_type.inst_id.has_value()) {
+      return {.inst_id = SemIR::ErrorInst::TypeInstId,
+              .type_id = SemIR::ErrorInst::TypeId};
+    }
+    return mapped_type;
   }
 
-  auto [type_inst_id, type_id] = MapType(context, loc_id, ret_type);
+  if (!isa<clang::CXXConstructorDecl>(clang_decl)) {
+    // void.
+    return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+  }
+
+  // TODO: Make this a `PartialType`.
+  SemIR::TypeInstId record_type_inst_id = context.types().GetAsTypeInstId(
+      context.sem_ir()
+          .clang_decls()
+          .Get(context.sem_ir().clang_decls().Lookup(
+              clang::cast<clang::Decl>(clang_decl->getParent())))
+          .inst_id);
+  return {
+      .inst_id = record_type_inst_id,
+      .type_id = context.types().GetTypeIdForTypeInstId(record_type_inst_id)};
+}
+
+// Returns the return pattern of the given function declaration. In case of an
+// unsupported return type, it produces a diagnostic and returns
+// `SemIR::ErrorInst::InstId`. Constructors are treated as returning a class
+// instance.
+static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
+                             clang::FunctionDecl* clang_decl) -> SemIR::InstId {
+  auto [type_inst_id, type_id] = GetReturnTypeExpr(context, loc_id, clang_decl);
   if (!type_inst_id.has_value()) {
-    context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
-                                       ret_type.getAsString()));
+    // void.
+    return SemIR::InstId::None;
+  }
+  if (type_inst_id == SemIR::ErrorInst::TypeInstId) {
+    context.TODO(loc_id,
+                 llvm::formatv("Unsupported: return type: {0}",
+                               clang_decl->getReturnType().getAsString()));
     return SemIR::ErrorInst::InstId;
   }
   auto pattern_type_id = GetPatternType(context, type_id);
@@ -1140,10 +1242,10 @@ struct FunctionParamsInsts {
 // Produces a diagnostic and returns `std::nullopt` if the function declaration
 // has an unsupported parameter type.
 static auto CreateFunctionParamsInsts(Context& context, SemIR::LocId loc_id,
-                                      const clang::FunctionDecl* clang_decl)
+                                      clang::FunctionDecl* clang_decl)
     -> std::optional<FunctionParamsInsts> {
-  if (isa<clang::CXXConstructorDecl, clang::CXXDestructorDecl>(clang_decl)) {
-    context.TODO(loc_id, "Unsupported: Constructor/Destructor");
+  if (isa<clang::CXXDestructorDecl>(clang_decl)) {
+    context.TODO(loc_id, "Unsupported: Destructor");
     return std::nullopt;
   }
 
@@ -1157,7 +1259,7 @@ static auto CreateFunctionParamsInsts(Context& context, SemIR::LocId loc_id,
   if (!param_patterns_id.has_value()) {
     return std::nullopt;
   }
-  auto return_slot_pattern_id = GetReturnType(context, loc_id, clang_decl);
+  auto return_slot_pattern_id = GetReturnPattern(context, loc_id, clang_decl);
   if (SemIR::ErrorInst::InstId == return_slot_pattern_id) {
     return std::nullopt;
   }
@@ -1228,8 +1330,13 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
       AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
   context.imports().push_back(decl_id);
 
+  llvm::StringRef function_name =
+      isa<clang::CXXConstructorDecl>(clang_decl)
+          ? llvm::StringRef(CarbonConstructorFunctionMame)
+          : clang_decl->getName();
+
   auto function_info = SemIR::Function{
-      {.name_id = AddIdentifierName(context, clang_decl->getName()),
+      {.name_id = AddIdentifierName(context, function_name),
        .parent_scope_id = GetParentNameScopeId(context, clang_decl),
        .generic_id = SemIR::GenericId::None,
        .first_param_node_id = Parse::NodeId::None,
@@ -1430,24 +1537,17 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
         builder.Note(loc_id, InCppNameLookup, name_id);
       });
 
-  auto lookup = ClangLookup(context, scope_id, name_id);
-  if (!lookup) {
+  auto decl = ClangLookup(context, loc_id, scope_id, name_id);
+  if (!decl) {
     return SemIR::ScopeLookupResult::MakeNotFound();
   }
-
-  if (!lookup->isSingleResult()) {
-    context.TODO(loc_id,
-                 llvm::formatv("Unsupported: Lookup succeeded but couldn't "
-                               "find a single result; LookupResultKind: {0}",
-                               static_cast<int>(lookup->getResultKind()))
-                     .str());
+  if (!*decl) {
     context.name_scopes().AddRequiredName(scope_id, name_id,
                                           SemIR::ErrorInst::InstId);
     return SemIR::ScopeLookupResult::MakeError();
   }
 
-  return ImportNameDeclIntoScope(context, loc_id, scope_id, name_id,
-                                 lookup->getFoundDecl());
+  return ImportNameDeclIntoScope(context, loc_id, scope_id, name_id, *decl);
 }
 
 }  // namespace Carbon::Check
