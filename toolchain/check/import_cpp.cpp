@@ -37,6 +37,7 @@
 #include "toolchain/check/pattern.h"
 #include "toolchain/check/pattern_match.h"
 #include "toolchain/check/type.h"
+#include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/diagnostic.h"
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/diagnostics/format_providers.h"
@@ -573,12 +574,22 @@ static auto MakeIntType(Context& context, IntId size_id, bool is_signed)
 static auto MapBuiltinType(Context& context, clang::QualType qual_type,
                            const clang::BuiltinType& type) -> TypeExpr {
   if (type.isInteger()) {
-    auto width = context.ast_context().getIntWidth(qual_type);
+    unsigned width = context.ast_context().getIntWidth(qual_type);
     bool is_signed = type.isSignedInteger();
     auto int_n_type =
         context.ast_context().getIntTypeForBitwidth(width, is_signed);
     if (context.ast_context().hasSameType(qual_type, int_n_type)) {
-      return MakeIntType(context, context.ints().Add(width), is_signed);
+      TypeExpr type_expr =
+          MakeIntType(context, context.ints().Add(width), is_signed);
+      // Make sure signed integer of 32 or 64 bits are complete so we can check
+      // against them when deciding whether we need to generate a thunk.
+      if (is_signed && (width == 32 || width == 64)) {
+        SemIR::TypeId type_id = type_expr.type_id;
+        if (!context.types().IsComplete(type_id)) {
+          CompleteTypeOrCheckFail(context, type_id);
+        }
+      }
+      return type_expr;
     }
     // TODO: Handle integer types that map to named aliases.
   }

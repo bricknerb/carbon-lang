@@ -12,6 +12,7 @@
 #include "toolchain/check/control_flow.h"
 #include "toolchain/check/literal.h"
 #include "toolchain/check/type.h"
+#include "toolchain/check/type_completion.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
@@ -51,34 +52,26 @@ static auto IsThunkRequiredForType(Context& context, SemIR::TypeId type_id)
     }
 
     case SemIR::ClassType::Kind: {
-      // TODO: Consider using `TryGetIntTypeInfo()`.
-      if (context.types().IsComplete(type_id)) {
-        SemIR::TypeId object_representation_type_id =
-            context.types().GetObjectRepr(type_id);
-        if (auto int_type = context.types().TryGetAs<SemIR::IntType>(
-                object_representation_type_id)) {
-          if (int_type->int_kind != SemIR::IntKind::Signed) {
-            return true;
-          }
-          llvm::APInt bit_width = context.ints().Get(
-              context.insts()
-                  .GetAs<SemIR::IntValue>(int_type->bit_width_id)
-                  .int_id);
-          return bit_width != 32 && bit_width != 64;
-        }
+      if (!context.types().IsComplete(type_id)) {
         return true;
       }
 
-      // TODO: When we generate the thunk on call and not on name lookup, the
-      // type should always be complete.
+      // TODO: Consider using `TryGetIntTypeInfo()`.
+      SemIR::TypeId object_representation_type_id =
+          context.types().GetObjectRepr(type_id);
+      if (auto int_type = context.types().TryGetAs<SemIR::IntType>(
+              object_representation_type_id)) {
+        if (int_type->int_kind != SemIR::IntKind::Signed) {
+          return true;
+        }
+        llvm::APInt bit_width = context.ints().Get(
+            context.insts()
+                .GetAs<SemIR::IntValue>(int_type->bit_width_id)
+                .int_id);
+        return bit_width != 32 && bit_width != 64;
+      }
 
-      auto int32_type = context.types().GetTypeIdForTypeInstId(
-          MakeIntTypeLiteral(context, Parse::NodeId::None,
-                             SemIR::IntKind::Signed, context.ints().Add(32)));
-      auto int64_type = context.types().GetTypeIdForTypeInstId(
-          MakeIntTypeLiteral(context, Parse::NodeId::None,
-                             SemIR::IntKind::Signed, context.ints().Add(64)));
-      return type_id != int32_type && type_id != int64_type;
+      return true;
     }
 
     default:
