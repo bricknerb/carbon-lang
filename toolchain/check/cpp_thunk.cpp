@@ -53,6 +53,7 @@ static auto IsThunkRequiredForType(Context& context, SemIR::TypeId type_id)
 
     case SemIR::ClassType::Kind: {
       if (!context.types().IsComplete(type_id)) {
+        // Signed integers of 32 or 64 bits should be completed when imported.
         return true;
       }
 
