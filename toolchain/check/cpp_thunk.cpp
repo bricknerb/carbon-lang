@@ -57,22 +57,13 @@ static auto IsThunkRequiredForType(Context& context, SemIR::TypeId type_id)
         return true;
       }
 
-      // TODO: Consider using `TryGetIntTypeInfo()`.
-      SemIR::TypeId object_representation_type_id =
-          context.types().GetObjectRepr(type_id);
-      if (auto int_type = context.types().TryGetAs<SemIR::IntType>(
-              object_representation_type_id)) {
-        if (int_type->int_kind != SemIR::IntKind::Signed) {
-          return true;
-        }
-        llvm::APInt bit_width = context.ints().Get(
-            context.insts()
-                .GetAs<SemIR::IntValue>(int_type->bit_width_id)
-                .int_id);
-        return bit_width != 32 && bit_width != 64;
+      if (!context.types().IsSignedInt(type_id)) {
+        return true;
       }
 
-      return true;
+      llvm::APInt bit_width =
+          context.ints().Get(context.types().GetIntTypeInfo(type_id).bit_width);
+      return bit_width != 32 && bit_width != 64;
     }
 
     default:
