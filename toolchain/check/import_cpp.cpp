@@ -374,24 +374,11 @@ static auto ClangLookupName(Context& context, SemIR::NameScopeId scope_id,
   return lookup;
 }
 
-// The name of the Carbon function a C++ constructor is mapped to.
-static constexpr llvm::StringLiteral CarbonConstructorFunctionMame = "Make";
-
-// If the name is not of a constructor function returns `nullopt` or the scope
-// is not a class. Otherwise, looks up for constructors in the class and returns
-// the lookup result.
-static auto ClangConstructorLookup(Context& context,
-                                   SemIR::NameScopeId scope_id,
-                                   SemIR::NameId name_id)
-    -> std::optional<clang::DeclContextLookupResult> {
-  SemIR::NameScope& scope = context.name_scopes().Get(scope_id);
-  // TODO: Support translating constructors to `fn <type name>`, and not just
-  // `fn Make`.
-  if (context.names().GetAsStringIfIdentifier(name_id) !=
-          CarbonConstructorFunctionMame ||
-      !context.insts().Is<SemIR::ClassDecl>(scope.inst_id())) {
-    return std::nullopt;
-  }
+// Looks up for constructors in the class scope and returns the lookup result.
+static auto ClangConstructorLookup(const Context& context,
+                                   SemIR::NameScopeId scope_id)
+    -> clang::DeclContextLookupResult {
+  const SemIR::NameScope& scope = context.sem_ir().name_scopes().Get(scope_id);
 
   clang::Sema& sema = context.sem_ir().cpp_ast()->getSema();
   clang::Decl* decl =
@@ -399,9 +386,49 @@ static auto ClangConstructorLookup(Context& context,
   return sema.LookupConstructors(clang::cast<clang::CXXRecordDecl>(decl));
 }
 
-// Look ups the given name in the Clang AST in a specific scope, falling back to
-// a constructor function. If not found, returns `nullopt`. If there's not a
-// single result, returns `nullptr`. Otherwise, returns the single declaration.
+// Returns true if the given Clang declaration is the implicit injected class
+// name within the class.
+static auto IsDeclInjectedClassName(const Context& context,
+                                    SemIR::NameScopeId scope_id,
+                                    SemIR::NameId name_id,
+                                    const clang::NamedDecl* named_decl)
+    -> bool {
+  if (!named_decl->isImplicit()) {
+    return false;
+  }
+
+  const auto* record_decl = clang::dyn_cast<clang::CXXRecordDecl>(named_decl);
+  if (!record_decl) {
+    return false;
+  }
+
+  SemIR::ClangDecl clang_decl = context.sem_ir().clang_decls().Get(
+      context.sem_ir().name_scopes().Get(scope_id).clang_decl_context_id());
+  const auto* scope_record_decl =
+      clang::cast<clang::CXXRecordDecl>(clang_decl.decl);
+
+  const clang::ASTContext& ast_context =
+      context.sem_ir().cpp_ast()->getASTContext();
+  CARBON_CHECK(
+      ast_context.getCanonicalType(
+          ast_context.getRecordType(scope_record_decl)) ==
+      ast_context.getCanonicalType(ast_context.getRecordType(record_decl)));
+
+  CARBON_CHECK(name_id ==
+               context.sem_ir()
+                   .classes()
+                   .Get(context.sem_ir()
+                            .insts()
+                            .GetAs<SemIR::ClassDecl>(clang_decl.inst_id)
+                            .class_id)
+                   .name_id);
+  return true;
+}
+
+// Look ups the given name in the Clang AST in a specific scope. If the found
+// declaration is the injected class name, look ups constructors instead. If not
+// found, returns `nullopt`. If there's not a single result, returns `nullptr`.
+// Otherwise, returns the single declaration.
 static auto ClangLookup(Context& context, SemIR::LocId loc_id,
                         SemIR::NameScopeId scope_id, SemIR::NameId name_id)
     -> std::optional<clang::NamedDecl*> {
@@ -415,31 +442,35 @@ static auto ClangLookup(Context& context, SemIR::LocId loc_id,
                        .str());
       return nullptr;
     }
-    return lookup->getFoundDecl();
-  }
 
-  auto constructors_lookup = ClangConstructorLookup(context, scope_id, name_id);
-  if (!constructors_lookup) {
-    return std::nullopt;
-  }
-
-  llvm::SmallVector<clang::CXXConstructorDecl*> constructors;
-  for (clang::Decl* decl : *constructors_lookup) {
-    auto* constructor = clang::cast<clang::CXXConstructorDecl>(decl);
-    if (constructor->isDeleted() || constructor->isCopyOrMoveConstructor()) {
-      continue;
+    if (!IsDeclInjectedClassName(context, scope_id, name_id,
+                                 lookup->getFoundDecl())) {
+      return lookup->getFoundDecl();
     }
-    constructors.push_back(constructor);
-  }
-  if (constructors.size() != 1) {
-    context.TODO(
-        loc_id,
-        llvm::formatv("Unsupported: Constructors lookup succeeded but couldn't "
+
+    clang::DeclContextLookupResult constructors_lookup =
+        ClangConstructorLookup(context, scope_id);
+
+    llvm::SmallVector<clang::CXXConstructorDecl*> constructors;
+    for (clang::Decl* decl : constructors_lookup) {
+      auto* constructor = clang::cast<clang::CXXConstructorDecl>(decl);
+      if (constructor->isDeleted() || constructor->isCopyOrMoveConstructor()) {
+        continue;
+      }
+      constructors.push_back(constructor);
+    }
+    if (constructors.size() != 1) {
+      context.TODO(
+          loc_id, llvm::formatv(
+                      "Unsupported: Constructors lookup succeeded but couldn't "
                       "find a single result; Found {0} constructors",
                       constructors.size()));
-    return nullptr;
+      return nullptr;
+    }
+    return constructors[0];
   }
-  return constructors[0];
+
+  return std::nullopt;
 }
 
 // Returns whether `decl` already mapped to an instruction.
@@ -1330,13 +1361,19 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
       AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
   context.imports().push_back(decl_id);
 
-  llvm::StringRef function_name =
+  SemIR::NameId function_name_id =
       isa<clang::CXXConstructorDecl>(clang_decl)
-          ? llvm::StringRef(CarbonConstructorFunctionMame)
-          : clang_decl->getName();
+          ? context.classes()
+                .Get(context.insts()
+                         .GetAs<SemIR::ClassDecl>(LookupClangDeclInstId(
+                             context,
+                             clang::cast<clang::Decl>(clang_decl->getParent())))
+                         .class_id)
+                .name_id
+          : AddIdentifierName(context, clang_decl->getName());
 
   auto function_info = SemIR::Function{
-      {.name_id = AddIdentifierName(context, function_name),
+      {.name_id = function_name_id,
        .parent_scope_id = GetParentNameScopeId(context, clang_decl),
        .generic_id = SemIR::GenericId::None,
        .first_param_node_id = Parse::NodeId::None,

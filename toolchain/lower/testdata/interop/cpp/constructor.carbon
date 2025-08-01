@@ -32,7 +32,7 @@ library "[[@TEST_NAME]]";
 import Cpp library "default.h";
 
 fn F() {
-  let c: Cpp.C = Cpp.C.Make();
+  let c: Cpp.C = Cpp.C.C();
 }
 
 // CHECK:STDOUT: ; ModuleID = 'import_default.carbon'
@@ -48,9 +48,9 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: define void @_CF.Main() !dbg !7 {
 // CHECK:STDOUT: entry:
-// CHECK:STDOUT:   %.loc7_29.1.temp = alloca [8 x i8], align 1, !dbg !10
-// CHECK:STDOUT:   call void @llvm.lifetime.start.p0(i64 8, ptr %.loc7_29.1.temp), !dbg !10
-// CHECK:STDOUT:   call void @_ZN1CC1Ev(ptr %.loc7_29.1.temp), !dbg !10
+// CHECK:STDOUT:   %.loc7_26.1.temp = alloca [8 x i8], align 1, !dbg !10
+// CHECK:STDOUT:   call void @llvm.lifetime.start.p0(i64 8, ptr %.loc7_26.1.temp), !dbg !10
+// CHECK:STDOUT:   call void @_ZN1CC1Ev(ptr %.loc7_26.1.temp), !dbg !10
 // CHECK:STDOUT:   ret void, !dbg !11
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
