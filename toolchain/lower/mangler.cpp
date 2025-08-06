@@ -169,6 +169,8 @@ auto Mangler::Mangle(SemIR::FunctionId function_id,
     case SemIR::Function::SpecialFunctionKind::Thunk:
       os << ":thunk";
       break;
+    case SemIR::Function::SpecialFunctionKind::HasCppThunk:
+      CARBON_FATAL("C++ functions should have been handled earlier");
   }
 
   // TODO: If the function is private, also include the library name as part of

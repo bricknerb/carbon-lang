@@ -29,6 +29,7 @@
 #include "toolchain/check/class.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/convert.h"
+#include "toolchain/check/cpp_thunk.h"
 #include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/check/eval.h"
 #include "toolchain/check/function.h"
@@ -38,11 +39,13 @@
 #include "toolchain/check/pattern.h"
 #include "toolchain/check/pattern_match.h"
 #include "toolchain/check/type.h"
+#include "toolchain/check/type_completion.h"
 #include "toolchain/diagnostics/diagnostic.h"
 #include "toolchain/diagnostics/diagnostic_emitter.h"
 #include "toolchain/diagnostics/format_providers.h"
 #include "toolchain/parse/node_ids.h"
 #include "toolchain/sem_ir/clang_decl.h"
+#include "toolchain/sem_ir/function.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/name_scope.h"
@@ -932,7 +935,8 @@ static auto MakeIntType(Context& context, IntId size_id, bool is_signed)
 
 // Maps a C++ builtin type to a Carbon type.
 // TODO: Support more builtin types.
-static auto MapBuiltinType(Context& context, clang::QualType qual_type,
+static auto MapBuiltinType(Context& context, SemIR::LocId loc_id,
+                           clang::QualType qual_type,
                            const clang::BuiltinType& type) -> TypeExpr {
   clang::ASTContext& ast_context = context.ast_context();
   if (type.isBooleanType()) {
@@ -942,11 +946,22 @@ static auto MapBuiltinType(Context& context, clang::QualType qual_type,
                           context, SemIR::BoolType::TypeInstId)));
   }
   if (type.isInteger()) {
-    auto width = ast_context.getIntWidth(qual_type);
+    unsigned width = context.ast_context().getIntWidth(qual_type);
     bool is_signed = type.isSignedInteger();
-    auto int_n_type = ast_context.getIntTypeForBitwidth(width, is_signed);
-    if (ast_context.hasSameType(qual_type, int_n_type)) {
-      return MakeIntType(context, context.ints().Add(width), is_signed);
+    auto int_n_type =
+        context.ast_context().getIntTypeForBitwidth(width, is_signed);
+    if (context.ast_context().hasSameType(qual_type, int_n_type)) {
+      TypeExpr type_expr =
+          MakeIntType(context, context.ints().Add(width), is_signed);
+      // Try to make sure signed integer of 32 or 64 bits are complete so we can
+      // check against them when deciding whether we need to generate a thunk.
+      if (is_signed && (width == 32 || width == 64)) {
+        SemIR::TypeId type_id = type_expr.type_id;
+        if (!context.types().IsComplete(type_id)) {
+          TryToCompleteType(context, type_id, loc_id);
+        }
+      }
+      return type_expr;
     }
     // TODO: Handle integer types that map to named aliases.
   } else if (type.isDoubleType()) {
@@ -986,10 +1001,10 @@ static auto MapRecordType(Context& context, const clang::RecordType& type)
 // Maps a C++ type that is not a wrapper type such as a pointer to a Carbon
 // type.
 // TODO: Support more types.
-static auto MapNonWrapperType(Context& context, clang::QualType type)
-    -> TypeExpr {
+static auto MapNonWrapperType(Context& context, SemIR::LocId loc_id,
+                              clang::QualType type) -> TypeExpr {
   if (const auto* builtin_type = type->getAs<clang::BuiltinType>()) {
-    return MapBuiltinType(context, type, *builtin_type);
+    return MapBuiltinType(context, loc_id, type, *builtin_type);
   }
 
   if (const auto* record_type = type->getAs<clang::RecordType>()) {
@@ -1066,7 +1081,7 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
     wrapper_types.push_back(orig_type);
   }
 
-  auto mapped = MapNonWrapperType(context, type);
+  auto mapped = MapNonWrapperType(context, loc_id, type);
 
   for (auto wrapper : llvm::reverse(wrapper_types)) {
     if (!mapped.inst_id.has_value() ||
@@ -1300,6 +1315,64 @@ static auto CreateFunctionParamsInsts(Context& context, SemIR::LocId loc_id,
            .call_params_id = call_params_id}};
 }
 
+// Creates a `FunctionDecl` and a `Function` without C++ thunk information.
+// Returns std::nullopt on failure. The given Clang declaration is assumed to:
+// * Have not been imported before.
+// * Be of supported type (ignoring parameters).
+static auto ImportFunction(Context& context, SemIR::LocId loc_id,
+                           clang::FunctionDecl* clang_decl)
+    -> std::optional<SemIR::FunctionId> {
+  context.scope_stack().PushForDeclName();
+  context.inst_block_stack().Push();
+  context.pattern_block_stack().Push();
+
+  auto function_params_insts =
+      CreateFunctionParamsInsts(context, loc_id, clang_decl);
+
+  auto pattern_block_id = context.pattern_block_stack().Pop();
+  auto decl_block_id = context.inst_block_stack().Pop();
+  context.scope_stack().Pop();
+
+  if (!function_params_insts.has_value()) {
+    return std::nullopt;
+  }
+
+  auto function_decl = SemIR::FunctionDecl{
+      SemIR::TypeId::None, SemIR::FunctionId::None, decl_block_id};
+  auto decl_id =
+      AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
+  context.imports().push_back(decl_id);
+
+  auto function_info = SemIR::Function{
+      {.name_id = AddIdentifierName(context, clang_decl->getName()),
+       .parent_scope_id = GetParentNameScopeId(context, clang_decl),
+       .generic_id = SemIR::GenericId::None,
+       .first_param_node_id = Parse::NodeId::None,
+       .last_param_node_id = Parse::NodeId::None,
+       .pattern_block_id = pattern_block_id,
+       .implicit_param_patterns_id =
+           function_params_insts->implicit_param_patterns_id,
+       .param_patterns_id = function_params_insts->param_patterns_id,
+       .is_extern = false,
+       .extern_library_id = SemIR::LibraryNameId::None,
+       .non_owning_decl_id = SemIR::InstId::None,
+       .first_owning_decl_id = decl_id,
+       .definition_id = SemIR::InstId::None},
+      {.call_params_id = function_params_insts->call_params_id,
+       .return_slot_pattern_id = function_params_insts->return_slot_pattern_id,
+       .virtual_modifier = SemIR::FunctionFields::VirtualModifier::None,
+       .self_param_id = FindSelfPattern(
+           context, function_params_insts->implicit_param_patterns_id),
+       .clang_decl_id = context.sem_ir().clang_decls().Add(
+           {.decl = clang_decl, .inst_id = decl_id})}};
+
+  function_decl.function_id = context.functions().Add(function_info);
+  function_decl.type_id = GetFunctionType(context, function_decl.function_id,
+                                          SemIR::SpecificId::None);
+  ReplaceInstBeforeConstantUse(context, decl_id, function_decl);
+  return function_decl.function_id;
+}
+
 // Imports a function declaration from Clang to Carbon. If successful, returns
 // the new Carbon function declaration `InstId`. If the declaration was already
 // imported, returns the mapped instruction.
@@ -1334,59 +1407,29 @@ static auto ImportFunctionDecl(Context& context, SemIR::LocId loc_id,
     }
   }
 
-  context.scope_stack().PushForDeclName();
-  context.inst_block_stack().Push();
-  context.pattern_block_stack().Push();
+  CARBON_CHECK(clang_decl->getFunctionType()->isFunctionProtoType(),
+               "Not Prototype function (non-C++ code)");
 
-  auto function_params_insts =
-      CreateFunctionParamsInsts(context, loc_id, clang_decl);
-
-  auto pattern_block_id = context.pattern_block_stack().Pop();
-  auto decl_block_id = context.inst_block_stack().Pop();
-  context.scope_stack().Pop();
-
-  if (!function_params_insts.has_value()) {
+  auto function_id = ImportFunction(context, loc_id, clang_decl);
+  if (!function_id) {
     MarkFailedDecl(context, clang_decl);
     return SemIR::ErrorInst::InstId;
   }
 
-  auto function_decl = SemIR::FunctionDecl{
-      SemIR::TypeId::None, SemIR::FunctionId::None, decl_block_id};
-  auto decl_id =
-      AddPlaceholderInstInNoBlock(context, Parse::NodeId::None, function_decl);
-  context.imports().push_back(decl_id);
+  SemIR::Function& function_info = context.functions().Get(*function_id);
+  if (IsCppThunkRequired(context, function_info)) {
+    clang::FunctionDecl* thunk_clang_decl =
+        BuildCppThunk(context, function_info);
+    if (thunk_clang_decl) {
+      SemIR::FunctionId thunk_function_id =
+          *ImportFunction(context, loc_id, thunk_clang_decl);
+      SemIR::InstId thunk_function_decl_id =
+          context.functions().Get(thunk_function_id).first_owning_decl_id;
+      function_info.SetHasCppThunk(thunk_function_decl_id);
+    }
+  }
 
-  auto function_info = SemIR::Function{
-      {.name_id = AddIdentifierName(context, clang_decl->getName()),
-       .parent_scope_id = GetParentNameScopeId(context, clang_decl),
-       .generic_id = SemIR::GenericId::None,
-       .first_param_node_id = Parse::NodeId::None,
-       .last_param_node_id = Parse::NodeId::None,
-       .pattern_block_id = pattern_block_id,
-       .implicit_param_patterns_id =
-           function_params_insts->implicit_param_patterns_id,
-       .param_patterns_id = function_params_insts->param_patterns_id,
-       .is_extern = false,
-       .extern_library_id = SemIR::LibraryNameId::None,
-       .non_owning_decl_id = SemIR::InstId::None,
-       .first_owning_decl_id = decl_id,
-       .definition_id = SemIR::InstId::None},
-      {.call_params_id = function_params_insts->call_params_id,
-       .return_slot_pattern_id = function_params_insts->return_slot_pattern_id,
-       .virtual_modifier = SemIR::FunctionFields::VirtualModifier::None,
-       .self_param_id = FindSelfPattern(
-           context, function_params_insts->implicit_param_patterns_id),
-       .clang_decl_id = context.sem_ir().clang_decls().Add(
-           {.decl = clang_decl, .inst_id = decl_id})}};
-
-  function_decl.function_id = context.functions().Add(function_info);
-
-  function_decl.type_id = GetFunctionType(context, function_decl.function_id,
-                                          SemIR::SpecificId::None);
-
-  ReplaceInstBeforeConstantUse(context, decl_id, function_decl);
-
-  return decl_id;
+  return function_info.first_owning_decl_id;
 }
 
 using DeclSet = llvm::SetVector<clang::Decl*>;
