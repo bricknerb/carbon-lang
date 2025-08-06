@@ -4,11 +4,13 @@
 
 #include "toolchain/check/check.h"
 
+#include <regex>
 #include <string>
 #include <utility>
 
 #include "common/check.h"
 #include "common/map.h"
+#include "common/raw_string_ostream.h"
 #include "toolchain/check/check_unit.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/diagnostic_emitter.h"
@@ -392,6 +394,27 @@ static auto MaybeDumpSemIR(
   }
 }
 
+// Handles options for dumping C++ AST.
+static auto MaybeDumpCppAST(llvm::ArrayRef<Unit> units,
+                            const CheckParseTreesOptions& options) -> void {
+  if (!options.dump_cpp_ast_stream) {
+    return;
+  }
+
+  for (const Unit& unit : units) {
+    if (!unit.cpp_ast || !*unit.cpp_ast) {
+      continue;
+    }
+
+    RawStringOstream ast_string;
+    (*unit.cpp_ast)->getASTContext().getTranslationUnitDecl()->dump(ast_string);
+
+    std::regex id_regex(R"( 0x[a-f0-9]+ )");
+    *options.dump_cpp_ast_stream
+        << std::regex_replace(ast_string.TakeStr(), id_regex, " <ID> ");
+  }
+}
+
 auto CheckParseTrees(
     llvm::MutableArrayRef<Unit> units,
     const Parse::GetTreeAndSubtreesStore& tree_and_subtrees_getters,
@@ -509,6 +532,7 @@ auto CheckParseTrees(
   }
 
   MaybeDumpSemIR(units, tree_and_subtrees_getters, options);
+  MaybeDumpCppAST(units, options);
 }
 
 }  // namespace Carbon::Check
