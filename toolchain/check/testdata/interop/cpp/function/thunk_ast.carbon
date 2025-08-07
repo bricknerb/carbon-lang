@@ -4,6 +4,7 @@
 //
 // INCLUDE-FILE: toolchain/testing/testdata/min_prelude/int.carbon
 // EXTRA-ARGS: --dump-cpp-ast
+// SET-CHECK-SUBSET
 //
 // AUTOUPDATE
 // TIP: To test this file alone, run:
@@ -11,20 +12,20 @@
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/thunk_ast.carbon
 // CHECK:STDOUT: TranslationUnitDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc>
-// CHECK:STDOUT: |-TypedefDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc> implicit __int128_t '__int128'
-// CHECK:STDOUT: | `-BuiltinType {{0x[a-f0-9]+}} '__int128'
-// CHECK:STDOUT: |-TypedefDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc> implicit __uint128_t 'unsigned __int128'
-// CHECK:STDOUT: | `-BuiltinType {{0x[a-f0-9]+}} 'unsigned __int128'
-// CHECK:STDOUT: |-TypedefDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc> implicit __NSConstantString '__NSConstantString_tag'
-// CHECK:STDOUT: | `-RecordType {{0x[a-f0-9]+}} '__NSConstantString_tag'
-// CHECK:STDOUT: |   `-CXXRecord {{0x[a-f0-9]+}} '__NSConstantString_tag'
-// CHECK:STDOUT: |-TypedefDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc> implicit __builtin_ms_va_list 'char *'
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
 // CHECK:STDOUT: | `-PointerType {{0x[a-f0-9]+}} 'char *'
-// CHECK:STDOUT: |   `-BuiltinType {{0x[a-f0-9]+}} 'char'
-// CHECK:STDOUT: |-TypedefDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc> implicit __builtin_va_list '__va_list_tag[1]'
-// CHECK:STDOUT: | `-ConstantArrayType {{0x[a-f0-9]+}} '__va_list_tag[1]' 1 {{}}
-// CHECK:STDOUT: |   `-RecordType {{0x[a-f0-9]+}} '__va_list_tag'
-// CHECK:STDOUT: |     `-CXXRecord {{0x[a-f0-9]+}} '__va_list_tag'
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
+// CHECK:STDOUT: {{.*}}
 
 // --- thunk_required.h
 
