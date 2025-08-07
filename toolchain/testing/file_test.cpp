@@ -293,7 +293,7 @@ auto ToolchainFileTest::DoExtraCheckReplacements(std::string& check_line) const
           R"(^// CHECK:STDOUT: (TranslationUnitDecl|[ |]*`?\-))");
       if (RE2::PartialMatch(check_line, is_clang_ast_line_re)) {
         static RE2 clang_decl_id_re(R"( 0x[a-f0-9]+ )");
-        RE2::GlobalReplace(&check_line, clang_decl_id_re, " <ID> ");
+        RE2::GlobalReplace(&check_line, clang_decl_id_re, " {{0x[a-f0-9]+}} ");
       }
     }
   } else {
