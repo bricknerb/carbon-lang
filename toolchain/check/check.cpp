@@ -405,13 +405,8 @@ static auto MaybeDumpCppAST(llvm::ArrayRef<Unit> units,
     if (!unit.cpp_ast || !*unit.cpp_ast) {
       continue;
     }
-
-    RawStringOstream ast_string;
-    (*unit.cpp_ast)->getASTContext().getTranslationUnitDecl()->dump(ast_string);
-
-    std::regex id_regex(R"( 0x[a-f0-9]+ )");
-    *options.dump_cpp_ast_stream
-        << std::regex_replace(ast_string.TakeStr(), id_regex, " <ID> ");
+    clang::ASTContext& ast_context = (*unit.cpp_ast)->getASTContext();
+    ast_context.getTranslationUnitDecl()->dump(*options.dump_cpp_ast_stream);
   }
 }
 

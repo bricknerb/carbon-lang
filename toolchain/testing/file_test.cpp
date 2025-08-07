@@ -286,6 +286,16 @@ auto ToolchainFileTest::DoExtraCheckReplacements(std::string& check_line) const
     // package to the VFS with a fixed name.
     absl::StrReplaceAll({{data_->installation.core_package(), "{{.*}}"}},
                         &check_line);
+    if (component_ == "check") {
+      // For Clang AST dump lines, we replace the ids since they're inconsistent
+      // between runs.
+      static RE2 is_clang_ast_line_re(
+          R"(^// CHECK:STDOUT: (TranslationUnitDecl|[ |]*`?\-))");
+      if (RE2::PartialMatch(check_line, is_clang_ast_line_re)) {
+        static RE2 clang_decl_id_re(R"( 0x[a-f0-9]+ )");
+        RE2::GlobalReplace(&check_line, clang_decl_id_re, " <ID> ");
+      }
+    }
   } else {
     FileTestBase::DoExtraCheckReplacements(check_line);
   }
