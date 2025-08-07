@@ -277,7 +277,7 @@ static auto DoClangASTCheckReplacements(std::string& check_line) -> void {
   // Filter out references to builtins.
   static const RE2 is_builtin_referring_re(R"(`-BuiltinType |[ ']__[a-zA-Z])");
   if (RE2::PartialMatch(check_line, is_builtin_referring_re)) {
-    check_line = "// CHECK:STDOUT: {{.*}}";
+    check_line.clear();
     return;
   }
 

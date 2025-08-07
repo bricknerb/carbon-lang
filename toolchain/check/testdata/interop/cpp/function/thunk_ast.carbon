@@ -12,20 +12,7 @@
 // TIP: To dump output, run:
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/thunk_ast.carbon
 // CHECK:STDOUT: TranslationUnitDecl {{0x[a-f0-9]+}} <<invalid sloc>> <invalid sloc>
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
 // CHECK:STDOUT: | `-PointerType {{0x[a-f0-9]+}} 'char *'
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
-// CHECK:STDOUT: {{.*}}
 
 // --- thunk_required.h
 
