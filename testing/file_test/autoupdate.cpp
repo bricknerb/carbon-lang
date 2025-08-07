@@ -393,9 +393,6 @@ auto FileTestAutoupdater::Run(bool dry_run) -> bool {
   if (!dry_run) {
     std::ofstream out(file_test_path_);
     out << new_content;
-  } else {
-    // TODO: Remove.
-    llvm::errs() << "Autoupdate new content:\n" << new_content;
   }
   return true;
 }
