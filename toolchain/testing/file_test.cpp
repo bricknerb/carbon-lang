@@ -295,9 +295,10 @@ auto ToolchainFileTest::DoExtraCheckReplacements(std::string& check_line) const
       if (RE2::PartialMatch(check_line, is_clang_ast_line_re)) {
         static const RE2 clang_decl_id_re(
             llvm::formatv(" {0} ", ClangDeclIdRegex));
-        RE2::GlobalReplace(
-            &check_line, clang_decl_id_re,
-            llvm::formatv(" {{{{{0}}} ", ClangDeclIdRegex).str());
+        static const std::string& clang_decl_id_replacement =
+            *new std::string(llvm::formatv(" {{{{{0}}} ", ClangDeclIdRegex));
+        RE2::GlobalReplace(&check_line, clang_decl_id_re,
+                           clang_decl_id_replacement);
       }
     }
   } else {
