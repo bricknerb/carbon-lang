@@ -4,13 +4,11 @@
 
 #include "toolchain/check/check.h"
 
-#include <regex>
 #include <string>
 #include <utility>
 
 #include "common/check.h"
 #include "common/map.h"
-#include "common/raw_string_ostream.h"
 #include "toolchain/check/check_unit.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/diagnostic_emitter.h"
