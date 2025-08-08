@@ -8,6 +8,7 @@
 
 #include "common/raw_string_ostream.h"
 #include "toolchain/base/kind_switch.h"
+#include "toolchain/lower/clang_global_decl.h"
 #include "toolchain/sem_ir/entry_point.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/pattern.h"
@@ -218,7 +219,7 @@ auto Mangler::MangleGlobalVariable(SemIR::InstId pattern_id) -> std::string {
 
 auto Mangler::MangleCppClang(const clang::NamedDecl* decl) -> std::string {
   return file_context_.cpp_code_generator()
-      .GetMangledName(clang::GlobalDecl(decl))
+      .GetMangledName(CreateGlobalDecl(decl))
       .str();
 }
 
