@@ -123,7 +123,8 @@ struct AnySizedInt {
   }
 };
 
-// Constraint that requires the type to be an integer type.
+// Constraint that requires the type to be an integer type: either a sized
+// integer type or a literal.
 struct AnyInt {
   static auto Check(const File& sem_ir, ValidateState& state, TypeId type_id)
       -> bool {
@@ -133,15 +134,22 @@ struct AnyInt {
   }
 };
 
-// Constraint that requires the type to be a float type.
+// Constraint that requires the type to be a sized floating-point type.
+struct AnySizedFloat {
+  static auto Check(const File& sem_ir, ValidateState& /*state*/,
+                    TypeId type_id) -> bool {
+    return sem_ir.types().Is<FloatType>(type_id);
+  }
+};
+
+// Constraint that requires the type to be a float type: either a sized float
+// type or a literal.
 struct AnyFloat {
   static auto Check(const File& sem_ir, ValidateState& state, TypeId type_id)
       -> bool {
-    if (BuiltinType<LegacyFloatType::TypeInstId>::Check(sem_ir, state,
-                                                        type_id)) {
-      return true;
-    }
-    return sem_ir.types().Is<FloatType>(type_id);
+    return AnySizedFloat::Check(sem_ir, state, type_id) ||
+           BuiltinType<LegacyFloatType::TypeInstId>::Check(sem_ir, state,
+                                                           type_id);
   }
 };
 
@@ -251,6 +259,10 @@ using SizedIntU = TypeParam<1, AnySizedInt>;
 // generic type parameter that is constrained to be an float type.
 using FloatT = TypeParam<0, AnyFloat>;
 
+// Convenience name used in the builtin type signatures below for a second
+// generic type parameter that is constrained to be an float type.
+using FloatU = TypeParam<1, AnyFloat>;
+
 // Not a builtin function.
 constexpr BuiltinInfo None = {"", nullptr};
 
@@ -275,6 +287,10 @@ constexpr BuiltinInfo CharLiteralMakeType = {"char_literal.make_type",
 // Returns the `Core.IntLiteral` type.
 constexpr BuiltinInfo IntLiteralMakeType = {"int_literal.make_type",
                                             ValidateSignature<auto()->Type>};
+
+// Returns the `Core.FloatLiteral` type.
+constexpr BuiltinInfo FloatLiteralMakeType = {"float_literal.make_type",
+                                              ValidateSignature<auto()->Type>};
 
 // Returns the `iN` type.
 // TODO: Should we use a more specific type as the type of the bit width?
@@ -497,6 +513,31 @@ constexpr BuiltinInfo FloatMul = {
 constexpr BuiltinInfo FloatDiv = {
     "float.div", ValidateSignature<auto(FloatT, FloatT)->FloatT>};
 
+// "float.add_assign": float in-place addition.
+constexpr BuiltinInfo FloatAddAssign = {
+    "float.add_assign",
+    ValidateSignature<auto(PointerTo<FloatT>, FloatT)->NoReturn>};
+
+// "float.sub_assign": float in-place subtraction.
+constexpr BuiltinInfo FloatSubAssign = {
+    "float.sub_assign",
+    ValidateSignature<auto(PointerTo<FloatT>, FloatT)->NoReturn>};
+
+// "float.mul_assign": float in-place multiplication.
+constexpr BuiltinInfo FloatMulAssign = {
+    "float.mul_assign",
+    ValidateSignature<auto(PointerTo<FloatT>, FloatT)->NoReturn>};
+
+// "float.div_assign": float in-place division.
+constexpr BuiltinInfo FloatDivAssign = {
+    "float.div_assign",
+    ValidateSignature<auto(PointerTo<FloatT>, FloatT)->NoReturn>};
+
+// Converts between floating-point types, with a diagnostic if the value doesn't
+// fit.
+constexpr BuiltinInfo FloatConvertChecked = {
+    "float.convert_checked", ValidateSignature<auto(FloatT)->FloatU>};
+
 // "float.eq": float equality comparison.
 constexpr BuiltinInfo FloatEq = {"float.eq",
                                  ValidateSignature<auto(FloatT, FloatT)->Bool>};
@@ -608,6 +649,7 @@ auto BuiltinFunctionKind::IsCompTimeOnly(const File& sem_ir,
                                          TypeId return_type_id) const -> bool {
   switch (*this) {
     case CharConvertChecked:
+    case FloatConvertChecked:
     case IntConvertChecked:
       // Checked conversions are compile-time only.
       return true;

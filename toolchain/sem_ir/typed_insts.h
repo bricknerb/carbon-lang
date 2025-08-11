@@ -691,17 +691,6 @@ struct FieldDecl {
   ElementIndex index;
 };
 
-// A floating point value.
-struct FloatValue {
-  static constexpr auto Kind =
-      InstKind::FloatValue.Define<Parse::RealLiteralId>(
-          {.ir_name = "float_value",
-           .constant_kind = InstConstantKind::Always});
-
-  TypeId type_id;
-  FloatId float_id;
-};
-
 // A floating point type.
 struct FloatType {
   static constexpr auto Kind = InstKind::FloatType.Define<Parse::NoneNodeId>(
@@ -715,6 +704,17 @@ struct FloatType {
   // TODO: Consider adding a more compact way of representing either a small
   // float bit width or an inst_id.
   InstId bit_width_id;
+};
+
+// A floating point value.
+struct FloatValue {
+  static constexpr auto Kind =
+      InstKind::FloatValue.Define<Parse::RealLiteralId>(
+          {.ir_name = "float_value",
+           .constant_kind = InstConstantKind::Always});
+
+  TypeId type_id;
+  FloatId float_id;
 };
 
 // A function declaration.
@@ -1085,13 +1085,13 @@ struct IntValue {
   IntId int_id;
 };
 
-// The legacy float type. This is currently used for real literals, and is
-// treated as f64. It's separate from `FloatType`, and should change to mirror
-// integers, likely replacing this with a `FloatLiteralType`.
+// The float literal type. This is currently represented as f64.
+// TODO: Rename this to FloatLiteralType.
+// TODO: Replace this with a rational number type, following the design.
 struct LegacyFloatType {
   static constexpr auto Kind =
       InstKind::LegacyFloatType.Define<Parse::NoneNodeId>(
-          {.ir_name = "f64",
+          {.ir_name = "Core.FloatLiteral",
            .is_type = InstIsType::Always,
            .constant_kind = InstConstantKind::Always});
   // This is a singleton instruction. However, it may still evolve into a more

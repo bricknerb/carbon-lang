@@ -37,16 +37,33 @@ library "[[@TEST_NAME]]";
 var test_f64: f64;
 //@dump-sem-ir-end
 
-// --- fail_fN_todo_unsupported.carbon
+// --- fail_todo_fN_unsupported.carbon
 library "[[@TEST_NAME]]";
 
 // TODO: Some or all of these should eventually work.
-// CHECK:STDERR: fail_fN_todo_unsupported.carbon:[[@LINE+4]]:15: error: semantics TODO: `Currently only f64 is allowed` [SemanticsTodo]
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_todo_fN_unsupported.carbon:[[@LINE+4]]:15: note: in `f16` used here [ResolvingSpecificHere]
 // CHECK:STDERR: var test_f16: f16;
 // CHECK:STDERR:               ^~~
 // CHECK:STDERR:
 var test_f16: f16;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_todo_fN_unsupported.carbon:[[@LINE+4]]:15: note: in `f32` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f32: f32;
+// CHECK:STDERR:               ^~~
+// CHECK:STDERR:
 var test_f32: f32;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_todo_fN_unsupported.carbon:[[@LINE+4]]:16: note: in `f128` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f128: f128;
+// CHECK:STDERR:                ^~~~
+// CHECK:STDERR:
 var test_f128: f128;
 
 // --- string.carbon
@@ -147,14 +164,45 @@ library "[[@TEST_NAME]]";
 // CHECK:STDERR:              ^~
 // CHECK:STDERR:
 var test_f0: f0;
-// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:14: error: semantics TODO: `Currently only f64 is allowed` [SemanticsTodo]
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:14: note: in `f1` used here [ResolvingSpecificHere]
 // CHECK:STDERR: var test_f1: f1;
 // CHECK:STDERR:              ^~
 // CHECK:STDERR:
 var test_f1: f1;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:15: note: in `f15` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f15: f15;
+// CHECK:STDERR:               ^~~
+// CHECK:STDERR:
 var test_f15: f15;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:16: note: in `f100` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f100: f100;
+// CHECK:STDERR:                ^~~~
+// CHECK:STDERR:
 var test_f100: f100;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:23: note: in `f1000000000` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f1000000000: f1000000000;
+// CHECK:STDERR:                       ^~~~~~~~~~~
+// CHECK:STDERR:
 var test_f1000000000: f1000000000;
+// CHECK:STDERR: min_prelude/parts/float.carbon:11:9: error: bit width must be 64 [CompileTimeFloatBitWidth]
+// CHECK:STDERR:   adapt MakeFloat(N);
+// CHECK:STDERR:         ^~~~~~~~~~~~
+// CHECK:STDERR: fail_fN_bad_width.carbon:[[@LINE+4]]:26: note: in `f1000000000000` used here [ResolvingSpecificHere]
+// CHECK:STDERR: var test_f1000000000000: f1000000000000;
+// CHECK:STDERR:                          ^~~~~~~~~~~~~~
+// CHECK:STDERR:
 var test_f1000000000000: f1000000000000;
 
 // --- fail_non_type_as_type.carbon
@@ -300,9 +348,8 @@ var x: type = 42;
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %int_64: Core.IntLiteral = int_value 64 [concrete]
-// CHECK:STDOUT:   %Float.type: type = fn_type @Float [concrete]
-// CHECK:STDOUT:   %Float: %Float.type = struct_value () [concrete]
-// CHECK:STDOUT:   %pattern_type.3de: type = pattern_type f64 [concrete]
+// CHECK:STDOUT:   %f64.d77: type = class_type @Float, @Float(%int_64) [concrete]
+// CHECK:STDOUT:   %pattern_type.0ae: type = pattern_type %f64.d77 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -310,17 +357,15 @@ var x: type = 42;
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %test_f64.patt: %pattern_type.3de = binding_pattern test_f64 [concrete]
-// CHECK:STDOUT:     %test_f64.var_patt: %pattern_type.3de = var_pattern %test_f64.patt [concrete]
+// CHECK:STDOUT:     %test_f64.patt: %pattern_type.0ae = binding_pattern test_f64 [concrete]
+// CHECK:STDOUT:     %test_f64.var_patt: %pattern_type.0ae = var_pattern %test_f64.patt [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %test_f64.var: ref f64 = var %test_f64.var_patt [concrete]
-// CHECK:STDOUT:   %.loc4_15.1: type = splice_block %.loc4_15.3 [concrete = f64] {
+// CHECK:STDOUT:   %test_f64.var: ref %f64.d77 = var %test_f64.var_patt [concrete]
+// CHECK:STDOUT:   %.loc4: type = splice_block %f64 [concrete = constants.%f64.d77] {
 // CHECK:STDOUT:     %int_64: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:     %Float.call: init type = call constants.%Float(%int_64) [concrete = f64]
-// CHECK:STDOUT:     %.loc4_15.2: type = value_of_initializer %Float.call [concrete = f64]
-// CHECK:STDOUT:     %.loc4_15.3: type = converted %Float.call, %.loc4_15.2 [concrete = f64]
+// CHECK:STDOUT:     %f64: type = class_type @Float, @Float(constants.%int_64) [concrete = constants.%f64.d77]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %test_f64: ref f64 = bind_name test_f64, %test_f64.var [concrete = %test_f64.var]
+// CHECK:STDOUT:   %test_f64: ref %f64.d77 = bind_name test_f64, %test_f64.var [concrete = %test_f64.var]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- string.carbon
