@@ -30,6 +30,7 @@ auto BuildCppThunk(Context& context, const SemIR::Function& callee_function)
 // syntactic argument list.
 auto PerformCppThunkCall(Context& context, SemIR::LocId loc_id,
                          SemIR::FunctionId callee_function_id,
+                         SemIR::InstId return_slot_arg_id,
                          llvm::ArrayRef<SemIR::InstId> callee_arg_ids,
                          SemIR::InstId thunk_callee_id) -> SemIR::InstId;
 

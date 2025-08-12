@@ -12,9 +12,11 @@
 #include "toolchain/check/control_flow.h"
 #include "toolchain/check/convert.h"
 #include "toolchain/check/literal.h"
+#include "toolchain/check/return.h"
 #include "toolchain/check/type.h"
 #include "toolchain/check/type_completion.h"
 #include "toolchain/sem_ir/ids.h"
+#include "toolchain/sem_ir/inst.h"
 #include "toolchain/sem_ir/typed_insts.h"
 
 namespace Carbon::Check {
@@ -73,39 +75,44 @@ auto IsCppThunkRequired(Context& context, const SemIR::Function& function)
     return false;
   }
 
+  if (isa<clang::CXXConstructorDecl>(
+          context.sem_ir().clang_decls().Get(function.clang_decl_id).decl)) {
+    return false;
+  }
+
   if (function.self_param_id.has_value()) {
     // TODO: Support member methods.
     return false;
   }
 
+  bool thunk_required = false;
   SemIR::TypeId return_type_id =
       function.GetDeclaredReturnType(context.sem_ir());
   if (return_type_id.has_value()) {
-    // TODO: Support non-void return values.
-    return false;
+    CARBON_CHECK(return_type_id != SemIR::ErrorInst::TypeId);
+    thunk_required = IsThunkRequiredForType(context, return_type_id);
   }
 
-  bool thunk_required_for_param = false;
   for (auto param_id :
        context.inst_blocks().GetOrEmpty(function.call_params_id)) {
     if (param_id == SemIR::ErrorInst::InstId) {
       return false;
     }
-    if (!thunk_required_for_param &&
+    if (!thunk_required &&
         IsThunkRequiredForType(
             context,
             context.insts().GetAs<SemIR::AnyParam>(param_id).type_id)) {
-      thunk_required_for_param = true;
+      thunk_required = true;
     }
   }
 
-  return thunk_required_for_param;
+  return thunk_required;
 }
 
-// Returns whether the type is a pointer or a signed int of 32 or 64 bits.
+// Returns whether the type is void, a pointer or a signed int of 32 or 64 bits.
 static auto IsSimpleAbiType(clang::ASTContext& ast_context,
                             clang::QualType type) -> bool {
-  if (type->isPointerType()) {
+  if (type->isVoidType() || type->isPointerType()) {
     return true;
   }
 
@@ -120,26 +127,34 @@ static auto IsSimpleAbiType(clang::ASTContext& ast_context,
 }
 
 // Creates the thunk parameter types given the callee function.
-static auto BuildThunkParameterTypes(
-    clang::ASTContext& ast_context,
-    const clang::FunctionDecl& callee_function_decl)
-    -> llvm::SmallVector<clang::QualType> {
-  llvm::SmallVector<clang::QualType> thunk_param_types;
-  thunk_param_types.reserve(callee_function_decl.getNumParams());
+static auto BuildThunkTypes(clang::ASTContext& ast_context,
+                            const clang::FunctionDecl& callee_function_decl)
+    -> std::tuple<clang::QualType, llvm::SmallVector<clang::QualType>> {
+  std::tuple<clang::QualType, llvm::SmallVector<clang::QualType>> result;
+  auto& [thunk_return_type, thunk_param_types] = result;
 
+  unsigned num_callee_params = callee_function_decl.getNumParams();
+  llvm::SmallVector<clang::QualType> callee_types;
+  callee_types.reserve(num_callee_params + 1);
   for (const clang::ParmVarDecl* callee_param :
        callee_function_decl.parameters()) {
-    clang::QualType param_type = callee_param->getType();
-    bool is_simple_abi_type = IsSimpleAbiType(ast_context, param_type);
-    if (!is_simple_abi_type) {
-      clang::QualType pointer_type = ast_context.getPointerType(param_type);
-      param_type = ast_context.getAttributedType(
-          clang::NullabilityKind::NonNull, pointer_type, pointer_type);
-    }
-    thunk_param_types.push_back(param_type);
+    callee_types.push_back(callee_param->getType());
   }
+  callee_types.push_back(callee_function_decl.getReturnType());
+  for (clang::QualType type : callee_types) {
+    bool is_simple_abi_type = IsSimpleAbiType(ast_context, type);
+    if (!is_simple_abi_type) {
+      clang::QualType pointer_type = ast_context.getPointerType(type);
+      type = ast_context.getAttributedType(clang::NullabilityKind::NonNull,
+                                           pointer_type, pointer_type);
+    }
+    thunk_param_types.push_back(type);
+  }
+  thunk_return_type = thunk_param_types.back() == callee_types.back()
+                          ? thunk_param_types.pop_back_val()
+                          : thunk_return_type = ast_context.VoidTy;
 
-  return thunk_param_types;
+  return result;
 }
 
 // Returns the thunk parameters using the callee function parameter identifiers.
@@ -150,20 +165,31 @@ static auto BuildThunkParameters(
     -> llvm::SmallVector<clang::ParmVarDecl*> {
   clang::SourceLocation clang_loc = callee_function_decl.getLocation();
 
-  unsigned num_params = thunk_function_decl->getNumParams();
-  CARBON_CHECK(callee_function_decl.getNumParams() == num_params);
+  unsigned num_thunk_params = thunk_function_decl->getNumParams();
+  unsigned num_callee_params = callee_function_decl.getNumParams();
 
   const auto* thunk_function_proto_type =
       thunk_function_decl->getFunctionType()->getAs<clang::FunctionProtoType>();
 
   llvm::SmallVector<clang::ParmVarDecl*> thunk_params;
-  thunk_params.reserve(num_params);
-  for (unsigned i = 0; i < num_params; ++i) {
+  thunk_params.reserve(num_thunk_params);
+  for (unsigned i = 0; i < num_callee_params; ++i) {
     clang::ParmVarDecl* thunk_param = clang::ParmVarDecl::Create(
         ast_context, thunk_function_decl, clang_loc, clang_loc,
         callee_function_decl.getParamDecl(i)->getIdentifier(),
         thunk_function_proto_type->getParamType(i), nullptr, clang::SC_None,
         nullptr);
+    thunk_params.push_back(thunk_param);
+  }
+  if (num_thunk_params > num_callee_params) {
+    CARBON_CHECK(num_thunk_params == num_callee_params + 1);
+    clang::IdentifierInfo* return_slot_ident =
+        &ast_context.Idents.get("__carbon_thunk_return_slot");
+    clang::ParmVarDecl* thunk_param = clang::ParmVarDecl::Create(
+        ast_context, thunk_function_decl, clang_loc, clang_loc,
+        return_slot_ident,
+        thunk_function_proto_type->getParamType(num_thunk_params - 1), nullptr,
+        clang::SC_None, nullptr);
     thunk_params.push_back(thunk_param);
   }
   return thunk_params;
@@ -173,6 +199,7 @@ static auto BuildThunkParameters(
 // thunk parameter types.
 static auto CreateThunkFunctionDecl(
     Context& context, const clang::FunctionDecl& callee_function_decl,
+    clang::QualType thunk_return_type,
     llvm::ArrayRef<clang::QualType> thunk_param_types) -> clang::FunctionDecl* {
   clang::ASTContext& ast_context = context.ast_context();
   clang::SourceLocation clang_loc = callee_function_decl.getLocation();
@@ -184,9 +211,9 @@ static auto CreateThunkFunctionDecl(
                                          ->castAs<clang::FunctionProtoType>();
 
   // TODO: Check whether we need to modify `ExtParameterInfo` in `ExtProtoInfo`.
-  clang::QualType thunk_function_type = ast_context.getFunctionType(
-      callee_function_decl.getReturnType(), thunk_param_types,
-      callee_function_type->getExtProtoInfo());
+  clang::QualType thunk_function_type =
+      ast_context.getFunctionType(thunk_return_type, thunk_param_types,
+                                  callee_function_type->getExtProtoInfo());
 
   clang::DeclContext* decl_context = ast_context.getTranslationUnitDecl();
   // TODO: Thunks should not have external linkage, consider using `SC_Static`.
@@ -204,6 +231,7 @@ static auto CreateThunkFunctionDecl(
       clang::AlwaysInlineAttr::CreateImplicit(ast_context));
 
   // Set asm("<callee function mangled name>.carbon_thunk").
+  CARBON_CHECK(context.sem_ir().clang_mangle_context());
   thunk_function_decl->addAttr(clang::AsmLabelAttr::CreateImplicit(
       ast_context,
       GenerateThunkMangledName(*context.sem_ir().clang_mangle_context(),
@@ -220,10 +248,16 @@ static auto BuildCalleeArgs(clang::Sema& sema,
                             const clang::FunctionDecl& callee_function_decl)
     -> llvm::SmallVector<clang::Expr*> {
   llvm::SmallVector<clang::Expr*> call_args;
-  size_t num_params = thunk_function_decl->getNumParams();
-  CARBON_CHECK(callee_function_decl.getNumParams() == num_params);
-  call_args.reserve(num_params);
-  for (unsigned i = 0; i < num_params; ++i) {
+  size_t num_callee_params = callee_function_decl.getNumParams();
+  call_args.reserve(num_callee_params);
+
+  bool return_type_changed = callee_function_decl.getReturnType() !=
+                             thunk_function_decl->getReturnType();
+  size_t num_thunk_params = thunk_function_decl->getNumParams();
+  CARBON_CHECK(!return_type_changed && num_thunk_params == num_callee_params ||
+               return_type_changed &&
+                   num_thunk_params == num_callee_params + 1);
+  for (unsigned i = 0; i < num_callee_params; ++i) {
     clang::ParmVarDecl* thunk_param = thunk_function_decl->getParamDecl(i);
     clang::SourceLocation clang_loc = thunk_param->getLocation();
 
@@ -251,6 +285,7 @@ static auto BuildCalleeArgs(clang::Sema& sema,
 // failure.
 static auto BuildThunkBody(clang::Sema& sema,
                            clang::FunctionDecl* callee_function_decl,
+                           clang::FunctionDecl* thunk_function_decl,
                            llvm::MutableArrayRef<clang::Expr*> call_args)
     -> clang::Stmt* {
   clang::SourceLocation clang_loc = callee_function_decl->getLocation();
@@ -265,8 +300,30 @@ static auto BuildThunkBody(clang::Sema& sema,
     return nullptr;
   }
   clang::Expr* call = call_result.get();
+  clang::Expr* ret_val_expr = nullptr;
+  if (thunk_function_decl->getReturnType() ==
+      callee_function_decl->getReturnType()) {
+    ret_val_expr = call;
+  } else {
+    clang::ParmVarDecl* return_slot = thunk_function_decl->getParamDecl(
+        thunk_function_decl->getNumParams() - 1);
+    clang::Expr* return_slot_ref = sema.BuildDeclRefExpr(
+        return_slot, return_slot->getType(), clang::VK_LValue, clang_loc);
+    clang::ExprResult deref_result =
+        sema.BuildUnaryOp(nullptr, clang_loc, clang::UO_Deref, return_slot_ref);
+    CARBON_CHECK(deref_result.isUsable());
+    clang::Expr* deref = deref_result.get();
+    clang::ExprResult assign_result =
+        sema.BuildBinOp(nullptr, clang_loc, clang::BO_Assign, deref, call);
+    CARBON_CHECK(assign_result.isUsable());
+    ret_val_expr = assign_result.get();
+  }
+  if (thunk_function_decl->getReturnType()->isVoidType()) {
+    return ret_val_expr;
+  }
 
-  clang::StmtResult return_result = sema.BuildReturnStmt(clang_loc, call);
+  clang::StmtResult return_result =
+      sema.BuildReturnStmt(clang_loc, ret_val_expr);
   CARBON_CHECK(return_result.isUsable());
   return return_result.get();
 }
@@ -281,10 +338,10 @@ auto BuildCppThunk(Context& context, const SemIR::Function& callee_function)
   CARBON_CHECK(callee_function_decl);
 
   // Build the thunk function declaration.
-  auto thunk_param_types =
-      BuildThunkParameterTypes(context.ast_context(), *callee_function_decl);
+  auto [thunk_return_type, thunk_param_types] =
+      BuildThunkTypes(context.ast_context(), *callee_function_decl);
   clang::FunctionDecl* thunk_function_decl = CreateThunkFunctionDecl(
-      context, *callee_function_decl, thunk_param_types);
+      context, *callee_function_decl, thunk_return_type, thunk_param_types);
 
   // Build the thunk function body.
   clang::Sema& sema = context.sem_ir().clang_ast_unit()->getSema();
@@ -293,7 +350,8 @@ auto BuildCppThunk(Context& context, const SemIR::Function& callee_function)
 
   llvm::SmallVector<clang::Expr*> call_args =
       BuildCalleeArgs(sema, thunk_function_decl, *callee_function_decl);
-  clang::Stmt* body = BuildThunkBody(sema, callee_function_decl, call_args);
+  clang::Stmt* body = BuildThunkBody(sema, callee_function_decl,
+                                     thunk_function_decl, call_args);
   sema.ActOnFinishFunctionBody(thunk_function_decl, body);
   if (!body) {
     return nullptr;
@@ -304,6 +362,7 @@ auto BuildCppThunk(Context& context, const SemIR::Function& callee_function)
 
 auto PerformCppThunkCall(Context& context, SemIR::LocId loc_id,
                          SemIR::FunctionId callee_function_id,
+                         SemIR::InstId /*return_slot_arg_id*/,
                          llvm::ArrayRef<SemIR::InstId> callee_arg_ids,
                          SemIR::InstId thunk_callee_id) -> SemIR::InstId {
   llvm::ArrayRef<SemIR::InstId> callee_function_params =
@@ -317,11 +376,10 @@ auto PerformCppThunkCall(Context& context, SemIR::LocId loc_id,
                        .function_id)
               .call_params_id);
 
-  size_t num_params = callee_function_params.size();
-  CARBON_CHECK(thunk_function_params.size() == num_params);
-  CARBON_CHECK(callee_arg_ids.size() == num_params);
+  size_t num_thunk_params = thunk_function_params.size();
+  size_t num_args = callee_arg_ids.size();
   llvm::SmallVector<SemIR::InstId> thunk_arg_ids;
-  thunk_arg_ids.reserve(num_params);
+  thunk_arg_ids.reserve(num_thunk_params);
   for (auto [callee_param_inst_id, thunk_param_inst_id, callee_arg_id] :
        llvm::zip(callee_function_params, thunk_function_params,
                  callee_arg_ids)) {
@@ -345,8 +403,29 @@ auto PerformCppThunkCall(Context& context, SemIR::LocId loc_id,
     }
     thunk_arg_ids.push_back(arg_id);
   }
+  if (num_thunk_params == num_args) {
+    return PerformCall(context, loc_id, thunk_callee_id, thunk_arg_ids);
+  }
 
-  return PerformCall(context, loc_id, thunk_callee_id, thunk_arg_ids);
+  SemIR::InstId last_thunk_param_id = thunk_function_params.back();
+  auto last_thunk_param =
+      context.insts().GetAs<SemIR::AnyParam>(last_thunk_param_id);
+  SemIR::TypeId pointer_type_id = last_thunk_param.type_id;
+  auto pointer_type =
+      context.types().GetAs<SemIR::PointerType>(pointer_type_id);
+  SemIR::TypeId return_type_id =
+      context.types().GetTypeIdForTypeInstId(pointer_type.pointee_id);
+
+  SemIR::InstId return_storage_id = AddInstWithCleanup<SemIR::TemporaryStorage>(
+      context, loc_id, {.type_id = return_type_id});
+
+  auto return_storage_addr_id = AddInst<SemIR::AddrOf>(
+      context, loc_id,
+      {.type_id = pointer_type_id, .lvalue_id = return_storage_id});
+  thunk_arg_ids.push_back(return_storage_addr_id);
+
+  PerformCall(context, loc_id, thunk_callee_id, thunk_arg_ids);
+  return return_storage_id;
 }
 
 }  // namespace Carbon::Check
