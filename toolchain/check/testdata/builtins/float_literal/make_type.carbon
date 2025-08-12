@@ -32,7 +32,7 @@ var f: FloatLiteral() = 1.0;
 // CHECK:STDOUT:   %FloatLiteral.type: type = fn_type @FloatLiteral [concrete]
 // CHECK:STDOUT:   %FloatLiteral: %FloatLiteral.type = struct_value () [concrete]
 // CHECK:STDOUT:   %pattern_type.dab: type = pattern_type Core.FloatLiteral [concrete]
-// CHECK:STDOUT:   %float: Core.FloatLiteral = float_value 1 [concrete]
+// CHECK:STDOUT:   %float: Core.FloatLiteral = float_literal_value 10e-1 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -56,7 +56,7 @@ var f: FloatLiteral() = 1.0;
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @__global_init() {
 // CHECK:STDOUT: !entry:
-// CHECK:STDOUT:   %float: Core.FloatLiteral = float_value 1 [concrete = constants.%float]
+// CHECK:STDOUT:   %float: Core.FloatLiteral = float_literal_value 10e-1 [concrete = constants.%float]
 // CHECK:STDOUT:   assign file.%f.var, %float
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
