@@ -340,17 +340,17 @@ static auto MaybeDumpFormattedSemIR(
     return;
   }
 
-  bool has_ranges = sem_ir.parse_tree().tokens().has_dump_sem_ir_ranges();
+  const auto& tokens = sem_ir.parse_tree().tokens();
   if (options.dump_sem_ir_ranges ==
           CheckParseTreesOptions::DumpSemIRRanges::Only &&
-      !has_ranges) {
+      !tokens.has_dump_sem_ir_ranges() && !tokens.has_include_in_dumps()) {
     return;
   }
 
   bool use_dump_sem_ir_ranges =
       options.dump_sem_ir_ranges !=
           CheckParseTreesOptions::DumpSemIRRanges::Ignore &&
-      has_ranges;
+      tokens.has_dump_sem_ir_ranges();
   SemIR::Formatter formatter(&sem_ir, tree_and_subtrees_getter,
                              options.include_in_dumps, use_dump_sem_ir_ranges);
   formatter.Format();
