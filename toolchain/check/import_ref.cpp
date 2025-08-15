@@ -1649,7 +1649,7 @@ static auto AddClassDefinition(ImportContext& context,
                                SemIR::Class& new_class,
                                SemIR::InstId complete_type_witness_id,
                                SemIR::InstId base_id, SemIR::InstId adapt_id,
-                               SemIR::InstId vtable_ptr_id) -> void {
+                               SemIR::InstId vtable_decl_id) -> void {
   new_class.definition_id = new_class.first_owning_decl_id;
 
   new_class.complete_type_witness_id = complete_type_witness_id;
@@ -1671,8 +1671,8 @@ static auto AddClassDefinition(ImportContext& context,
   if (import_class.adapt_id.has_value()) {
     new_class.adapt_id = adapt_id;
   }
-  if (import_class.vtable_ptr_id.has_value()) {
-    new_class.vtable_ptr_id = vtable_ptr_id;
+  if (import_class.vtable_decl_id.has_value()) {
+    new_class.vtable_decl_id = vtable_decl_id;
   }
 }
 
@@ -1740,11 +1740,11 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver,
   auto adapt_id = import_class.adapt_id.has_value()
                       ? GetLocalConstantInstId(resolver, import_class.adapt_id)
                       : SemIR::InstId::None;
-  auto& new_class = resolver.local_classes().Get(class_id);
-  auto vtable_ptr_const_id =
-      import_class.vtable_ptr_id.has_value()
-          ? AddImportRef(resolver, import_class.vtable_ptr_id)
+  auto vtable_decl_id =
+      import_class.vtable_decl_id.has_value()
+          ? AddImportRef(resolver, import_class.vtable_decl_id)
           : SemIR::InstId::None;
+  auto& new_class = resolver.local_classes().Get(class_id);
 
   if (resolver.HasNewWork()) {
     return ResolveResult::Retry(class_const_id, new_class.first_decl_id());
@@ -1770,7 +1770,7 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver,
         import_class.complete_type_witness_id, complete_type_witness_const_id);
     AddClassDefinition(resolver, import_class, new_class,
                        complete_type_witness_id, base_id, adapt_id,
-                       vtable_ptr_const_id);
+                       vtable_decl_id);
   }
 
   return ResolveResult::Done(class_const_id, new_class.first_decl_id());
@@ -2043,18 +2043,14 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver,
 }
 
 static auto TryResolveTypedInst(ImportRefResolver& resolver,
-                                SemIR::VtablePtr inst,
+                                SemIR::VtableDecl inst,
                                 SemIR::ConstantId /*vtable_const_id*/)
     -> ResolveResult {
   const auto& import_vtable = resolver.import_vtables().Get(inst.vtable_id);
-
   auto class_const_id =
       GetLocalConstantId(resolver, resolver.import_classes()
                                        .Get(import_vtable.class_id)
                                        .first_owning_decl_id);
-
-  auto specific_data = GetLocalSpecificData(resolver, inst.specific_id);
-
   auto class_const_inst = resolver.local_insts().Get(
       resolver.local_constant_values().GetInstId(class_const_id));
 
@@ -2111,12 +2107,35 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver,
         .virtual_functions_id =
             resolver.local_inst_blocks().Add(lazy_virtual_functions)}});
 
-  return ResolveAsDeduplicated<SemIR::VtablePtr>(
+  return ResolveAsDeduplicated<SemIR::VtableDecl>(
       resolver, {.type_id = GetPointerType(resolver.local_context(),
                                            SemIR::VtableType::TypeInstId),
-                 .vtable_id = new_vtable_id,
-                 .specific_id = GetOrAddLocalSpecific(
-                     resolver, inst.specific_id, specific_data)});
+                 .vtable_id = new_vtable_id});
+}
+
+static auto TryResolveTypedInst(ImportRefResolver& resolver,
+                                SemIR::VtablePtr inst,
+                                SemIR::ConstantId /*vtable_const_id*/)
+    -> ResolveResult {
+  auto specific_data = GetLocalSpecificData(resolver, inst.specific_id);
+
+  auto vtable_const_id = GetLocalConstantId(
+      resolver, resolver.import_classes()
+                    .Get(resolver.import_vtables().Get(inst.vtable_id).class_id)
+                    .vtable_decl_id);
+  auto vtable_const_inst = resolver.local_insts().Get(
+      resolver.local_constant_values().GetInstId(vtable_const_id));
+  if (resolver.HasNewWork()) {
+    return ResolveResult::Retry();
+  }
+
+  return ResolveAsDeduplicated<SemIR::VtablePtr>(
+      resolver,
+      {.type_id = GetPointerType(resolver.local_context(),
+                                 SemIR::VtableType::TypeInstId),
+       .vtable_id = vtable_const_inst.As<SemIR::VtableDecl>().vtable_id,
+       .specific_id =
+           GetOrAddLocalSpecific(resolver, inst.specific_id, specific_data)});
 }
 
 static auto TryResolveTypedInst(ImportRefResolver& resolver,
@@ -3226,6 +3245,9 @@ static auto TryResolveInstCanonical(ImportRefResolver& resolver,
     }
     case CARBON_KIND(SemIR::VarStorage inst): {
       return TryResolveTypedInst(resolver, inst, inst_id);
+    }
+    case CARBON_KIND(SemIR::VtableDecl inst): {
+      return TryResolveTypedInst(resolver, inst, const_id);
     }
     case CARBON_KIND(SemIR::VtablePtr inst): {
       return TryResolveTypedInst(resolver, inst, const_id);
