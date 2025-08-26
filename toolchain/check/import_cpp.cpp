@@ -1088,7 +1088,7 @@ static auto MapBuiltinType(Context& context, SemIR::LocId loc_id,
     if (context.ast_context().hasSameType(qual_type, int_n_type)) {
       TypeExpr type_expr =
           MakeIntType(context, context.ints().Add(width), is_signed);
-      // Try to make sure signed integer of 32 or 64 bits are complete so we can
+      // Try to make sure integer types of 32 or 64 bits are complete so we can
       // check against them when deciding whether we need to generate a thunk.
       if (width == 32 || width == 64) {
         SemIR::TypeId type_id = type_expr.type_id;
