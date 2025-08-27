@@ -29,6 +29,7 @@
 #include "toolchain/check/class.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/convert.h"
+#include "toolchain/check/cpp_custom_type_mapping.h"
 #include "toolchain/check/cpp_thunk.h"
 #include "toolchain/check/diagnostic_helpers.h"
 #include "toolchain/check/eval.h"
@@ -1200,7 +1201,24 @@ static auto MapBuiltinType(Context& context, SemIR::LocId loc_id,
     // TODO: Handle floating-point types that map to named aliases.
   }
 
-  return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+  return TypeExpr::None;
+}
+
+// Determines whether record_decl is a C++ class that has a custom mapping into
+// Carbon, and if so, returns the corresponding Carbon type. Otherwise returns
+// None.
+static auto LookupCustomRecordType(Context& context,
+                                   const clang::CXXRecordDecl* record_decl)
+    -> TypeExpr {
+  switch (GetCustomCppTypeMapping(record_decl)) {
+    case CustomCppTypeMapping::None:
+      return TypeExpr::None;
+
+    case CustomCppTypeMapping::Str:
+      return MakeStringType(
+          context,
+          AddImportIRInst(context.sem_ir(), record_decl->getLocation()));
+  }
 }
 
 // Maps a C++ tag type (class, struct, union, enum) to a Carbon type.
@@ -1210,12 +1228,21 @@ static auto MapTagType(Context& context, const clang::TagType& type)
   CARBON_CHECK(tag_decl);
 
   // Check if the declaration is already mapped.
-  SemIR::InstId record_inst_id = LookupClangDeclInstId(context, tag_decl);
-  if (!record_inst_id.has_value()) {
-    record_inst_id = ImportTagDecl(context, tag_decl);
+  SemIR::InstId tag_inst_id = LookupClangDeclInstId(context, tag_decl);
+  if (!tag_inst_id.has_value()) {
+    if (auto* record_decl = dyn_cast<clang::CXXRecordDecl>(tag_decl)) {
+      auto custom_type = LookupCustomRecordType(context, record_decl);
+      if (custom_type.inst_id.has_value()) {
+        context.sem_ir().clang_decls().Add(
+            {.decl = record_decl, .inst_id = custom_type.inst_id});
+        return custom_type;
+      }
+    }
+
+    tag_inst_id = ImportTagDecl(context, tag_decl);
   }
   SemIR::TypeInstId record_type_inst_id =
-      context.types().GetAsTypeInstId(record_inst_id);
+      context.types().GetAsTypeInstId(tag_inst_id);
   return {
       .inst_id = record_type_inst_id,
       .type_id = context.types().GetTypeIdForTypeInstId(record_type_inst_id)};
@@ -1237,7 +1264,7 @@ static auto MapNonWrapperType(Context& context, SemIR::LocId loc_id,
   CARBON_CHECK(!type.hasQualifiers() && !type->isPointerType(),
                "Should not see wrapper types here");
 
-  return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+  return TypeExpr::None;
 }
 
 // Maps a qualified C++ type to a Carbon type.
@@ -1254,7 +1281,7 @@ static auto MapQualifiedType(Context& context, clang::QualType type,
 
   // TODO: Support other qualifiers.
   if (!quals.empty()) {
-    return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+    return TypeExpr::None;
   }
 
   return type_expr;
@@ -1269,7 +1296,7 @@ static auto MapPointerType(Context& context, clang::QualType type,
       !nullability.has_value() ||
       *nullability != clang::NullabilityKind::NonNull) {
     // TODO: Support nullable pointers.
-    return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+    return TypeExpr::None;
   }
 
   SemIR::TypeId pointer_type_id =
@@ -1467,7 +1494,7 @@ static auto GetReturnTypeExpr(Context& context, SemIR::LocId loc_id,
 
   if (!isa<clang::CXXConstructorDecl>(clang_decl)) {
     // void.
-    return {.inst_id = SemIR::TypeInstId::None, .type_id = SemIR::TypeId::None};
+    return TypeExpr::None;
   }
 
   // TODO: Make this a `PartialType`.
