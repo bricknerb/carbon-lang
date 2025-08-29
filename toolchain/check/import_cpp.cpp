@@ -1627,7 +1627,7 @@ static auto GetFunctionName(Context& context, clang::FunctionDecl* clang_decl)
     }
 
     case clang::DeclarationName::CXXOperatorName: {
-      return AddIdentifierName(context, "__cpp_op__");
+      return SemIR::NameId::CppOperator;
     }
 
     default: {
