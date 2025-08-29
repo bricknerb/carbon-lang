@@ -93,6 +93,104 @@ fn F() {
   // CHECK:STDERR: fail_call_with_wrong_type.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:19: error: cannot implicitly convert expression of type `Core.IntLiteral` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:                   ^
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+5]]:19: note: type `Core.IntLiteral` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:                   ^
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR:
+  let c3: Cpp.C = 6 + c1;
+}
+
+// ============================================================================
+// One of two operands conversion
+// ============================================================================
+
+// --- plus_with_int_conversion.h
+
+class C {
+ public:
+  C(int);
+};
+auto operator+ (C c1, C c2) -> C;
+
+// --- fail_todo_plus_with_int_conversion.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "plus_with_int_conversion.h";
+
+fn F() {
+  let c1: Cpp.C = Cpp.C.C(4);
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon:[[@LINE+8]]:24: error: cannot implicitly convert expression of type `Core.IntLiteral` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR:                        ^
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon:[[@LINE+5]]:24: note: type `Core.IntLiteral` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR:                        ^
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR:
+  let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon:[[@LINE+8]]:19: error: cannot implicitly convert expression of type `Core.IntLiteral` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:                   ^
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon:[[@LINE+5]]:19: note: type `Core.IntLiteral` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:                   ^
+  // CHECK:STDERR: fail_todo_plus_with_int_conversion.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR:
+  let c3: Cpp.C = 6 + c1;
+}
+
+// ============================================================================
+// All operands conversion
+// ============================================================================
+
+// --- plus_with_string_view_conversion.h
+
+namespace std {
+  using size_t = __SIZE_TYPE__;
+
+  inline namespace __1 {
+    template<typename T> struct char_traits {};
+
+    template<typename CharT, typename Traits = char_traits<CharT>>
+    class basic_string_view {
+     public:
+      basic_string_view() = default;
+      size_t size() const { return size_; }
+
+     private:
+      const CharT* data_;
+      size_t size_;
+    };
+
+    using string_view = basic_string_view<char>;
+  }
+}
+
+class C {
+ public:
+  C(std::string_view s);
+};
+auto operator+ (C c1, C c2) -> C;
+
+// --- fail_todo_import_plus_with_string_view_conversion.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "plus_with_string_view_conversion.h";
+
+fn F() {
+  let s1: str = "hello";
+  let s2: str = "world";
+  // CHECK:STDERR: fail_todo_import_plus_with_string_view_conversion.carbon:[[@LINE+4]]:18: error: cannot access member of interface `Core.AddWith(Core.String)` in type `Core.String` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR:   let c: Cpp.C = s1 + s2;
+  // CHECK:STDERR:                  ^~~~~~~
+  // CHECK:STDERR:
+  let c: Cpp.C = s1 + s2;
 }
 
 // ============================================================================

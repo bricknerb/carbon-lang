@@ -71,9 +71,9 @@ auto BuildBinaryOperator(Context& context, SemIR::LocId loc_id, Operator op,
                          SemIR::InstId lhs_id, SemIR::InstId rhs_id,
                          MakeDiagnosticBuilderFn missing_impl_diagnoser)
     -> SemIR::InstId {
-  // For binary operators with a C++ class as the LHS, try to import and call
-  // the C++ operator.
-  if (IsOfCppClassType(context, lhs_id)) {
+  // For binary operators with a C++ class as at least one of the operands, try
+  // to import and call the C++ operator.
+  if (IsOfCppClassType(context, lhs_id) || IsOfCppClassType(context, rhs_id)) {
     SemIR::ScopeLookupResult cpp_lookup_result =
         ImportOperatorFromCpp(context, loc_id, op);
     if (cpp_lookup_result.is_found()) {
