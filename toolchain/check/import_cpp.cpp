@@ -487,7 +487,7 @@ auto ImportCppFiles(Context& context,
 }
 
 // Returns the Clang `DeclContext` for the given name scope. Return the
-// translation unit decl if not scope is provided.
+// translation unit decl if no scope is provided.
 static auto GetDeclContext(Context& context, SemIR::NameScopeId scope_id)
     -> clang::DeclContext* {
   if (!scope_id.has_value()) {
