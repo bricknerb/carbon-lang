@@ -73,6 +73,10 @@ auto BuildBinaryOperator(Context& context, SemIR::LocId loc_id, Operator op,
     -> SemIR::InstId {
   // For binary operators with a C++ class as at least one of the operands, try
   // to import and call the C++ operator.
+  // TODO: Instead of hooking this here, change impl lookup, so that a generic
+  // constraint such as `T:! Core.Add` is satisfied by C++ class types that are
+  // addable. See
+  // https://github.com/carbon-language/carbon-lang/pull/5996/files#r2308666348
   if (IsOfCppClassType(context, lhs_id) || IsOfCppClassType(context, rhs_id)) {
     SemIR::ScopeLookupResult cpp_lookup_result =
         ImportOperatorFromCpp(context, loc_id, op);
