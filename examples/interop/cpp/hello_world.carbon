@@ -5,7 +5,8 @@
 import Cpp inline "#include <cstdio>";
 
 fn Run() {
-  // TODO: Requires operator << and declaration type Var (cout).
+  // TODO: Requires operator <<, declaration type Var (cout) and class with
+  // virtual bases (basic_ostream).
   // Cpp.std.cout << "Hello world!\n";
 
   // TODO: Requires variadic function.
