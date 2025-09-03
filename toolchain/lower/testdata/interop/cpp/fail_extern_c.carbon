@@ -22,21 +22,13 @@
 
 extern "C" int foo;
 
-// --- fail_todo_import_extern_c_variable.carbon
+// --- import_extern_c_variable.carbon
 
 library "[[@TEST_NAME]]";
 
-// CHECK:STDERR: fail_todo_import_extern_c_variable.carbon:[[@LINE+4]]:10: in file included here [InCppInclude]
-// CHECK:STDERR: ./extern_c_variable.h:2:16: error: semantics TODO: `Unsupported: Declaration type Var` [SemanticsTodo]
-// CHECK:STDERR: extern "C" int foo;
-// CHECK:STDERR:                ^
 import Cpp library "extern_c_variable.h";
 
 fn MyF() -> i32 {
-  // CHECK:STDERR: fail_todo_import_extern_c_variable.carbon:[[@LINE+4]]:10: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   return Cpp.foo;
-  // CHECK:STDERR:          ^~~~~~~
-  // CHECK:STDERR:
   return Cpp.foo;
 }
 

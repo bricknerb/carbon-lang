@@ -117,23 +117,15 @@ union Bar {
   static Bar* _Nonnull foo;
 };
 
-// --- fail_todo_import_static_data_member.carbon
+// --- import_static_data_member.carbon
 
 library "[[@TEST_NAME]]";
 
-// CHECK:STDERR: fail_todo_import_static_data_member.carbon:[[@LINE+4]]:10: in file included here [InCppInclude]
-// CHECK:STDERR: ./static_data_member.h:4:24: error: semantics TODO: `Unsupported: Declaration type Var` [SemanticsTodo]
-// CHECK:STDERR:   static Bar* _Nonnull foo;
-// CHECK:STDERR:                        ^
 import Cpp library "static_data_member.h";
 
 fn MyF() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_import_static_data_member.carbon:[[@LINE+4]]:23: note: in `Cpp` name lookup for `foo` [InCppNameLookup]
-  // CHECK:STDERR:   let bar: Cpp.Bar* = Cpp.Bar.foo();
-  // CHECK:STDERR:                       ^~~~~~~~~~~
-  // CHECK:STDERR:
-  let bar: Cpp.Bar* = Cpp.Bar.foo();
+  let bar: Cpp.Bar* = Cpp.Bar.foo;
   //@dump-sem-ir-end
 }
 
@@ -319,12 +311,16 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_static_data_member.carbon
+// CHECK:STDOUT: --- import_static_data_member.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %Bar: type = class_type @Bar [concrete]
 // CHECK:STDOUT:   %ptr.f68: type = ptr_type %Bar [concrete]
-// CHECK:STDOUT:   %pattern_type: type = pattern_type %ptr.f68 [concrete]
+// CHECK:STDOUT:   %pattern_type.146: type = pattern_type %ptr.f68 [concrete]
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.type.4a2: type = fn_type @T.as.Destroy.impl.Op, @T.as.Destroy.impl(%ptr.f68) [concrete]
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.87e: %T.as.Destroy.impl.Op.type.4a2 = struct_value () [concrete]
+// CHECK:STDOUT:   %ptr.b75: type = ptr_type %ptr.f68 [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
@@ -333,22 +329,31 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Bar.decl: type = class_decl @Bar [concrete = constants.%Bar] {} {}
+// CHECK:STDOUT:   %foo.var: ref %ptr.f68 = var @MyF.%foo.var_patt
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @MyF() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %bar.patt: %pattern_type = binding_pattern bar [concrete]
+// CHECK:STDOUT:     %bar.patt: %pattern_type.146 = binding_pattern bar [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.ref.loc16_23: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %Bar.ref.loc16_26: type = name_ref Bar, imports.%Bar.decl [concrete = constants.%Bar]
-// CHECK:STDOUT:   %foo.ref: <error> = name_ref foo, <error> [concrete = <error>]
-// CHECK:STDOUT:   %.loc16: type = splice_block %ptr [concrete = constants.%ptr.f68] {
-// CHECK:STDOUT:     %Cpp.ref.loc16_12: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %Bar.ref.loc16_15: type = name_ref Bar, imports.%Bar.decl [concrete = constants.%Bar]
-// CHECK:STDOUT:     %ptr: type = ptr_type %Bar.ref.loc16_15 [concrete = constants.%ptr.f68]
+// CHECK:STDOUT:   %Cpp.ref.loc8_23: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %Bar.ref.loc8_26: type = name_ref Bar, imports.%Bar.decl [concrete = constants.%Bar]
+// CHECK:STDOUT:   %foo.patt: %pattern_type.146 = binding_pattern foo [concrete]
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %foo.ref: ref %ptr.f68 = name_ref foo, imports.%foo.var
+// CHECK:STDOUT:   %.loc8_19: type = splice_block %ptr [concrete = constants.%ptr.f68] {
+// CHECK:STDOUT:     %Cpp.ref.loc8_12: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %Bar.ref.loc8_15: type = name_ref Bar, imports.%Bar.decl [concrete = constants.%Bar]
+// CHECK:STDOUT:     %ptr: type = ptr_type %Bar.ref.loc8_15 [concrete = constants.%ptr.f68]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %bar: %ptr.f68 = bind_name bar, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc8_30: %ptr.f68 = bind_value %foo.ref
+// CHECK:STDOUT:   %bar: %ptr.f68 = bind_name bar, %.loc8_30
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound: <bound method> = bound_method imports.%foo.var, constants.%T.as.Destroy.impl.Op.87e
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method imports.%foo.var, %T.as.Destroy.impl.Op.specific_fn
+// CHECK:STDOUT:   %addr: %ptr.b75 = addr_of imports.%foo.var
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
