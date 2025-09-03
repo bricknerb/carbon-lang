@@ -7,5 +7,6 @@ load("//bazel/carbon_rules:defs.bzl", "carbon_binary")
 carbon_binary(
     name = "hello_world",
     srcs = ["hello_world.carbon"],
+    # TODO: Remove when macos can find cstdio.
     tags = ["manual"],
 )
