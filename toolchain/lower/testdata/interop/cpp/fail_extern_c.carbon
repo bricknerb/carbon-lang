@@ -15,24 +15,6 @@
 // successfully compile.
 
 // ============================================================================
-// extern "C" variable
-// ============================================================================
-
-// --- extern_c_variable.h
-
-extern "C" int foo;
-
-// --- import_extern_c_variable.carbon
-
-library "[[@TEST_NAME]]";
-
-import Cpp library "extern_c_variable.h";
-
-fn MyF() -> i32 {
-  return Cpp.foo;
-}
-
-// ============================================================================
 // extern "C" function with C++ special name
 // ============================================================================
 
