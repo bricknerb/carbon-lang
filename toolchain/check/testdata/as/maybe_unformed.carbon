@@ -212,10 +212,7 @@ fn Use() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %X: type = class_type @X [concrete]
 // CHECK:STDOUT:   %Destroy.type: type = facet_type <@Destroy> [concrete]
-// CHECK:STDOUT:   %ptr.d17: type = ptr_type %X [concrete]
-// CHECK:STDOUT:   %X.as.Destroy.impl.Op.type: type = fn_type @X.as.Destroy.impl.Op [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %X.as.Destroy.impl.Op: %X.as.Destroy.impl.Op.type = struct_value () [concrete]
 // CHECK:STDOUT:   %Init.type: type = fn_type @Init [concrete]
 // CHECK:STDOUT:   %Init: %Init.type = struct_value () [concrete]
 // CHECK:STDOUT:   %MaybeUnformed.type: type = generic_class_type @MaybeUnformed [concrete]
@@ -281,14 +278,11 @@ fn Use() {
 // CHECK:STDOUT:     %MaybeUnformed.loc27_30: type = class_type @MaybeUnformed, @MaybeUnformed(constants.%X) [concrete = constants.%MaybeUnformed.275]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %v: %MaybeUnformed.275 = bind_name v, <error> [concrete = <error>]
-// CHECK:STDOUT:   %X.as.Destroy.impl.Op.bound: <bound method> = bound_method %.loc19_39, constants.%X.as.Destroy.impl.Op
-// CHECK:STDOUT:   %addr.loc19_39: %ptr.d17 = addr_of %.loc19_39
-// CHECK:STDOUT:   %X.as.Destroy.impl.Op.call: init %empty_tuple.type = call %X.as.Destroy.impl.Op.bound(%addr.loc19_39)
 // CHECK:STDOUT:   %MaybeUnformed.as.Destroy.impl.Op.bound: <bound method> = bound_method %i.var, constants.%MaybeUnformed.as.Destroy.impl.Op.b85
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %i.var, %MaybeUnformed.as.Destroy.impl.Op.specific_fn
-// CHECK:STDOUT:   %addr.loc19_3: %ptr.58e = addr_of %i.var
-// CHECK:STDOUT:   %MaybeUnformed.as.Destroy.impl.Op.call: init %empty_tuple.type = call %bound_method(%addr.loc19_3)
+// CHECK:STDOUT:   %addr: %ptr.58e = addr_of %i.var
+// CHECK:STDOUT:   %MaybeUnformed.as.Destroy.impl.Op.call: init %empty_tuple.type = call %bound_method(%addr)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
