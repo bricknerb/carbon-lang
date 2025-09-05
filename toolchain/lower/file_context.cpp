@@ -327,9 +327,19 @@ auto FileContext::BuildFunctionTypeInfo(const SemIR::Function& function,
   }
   for (auto param_pattern_id : llvm::concat<const SemIR::InstId>(
            implicit_param_patterns, param_patterns)) {
+    // TODO: Handle a general pattern here, rather than assuming that each
+    // parameter pattern contains at most one binding.
     auto param_pattern_info = SemIR::Function::GetParamPatternInfoFromPatternId(
         sem_ir(), param_pattern_id);
     if (!param_pattern_info) {
+      continue;
+    }
+    // TODO: Use a more general mechanism to determine if the binding is a
+    // reference binding.
+    if (param_pattern_info->var_pattern_id.has_value()) {
+      param_types.push_back(
+          llvm::PointerType::get(llvm_context(), /*AddressSpace=*/0));
+      param_inst_ids.push_back(param_pattern_id);
       continue;
     }
     auto param_type_id = ExtractScrutineeType(
@@ -764,8 +774,7 @@ static auto BuildTypeForInst(FileContext& context, SemIR::ClassType inst)
 }
 
 template <typename InstT>
-  requires(InstT::Kind.template IsAnyOf<
-           SemIR::ConstType, SemIR::MaybeUnformedType, SemIR::PartialType>())
+  requires(SemIR::Internal::HasInstCategory<SemIR::AnyQualifiedType, InstT>)
 static auto BuildTypeForInst(FileContext& context, InstT inst) -> llvm::Type* {
   return context.GetType(
       context.sem_ir().types().GetTypeIdForTypeInstId(inst.inner_id));
