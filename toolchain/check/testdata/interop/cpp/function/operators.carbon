@@ -12,24 +12,37 @@
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/operators.carbon
 
 // ============================================================================
-// Negate
+// Unary operators
 // ============================================================================
 
-// --- negate.h
+// --- unary_operators.h
 
 class C {};
+
+// Increment and Decrement.
+// TODO: Change `operand` and return value to reference when it is supported.
+auto operator++(C operand) -> C;
+auto operator--(C operand) -> C;
+
+// Arithmetic.
 auto operator-(C operand) -> C;
 
-// --- import_negate.carbon
+// --- import_unary_operators.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "negate.h";
+import Cpp library "unary_operators.h";
 
 fn F() {
   //@dump-sem-ir-begin
-  let c1: Cpp.C = Cpp.C.C();
-  let c2: Cpp.C = -c1;
+  let c: Cpp.C = Cpp.C.C();
+
+  // Increment and Decrement.
+  ++c;
+  --c;
+
+  // Arithmetic.
+  let minus: Cpp.C = -c;
   //@dump-sem-ir-end
 }
 
@@ -190,6 +203,62 @@ fn F() {
 }
 
 // ============================================================================
+// Unsupported unary operators
+// ============================================================================
+
+// --- unsupported_unary_operators.h
+
+class C {};
+
+// --- fail_todo_import_unsupported_unary_operators.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "unsupported_unary_operators.h";
+
+fn F() {
+  let c: Cpp.C = Cpp.C.C();
+
+  // Arithmetic.
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+12]]:21: error: expected expression [ExpectedExpr]
+  // CHECK:STDERR:   let plus: Cpp.C = +c;
+  // CHECK:STDERR:                     ^
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+8]]:21: error: whitespace missing after binary operator [BinaryOperatorRequiresWhitespace]
+  // CHECK:STDERR:   let plus: Cpp.C = +c;
+  // CHECK:STDERR:                     ^
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+4]]:21: error: semantics TODO: `handle invalid parse trees in `check`` [SemanticsTodo]
+  // CHECK:STDERR:   let plus: Cpp.C = +c;
+  // CHECK:STDERR:                     ^
+  // CHECK:STDERR:
+  let plus: Cpp.C = +c;
+
+  // Increment and Decrement.
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+4]]:4: error: expected `;` after expression statement [ExpectedExprSemi]
+  // CHECK:STDERR:   c++;
+  // CHECK:STDERR:    ^~
+  // CHECK:STDERR:
+  c++;
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+4]]:4: error: expected `;` after expression statement [ExpectedExprSemi]
+  // CHECK:STDERR:   c--;
+  // CHECK:STDERR:    ^~
+  // CHECK:STDERR:
+  c--;
+
+  // Bitwise.
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+8]]:26: error: expected expression [ExpectedExpr]
+  // CHECK:STDERR:   let not_value: Cpp.C = ~c;
+  // CHECK:STDERR:                          ^
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_unsupported_unary_operators.carbon:[[@LINE+4]]:26: error: `let` declarations must end with a `;` [ExpectedDeclSemi]
+  // CHECK:STDERR:   let not_value: Cpp.C = ~c;
+  // CHECK:STDERR:                          ^
+  // CHECK:STDERR:
+  let not_value: Cpp.C = ~c;
+}
+
+// ============================================================================
 // SubWith
 // ============================================================================
 
@@ -221,6 +290,105 @@ fn F() {
   // CHECK:STDERR:
   let c3: Cpp.C = c1 - c2;
   //@dump-sem-ir-end
+}
+
+// ============================================================================
+// Logical operators
+// ============================================================================
+
+// --- logical_operators.h
+
+class C {};
+
+// --- fail_import_logical_operators.carbon
+
+library "[[@TEST_NAME]]";
+import Cpp library "logical_operators.h";
+
+fn F() {
+  let c1: Cpp.C = Cpp.C.C();
+  let c2: Cpp.C = Cpp.C.C();
+
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+7]]:26: error: cannot implicitly convert expression of type `Cpp.C` to `bool` [ConversionFailure]
+  // CHECK:STDERR:   let not_result: bool = not c1;
+  // CHECK:STDERR:                          ^~~~~~
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+4]]:26: note: type `Cpp.C` does not implement interface `Core.ImplicitAs(bool)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let not_result: bool = not c1;
+  // CHECK:STDERR:                          ^~~~~~
+  // CHECK:STDERR:
+  let not_result: bool = not c1;
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+14]]:26: error: cannot implicitly convert expression of type `Cpp.C` to `bool` [ConversionFailure]
+  // CHECK:STDERR:   let and_result: bool = c1 and c2;
+  // CHECK:STDERR:                          ^~~~~~
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+11]]:26: note: type `Cpp.C` does not implement interface `Core.ImplicitAs(bool)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let and_result: bool = c1 and c2;
+  // CHECK:STDERR:                          ^~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+7]]:26: error: cannot implicitly convert expression of type `Cpp.C` to `bool` [ConversionFailure]
+  // CHECK:STDERR:   let and_result: bool = c1 and c2;
+  // CHECK:STDERR:                          ^~~~~~~~~
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+4]]:26: note: type `Cpp.C` does not implement interface `Core.ImplicitAs(bool)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let and_result: bool = c1 and c2;
+  // CHECK:STDERR:                          ^~~~~~~~~
+  // CHECK:STDERR:
+  let and_result: bool = c1 and c2;
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+14]]:25: error: cannot implicitly convert expression of type `Cpp.C` to `bool` [ConversionFailure]
+  // CHECK:STDERR:   let or_result: bool = c1 or c2;
+  // CHECK:STDERR:                         ^~~~~
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+11]]:25: note: type `Cpp.C` does not implement interface `Core.ImplicitAs(bool)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let or_result: bool = c1 or c2;
+  // CHECK:STDERR:                         ^~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+7]]:25: error: cannot implicitly convert expression of type `Cpp.C` to `bool` [ConversionFailure]
+  // CHECK:STDERR:   let or_result: bool = c1 or c2;
+  // CHECK:STDERR:                         ^~~~~~~~
+  // CHECK:STDERR: fail_import_logical_operators.carbon:[[@LINE+4]]:25: note: type `Cpp.C` does not implement interface `Core.ImplicitAs(bool)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let or_result: bool = c1 or c2;
+  // CHECK:STDERR:                         ^~~~~~~~
+  // CHECK:STDERR:
+  let or_result: bool = c1 or c2;
+}
+
+// ============================================================================
+// Pointer and Memory operators
+// ============================================================================
+
+// --- pointer_and_memory_operators.h
+
+class C {};
+
+// --- fail_import_pointer_and_memory_operators.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "pointer_and_memory_operators.h";
+
+fn F() {
+  let c: Cpp.C = Cpp.C.C();
+
+  // Pointer and Memory.
+  // CHECK:STDERR: fail_import_pointer_and_memory_operators.carbon:[[@LINE+4]]:28: error: cannot dereference operand of non-pointer type `Cpp.C` [DerefOfNonPointer]
+  // CHECK:STDERR:   let dereference: Cpp.C = *c;
+  // CHECK:STDERR:                            ^
+  // CHECK:STDERR:
+  let dereference: Cpp.C = *c;
+  // CHECK:STDERR: fail_import_pointer_and_memory_operators.carbon:[[@LINE+11]]:24: error: cannot take the address of non-reference expression [AddrOfNonRef]
+  // CHECK:STDERR:   let address: Cpp.C = &c;
+  // CHECK:STDERR:                        ^
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_import_pointer_and_memory_operators.carbon:[[@LINE+7]]:24: error: cannot implicitly convert expression of type `Cpp.C*` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR:   let address: Cpp.C = &c;
+  // CHECK:STDERR:                        ^~
+  // CHECK:STDERR: fail_import_pointer_and_memory_operators.carbon:[[@LINE+4]]:24: note: type `Cpp.C*` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let address: Cpp.C = &c;
+  // CHECK:STDERR:                        ^~
+  // CHECK:STDERR:
+  let address: Cpp.C = &c;
+  // CHECK:STDERR: fail_import_pointer_and_memory_operators.carbon:[[@LINE+4]]:29: error: cannot apply `->` operator to non-pointer type `Cpp.C` [ArrowOperatorOfNonPointer]
+  // CHECK:STDERR:   let call_result: Cpp.C = c->foo();
+  // CHECK:STDERR:                             ^~
+  // CHECK:STDERR:
+  let call_result: Cpp.C = c->foo();
 }
 
 // ============================================================================
@@ -336,7 +504,7 @@ fn F() {
   let c3: Cpp.C = c1 + c2;
 }
 
-// CHECK:STDOUT: --- import_negate.carbon
+// CHECK:STDOUT: --- import_unary_operators.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -347,6 +515,10 @@ fn F() {
 // CHECK:STDOUT:   %ptr.d9e: type = ptr_type %C [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk.type: type = fn_type @C__carbon_thunk [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk: %C__carbon_thunk.type = struct_value () [concrete]
+// CHECK:STDOUT:   %operator++__carbon_thunk.type: type = fn_type @operator++__carbon_thunk [concrete]
+// CHECK:STDOUT:   %operator++__carbon_thunk: %operator++__carbon_thunk.type = struct_value () [concrete]
+// CHECK:STDOUT:   %operator--__carbon_thunk.type: type = fn_type @operator--__carbon_thunk [concrete]
+// CHECK:STDOUT:   %operator--__carbon_thunk: %operator--__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT:   %operator-__carbon_thunk.type: type = fn_type @operator-__carbon_thunk [concrete]
 // CHECK:STDOUT:   %operator-__carbon_thunk: %operator-__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT:   %T.as.Destroy.impl.Op.type.1b3: type = fn_type @T.as.Destroy.impl.Op, @T.as.Destroy.impl(%C) [concrete]
@@ -369,6 +541,16 @@ fn F() {
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %operator++__carbon_thunk.decl: %operator++__carbon_thunk.type = fn_decl @operator++__carbon_thunk [concrete = constants.%operator++__carbon_thunk] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %operator--__carbon_thunk.decl: %operator--__carbon_thunk.type = fn_decl @operator--__carbon_thunk [concrete = constants.%operator--__carbon_thunk] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %operator-__carbon_thunk.decl: %operator-__carbon_thunk.type = fn_decl @operator-__carbon_thunk [concrete = constants.%operator-__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -379,49 +561,75 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %c1.patt: %pattern_type.217 = binding_pattern c1 [concrete]
+// CHECK:STDOUT:     %c.patt: %pattern_type.217 = binding_pattern c [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Cpp.ref.loc8_19: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %C.ref.loc8_22: type = name_ref C, imports.%C.decl [concrete = constants.%C]
-// CHECK:STDOUT:   %C.ref.loc8_24: %C.C.type = name_ref C, imports.%C.C.decl [concrete = constants.%C.C]
-// CHECK:STDOUT:   %.loc8_27.1: ref %C = temporary_storage
-// CHECK:STDOUT:   %addr.loc8_27.1: %ptr.d9e = addr_of %.loc8_27.1
-// CHECK:STDOUT:   %C__carbon_thunk.call: init %empty_tuple.type = call imports.%C__carbon_thunk.decl(%addr.loc8_27.1)
-// CHECK:STDOUT:   %.loc8_27.2: init %C = in_place_init %C__carbon_thunk.call, %.loc8_27.1
-// CHECK:STDOUT:   %.loc8_14: type = splice_block %C.ref.loc8_14 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc8_11: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %C.ref.loc8_14: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %Cpp.ref.loc8_18: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %C.ref.loc8_21: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %C.ref.loc8_23: %C.C.type = name_ref C, imports.%C.C.decl [concrete = constants.%C.C]
+// CHECK:STDOUT:   %.loc8_26.1: ref %C = temporary_storage
+// CHECK:STDOUT:   %addr.loc8_26.1: %ptr.d9e = addr_of %.loc8_26.1
+// CHECK:STDOUT:   %C__carbon_thunk.call: init %empty_tuple.type = call imports.%C__carbon_thunk.decl(%addr.loc8_26.1)
+// CHECK:STDOUT:   %.loc8_26.2: init %C = in_place_init %C__carbon_thunk.call, %.loc8_26.1
+// CHECK:STDOUT:   %.loc8_13: type = splice_block %C.ref.loc8_13 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc8_10: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %C.ref.loc8_13: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.loc8_27.3: ref %C = temporary %.loc8_27.1, %.loc8_27.2
-// CHECK:STDOUT:   %.loc8_27.4: %C = bind_value %.loc8_27.3
-// CHECK:STDOUT:   %c1: %C = bind_name c1, %.loc8_27.4
+// CHECK:STDOUT:   %.loc8_26.3: ref %C = temporary %.loc8_26.1, %.loc8_26.2
+// CHECK:STDOUT:   %.loc8_26.4: %C = bind_value %.loc8_26.3
+// CHECK:STDOUT:   %c: %C = bind_name c, %.loc8_26.4
+// CHECK:STDOUT:   %c.ref.loc11: %C = name_ref c, %c
+// CHECK:STDOUT:   %.loc11_3.1: ref %C = temporary_storage
+// CHECK:STDOUT:   %.loc11_5: ref %C = value_as_ref %c.ref.loc11
+// CHECK:STDOUT:   %addr.loc11_3.1: %ptr.d9e = addr_of %.loc11_5
+// CHECK:STDOUT:   %addr.loc11_3.2: %ptr.d9e = addr_of %.loc11_3.1
+// CHECK:STDOUT:   %operator++__carbon_thunk.call: init %empty_tuple.type = call imports.%operator++__carbon_thunk.decl(%addr.loc11_3.1, %addr.loc11_3.2)
+// CHECK:STDOUT:   %.loc11_3.2: init %C = in_place_init %operator++__carbon_thunk.call, %.loc11_3.1
+// CHECK:STDOUT:   %.loc11_3.3: ref %C = temporary %.loc11_3.1, %.loc11_3.2
+// CHECK:STDOUT:   %c.ref.loc12: %C = name_ref c, %c
+// CHECK:STDOUT:   %.loc12_3.1: ref %C = temporary_storage
+// CHECK:STDOUT:   %.loc12_5: ref %C = value_as_ref %c.ref.loc12
+// CHECK:STDOUT:   %addr.loc12_3.1: %ptr.d9e = addr_of %.loc12_5
+// CHECK:STDOUT:   %addr.loc12_3.2: %ptr.d9e = addr_of %.loc12_3.1
+// CHECK:STDOUT:   %operator--__carbon_thunk.call: init %empty_tuple.type = call imports.%operator--__carbon_thunk.decl(%addr.loc12_3.1, %addr.loc12_3.2)
+// CHECK:STDOUT:   %.loc12_3.2: init %C = in_place_init %operator--__carbon_thunk.call, %.loc12_3.1
+// CHECK:STDOUT:   %.loc12_3.3: ref %C = temporary %.loc12_3.1, %.loc12_3.2
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %c2.patt: %pattern_type.217 = binding_pattern c2 [concrete]
+// CHECK:STDOUT:     %minus.patt: %pattern_type.217 = binding_pattern minus [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %c1.ref: %C = name_ref c1, %c1
-// CHECK:STDOUT:   %.loc9_19.1: ref %C = temporary_storage
-// CHECK:STDOUT:   %.loc9_20: ref %C = value_as_ref %c1.ref
-// CHECK:STDOUT:   %addr.loc9_19.1: %ptr.d9e = addr_of %.loc9_20
-// CHECK:STDOUT:   %addr.loc9_19.2: %ptr.d9e = addr_of %.loc9_19.1
-// CHECK:STDOUT:   %operator-__carbon_thunk.call: init %empty_tuple.type = call imports.%operator-__carbon_thunk.decl(%addr.loc9_19.1, %addr.loc9_19.2)
-// CHECK:STDOUT:   %.loc9_19.2: init %C = in_place_init %operator-__carbon_thunk.call, %.loc9_19.1
-// CHECK:STDOUT:   %.loc9_14: type = splice_block %C.ref.loc9 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc9: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %C.ref.loc9: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %c.ref.loc15: %C = name_ref c, %c
+// CHECK:STDOUT:   %.loc15_22.1: ref %C = temporary_storage
+// CHECK:STDOUT:   %.loc15_23: ref %C = value_as_ref %c.ref.loc15
+// CHECK:STDOUT:   %addr.loc15_22.1: %ptr.d9e = addr_of %.loc15_23
+// CHECK:STDOUT:   %addr.loc15_22.2: %ptr.d9e = addr_of %.loc15_22.1
+// CHECK:STDOUT:   %operator-__carbon_thunk.call: init %empty_tuple.type = call imports.%operator-__carbon_thunk.decl(%addr.loc15_22.1, %addr.loc15_22.2)
+// CHECK:STDOUT:   %.loc15_22.2: init %C = in_place_init %operator-__carbon_thunk.call, %.loc15_22.1
+// CHECK:STDOUT:   %.loc15_17: type = splice_block %C.ref.loc15 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc15: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %C.ref.loc15: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.loc9_19.3: ref %C = temporary %.loc9_19.1, %.loc9_19.2
-// CHECK:STDOUT:   %.loc9_19.4: %C = bind_value %.loc9_19.3
-// CHECK:STDOUT:   %c2: %C = bind_name c2, %.loc9_19.4
-// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc9: <bound method> = bound_method %.loc9_19.3, constants.%T.as.Destroy.impl.Op.21b
+// CHECK:STDOUT:   %.loc15_22.3: ref %C = temporary %.loc15_22.1, %.loc15_22.2
+// CHECK:STDOUT:   %.loc15_22.4: %C = bind_value %.loc15_22.3
+// CHECK:STDOUT:   %minus: %C = bind_name minus, %.loc15_22.4
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc15: <bound method> = bound_method %.loc15_22.3, constants.%T.as.Destroy.impl.Op.21b
 // CHECK:STDOUT:   <elided>
-// CHECK:STDOUT:   %bound_method.loc9: <bound method> = bound_method %.loc9_19.3, %T.as.Destroy.impl.Op.specific_fn.1
-// CHECK:STDOUT:   %addr.loc9_19.3: %ptr.d9e = addr_of %.loc9_19.3
-// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc9: init %empty_tuple.type = call %bound_method.loc9(%addr.loc9_19.3)
-// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc8: <bound method> = bound_method %.loc8_27.3, constants.%T.as.Destroy.impl.Op.21b
+// CHECK:STDOUT:   %bound_method.loc15: <bound method> = bound_method %.loc15_22.3, %T.as.Destroy.impl.Op.specific_fn.1
+// CHECK:STDOUT:   %addr.loc15_22.3: %ptr.d9e = addr_of %.loc15_22.3
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc15: init %empty_tuple.type = call %bound_method.loc15(%addr.loc15_22.3)
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc12: <bound method> = bound_method %.loc12_3.3, constants.%T.as.Destroy.impl.Op.21b
 // CHECK:STDOUT:   <elided>
-// CHECK:STDOUT:   %bound_method.loc8: <bound method> = bound_method %.loc8_27.3, %T.as.Destroy.impl.Op.specific_fn.2
-// CHECK:STDOUT:   %addr.loc8_27.2: %ptr.d9e = addr_of %.loc8_27.3
-// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc8: init %empty_tuple.type = call %bound_method.loc8(%addr.loc8_27.2)
+// CHECK:STDOUT:   %bound_method.loc12: <bound method> = bound_method %.loc12_3.3, %T.as.Destroy.impl.Op.specific_fn.2
+// CHECK:STDOUT:   %addr.loc12_3.3: %ptr.d9e = addr_of %.loc12_3.3
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc12: init %empty_tuple.type = call %bound_method.loc12(%addr.loc12_3.3)
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc11: <bound method> = bound_method %.loc11_3.3, constants.%T.as.Destroy.impl.Op.21b
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %bound_method.loc11: <bound method> = bound_method %.loc11_3.3, %T.as.Destroy.impl.Op.specific_fn.3
+// CHECK:STDOUT:   %addr.loc11_3.3: %ptr.d9e = addr_of %.loc11_3.3
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc11: init %empty_tuple.type = call %bound_method.loc11(%addr.loc11_3.3)
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc8: <bound method> = bound_method %.loc8_26.3, constants.%T.as.Destroy.impl.Op.21b
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   %bound_method.loc8: <bound method> = bound_method %.loc8_26.3, %T.as.Destroy.impl.Op.specific_fn.4
+// CHECK:STDOUT:   %addr.loc8_26.2: %ptr.d9e = addr_of %.loc8_26.3
+// CHECK:STDOUT:   %T.as.Destroy.impl.Op.call.loc8: init %empty_tuple.type = call %bound_method.loc8(%addr.loc8_26.2)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

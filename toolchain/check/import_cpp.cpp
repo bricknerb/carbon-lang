@@ -2027,6 +2027,15 @@ static auto GetOperatorKind(Context& context, SemIR::LocId loc_id,
     return std::nullopt;
   }
 
+  // Increment and Decrement.
+  if (interface_name == "Inc") {
+    return clang::OO_PlusPlus;
+  }
+  if (interface_name == "Dec") {
+    return clang::OO_MinusMinus;
+  }
+
+  // Arithmetic.
   if (interface_name == "Negate") {
     return clang::OO_Minus;
   }
