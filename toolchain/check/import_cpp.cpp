@@ -2017,8 +2017,8 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                                  access);
 }
 
-static auto GetOperatorKind(Context& context, SemIR::LocId loc_id,
-                            llvm::StringLiteral interface_name)
+static auto GetClangOperatorKind(Context& context, SemIR::LocId loc_id,
+                                 llvm::StringLiteral interface_name)
     -> std::optional<clang::OverloadedOperatorKind> {
   // Unary operators.
   if (interface_name == "Destroy" || interface_name == "As" ||
@@ -2059,7 +2059,7 @@ auto ImportOperatorFromCpp(Context& context, SemIR::LocId loc_id, Operator op)
         builder.Note(loc_id, InCppOperatorLookup, op.interface_name.str());
       });
 
-  auto op_kind = GetOperatorKind(context, loc_id, op.interface_name);
+  auto op_kind = GetClangOperatorKind(context, loc_id, op.interface_name);
   if (!op_kind) {
     return SemIR::ScopeLookupResult::MakeNotFound();
   }
