@@ -57,6 +57,8 @@ struct EntityName : public Printable<EntityName> {
   // Whether this binding is a template parameter.
   bool is_template : 1 = false;
   // For imported C++ global variable names, the Clang decl to use for mangling.
+  // TODO: Move the mapping between global variables and the clang decl to avoid
+  // paying extra memory when the names are not imported from C++.
   ClangDeclId clang_decl_id = ClangDeclId::None;
 };
 
