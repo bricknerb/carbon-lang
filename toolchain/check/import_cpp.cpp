@@ -1843,13 +1843,18 @@ static auto ImportVarDecl(Context& context, SemIR::LocId loc_id,
           var_name_id, GetParentNameScopeId(context, var_decl),
           SemIR::CompileTimeBindIndex::None, false, clang_decl_id);
 
+  // Create `BindingPattern` and `VarPattern` in a `NameBindingDecl`.
+  context.pattern_block_stack().Push();
   SemIR::TypeId pattern_type_id = GetPatternType(context, var_type_id);
-  SemIR::InstId binding_pattern_inst_id = AddInst<SemIR::BindingPattern>(
+  SemIR::InstId binding_pattern_inst_id = AddPatternInst<SemIR::BindingPattern>(
       context, loc_id,
       {.type_id = pattern_type_id, .entity_name_id = entity_name_id});
-  var_storage.pattern_id = AddInst<SemIR::VarPattern>(
+  var_storage.pattern_id = AddPatternInst<SemIR::VarPattern>(
       context, Parse::VariablePatternId::None,
       {.type_id = pattern_type_id, .subpattern_id = binding_pattern_inst_id});
+  context.imports().push_back(AddInstInNoBlock<SemIR::NameBindingDecl>(
+      context, loc_id,
+      {.pattern_block_id = context.pattern_block_stack().Pop()}));
 
   // Finalize the `VarStorage` instruction.
   ReplaceInstBeforeConstantUse(context, var_storage_inst_id, var_storage);

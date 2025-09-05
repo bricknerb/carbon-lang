@@ -114,7 +114,7 @@ fn MyF() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %global.var: ref %C = var @MyF.%global.var_patt [concrete]
+// CHECK:STDOUT:   %global.var: ref %C = var %global.var_patt [concrete]
 // CHECK:STDOUT:   %Core.Destroy: type = import_ref Core//prelude/parts/destroy, Destroy, loaded [concrete = constants.%Destroy.type]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -146,8 +146,6 @@ fn MyF() {
 // CHECK:STDOUT:     %local.patt: %pattern_type.217 = binding_pattern local [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.ref.loc7_22: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %global.patt: %pattern_type.217 = binding_pattern global [concrete]
-// CHECK:STDOUT:   %global.var_patt: %pattern_type.217 = var_pattern %global.patt [concrete]
 // CHECK:STDOUT:   %global.ref: ref %C = name_ref global, imports.%global.var [concrete = imports.%global.var]
 // CHECK:STDOUT:   %.loc7_17: type = splice_block %C.ref [concrete = constants.%C] {
 // CHECK:STDOUT:     %Cpp.ref.loc7_14: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
@@ -193,7 +191,7 @@ fn MyF() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %global.var: ref %C = var @MyF.%global.var_patt [concrete]
+// CHECK:STDOUT:   %global.var: ref %C = var %global.var_patt [concrete]
 // CHECK:STDOUT:   %Core.Destroy: type = import_ref Core//prelude/parts/destroy, Destroy, loaded [concrete = constants.%Destroy.type]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -226,8 +224,6 @@ fn MyF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.ref.loc7_24: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %N.ref.loc7_27: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
-// CHECK:STDOUT:   %global.patt: %pattern_type.69f = binding_pattern global [concrete]
-// CHECK:STDOUT:   %global.var_patt: %pattern_type.69f = var_pattern %global.patt [concrete]
 // CHECK:STDOUT:   %global.ref: ref %C = name_ref global, imports.%global.var [concrete = imports.%global.var]
 // CHECK:STDOUT:   %.loc7_19: type = splice_block %C.ref [concrete = constants.%C] {
 // CHECK:STDOUT:     %Cpp.ref.loc7_14: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
