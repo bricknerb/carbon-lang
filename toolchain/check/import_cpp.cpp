@@ -2020,6 +2020,18 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
 static auto GetOperatorKind(Context& context, SemIR::LocId loc_id,
                             llvm::StringLiteral interface_name)
     -> std::optional<clang::OverloadedOperatorKind> {
+  // Unary operators.
+  if (interface_name == "Destroy" || interface_name == "As" ||
+      interface_name == "ImplicitAs") {
+    // TODO: Support destructors and conversions.
+    return std::nullopt;
+  }
+
+  if (interface_name == "Negate") {
+    return clang::OO_Minus;
+  }
+
+  // Binary operators.
   if (interface_name == "AddWith") {
     return clang::OO_Plus;
   }
