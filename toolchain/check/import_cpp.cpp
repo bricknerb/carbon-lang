@@ -2047,6 +2047,62 @@ static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
                                                            access_kind);
 }
 
+// Returns true if the scope is the top `Cpp` scope.
+static auto IsTopCppScope(Context& context, SemIR::NameScopeId scope_id)
+    -> bool {
+  const SemIR::NameScope& name_scope = context.name_scopes().Get(scope_id);
+  return name_scope.is_cpp_scope() && !context.name_scopes()
+                                           .Get(name_scope.parent_scope_id())
+                                           .is_cpp_scope();
+}
+
+// For builtin names like `Cpp.long`, return the associated types.
+static auto LookupBuiltInTypes(Context& context, SemIR::LocId loc_id,
+                               SemIR::NameScopeId scope_id,
+                               SemIR::NameId name_id) -> SemIR::InstId {
+  if (!IsTopCppScope(context, scope_id)) {
+    return SemIR::InstId::None;
+  }
+
+  auto name = context.names().GetAsStringIfIdentifier(name_id);
+  if (!name) {
+    return SemIR::InstId::None;
+  }
+
+  const clang::ASTContext& ast_context = context.ast_context();
+
+  // List of types based on
+  // https://github.com/carbon-language/carbon-lang/blob/trunk/proposals/p5448.md#details
+  using NameAndType = std::tuple<llvm::StringRef, clang::QualType>;
+  for (auto [type_name, builtin_type] : {
+           NameAndType{"signed_char", ast_context.SignedCharTy},
+           NameAndType{"short", ast_context.ShortTy},
+           NameAndType{"int", ast_context.IntTy},
+           NameAndType{"long", ast_context.LongTy},
+           NameAndType{"long_long", ast_context.LongLongTy},
+           NameAndType{"unsigned_char", ast_context.UnsignedCharTy},
+           NameAndType{"unsigned_short", ast_context.UnsignedShortTy},
+           NameAndType{"unsigned_int", ast_context.UnsignedIntTy},
+           NameAndType{"unsigned_long", ast_context.UnsignedLongTy},
+           NameAndType{"unsigned_long_long", ast_context.UnsignedLongLongTy},
+           NameAndType{"float", ast_context.FloatTy},
+           NameAndType{"double", ast_context.DoubleTy},
+           NameAndType{"long_double", ast_context.LongDoubleTy},
+       }) {
+    if (*name == type_name) {
+      SemIR::InstId inst_id =
+          MapNonWrapperType(context, loc_id, builtin_type).inst_id;
+      if (!inst_id.has_value()) {
+        context.TODO(loc_id, llvm::formatv("Unsupported: builtin type: {0}",
+                                           builtin_type.getAsString()));
+        return SemIR::ErrorInst::InstId;
+      }
+      return inst_id;
+    }
+  }
+  return SemIR::InstId::None;
+}
+
 auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
                        SemIR::NameScopeId scope_id, SemIR::NameId name_id)
     -> SemIR::ScopeLookupResult {
@@ -2059,6 +2115,15 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
 
   auto decl_and_access = ClangLookupName(context, loc_id, scope_id, name_id);
   if (!decl_and_access) {
+    SemIR::InstId builtin_inst_id =
+        LookupBuiltInTypes(context, loc_id, scope_id, name_id);
+    if (builtin_inst_id.has_value()) {
+      AddNameToScope(context, scope_id, name_id, SemIR::AccessKind::Public,
+                     builtin_inst_id);
+      return SemIR::ScopeLookupResult::MakeWrappedLookupResult(
+          builtin_inst_id, SemIR::AccessKind::Public);
+    }
+
     return SemIR::ScopeLookupResult::MakeNotFound();
   }
   auto [decl, access] = *decl_and_access;
