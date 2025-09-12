@@ -2073,34 +2073,34 @@ static auto LookupBuiltInTypes(Context& context, SemIR::LocId loc_id,
 
   // List of types based on
   // https://github.com/carbon-language/carbon-lang/blob/trunk/proposals/p5448.md#details
-  using NameAndType = std::tuple<llvm::StringLiteral, clang::QualType>;
-  for (auto [type_name, builtin_type] : {
-           NameAndType{"signed_char", ast_context.SignedCharTy},
-           NameAndType{"short", ast_context.ShortTy},
-           NameAndType{"int", ast_context.IntTy},
-           NameAndType{"long", ast_context.LongTy},
-           NameAndType{"long_long", ast_context.LongLongTy},
-           NameAndType{"unsigned_char", ast_context.UnsignedCharTy},
-           NameAndType{"unsigned_short", ast_context.UnsignedShortTy},
-           NameAndType{"unsigned_int", ast_context.UnsignedIntTy},
-           NameAndType{"unsigned_long", ast_context.UnsignedLongTy},
-           NameAndType{"unsigned_long_long", ast_context.UnsignedLongLongTy},
-           NameAndType{"float", ast_context.FloatTy},
-           NameAndType{"double", ast_context.DoubleTy},
-           NameAndType{"long_double", ast_context.LongDoubleTy},
-       }) {
-    if (*name == type_name) {
-      SemIR::InstId inst_id =
-          MapNonWrapperType(context, loc_id, builtin_type).inst_id;
-      if (!inst_id.has_value()) {
-        context.TODO(loc_id, llvm::formatv("Unsupported: builtin type: {0}",
-                                           builtin_type.getAsString()));
-        return SemIR::ErrorInst::InstId;
-      }
-      return inst_id;
-    }
+  auto builtin_type =
+      llvm::StringSwitch<clang::QualType>(*name)
+          .Case("signed_char", ast_context.SignedCharTy)
+          .Case("short", ast_context.ShortTy)
+          .Case("int", ast_context.IntTy)
+          .Case("long", ast_context.LongTy)
+          .Case("long_long", ast_context.LongLongTy)
+          .Case("unsigned_char", ast_context.UnsignedCharTy)
+          .Case("unsigned_short", ast_context.UnsignedShortTy)
+          .Case("unsigned_int", ast_context.UnsignedIntTy)
+          .Case("unsigned_long", ast_context.UnsignedLongTy)
+          .Case("unsigned_long_long", ast_context.UnsignedLongLongTy)
+          .Case("float", ast_context.FloatTy)
+          .Case("double", ast_context.DoubleTy)
+          .Case("long_double", ast_context.LongDoubleTy)
+          .Default(clang::QualType());
+  if (builtin_type.isNull()) {
+    return SemIR::InstId::None;
   }
-  return SemIR::InstId::None;
+
+  SemIR::InstId inst_id =
+      MapNonWrapperType(context, loc_id, builtin_type).inst_id;
+  if (!inst_id.has_value()) {
+    context.TODO(loc_id, llvm::formatv("Unsupported: builtin type: {0}",
+                                       builtin_type.getAsString()));
+    return SemIR::ErrorInst::InstId;
+  }
+  return inst_id;
 }
 
 auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
