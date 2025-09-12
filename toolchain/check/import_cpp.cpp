@@ -2073,7 +2073,7 @@ static auto LookupBuiltInTypes(Context& context, SemIR::LocId loc_id,
 
   // List of types based on
   // https://github.com/carbon-language/carbon-lang/blob/trunk/proposals/p5448.md#details
-  using NameAndType = std::tuple<llvm::StringRef, clang::QualType>;
+  using NameAndType = std::tuple<llvm::StringLiteral, clang::QualType>;
   for (auto [type_name, builtin_type] : {
            NameAndType{"signed_char", ast_context.SignedCharTy},
            NameAndType{"short", ast_context.ShortTy},
