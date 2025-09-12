@@ -77,7 +77,7 @@ fn F() {
   // CHECK:STDERR:                                ^~~~~~~~~~~~~~~~~~~~~~
   // CHECK:STDERR:
   let cpp_unsigned_long_long : Cpp.unsigned_long_long = 1 as u64;
-  let carbon_unsigned_long_long: i64 = cpp_unsigned_long_long;
+  let carbon_unsigned_long_long: u64 = cpp_unsigned_long_long;
 
   // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+7]]:25: error: semantics TODO: `Unsupported: builtin type: long double` [SemanticsTodo]
   // CHECK:STDERR:   let cpp_long_double : Cpp.long_double = 1.0 as f64;
@@ -626,6 +626,7 @@ fn F() {
 // CHECK:STDOUT:   %As.facet.3ba: %As.type.f20 = facet_value Core.IntLiteral, (%As.impl_witness.10d) [concrete]
 // CHECK:STDOUT:   %.8d9: type = fn_type_with_self_type %As.Convert.type.7eb, %As.facet.3ba [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.bound.a7e: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.As.impl.Convert.d63 [concrete]
+// CHECK:STDOUT:   %pattern_type.157: type = pattern_type %u64 [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.specific_fn.a60: <specific function> = specific_function %Core.IntLiteral.as.As.impl.Convert.d63, @Core.IntLiteral.as.As.impl.Convert.2(%int_64) [concrete]
 // CHECK:STDOUT:   %bound_method.b3d: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.As.impl.Convert.specific_fn.a60 [concrete]
 // CHECK:STDOUT:   %int_1.f23: %u64 = int_value 1 [concrete]
@@ -687,7 +688,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %int_1.loc25: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_64.loc25: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:   %u64: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
+// CHECK:STDOUT:   %u64.loc25: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
 // CHECK:STDOUT:   %impl.elem0.loc25: %.8d9 = impl_witness_access constants.%As.impl_witness.10d, element0 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.d63]
 // CHECK:STDOUT:   %bound_method.loc25_59.1: <bound method> = bound_method %int_1.loc25, %impl.elem0.loc25 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.bound.a7e]
 // CHECK:STDOUT:   %specific_fn.loc25: <specific function> = specific_function %impl.elem0.loc25, @Core.IntLiteral.as.As.impl.Convert.2(constants.%int_64) [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.specific_fn.a60]
@@ -698,14 +699,14 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %cpp_unsigned_long_long: <error> = bind_name cpp_unsigned_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %carbon_unsigned_long_long.patt: %pattern_type.95b = binding_pattern carbon_unsigned_long_long [concrete]
+// CHECK:STDOUT:     %carbon_unsigned_long_long.patt: %pattern_type.157 = binding_pattern carbon_unsigned_long_long [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %cpp_unsigned_long_long.ref: <error> = name_ref cpp_unsigned_long_long, %cpp_unsigned_long_long [concrete = <error>]
-// CHECK:STDOUT:   %.loc26: type = splice_block %i64.loc26 [concrete = constants.%i64] {
+// CHECK:STDOUT:   %.loc26: type = splice_block %u64.loc26 [concrete = constants.%u64] {
 // CHECK:STDOUT:     %int_64.loc26: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:     %i64.loc26: type = class_type @Int, @Int(constants.%int_64) [concrete = constants.%i64]
+// CHECK:STDOUT:     %u64.loc26: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %carbon_unsigned_long_long: %i64 = bind_name carbon_unsigned_long_long, <error> [concrete = <error>]
+// CHECK:STDOUT:   %carbon_unsigned_long_long: %u64 = bind_name carbon_unsigned_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %cpp_long_double.patt: <error> = binding_pattern cpp_long_double [concrete]
 // CHECK:STDOUT:   }
