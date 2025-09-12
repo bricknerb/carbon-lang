@@ -2,7 +2,7 @@
 // Exceptions. See /LICENSE for license information.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-// INCLUDE-FILE: toolchain/testing/testdata/min_prelude/primitives.carbon
+// INCLUDE-FILE: toolchain/testing/testdata/min_prelude/uint.carbon
 // EXTRA-ARGS: --target=x86_64-pc-windows-msvc --clang-arg=-fno-PIE
 //
 // AUTOUPDATE
