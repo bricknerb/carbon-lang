@@ -13,6 +13,7 @@
 #include "common/raw_string_ostream.h"
 #include "toolchain/base/kind_switch.h"
 #include "toolchain/sem_ir/entity_with_params_base.h"
+#include "toolchain/sem_ir/facet_type_info.h"
 #include "toolchain/sem_ir/ids.h"
 #include "toolchain/sem_ir/inst_kind.h"
 #include "toolchain/sem_ir/singleton_insts.h"
@@ -327,6 +328,14 @@ class Stringifier {
     bool some_where = false;
     if (facet_type_info.other_requirements) {
       step_stack_->PushString("...");
+      some_where = true;
+    }
+    if (facet_type_info.builtin_constraint_mask.HasAnyOf(
+            SemIR::BuiltinConstraintMask::TypeCanAggregateDestroy)) {
+      if (some_where) {
+        step_stack_->PushString(" and");
+      }
+      step_stack_->PushString(" .Self impls Core.CanAggregateDestroy");
       some_where = true;
     }
     for (auto rewrite : llvm::reverse(facet_type_info.rewrite_constraints)) {

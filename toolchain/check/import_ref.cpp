@@ -2564,6 +2564,7 @@ static auto TryResolveTypedInst(ImportRefResolver& resolver,
   }
 
   SemIR::FacetTypeInfo local_facet_type_info = {
+      .builtin_constraint_mask = import_facet_type_info.builtin_constraint_mask,
       .other_requirements = import_facet_type_info.other_requirements};
   local_facet_type_info.extend_constraints.reserve(
       import_facet_type_info.extend_constraints.size());
