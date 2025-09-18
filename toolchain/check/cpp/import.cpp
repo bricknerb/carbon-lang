@@ -1861,11 +1861,8 @@ static auto ImportDeclAfterDependencies(Context& context, SemIR::LocId loc_id,
 
 // Attempts to import a set of declarations. Returns `false` if an error was
 // produced, `true` otherwise.
-// TODO: Merge overload set and operators and remove the `is_overload_set`
-// param.
 static auto ImportDeclSet(Context& context, SemIR::LocId loc_id,
-                          ImportWorklist& worklist,
-                          bool is_overload_set = false) -> bool {
+                          ImportWorklist& worklist) -> bool {
   // Walk the dependency graph in depth-first order, and import declarations
   // once we've imported all of their dependencies.
   while (!worklist.empty()) {
@@ -1891,7 +1888,7 @@ static auto ImportDeclSet(Context& context, SemIR::LocId loc_id,
       // Functions that are part of the overload set are imported at a later
       // point, once the overload resolution has selected the suitable function
       // for the call.
-      if (is_overload_set && decl->getAsFunction()) {
+      if (decl->getAsFunction()) {
         continue;
       }
       auto inst_id = ImportDeclAfterDependencies(context, loc_id, decl);
@@ -2071,7 +2068,7 @@ static auto ImportOverloadSetAndDependencies(
   for (clang::NamedDecl* fn_decl : overloaded_set) {
     AddDependentDecl(context, fn_decl, worklist);
   }
-  if (!ImportDeclSet(context, loc_id, worklist, true)) {
+  if (!ImportDeclSet(context, loc_id, worklist)) {
     return SemIR::ErrorInst::InstId;
   }
   return ImportCppOverloadSet(context, scope_id, name_id, overloaded_set);
