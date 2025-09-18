@@ -599,8 +599,7 @@ static auto IsDeclInjectedClassName(const Context& context,
   CARBON_CHECK(ast_context.getCanonicalTagType(scope_record_decl) ==
                ast_context.getCanonicalTagType(record_decl));
 
-  auto class_decl =
-      context.sem_ir().insts().GetAs<SemIR::ClassDecl>(clang_decl.inst_id);
+  auto class_decl = context.insts().GetAs<SemIR::ClassDecl>(clang_decl.inst_id);
   CARBON_CHECK(name_id ==
                context.sem_ir().classes().Get(class_decl.class_id).name_id);
   return true;
