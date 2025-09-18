@@ -95,16 +95,28 @@ import Cpp library "postfix_inc_and_dec.h";
 fn F() {
   let postfix: Cpp.Postfix = Cpp.Postfix.Postfix();
   // TODO: Make the error more descriptive to clarify we call prefix operators of a class with suffix operators.
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+5]]:3: error: 1 argument passed to function expecting 2 arguments [CallArgCountMismatch]
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+11]]:3: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
   // CHECK:STDERR:   ++postfix;
   // CHECK:STDERR:   ^~~~~~~~~
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon: note: calling function declared here [InCallToEntity]
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+8]]:3: note: in `Cpp` operator `Inc` lookup [InCppOperatorLookup]
+  // CHECK:STDERR:   ++postfix;
+  // CHECK:STDERR:   ^~~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+4]]:3: error: cannot access member of interface `Core.Inc` in type `Cpp.Postfix` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR:   ++postfix;
+  // CHECK:STDERR:   ^~~~~~~~~
   // CHECK:STDERR:
   ++postfix;
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+5]]:3: error: 1 argument passed to function expecting 2 arguments [CallArgCountMismatch]
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+11]]:3: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
   // CHECK:STDERR:   --postfix;
   // CHECK:STDERR:   ^~~~~~~~~
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon: note: calling function declared here [InCallToEntity]
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+8]]:3: note: in `Cpp` operator `Dec` lookup [InCppOperatorLookup]
+  // CHECK:STDERR:   --postfix;
+  // CHECK:STDERR:   ^~~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+4]]:3: error: cannot access member of interface `Core.Dec` in type `Cpp.Postfix` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR:   --postfix;
+  // CHECK:STDERR:   ^~~~~~~~~
   // CHECK:STDERR:
   --postfix;
 }
@@ -225,22 +237,28 @@ import Cpp library "binary_operators.h";
 
 fn F() {
   let c1: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:24: error: cannot implicitly convert expression of type `Core.IntLiteral` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+11]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
   // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR:                        ^
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+5]]:24: note: type `Core.IntLiteral` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:19: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
   // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR:                        ^
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+4]]:19: error: cannot access member of interface `Core.AddWith(Core.IntLiteral)` in type `Cpp.C` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR:                   ^~~~~~
   // CHECK:STDERR:
   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:19: error: cannot implicitly convert expression of type `Core.IntLiteral` to `Cpp.C` [ConversionFailure]
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+11]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
   // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
-  // CHECK:STDERR:                   ^
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+5]]:19: note: type `Core.IntLiteral` does not implement interface `Core.ImplicitAs(Cpp.C)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:19: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
   // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
-  // CHECK:STDERR:                   ^
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+4]]:19: error: cannot access member of interface `Core.AddWith(Cpp.C)` in type `Core.IntLiteral` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:                   ^~~~~~
   // CHECK:STDERR:
   let c3: Cpp.C = 6 + c1;
 }
@@ -600,6 +618,13 @@ fn F() {
   //@dump-sem-ir-begin
   let c1: Cpp.N.C = Cpp.N.C.C();
   let c2: Cpp.N.C = Cpp.N.C.C();
+  // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+11]]:21: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
+  // CHECK:STDERR:   let c3: Cpp.N.C = c1 + c2;
+  // CHECK:STDERR:                     ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+8]]:21: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
+  // CHECK:STDERR:   let c3: Cpp.N.C = c1 + c2;
+  // CHECK:STDERR:                     ^~~~~~~
+  // CHECK:STDERR:
   // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+4]]:21: error: cannot access member of interface `Core.AddWith(Cpp.N.C)` in type `Cpp.N.C` that does not implement that interface [MissingImplInMemberAccess]
   // CHECK:STDERR:   let c3: Cpp.N.C = c1 + c2;
   // CHECK:STDERR:                     ^~~~~~~
@@ -672,7 +697,7 @@ class C {
   auto operator+(C rhs) -> C;
 };
 
-// --- fail_todo_import_member__add_with.carbon
+// --- fail_todo_import_member_add_with.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -682,7 +707,14 @@ fn F() {
   //@dump-sem-ir-begin
   let c1: Cpp.C = Cpp.C.C();
   let c2: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_todo_import_member__add_with.carbon:[[@LINE+4]]:19: error: cannot access member of interface `Core.AddWith(Cpp.C)` in type `Cpp.C` that does not implement that interface [MissingImplInMemberAccess]
+  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+11]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
+  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+8]]:19: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
+  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+4]]:19: error: cannot access member of interface `Core.AddWith(Cpp.C)` in type `Cpp.C` that does not implement that interface [MissingImplInMemberAccess]
   // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
   // CHECK:STDERR:                   ^~~~~~~
   // CHECK:STDERR:
@@ -737,6 +769,13 @@ import Cpp library "not_found.h";
 fn F() {
   let c1: Cpp.C = Cpp.C.C();
   let c2: Cpp.C = Cpp.C.C();
+  // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+11]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
+  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+8]]:19: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
+  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR:
   // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+4]]:19: error: cannot access member of interface `Core.AddWith(Cpp.C)` in type `Cpp.C` that does not implement that interface [MissingImplInMemberAccess]
   // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
   // CHECK:STDERR:                   ^~~~~~~
@@ -755,7 +794,7 @@ auto operator+(C lhs, C rhs) -> C;
 class D {};
 auto operator+(D lhs, D rhs) -> D;
 
-// --- fail_todo_import_overloading.carbon
+// --- import_overloading.carbon
 
 library "[[@TEST_NAME]]";
 
@@ -764,13 +803,6 @@ import Cpp library "overloading.h";
 fn F() {
   let c1: Cpp.C = Cpp.C.C();
   let c2: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_todo_import_overloading.carbon:[[@LINE+7]]:19: error: semantics TODO: `Unsupported: Lookup succeeded but couldn't find a single result; LookupResultKind: 3` [SemanticsTodo]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_overloading.carbon:[[@LINE+4]]:19: note: in `Cpp` operator `AddWith` lookup [InCppOperatorLookup]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
-  // CHECK:STDERR:
   let c3: Cpp.C = c1 + c2;
 }
 
@@ -2264,10 +2296,10 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c1.ref: %C = name_ref c1, %c1
 // CHECK:STDOUT:   %c2.ref: %C = name_ref c2, %c2
-// CHECK:STDOUT:   %.loc14: type = splice_block %C.ref.loc14 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc14: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %N.ref.loc14: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
-// CHECK:STDOUT:     %C.ref.loc14: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %.loc21: type = splice_block %C.ref.loc21 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc21: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %N.ref.loc21: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
+// CHECK:STDOUT:     %C.ref.loc21: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c3: %C = bind_name c3, <error> [concrete = <error>]
 // CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc9: <bound method> = bound_method %.loc9_31.3, constants.%T.as.Destroy.impl.Op.b3e
@@ -2526,7 +2558,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- fail_todo_import_member__add_with.carbon
+// CHECK:STDOUT: --- fail_todo_import_member_add_with.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -2596,9 +2628,9 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c1.ref: %C = name_ref c1, %c1
 // CHECK:STDOUT:   %c2.ref: %C = name_ref c2, %c2
-// CHECK:STDOUT:   %.loc14: type = splice_block %C.ref.loc14 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc14: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %C.ref.loc14: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %.loc21: type = splice_block %C.ref.loc21 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc21: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %C.ref.loc21: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c3: %C = bind_name c3, <error> [concrete = <error>]
 // CHECK:STDOUT:   %T.as.Destroy.impl.Op.bound.loc9: <bound method> = bound_method %.loc9_27.3, constants.%T.as.Destroy.impl.Op.a28

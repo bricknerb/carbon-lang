@@ -6,6 +6,7 @@
 #define CARBON_TOOLCHAIN_CHECK_CPP_OVERLOAD_RESOLUTION_H_
 
 #include "toolchain/check/context.h"
+#include "toolchain/check/operator.h"
 #include "toolchain/sem_ir/ids.h"
 
 namespace Carbon::Check {
@@ -27,6 +28,13 @@ auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
                                   SemIR::CppOverloadSetId overload_set_id,
                                   SemIR::InstId self_id,
                                   llvm::ArrayRef<SemIR::InstId> arg_ids)
+    -> SemIR::InstId;
+
+// Looks up the given operator in the Clang AST generated when importing C++
+// code using argument dependent lookup (ADL) and resolve operator overloads.
+auto LookupAndResolveCppOperator(Context& context, SemIR::LocId loc_id,
+                                 Operator op,
+                                 llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> SemIR::InstId;
 
 }  // namespace Carbon::Check
