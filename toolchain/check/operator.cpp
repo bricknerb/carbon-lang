@@ -8,6 +8,7 @@
 
 #include "toolchain/check/call.h"
 #include "toolchain/check/context.h"
+#include "toolchain/check/cpp/operators.h"
 #include "toolchain/check/cpp/overload_resolution.h"
 #include "toolchain/check/generic.h"
 #include "toolchain/check/member_access.h"
@@ -63,7 +64,7 @@ auto BuildUnaryOperator(Context& context, SemIR::LocId loc_id, Operator op,
   // https://github.com/carbon-language/carbon-lang/blob/db0a00d713015436844c55e7ac190a0f95556499/toolchain/check/operator.cpp#L76
   if (IsCppClassType(context, operand_id)) {
     SemIR::InstId cpp_inst_id =
-        LookupAndResolveCppOperator(context, loc_id, op, {operand_id});
+        LookupCppOperator(context, loc_id, op, {operand_id});
     if (cpp_inst_id.has_value() && cpp_inst_id != SemIR::ErrorInst::InstId) {
       return PerformCall(context, loc_id, cpp_inst_id, {operand_id});
     }
@@ -97,7 +98,7 @@ auto BuildBinaryOperator(Context& context, SemIR::LocId loc_id, Operator op,
   // https://github.com/carbon-language/carbon-lang/pull/5996/files/5d01fa69511b76f87efbc0387f5e40abcf4c911a#r2308664536
   if (IsCppClassType(context, lhs_id) || IsCppClassType(context, rhs_id)) {
     SemIR::InstId cpp_inst_id =
-        LookupAndResolveCppOperator(context, loc_id, op, {lhs_id, rhs_id});
+        LookupCppOperator(context, loc_id, op, {lhs_id, rhs_id});
     if (cpp_inst_id.has_value() && cpp_inst_id != SemIR::ErrorInst::InstId) {
       return PerformCall(context, loc_id, cpp_inst_id, {lhs_id, rhs_id});
     }

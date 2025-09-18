@@ -30,13 +30,6 @@ auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
                                   llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> SemIR::InstId;
 
-// Looks up the given operator in the Clang AST generated when importing C++
-// code using argument dependent lookup (ADL) and resolve operator overloads.
-auto LookupAndResolveCppOperator(Context& context, SemIR::LocId loc_id,
-                                 Operator op,
-                                 llvm::ArrayRef<SemIR::InstId> arg_ids)
-    -> SemIR::InstId;
-
 }  // namespace Carbon::Check
 
 #endif  // CARBON_TOOLCHAIN_CHECK_CPP_OVERLOAD_RESOLUTION_H_
