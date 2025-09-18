@@ -340,6 +340,32 @@ fn F() {
 }
 
 // ============================================================================
+// Incomplete struct
+// ============================================================================
+
+// --- incomplete.h
+
+struct Incomplete;
+
+// --- fail_import_incomplete.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "incomplete.h";
+
+fn F() {
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE+8]]:3: error: member access into incomplete class `Cpp.Incomplete` [QualifiedExprInIncompleteClassScope]
+  // CHECK:STDERR:   Cpp.Incomplete.foo();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE-6]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./incomplete.h:2:8: note: class was forward declared here [ClassForwardDeclaredHere]
+  // CHECK:STDERR: struct Incomplete;
+  // CHECK:STDERR:        ^
+  // CHECK:STDERR:
+  Cpp.Incomplete.foo();
+}
+
+// ============================================================================
 // Pointer to forward-declared struct as parameter type
 // ============================================================================
 

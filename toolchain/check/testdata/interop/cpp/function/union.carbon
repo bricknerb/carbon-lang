@@ -303,6 +303,32 @@ fn F() {
 }
 
 // ============================================================================
+// Incomplete union
+// ============================================================================
+
+// --- incomplete.h
+
+union Incomplete;
+
+// --- fail_import_incomplete.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "incomplete.h";
+
+fn F() {
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE+8]]:3: error: member access into incomplete class `Cpp.Incomplete` [QualifiedExprInIncompleteClassScope]
+  // CHECK:STDERR:   Cpp.Incomplete.foo();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE-6]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./incomplete.h:2:7: note: class was forward declared here [ClassForwardDeclaredHere]
+  // CHECK:STDERR: union Incomplete;
+  // CHECK:STDERR:       ^
+  // CHECK:STDERR:
+  Cpp.Incomplete.foo();
+}
+
+// ============================================================================
 // Pointer to forward-declared union as parameter type
 // ============================================================================
 

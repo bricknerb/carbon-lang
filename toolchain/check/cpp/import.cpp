@@ -2143,6 +2143,15 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
         builder.Note(loc_id, InCppNameLookup, name_id);
       });
 
+  if (auto class_decl = context.insts().TryGetAs<SemIR::ClassDecl>(
+          context.name_scopes().Get(scope_id).inst_id());
+      class_decl.has_value()) {
+    if (!context.types().IsComplete(
+            context.classes().Get(class_decl->class_id).self_type_id)) {
+      return SemIR::ScopeLookupResult::MakeError();
+    }
+  }
+
   auto lookup = ClangLookupName(context, scope_id, name_id);
   if (!lookup) {
     SemIR::InstId builtin_inst_id =

@@ -203,6 +203,32 @@ fn F() {
   //@dump-sem-ir-end
 }
 
+// ============================================================================
+// Trying to call a constructor of an incomplete class
+// ============================================================================
+
+// --- incomplete.h
+
+class C;
+
+// --- fail_import_incomplete.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "incomplete.h";
+
+fn F() {
+   // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE+8]]:4: error: member access into incomplete class `Cpp.C` [QualifiedExprInIncompleteClassScope]
+   // CHECK:STDERR:    Cpp.C.C();
+   // CHECK:STDERR:    ^~~~~~~
+   // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE-6]]:10: in file included here [InCppInclude]
+   // CHECK:STDERR: ./incomplete.h:2:7: note: class was forward declared here [ClassForwardDeclaredHere]
+   // CHECK:STDERR: class C;
+   // CHECK:STDERR:       ^
+   // CHECK:STDERR:
+   Cpp.C.C();
+}
+
 // CHECK:STDOUT: --- import_default.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
