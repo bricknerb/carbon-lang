@@ -784,6 +784,38 @@ fn F() {
 }
 
 // ============================================================================
+// Incomplete operand
+// ============================================================================
+
+// --- incomplete.h
+
+class Incomplete;
+class Complete {};
+
+auto operator+(Complete lhs, Incomplete rhs) -> Complete;
+
+auto foo(Complete complete) -> void;
+
+// --- fail_import_incomplete.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "incomplete.h";
+
+fn F() {
+  var c1: Cpp.Complete = Cpp.Complete.Complete();
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE+8]]:40: error: invalid use of incomplete type `Cpp.Incomplete` [IncompleteTypeInConversion]
+  // CHECK:STDERR:   let c3: Cpp.Complete = Cpp.foo(c1 + ({} as Cpp.Incomplete));
+  // CHECK:STDERR:                                        ^~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_incomplete.carbon:[[@LINE-7]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./incomplete.h:2:7: note: class was forward declared here [ClassForwardDeclaredHere]
+  // CHECK:STDERR: class Incomplete;
+  // CHECK:STDERR:       ^
+  // CHECK:STDERR:
+  let c3: Cpp.Complete = Cpp.foo(c1 + ({} as Cpp.Incomplete));
+}
+
+// ============================================================================
 // Operator overloading
 // ============================================================================
 
