@@ -6,9 +6,11 @@
 
 #include "clang/Sema/Overload.h"
 #include "clang/Sema/Sema.h"
+#include "toolchain/check/cpp/import.h"
 #include "toolchain/check/cpp/type_mapping.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/type.h"
+#include "toolchain/sem_ir/ids.h"
 
 namespace Carbon::Check {
 
@@ -188,21 +190,8 @@ auto LookupCppOperator(Context& context, SemIR::LocId loc_id, Operator op,
     functions.addDecl(it.Function, it.FoundDecl.getAccess());
   }
 
-  SemIR::CppOverloadSetId overload_set_id = context.cpp_overload_sets().Add(
-      {.name_id = SemIR::NameId::CppOperator,
-       .parent_scope_id = SemIR::NameScopeId::None,
-       .candidate_functions = functions});
-
-  auto overload_set_inst_id =
-      // TODO: Add a location.
-      AddInstInNoBlock<SemIR::CppOverloadSetValue>(
-          context, Parse::NodeId::None,
-          {.type_id = GetCppOverloadSetType(context, overload_set_id,
-                                            SemIR::SpecificId::None),
-           .overload_set_id = overload_set_id});
-
-  context.imports().push_back(overload_set_inst_id);
-  return overload_set_inst_id;
+  return ImportCppOverloadSet(context, SemIR::NameScopeId::None,
+                              SemIR::NameId::CppOperator, functions);
 }
 
 }  // namespace Carbon::Check

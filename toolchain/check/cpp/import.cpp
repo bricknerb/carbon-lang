@@ -2020,10 +2020,9 @@ static auto LookupBuiltinTypes(Context& context, SemIR::LocId loc_id,
   return inst_id;
 }
 
-// Imports an overloaded function set from Clang to Carbon.
-static auto ImportCppOverloadSet(Context& context, SemIR::NameScopeId scope_id,
-                                 SemIR::NameId name_id,
-                                 const clang::UnresolvedSet<4>& overload_set)
+auto ImportCppOverloadSet(Context& context, SemIR::NameScopeId scope_id,
+                          SemIR::NameId name_id,
+                          const clang::UnresolvedSet<4>& overload_set)
     -> SemIR::InstId {
   SemIR::CppOverloadSetId overload_set_id = context.cpp_overload_sets().Add(
       SemIR::CppOverloadSet{.name_id = name_id,
