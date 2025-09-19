@@ -16,8 +16,8 @@ namespace Carbon::Check {
 auto InventClangArg(Context& context, SemIR::InstId arg_id) -> clang::Expr*;
 
 // For each arg, invents a Clang argument expression to use in overload
-// resolution to represent the given Carbon argument instructions. Returns
-// std::nullopt if any arg failed.
+// resolution or argument dependent lookup (ADL) to represent the given Carbon
+// argument instructions. Returns std::nullopt if any arg failed.
 auto InventClangArgs(Context& context, llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> std::optional<llvm::SmallVector<clang::Expr*>>;
 
