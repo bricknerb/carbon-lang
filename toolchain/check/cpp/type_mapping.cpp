@@ -16,6 +16,7 @@
 #include "toolchain/base/value_ids.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/convert.h"
+#include "toolchain/check/cpp/location.h"
 #include "toolchain/check/literal.h"
 #include "toolchain/sem_ir/class.h"
 #include "toolchain/sem_ir/expr_info.h"
@@ -272,9 +273,9 @@ auto InventClangArg(Context& context, SemIR::InstId arg_id) -> clang::Expr* {
 
   // TODO: Avoid heap allocating more of these on every call. Either cache them
   // somewhere or put them on the stack.
-  return new (context.ast_context()) clang::OpaqueValueExpr(
-      // TODO: Add location accordingly.
-      clang::SourceLocation(), arg_cpp_type.getNonReferenceType(), value_kind);
+  return new (context.ast_context())
+      clang::OpaqueValueExpr(GetCppLocation(context, SemIR::LocId(arg_id)),
+                             arg_cpp_type.getNonReferenceType(), value_kind);
 }
 
 auto InventClangArgs(Context& context, llvm::ArrayRef<SemIR::InstId> arg_ids)

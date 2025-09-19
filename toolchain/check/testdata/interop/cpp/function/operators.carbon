@@ -94,21 +94,22 @@ import Cpp library "postfix_inc_and_dec.h";
 
 fn F() {
   let postfix: Cpp.Postfix = Cpp.Postfix.Postfix();
-  // TODO: Make the error more descriptive to clarify we call prefix operators of a class with suffix operators.
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+7]]:3: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   ++postfix;
-  // CHECK:STDERR:   ^~~~~~~~~
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+4]]:3: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   ++postfix;
-  // CHECK:STDERR:   ^~~~~~~~~
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+8]]:3: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    16 |   ++postfix;
+  // CHECK:STDERR:       |   ^
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE-7]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./postfix_inc_and_dec.h:3:6: note: candidate function not viable: requires 2 arguments, but 1 was provided [CppInteropParseNote]
+  // CHECK:STDERR:     3 | auto operator++(Postfix operand, int) -> Postfix;
+  // CHECK:STDERR:       |      ^          ~~~~~~~~~~~~~~~~~~~~
   // CHECK:STDERR:
   ++postfix;
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+7]]:3: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   --postfix;
-  // CHECK:STDERR:   ^~~~~~~~~
-  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+4]]:3: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   --postfix;
-  // CHECK:STDERR:   ^~~~~~~~~
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE+8]]:3: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    25 |   --postfix;
+  // CHECK:STDERR:       |   ^
+  // CHECK:STDERR: fail_postfix_calling_prefix.carbon:[[@LINE-16]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./postfix_inc_and_dec.h:4:6: note: candidate function not viable: requires 2 arguments, but 1 was provided [CppInteropParseNote]
+  // CHECK:STDERR:     4 | auto operator--(Postfix operand, int) -> Postfix;
+  // CHECK:STDERR:       |      ^          ~~~~~~~~~~~~~~~~~~~~
   // CHECK:STDERR:
   --postfix;
 }
@@ -229,20 +230,22 @@ import Cpp library "binary_operators.h";
 
 fn F() {
   let c1: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+7]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR:                   ^~~~~~
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+4]]:19: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:22: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    16 |   let c2: Cpp.C = c1 + 5;
+  // CHECK:STDERR:       |                      ^
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE-7]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./binary_operators.h:5:6: note: candidate function not viable: no known conversion from 'int' to 'C' for 2nd argument [CppInteropParseNote]
+  // CHECK:STDERR:     5 | auto operator+(C lhs, C rhs) -> C;
+  // CHECK:STDERR:       |      ^                ~~~~~
   // CHECK:STDERR:
   let c2: Cpp.C = c1 + 5;
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+7]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
-  // CHECK:STDERR:                   ^~~~~~
-  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+4]]:19: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   let c3: Cpp.C = 6 + c1;
-  // CHECK:STDERR:                   ^~~~~~
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE+8]]:21: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    25 |   let c3: Cpp.C = 6 + c1;
+  // CHECK:STDERR:       |                     ^
+  // CHECK:STDERR: fail_call_with_wrong_type.carbon:[[@LINE-16]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./binary_operators.h:5:6: note: candidate function not viable: no known conversion from 'int' to 'C' for 1st argument [CppInteropParseNote]
+  // CHECK:STDERR:     5 | auto operator+(C lhs, C rhs) -> C;
+  // CHECK:STDERR:       |      ^         ~~~~~
   // CHECK:STDERR:
   let c3: Cpp.C = 6 + c1;
 }
@@ -602,12 +605,9 @@ fn F() {
   //@dump-sem-ir-begin
   let c1: Cpp.N.C = Cpp.N.C.C();
   let c2: Cpp.N.C = Cpp.N.C.C();
-  // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+7]]:21: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   let c3: Cpp.N.C = c1 + c2;
-  // CHECK:STDERR:                     ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+4]]:21: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   let c3: Cpp.N.C = c1 + c2;
-  // CHECK:STDERR:                     ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_operands_in_namespace_operator_in_global.carbon:[[@LINE+4]]:24: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    14 |   let c3: Cpp.N.C = c1 + c2;
+  // CHECK:STDERR:       |                        ^
   // CHECK:STDERR:
   let c3: Cpp.N.C = c1 + c2;
   //@dump-sem-ir-end
@@ -687,12 +687,13 @@ fn F() {
   //@dump-sem-ir-begin
   let c1: Cpp.C = Cpp.C.C();
   let c2: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+7]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
-  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+4]]:19: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE+8]]:22: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    18 |   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:       |                      ^
+  // CHECK:STDERR: fail_todo_import_member_add_with.carbon:[[@LINE-9]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./member_add_with.h:4:8: note: candidate function not viable: requires single argument 'rhs', but 2 arguments were provided [CppInteropParseNote]
+  // CHECK:STDERR:     4 |   auto operator+(C rhs) -> C;
+  // CHECK:STDERR:       |        ^         ~~~~~
   // CHECK:STDERR:
   let c3: Cpp.C = c1 + c2;
   //@dump-sem-ir-end
@@ -745,12 +746,9 @@ import Cpp library "not_found.h";
 fn F() {
   let c1: Cpp.C = Cpp.C.C();
   let c2: Cpp.C = Cpp.C.C();
-  // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+7]]:19: error: no matching function for call to `<C++ operator>` [CppOverloadingNoViableFunctionFound]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
-  // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+4]]:19: note: in call to Cpp function here [InCallToCppFunction]
-  // CHECK:STDERR:   let c3: Cpp.C = c1 + c2;
-  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR: fail_import_not_found.carbon:[[@LINE+4]]:22: error: no matching function for call to '<C++ operator>' [CppInteropParseError]
+  // CHECK:STDERR:    13 |   let c3: Cpp.C = c1 + c2;
+  // CHECK:STDERR:       |                      ^
   // CHECK:STDERR:
   let c3: Cpp.C = c1 + c2;
 }
@@ -2385,10 +2383,10 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c1.ref: %C = name_ref c1, %c1
 // CHECK:STDOUT:   %c2.ref: %C = name_ref c2, %c2
-// CHECK:STDOUT:   %.loc17: type = splice_block %C.ref.loc17 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc17: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %N.ref.loc17: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
-// CHECK:STDOUT:     %C.ref.loc17: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %.loc14: type = splice_block %C.ref.loc14 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc14: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %N.ref.loc14: <namespace> = name_ref N, imports.%N [concrete = imports.%N]
+// CHECK:STDOUT:     %C.ref.loc14: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c3: %C = bind_name c3, <error> [concrete = <error>]
 // CHECK:STDOUT:   %facet_value.loc9: %type_where = facet_value constants.%C, () [concrete = constants.%facet_value]
@@ -2739,9 +2737,9 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c1.ref: %C = name_ref c1, %c1
 // CHECK:STDOUT:   %c2.ref: %C = name_ref c2, %c2
-// CHECK:STDOUT:   %.loc17: type = splice_block %C.ref.loc17 [concrete = constants.%C] {
-// CHECK:STDOUT:     %Cpp.ref.loc17: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %C.ref.loc17: type = name_ref C, imports.%C.decl [concrete = constants.%C]
+// CHECK:STDOUT:   %.loc18: type = splice_block %C.ref.loc18 [concrete = constants.%C] {
+// CHECK:STDOUT:     %Cpp.ref.loc18: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     %C.ref.loc18: type = name_ref C, imports.%C.decl [concrete = constants.%C]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %c3: %C = bind_name c3, <error> [concrete = <error>]
 // CHECK:STDOUT:   %facet_value.loc9: %type_where = facet_value constants.%C, () [concrete = constants.%facet_value]
