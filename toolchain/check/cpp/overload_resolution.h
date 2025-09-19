@@ -6,7 +6,6 @@
 #define CARBON_TOOLCHAIN_CHECK_CPP_OVERLOAD_RESOLUTION_H_
 
 #include "toolchain/check/context.h"
-#include "toolchain/check/operator.h"
 #include "toolchain/sem_ir/ids.h"
 
 namespace Carbon::Check {

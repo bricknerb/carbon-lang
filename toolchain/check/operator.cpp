@@ -9,7 +9,6 @@
 #include "toolchain/check/call.h"
 #include "toolchain/check/context.h"
 #include "toolchain/check/cpp/operators.h"
-#include "toolchain/check/cpp/overload_resolution.h"
 #include "toolchain/check/generic.h"
 #include "toolchain/check/member_access.h"
 #include "toolchain/check/name_lookup.h"
