@@ -760,11 +760,12 @@ auto InstNamer::NamingContext::NameInst() -> void {
     }
     case CARBON_KIND(Call inst): {
       auto callee_function = GetCalleeFunction(sem_ir(), inst.callee_id);
-      if (!callee_function.function_id.has_value()) {
-        AddInstName("");
+      if (auto* fn =
+              std::get_if<CalleeFunction::Function>(&callee_function.info)) {
+        AddEntityNameAndMaybePush(fn->function_id, ".call");
         return;
       }
-      AddEntityNameAndMaybePush(callee_function.function_id, ".call");
+      AddInstName("");
       return;
     }
     case CARBON_KIND(ClassDecl inst): {
