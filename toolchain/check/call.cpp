@@ -201,11 +201,10 @@ static auto CheckCalleeFunctionReturnType(Context& context, SemIR::LocId loc_id,
   return CheckFunctionReturnType(context, loc_id, function, callee_specific_id);
 }
 
-// Performs a call where the callee is a function.
-static auto PerformCallToFunction(Context& context, SemIR::LocId loc_id,
-                                  SemIR::InstId callee_id,
-                                  const SemIR::CalleeFunction& callee_function,
-                                  llvm::ArrayRef<SemIR::InstId> arg_ids)
+auto PerformCallToFunction(Context& context, SemIR::LocId loc_id,
+                           SemIR::InstId callee_id,
+                           const SemIR::CalleeFunction& callee_function,
+                           llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> SemIR::InstId {
   // If the callee is a generic function, determine the generic argument values
   // for the call.
@@ -337,17 +336,9 @@ auto PerformCall(Context& context, SemIR::LocId loc_id, SemIR::InstId callee_id,
     }
 
     case CARBON_KIND(SemIR::CalleeCppOverloadSet overload): {
-      CppOverloadResolutionResult overload_result =
-          PerformCppOverloadResolution(context, loc_id,
-                                       overload.cpp_overload_set_id,
-                                       overload.self_id, arg_ids);
-      if (overload_result.callee_id == SemIR::ErrorInst::InstId) {
-        return SemIR::ErrorInst::InstId;
-      }
-      CARBON_CHECK(overload_result.callee_function);
-      return PerformCallToFunction(context, loc_id, overload_result.callee_id,
-                                   *overload_result.callee_function,
-                                   overload_result.arg_ids);
+      return PerformCallToCppOverloadFunction(context, loc_id,
+                                              overload.cpp_overload_set_id,
+                                              overload.self_id, arg_ids);
     }
   }
 }

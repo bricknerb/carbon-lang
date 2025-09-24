@@ -8,6 +8,7 @@
 #include "clang/Sema/Overload.h"
 #include "clang/Sema/Sema.h"
 #include "toolchain/base/kind_switch.h"
+#include "toolchain/check/call.h"
 #include "toolchain/check/cpp/import.h"
 #include "toolchain/check/cpp/location.h"
 #include "toolchain/check/cpp/type_mapping.h"
@@ -179,20 +180,17 @@ static auto IsCppOperatorMethod(Context& context, SemIR::FunctionId function_id)
              context.clang_decls().Get(clang_decl_id).key.decl);
 }
 
-auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
-                                  SemIR::CppOverloadSetId overload_set_id,
-                                  SemIR::InstId self_id,
-                                  llvm::ArrayRef<SemIR::InstId> arg_ids)
-    -> CppOverloadResolutionResult {
-  CppOverloadResolutionResult result = {
-      .callee_id =
-          ResolveCalleeId(context, loc_id, overload_set_id, self_id, arg_ids),
-      .arg_ids = arg_ids};
-  SemIR::Callee callee = GetCallee(context.sem_ir(), result.callee_id);
+auto PerformCallToCppOverloadFunction(Context& context, SemIR::LocId loc_id,
+                                      SemIR::CppOverloadSetId overload_set_id,
+                                      SemIR::InstId self_id,
+                                      llvm::ArrayRef<SemIR::InstId> arg_ids)
+    -> SemIR::InstId {
+  SemIR::InstId callee_id =
+      ResolveCalleeId(context, loc_id, overload_set_id, self_id, arg_ids);
+  SemIR::Callee callee = GetCallee(context.sem_ir(), callee_id);
   CARBON_KIND_SWITCH(callee) {
     case CARBON_KIND(SemIR::CalleeError _): {
-      result.callee_id = SemIR::ErrorInst::InstId;
-      return result;
+      return SemIR::ErrorInst::InstId;
     }
     case CARBON_KIND(SemIR::CalleeFunction fn): {
       CARBON_CHECK(!fn.self_id.has_value());
@@ -201,10 +199,9 @@ auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
         fn.self_id = self_id;
       } else if (IsCppOperatorMethod(context, fn.function_id)) {
         // Adjust `self` and args for C++ overloaded operator methods.
-        fn.self_id = result.arg_ids.consume_front();
+        fn.self_id = arg_ids.consume_front();
       }
-      result.callee_function = fn;
-      return result;
+      return PerformCallToFunction(context, loc_id, callee_id, fn, arg_ids);
     }
     case CARBON_KIND(SemIR::CalleeCppOverloadSet _): {
       CARBON_FATAL("overloads can't be recursive");
