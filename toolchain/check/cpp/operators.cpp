@@ -7,6 +7,7 @@
 #include "clang/Sema/Overload.h"
 #include "clang/Sema/Sema.h"
 #include "toolchain/check/cpp/import.h"
+#include "toolchain/check/cpp/location.h"
 #include "toolchain/check/cpp/type_mapping.h"
 #include "toolchain/check/inst.h"
 #include "toolchain/check/type.h"
@@ -191,9 +192,9 @@ auto LookupCppOperator(Context& context, SemIR::LocId loc_id, Operator op,
   }
 
   clang::UnresolvedSet<4> functions;
-  // TODO: Add location accordingly.
   clang::OverloadCandidateSet candidate_set(
-      clang::SourceLocation(), clang::OverloadCandidateSet::CSK_Operator);
+      GetCppLocation(context, loc_id),
+      clang::OverloadCandidateSet::CSK_Operator);
   // This works for both unary and binary operators.
   context.clang_sema().LookupOverloadedBinOp(candidate_set, *op_kind, functions,
                                              *arg_exprs);
