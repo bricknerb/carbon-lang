@@ -8,7 +8,6 @@
 #include "clang/Sema/Overload.h"
 #include "clang/Sema/Sema.h"
 #include "toolchain/base/kind_switch.h"
-#include "toolchain/check/call.h"
 #include "toolchain/check/cpp/import.h"
 #include "toolchain/check/cpp/location.h"
 #include "toolchain/check/cpp/operators.h"
