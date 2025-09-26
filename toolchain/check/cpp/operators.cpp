@@ -194,4 +194,9 @@ auto LookupCppOperator(Context& context, SemIR::LocId loc_id, Operator op,
                               SemIR::NameId::CppOperator, functions);
 }
 
+auto IsCppOperatorMethodDecl(clang::Decl* decl) -> bool {
+  auto* clang_method_decl = dyn_cast<clang::CXXMethodDecl>(decl);
+  return clang_method_decl && clang_method_decl->isOverloadedOperator();
+}
+
 }  // namespace Carbon::Check

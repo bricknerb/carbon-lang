@@ -10,7 +10,7 @@
 #include "toolchain/check/context.h"
 #include "toolchain/check/control_flow.h"
 #include "toolchain/check/convert.h"
-#include "toolchain/check/cpp/overload_resolution.h"
+#include "toolchain/check/cpp/call.h"
 #include "toolchain/check/cpp/thunk.h"
 #include "toolchain/check/deduce.h"
 #include "toolchain/check/facet_type.h"
@@ -336,9 +336,9 @@ auto PerformCall(Context& context, SemIR::LocId loc_id, SemIR::InstId callee_id,
     }
 
     case CARBON_KIND(SemIR::CalleeCppOverloadSet overload): {
-      return PerformCallToCppOverloadFunction(context, loc_id,
-                                              overload.cpp_overload_set_id,
-                                              overload.self_id, arg_ids);
+      return PerformCallToCppFunction(context, loc_id,
+                                      overload.cpp_overload_set_id,
+                                      overload.self_id, arg_ids);
     }
   }
 }

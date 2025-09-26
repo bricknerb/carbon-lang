@@ -11,25 +11,18 @@
 
 namespace Carbon::Check {
 
-// Checks and builds SemIR for a call to a C++ function in the given overload
-// set with self `self_id` and arguments `arg_ids`.
-//
-// Chooses the best viable C++ function by performing Clang overloading
-// resolution over the overload set.
-//
-// Preserves the given self, if set. If not set, and the function is a C++
-// member operator, self will be set to the first argument, which in turn will
-// be removed from the given args.
+// Resolves which function to call using Clang overloading resolution, or
+// returns an error instruction if overload resolution failed.
 //
 // A set with a single non-templated function goes through the same rules for
 // overloading resolution. This is to make sure that calls that have no viable
 // implicit conversion sequence are rejected even when an implicit conversion is
 // possible. Keeping the same behavior here for consistency and supporting
 // migrations so that the migrated callers from C++ remain valid.
-auto PerformCallToCppOverloadFunction(Context& context, SemIR::LocId loc_id,
-                                      SemIR::CppOverloadSetId overload_set_id,
-                                      SemIR::InstId self_id,
-                                      llvm::ArrayRef<SemIR::InstId> arg_ids)
+auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
+                                  SemIR::CppOverloadSetId overload_set_id,
+                                  SemIR::InstId self_id,
+                                  llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> SemIR::InstId;
 
 }  // namespace Carbon::Check
