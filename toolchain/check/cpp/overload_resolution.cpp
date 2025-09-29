@@ -10,6 +10,7 @@
 #include "toolchain/base/kind_switch.h"
 #include "toolchain/check/cpp/import.h"
 #include "toolchain/check/cpp/location.h"
+#include "toolchain/check/cpp/operators.h"
 #include "toolchain/check/cpp/type_mapping.h"
 #include "toolchain/check/member_access.h"
 #include "toolchain/check/name_lookup.h"
@@ -116,18 +117,10 @@ static auto CheckOverloadAccess(Context& context, SemIR::LocId loc_id,
                .highest_allowed_access = allowed_access_kind});
 }
 
-// Returns whether the decl is an operator member function.
-static auto IsOperatorMethodDecl(clang::Decl* decl) -> bool {
-  auto* clang_method_decl = dyn_cast<clang::CXXMethodDecl>(decl);
-  return clang_method_decl && clang_method_decl->isOverloadedOperator();
-}
-
-// Resolve which function to call, or returns an error instruction if overload
-// resolution failed.
-static auto ResolveCalleeId(Context& context, SemIR::LocId loc_id,
-                            SemIR::CppOverloadSetId overload_set_id,
-                            SemIR::InstId self_id,
-                            llvm::ArrayRef<SemIR::InstId> arg_ids)
+auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
+                                  SemIR::CppOverloadSetId overload_set_id,
+                                  SemIR::InstId self_id,
+                                  llvm::ArrayRef<SemIR::InstId> arg_ids)
     -> SemIR::InstId {
   // Register an annotation scope to flush any Clang diagnostics when we return.
   // This is important to ensure that Clang diagnostics are properly interleaved
@@ -177,7 +170,7 @@ static auto ResolveCalleeId(Context& context, SemIR::LocId loc_id,
           context, loc_id, best_viable_fn->Function,
           // If this is an operator method, the first arg will be used as self.
           arg_exprs.size() -
-              (IsOperatorMethodDecl(best_viable_fn->Function) ? 1 : 0));
+              (IsCppOperatorMethodDecl(best_viable_fn->Function) ? 1 : 0));
       CheckOverloadAccess(context, loc_id, overload_set,
                           best_viable_fn->FoundDecl, result_id);
       return result_id;
@@ -204,52 +197,6 @@ static auto ResolveCalleeId(Context& context, SemIR::LocId loc_id,
           GetCppName(context, overload_set.name_id), candidate_set,
           best_viable_fn->Function, arg_exprs);
       return SemIR::ErrorInst::InstId;
-    }
-  }
-}
-
-// Returns whether the function is an imported C++ operator member function.
-static auto IsCppOperatorMethod(Context& context, SemIR::FunctionId function_id)
-    -> bool {
-  SemIR::ClangDeclId clang_decl_id =
-      context.functions().Get(function_id).clang_decl_id;
-  return clang_decl_id.has_value() &&
-         IsOperatorMethodDecl(
-             context.clang_decls().Get(clang_decl_id).key.decl);
-}
-
-auto PerformCppOverloadResolution(Context& context, SemIR::LocId loc_id,
-                                  SemIR::CppOverloadSetId overload_set_id,
-                                  SemIR::InstId self_id,
-                                  llvm::ArrayRef<SemIR::InstId> arg_ids)
-    -> CppOverloadResolutionResult {
-  CppOverloadResolutionResult result = {
-      .callee_id =
-          ResolveCalleeId(context, loc_id, overload_set_id, self_id, arg_ids),
-      .arg_ids = arg_ids};
-  SemIR::Callee callee = GetCallee(context.sem_ir(), result.callee_id);
-  CARBON_KIND_SWITCH(callee) {
-    case CARBON_KIND(SemIR::CalleeError _): {
-      result.callee_id = SemIR::ErrorInst::InstId;
-      return result;
-    }
-    case CARBON_KIND(SemIR::CalleeFunction fn): {
-      CARBON_CHECK(!fn.self_id.has_value());
-      if (self_id.has_value()) {
-        // Preserve the `self` argument from the original callee.
-        fn.self_id = self_id;
-      } else if (IsCppOperatorMethod(context, fn.function_id)) {
-        // Adjust `self` and args for C++ overloaded operator methods.
-        fn.self_id = result.arg_ids.consume_front();
-      }
-      result.callee_function = fn;
-      return result;
-    }
-    case CARBON_KIND(SemIR::CalleeCppOverloadSet _): {
-      CARBON_FATAL("overloads can't be recursive");
-    }
-    case CARBON_KIND(SemIR::CalleeNonFunction _): {
-      CARBON_FATAL("overloads should produce functions");
     }
   }
 }
