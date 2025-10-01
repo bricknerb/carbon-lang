@@ -227,7 +227,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
-// CHECK:STDOUT:   %.547: type = cpp_overload_set_type @TakesLValue [concrete]
+// CHECK:STDOUT:   %.547: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.547 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.5c7: type = ptr_type %S [concrete]
 // CHECK:STDOUT:   %TakesLValue__carbon_thunk.type: type = fn_type @TakesLValue__carbon_thunk [concrete]
@@ -245,7 +245,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.a7f: %.547 = cpp_overload_set_value @TakesLValue [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a7f: %.547 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %TakesLValue__carbon_thunk.decl: %TakesLValue__carbon_thunk.type = fn_decl @TakesLValue__carbon_thunk [concrete = constants.%TakesLValue__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -290,7 +290,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
-// CHECK:STDOUT:   %.547: type = cpp_overload_set_type @Destroy.Op [concrete]
+// CHECK:STDOUT:   %.547: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.547 = struct_value () [concrete]
 // CHECK:STDOUT:   %T: type = class_type @T [concrete]
 // CHECK:STDOUT:   %pattern_type.e6b: type = pattern_type %T [concrete]
@@ -314,7 +314,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.a7f: %.547 = cpp_overload_set_value @Destroy.Op [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a7f: %.547 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %T.decl: type = class_decl @T [concrete = constants.%T] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -402,7 +402,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @TakesRValue [concrete]
+// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.1b9 = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
@@ -422,7 +422,7 @@ fn F() {
 // CHECK:STDOUT:     .S = %S.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @TakesRValue [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
 // CHECK:STDOUT:   %TakesRValue__carbon_thunk.decl: %TakesRValue__carbon_thunk.type = fn_decl @TakesRValue__carbon_thunk [concrete = constants.%TakesRValue__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
@@ -464,7 +464,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
-// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @TakesRValue [concrete]
+// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.1b9 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.5c7: type = ptr_type %S [concrete]
 // CHECK:STDOUT:   %TakesRValue__carbon_thunk.type: type = fn_type @TakesRValue__carbon_thunk [concrete]
@@ -482,7 +482,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @TakesRValue [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %TakesRValue__carbon_thunk.decl: %TakesRValue__carbon_thunk.type = fn_decl @TakesRValue__carbon_thunk [concrete = constants.%TakesRValue__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -529,7 +529,7 @@ fn F() {
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
-// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @Destroy.Op [concrete]
+// CHECK:STDOUT:   %.1b9: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.1b9 = struct_value () [concrete]
 // CHECK:STDOUT:   %T: type = class_type @T [concrete]
 // CHECK:STDOUT:   %pattern_type.e6b: type = pattern_type %T [concrete]
@@ -554,7 +554,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @Destroy.Op [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.1f6: %.1b9 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %T.decl: type = class_decl @T [concrete = constants.%T] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -632,7 +632,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
-// CHECK:STDOUT:   %.4e1: type = cpp_overload_set_type @TakesConstLValue [concrete]
+// CHECK:STDOUT:   %.4e1: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.4e1 = struct_value () [concrete]
 // CHECK:STDOUT:   %const: type = const_type %S [concrete]
 // CHECK:STDOUT:   %ptr.ff5: type = ptr_type %const [concrete]
@@ -652,7 +652,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.9bc: %.4e1 = cpp_overload_set_value @TakesConstLValue [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.9bc: %.4e1 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %TakesConstLValue__carbon_thunk.decl: %TakesConstLValue__carbon_thunk.type = fn_decl @TakesConstLValue__carbon_thunk [concrete = constants.%TakesConstLValue__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -711,7 +711,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
-// CHECK:STDOUT:   %.4e1: type = cpp_overload_set_type @TakesConstLValue [concrete]
+// CHECK:STDOUT:   %.4e1: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.4e1 = struct_value () [concrete]
 // CHECK:STDOUT:   %const: type = const_type %S [concrete]
 // CHECK:STDOUT:   %ptr.ff5: type = ptr_type %const [concrete]
@@ -738,7 +738,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.9bc: %.4e1 = cpp_overload_set_value @TakesConstLValue [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.9bc: %.4e1 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %TakesConstLValue__carbon_thunk.decl: %TakesConstLValue__carbon_thunk.type = fn_decl @TakesConstLValue__carbon_thunk [concrete = constants.%TakesConstLValue__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

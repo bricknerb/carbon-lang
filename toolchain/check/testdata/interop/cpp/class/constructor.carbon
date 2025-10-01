@@ -275,7 +275,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.d9e: type = ptr_type %C [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk.type: type = fn_type @C__carbon_thunk [concrete]
@@ -292,7 +292,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl: %C__carbon_thunk.type = fn_decl @C__carbon_thunk [concrete = constants.%C__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -335,7 +335,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %int_123.fff: Core.IntLiteral = int_value 123 [concrete]
 // CHECK:STDOUT:   %int_456.010: Core.IntLiteral = int_value 456 [concrete]
@@ -373,7 +373,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl: %C__carbon_thunk.type = fn_decl @C__carbon_thunk [concrete = constants.%C__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -434,7 +434,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C.1 [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.d9e: type = ptr_type %C [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk.type.65f120.1: type = fn_type @C__carbon_thunk.1 [concrete]
@@ -474,7 +474,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C.1 [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl.8acdfe.1: %C__carbon_thunk.type.65f120.1 = fn_decl @C__carbon_thunk.1 [concrete = constants.%C__carbon_thunk.d98342.1] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -564,7 +564,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C.1 [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %int_8.b85: Core.IntLiteral = int_value 8 [concrete]
 // CHECK:STDOUT:   %int_9.988: Core.IntLiteral = int_value 9 [concrete]
@@ -604,7 +604,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C.1 [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl.8acdfe.1: %C__carbon_thunk.type.65f120.1 = fn_decl @C__carbon_thunk.1 [concrete = constants.%C__carbon_thunk.d98342.1] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -702,7 +702,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C.1 [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %int_123.fff: Core.IntLiteral = int_value 123 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
@@ -753,7 +753,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C.1 [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl.8acdfe.1: %C__carbon_thunk.type.65f120.1 = fn_decl @C__carbon_thunk.1 [concrete = constants.%C__carbon_thunk.d98342.1] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -885,7 +885,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %int_8.b85: Core.IntLiteral = int_value 8 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
@@ -931,7 +931,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl: %C__carbon_thunk.type = fn_decl @C__carbon_thunk [concrete = constants.%C__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -1005,7 +1005,7 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
 // CHECK:STDOUT:   %pattern_type.217: type = pattern_type %C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C.C.1 [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %int_8.b85: Core.IntLiteral = int_value 8 [concrete]
 // CHECK:STDOUT:   %int_9.988: Core.IntLiteral = int_value 9 [concrete]
@@ -1057,7 +1057,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C.C.1 [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %C__carbon_thunk.decl.8acdfe.1: %C__carbon_thunk.type.65f120.1 = fn_decl @C__carbon_thunk.1 [concrete = constants.%C__carbon_thunk.d98342.1] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

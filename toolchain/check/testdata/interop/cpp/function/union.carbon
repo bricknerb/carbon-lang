@@ -516,7 +516,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -536,7 +536,7 @@ fn F() {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
@@ -573,7 +573,7 @@ fn F() {
 // CHECK:STDOUT: --- fail_import_definition_single_data_member_value_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @As.Convert [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -585,7 +585,7 @@ fn F() {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @As.Convert [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -603,7 +603,7 @@ fn F() {
 // CHECK:STDOUT: --- fail_import_definition_multiple_data_members_value_param_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @As.Convert [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -615,7 +615,7 @@ fn F() {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @As.Convert [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -634,7 +634,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -655,7 +655,7 @@ fn F() {
 // CHECK:STDOUT:     .N = %N
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %N: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
@@ -716,7 +716,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.92e: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.92e: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.92e = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -740,7 +740,7 @@ fn F() {
 // CHECK:STDOUT:     .N2 = %N2
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.218: %.92e = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.218: %.92e = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %N2: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
@@ -785,7 +785,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %O: type = class_type @O [concrete]
@@ -811,7 +811,7 @@ fn F() {
 // CHECK:STDOUT:     .O = %O.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %O.decl: type = class_decl @O [concrete = constants.%O] {} {}
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
@@ -870,11 +870,11 @@ fn F() {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
-// CHECK:STDOUT:   %.372: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.372: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.e6c: %.372 = struct_value () [concrete]
 // CHECK:STDOUT:   %U.bar.type: type = fn_type @U.bar [concrete]
 // CHECK:STDOUT:   %U.bar: %U.bar.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.109: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %U.val: %U = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
@@ -893,9 +893,9 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
-// CHECK:STDOUT:   %.a8c: %.372 = cpp_overload_set_value @foo [concrete = constants.%empty_struct.e6c]
+// CHECK:STDOUT:   %.a8c: %.372 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.e6c]
 // CHECK:STDOUT:   %U.bar.decl: %U.bar.type = fn_decl @U.bar [concrete = constants.%U.bar] {} {}
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo__carbon_thunk [concrete = constants.%empty_struct.109]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.109]
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -936,7 +936,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.109: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
@@ -944,7 +944,7 @@ fn F() {
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
 // CHECK:STDOUT:   %foo__carbon_thunk.type: type = fn_type @foo__carbon_thunk [concrete]
 // CHECK:STDOUT:   %foo__carbon_thunk: %foo__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.372: type = cpp_overload_set_type @U.bar [concrete]
+// CHECK:STDOUT:   %.372: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.e6c: %.372 = struct_value () [concrete]
 // CHECK:STDOUT:   %U.bar.type: type = fn_type @U.bar [concrete]
 // CHECK:STDOUT:   %U.bar: %U.bar.type = struct_value () [concrete]
@@ -960,14 +960,14 @@ fn F() {
 // CHECK:STDOUT:     .U = %U.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo__carbon_thunk [concrete = constants.%empty_struct.109]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.109]
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a8c: %.372 = cpp_overload_set_value @U.bar [concrete = constants.%empty_struct.e6c]
+// CHECK:STDOUT:   %.a8c: %.372 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.e6c]
 // CHECK:STDOUT:   %U.bar.decl: %U.bar.type = fn_decl @U.bar [concrete = constants.%U.bar] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -1006,7 +1006,7 @@ fn F() {
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %U [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
@@ -1019,7 +1019,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -1042,7 +1042,7 @@ fn F() {
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %U [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
@@ -1055,7 +1055,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %U.decl: type = class_decl @U [concrete = constants.%U] {} {}
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -1076,7 +1076,7 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %ptr.86f: type = ptr_type %U [concrete]
@@ -1093,7 +1093,7 @@ fn F() {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -1123,7 +1123,7 @@ fn F() {
 // CHECK:STDOUT: --- import_decl_pointer_return_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %U [concrete]
@@ -1136,7 +1136,7 @@ fn F() {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -1155,7 +1155,7 @@ fn F() {
 // CHECK:STDOUT: --- import_definition_pointer_return_type.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c5d = struct_value () [concrete]
 // CHECK:STDOUT:   %U: type = class_type @U [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %U [concrete]
@@ -1168,7 +1168,7 @@ fn F() {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

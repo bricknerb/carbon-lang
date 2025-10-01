@@ -43,7 +43,7 @@ fn G() {
 // CHECK:STDOUT:   %G.type: type = fn_type @G [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %G: %G.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.557: type = cpp_overload_set_type @C.C [concrete]
+// CHECK:STDOUT:   %.557: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.56a: %.557 = struct_value () [concrete]
 // CHECK:STDOUT:   %.4f0: type = class_type @.1 [concrete]
 // CHECK:STDOUT:   %int_1.81a: %.4f0 = int_value 1 [concrete]
@@ -51,12 +51,12 @@ fn G() {
 // CHECK:STDOUT:   %F__carbon_thunk.type.eda1ac.1: type = fn_type @F__carbon_thunk.1 [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk.0cd6a8.1: %F__carbon_thunk.type.eda1ac.1 = struct_value () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.e73: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.d9e: type = ptr_type %C [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk.type: type = fn_type @C__carbon_thunk [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk: %C__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.9a3: type = cpp_overload_set_type @C.F [concrete]
+// CHECK:STDOUT:   %.9a3: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.acc: %.9a3 = struct_value () [concrete]
 // CHECK:STDOUT:   %.bb7: type = class_type @.2 [concrete]
 // CHECK:STDOUT:   %int_1.1d6: %.bb7 = int_value 1 [concrete]
@@ -82,7 +82,7 @@ fn G() {
 // CHECK:STDOUT:     .C = %C.decl
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.4a9: %.557 = cpp_overload_set_value @C.C [concrete = constants.%empty_struct.56a]
+// CHECK:STDOUT:   %.4a9: %.557 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.56a]
 // CHECK:STDOUT:   %int_1.81a: %.4f0 = int_value 1 [concrete = constants.%int_1.81a]
 // CHECK:STDOUT:   %F__carbon_thunk.decl.e1b8ec.1: %F__carbon_thunk.type.eda1ac.1 = fn_decl @F__carbon_thunk.1 [concrete = constants.%F__carbon_thunk.0cd6a8.1] {
 // CHECK:STDOUT:     <elided>
@@ -90,13 +90,13 @@ fn G() {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C__carbon_thunk [concrete = constants.%empty_struct.e73]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.e73]
 // CHECK:STDOUT:   %C__carbon_thunk.decl: %C__carbon_thunk.type = fn_decl @C__carbon_thunk [concrete = constants.%C__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.951: %.9a3 = cpp_overload_set_value @C.F [concrete = constants.%empty_struct.acc]
+// CHECK:STDOUT:   %.951: %.9a3 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.acc]
 // CHECK:STDOUT:   %int_1.1d6: %.bb7 = int_value 1 [concrete = constants.%int_1.1d6]
 // CHECK:STDOUT:   %F__carbon_thunk.decl.e1b8ec.2: %F__carbon_thunk.type.eda1ac.2 = fn_decl @F__carbon_thunk.2 [concrete = constants.%F__carbon_thunk.0cd6a8.2] {
 // CHECK:STDOUT:     <elided>

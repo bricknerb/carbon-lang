@@ -492,14 +492,14 @@ fn F() {
 // CHECK:STDOUT:   %S: type = class_type @S [concrete]
 // CHECK:STDOUT:   %ptr.5c7: type = ptr_type %S [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.177: type = cpp_overload_set_type @S.foo [concrete]
+// CHECK:STDOUT:   %.177: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.177 = struct_value () [concrete]
 // CHECK:STDOUT:   %S.foo.type: type = fn_type @S.foo [concrete]
 // CHECK:STDOUT:   %S.foo: %S.foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %.dcb: %.177 = cpp_overload_set_value @S.foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.dcb: %.177 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %S.foo.decl: %S.foo.type = fn_decl @S.foo [concrete = constants.%S.foo] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -523,12 +523,12 @@ fn F() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %C: type = class_type @C [concrete]
-// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @C__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.d40: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.e73: %.d40 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.d9e: type = ptr_type %C [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk.type: type = fn_type @C__carbon_thunk [concrete]
 // CHECK:STDOUT:   %C__carbon_thunk: %C__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.cd1: type = cpp_overload_set_type @C.foo [concrete]
+// CHECK:STDOUT:   %.cd1: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.b85: %.cd1 = struct_value () [concrete]
 // CHECK:STDOUT:   %C.foo.type: type = fn_type @C.foo [concrete]
 // CHECK:STDOUT:   %C.foo: %C.foo.type = struct_value () [concrete]
@@ -544,13 +544,13 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %C.decl: type = class_decl @C [concrete = constants.%C] {} {}
-// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @C__carbon_thunk [concrete = constants.%empty_struct.e73]
+// CHECK:STDOUT:   %.40b: %.d40 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.e73]
 // CHECK:STDOUT:   %C__carbon_thunk.decl: %C__carbon_thunk.type = fn_decl @C__carbon_thunk [concrete = constants.%C__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.e4a: %.cd1 = cpp_overload_set_value @C.foo [concrete = constants.%empty_struct.b85]
+// CHECK:STDOUT:   %.e4a: %.cd1 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.b85]
 // CHECK:STDOUT:   %C.foo.decl: %C.foo.type = fn_decl @C.foo [concrete = constants.%C.foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -583,7 +583,7 @@ fn F() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %DerivedPublic: type = class_type @DerivedPublic [concrete]
-// CHECK:STDOUT:   %.5a6: type = cpp_overload_set_type @Base.foo [concrete]
+// CHECK:STDOUT:   %.5a6: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.5a6 = struct_value () [concrete]
 // CHECK:STDOUT:   %Base.foo.type: type = fn_type @Base.foo [concrete]
 // CHECK:STDOUT:   %Base.foo: %Base.foo.type = struct_value () [concrete]
@@ -595,7 +595,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %DerivedPublic.decl: type = class_decl @DerivedPublic [concrete = constants.%DerivedPublic] {} {}
-// CHECK:STDOUT:   %.607: %.5a6 = cpp_overload_set_value @Base.foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.607: %.5a6 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %Base.foo.decl: %Base.foo.type = fn_decl @Base.foo [concrete = constants.%Base.foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

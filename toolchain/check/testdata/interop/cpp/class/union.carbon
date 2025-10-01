@@ -289,7 +289,7 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %Bar: type = class_type @Bar [concrete]
-// CHECK:STDOUT:   %.c07: type = cpp_overload_set_type @Bar.foo [concrete]
+// CHECK:STDOUT:   %.c07: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct: %.c07 = struct_value () [concrete]
 // CHECK:STDOUT:   %Bar.foo.type: type = fn_type @Bar.foo [concrete]
 // CHECK:STDOUT:   %Bar.foo: %Bar.foo.type = struct_value () [concrete]
@@ -301,7 +301,7 @@ fn MyF(bar: Cpp.Bar*);
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Bar.decl: type = class_decl @Bar [concrete = constants.%Bar] {} {}
-// CHECK:STDOUT:   %.617: %.c07 = cpp_overload_set_value @Bar.foo [concrete = constants.%empty_struct]
+// CHECK:STDOUT:   %.617: %.c07 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct]
 // CHECK:STDOUT:   %Bar.foo.decl: %Bar.foo.type = fn_decl @Bar.foo [concrete = constants.%Bar.foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

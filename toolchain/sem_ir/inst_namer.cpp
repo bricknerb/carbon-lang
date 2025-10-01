@@ -135,13 +135,10 @@ auto InstNamer::GetScopeIdOffset(ScopeIdTypeEnum id_enum) const -> int {
       offset += sem_ir_->classes().size();
       [[fallthrough]];
     case ScopeIdTypeEnum::For<ClassId>:
-      offset += sem_ir_->vtables().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<VtableId>:
-      offset += sem_ir_->functions().size();
+      offset += sem_ir_->cpp_overload_sets().size();
       [[fallthrough]];
     case ScopeIdTypeEnum::For<CppOverloadSetId>:
-      offset += sem_ir_->cpp_overload_sets().size();
+      offset += sem_ir_->functions().size();
       [[fallthrough]];
     case ScopeIdTypeEnum::For<FunctionId>:
       offset += sem_ir_->impls().size();
@@ -153,6 +150,9 @@ auto InstNamer::GetScopeIdOffset(ScopeIdTypeEnum id_enum) const -> int {
       offset += sem_ir_->specific_interfaces().size();
       [[fallthrough]];
     case ScopeIdTypeEnum::For<SpecificInterfaceId>:
+      offset += sem_ir_->vtables().size();
+      [[fallthrough]];
+    case ScopeIdTypeEnum::For<VtableId>:
       // All type-specific scopes are offset by `FirstEntityScope`.
       offset += static_cast<int>(ScopeId::FirstEntityScope);
       return offset;

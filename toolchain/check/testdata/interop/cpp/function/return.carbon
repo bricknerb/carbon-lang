@@ -47,12 +47,12 @@ fn F() {
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %IngestI32.type: type = fn_type @IngestI32 [concrete]
 // CHECK:STDOUT:   %IngestI32: %IngestI32.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.bf4: type = cpp_overload_set_type @F [concrete]
+// CHECK:STDOUT:   %.bf4: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.00b: %.bf4 = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr: type = ptr_type %i16 [concrete]
 // CHECK:STDOUT:   %foo1__carbon_thunk.type: type = fn_type @foo1__carbon_thunk [concrete]
 // CHECK:STDOUT:   %foo1__carbon_thunk: %foo1__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.c2a: type = cpp_overload_set_type @foo1 [concrete]
+// CHECK:STDOUT:   %.c2a: type = cpp_overload_set_type @<null name> [concrete]
 // CHECK:STDOUT:   %empty_struct.7e8: %.c2a = struct_value () [concrete]
 // CHECK:STDOUT:   %foo2.type: type = fn_type @foo2 [concrete]
 // CHECK:STDOUT:   %foo2: %foo2.type = struct_value () [concrete]
@@ -64,13 +64,13 @@ fn F() {
 // CHECK:STDOUT:     .foo2 = %.c5f
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.6c5: %.bf4 = cpp_overload_set_value @F [concrete = constants.%empty_struct.00b]
+// CHECK:STDOUT:   %.6c5: %.bf4 = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.00b]
 // CHECK:STDOUT:   %foo1__carbon_thunk.decl: %foo1__carbon_thunk.type = fn_decl @foo1__carbon_thunk [concrete = constants.%foo1__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.c5f: %.c2a = cpp_overload_set_value @foo1 [concrete = constants.%empty_struct.7e8]
+// CHECK:STDOUT:   %.c5f: %.c2a = cpp_overload_set_value @<null name> [concrete = constants.%empty_struct.7e8]
 // CHECK:STDOUT:   %foo2.decl: %foo2.type = fn_decl @foo2 [concrete = constants.%foo2] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
