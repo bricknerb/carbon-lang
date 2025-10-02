@@ -37,8 +37,8 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.fc4: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.6a4: %.fc4 = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %TakesConstInt.cpp_overload_set.type: type = cpp_overload_set_type @TakesConstInt.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %TakesConstInt.cpp_overload_set.value: %TakesConstInt.cpp_overload_set.type = cpp_overload_set_value @TakesConstInt.cpp_overload_set [concrete]
 // CHECK:STDOUT:   %int_42.20e: Core.IntLiteral = int_value 42 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -62,8 +62,8 @@ fn F() {
 // CHECK:STDOUT:   %empty_struct_type: type = struct_type {} [concrete]
 // CHECK:STDOUT:   %pattern_type.7da: type = pattern_type %S [concrete]
 // CHECK:STDOUT:   %S.val: %S = struct_value () [concrete]
-// CHECK:STDOUT:   %.289: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.7c2: %.289 = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %TakesConstS.cpp_overload_set.type: type = cpp_overload_set_type @TakesConstS.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %TakesConstS.cpp_overload_set.value: %TakesConstS.cpp_overload_set.type = cpp_overload_set_value @TakesConstS.cpp_overload_set [concrete]
 // CHECK:STDOUT:   %const: type = const_type %S [concrete]
 // CHECK:STDOUT:   %ptr.ff5: type = ptr_type %const [concrete]
 // CHECK:STDOUT:   %TakesConstS__carbon_thunk.type: type = fn_type @TakesConstS__carbon_thunk [concrete]
@@ -77,12 +77,12 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .TakesConstInt = %.6a4
+// CHECK:STDOUT:     .TakesConstInt = %TakesConstInt.cpp_overload_set.value
 // CHECK:STDOUT:     .S = %S.decl
-// CHECK:STDOUT:     .TakesConstS = %.7c2
+// CHECK:STDOUT:     .TakesConstS = %TakesConstS.cpp_overload_set.value
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.6a4: %.fc4 = cpp_overload_set_value @<null name> [concrete = constants.%.6a4]
+// CHECK:STDOUT:   %TakesConstInt.cpp_overload_set.value: %TakesConstInt.cpp_overload_set.type = cpp_overload_set_value @TakesConstInt.cpp_overload_set [concrete = constants.%TakesConstInt.cpp_overload_set.value]
 // CHECK:STDOUT:   %TakesConstInt.decl: %TakesConstInt.type = fn_decl @TakesConstInt [concrete = constants.%TakesConstInt] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -91,7 +91,7 @@ fn F() {
 // CHECK:STDOUT:   %Core.import_ref.ee7: @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert.type (%Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert (constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0)]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.9e9 = impl_witness_table (%Core.import_ref.ee7), @Core.IntLiteral.as.ImplicitAs.impl [concrete]
 // CHECK:STDOUT:   %S.decl: type = class_decl @S [concrete = constants.%S] {} {}
-// CHECK:STDOUT:   %.7c2: %.289 = cpp_overload_set_value @<null name> [concrete = constants.%.7c2]
+// CHECK:STDOUT:   %TakesConstS.cpp_overload_set.value: %TakesConstS.cpp_overload_set.type = cpp_overload_set_value @TakesConstS.cpp_overload_set [concrete = constants.%TakesConstS.cpp_overload_set.value]
 // CHECK:STDOUT:   %TakesConstS__carbon_thunk.decl: %TakesConstS__carbon_thunk.type = fn_decl @TakesConstS__carbon_thunk [concrete = constants.%TakesConstS__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -102,7 +102,7 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref.loc8: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %TakesConstInt.ref: %.fc4 = name_ref TakesConstInt, imports.%.6a4 [concrete = constants.%.6a4]
+// CHECK:STDOUT:   %TakesConstInt.ref: %TakesConstInt.cpp_overload_set.type = name_ref TakesConstInt, imports.%TakesConstInt.cpp_overload_set.value [concrete = constants.%TakesConstInt.cpp_overload_set.value]
 // CHECK:STDOUT:   %int_42: Core.IntLiteral = int_value 42 [concrete = constants.%int_42.20e]
 // CHECK:STDOUT:   %impl.elem0: %.1df = impl_witness_access constants.%ImplicitAs.impl_witness.204, element0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0]
 // CHECK:STDOUT:   %bound_method.loc8_21.1: <bound method> = bound_method %int_42, %impl.elem0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.bound]
@@ -127,7 +127,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %s: ref %S = bind_name s, %s.var
 // CHECK:STDOUT:   %Cpp.ref.loc11: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %TakesConstS.ref: %.289 = name_ref TakesConstS, imports.%.7c2 [concrete = constants.%.7c2]
+// CHECK:STDOUT:   %TakesConstS.ref: %TakesConstS.cpp_overload_set.type = name_ref TakesConstS, imports.%TakesConstS.cpp_overload_set.value [concrete = constants.%TakesConstS.cpp_overload_set.value]
 // CHECK:STDOUT:   %s.ref: ref %S = name_ref s, %s
 // CHECK:STDOUT:   %.loc11_19.1: %S = bind_value %s.ref
 // CHECK:STDOUT:   %.loc11_19.2: ref %S = value_as_ref %.loc11_19.1

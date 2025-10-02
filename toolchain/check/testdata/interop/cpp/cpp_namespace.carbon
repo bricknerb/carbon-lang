@@ -143,18 +143,18 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.98d: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %system_function.cpp_overload_set.type: type = cpp_overload_set_type @system_function.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %system_function.cpp_overload_set.value: %system_function.cpp_overload_set.type = cpp_overload_set_value @system_function.cpp_overload_set [concrete]
 // CHECK:STDOUT:   %system_function.type: type = fn_type @system_function [concrete]
 // CHECK:STDOUT:   %system_function: %system_function.type = struct_value () [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .system_function = %.769
+// CHECK:STDOUT:     .system_function = %system_function.cpp_overload_set.value
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @<null name> [concrete = constants.%.769]
+// CHECK:STDOUT:   %system_function.cpp_overload_set.value: %system_function.cpp_overload_set.type = cpp_overload_set_value @system_function.cpp_overload_set [concrete = constants.%system_function.cpp_overload_set.value]
 // CHECK:STDOUT:   %system_function.decl: %system_function.type = fn_decl @system_function [concrete = constants.%system_function] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -167,7 +167,7 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %system_function.ref: %.98d = name_ref system_function, imports.%.769 [concrete = constants.%.769]
+// CHECK:STDOUT:   %system_function.ref: %system_function.cpp_overload_set.type = name_ref system_function, imports.%system_function.cpp_overload_set.value [concrete = constants.%system_function.cpp_overload_set.value]
 // CHECK:STDOUT:   %system_function.call: init %empty_tuple.type = call imports.%system_function.decl()
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }

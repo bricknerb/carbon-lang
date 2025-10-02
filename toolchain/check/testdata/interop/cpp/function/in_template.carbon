@@ -38,8 +38,8 @@ fn F() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %X: type = class_type @X [concrete]
-// CHECK:STDOUT:   %.034: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %X.f.cpp_overload_set.type: type = cpp_overload_set_type @X.f.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %X.f.cpp_overload_set.value: %X.f.cpp_overload_set.type = cpp_overload_set_value @X.f.cpp_overload_set [concrete]
 // CHECK:STDOUT:   %int_42.20e: Core.IntLiteral = int_value 42 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -67,7 +67,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %X.decl: type = class_decl @X [concrete = constants.%X] {} {}
-// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @<null name> [concrete = constants.%.a8d]
+// CHECK:STDOUT:   %X.f.cpp_overload_set.value: %X.f.cpp_overload_set.type = cpp_overload_set_value @X.f.cpp_overload_set [concrete = constants.%X.f.cpp_overload_set.value]
 // CHECK:STDOUT:   %X.f.decl: %X.f.type = fn_decl @X.f [concrete = constants.%X.f] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -81,7 +81,7 @@ fn F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %Y.ref: type = name_ref Y, imports.%X.decl [concrete = constants.%X]
-// CHECK:STDOUT:   %f.ref: %.034 = name_ref f, imports.%.a8d [concrete = constants.%.a8d]
+// CHECK:STDOUT:   %f.ref: %X.f.cpp_overload_set.type = name_ref f, imports.%X.f.cpp_overload_set.value [concrete = constants.%X.f.cpp_overload_set.value]
 // CHECK:STDOUT:   %int_42: Core.IntLiteral = int_value 42 [concrete = constants.%int_42.20e]
 // CHECK:STDOUT:   %impl.elem0: %.1df = impl_witness_access constants.%ImplicitAs.impl_witness.204, element0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0]
 // CHECK:STDOUT:   %bound_method.loc8_11.1: <bound method> = bound_method %int_42, %impl.elem0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.bound]

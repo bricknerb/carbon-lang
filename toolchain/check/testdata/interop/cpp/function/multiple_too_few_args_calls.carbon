@@ -44,28 +44,28 @@ fn Call() {
 // CHECK:STDOUT: --- fail_call_too_few_args.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %.082: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.e7d: %.082 = cpp_overload_set_value @<null name> [concrete]
-// CHECK:STDOUT:   %.152: type = cpp_overload_set_type @<null name> [concrete]
-// CHECK:STDOUT:   %.172: %.152 = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %F1.cpp_overload_set.type: type = cpp_overload_set_type @F1.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %F1.cpp_overload_set.value: %F1.cpp_overload_set.type = cpp_overload_set_value @F1.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %F2.cpp_overload_set.type: type = cpp_overload_set_type @F2.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %F2.cpp_overload_set.value: %F2.cpp_overload_set.type = cpp_overload_set_value @F2.cpp_overload_set [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
-// CHECK:STDOUT:     .F1 = %.e7d
-// CHECK:STDOUT:     .F2 = %.172
+// CHECK:STDOUT:     .F1 = %F1.cpp_overload_set.value
+// CHECK:STDOUT:     .F2 = %F2.cpp_overload_set.value
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.e7d: %.082 = cpp_overload_set_value @<null name> [concrete = constants.%.e7d]
-// CHECK:STDOUT:   %.172: %.152 = cpp_overload_set_value @<null name> [concrete = constants.%.172]
+// CHECK:STDOUT:   %F1.cpp_overload_set.value: %F1.cpp_overload_set.type = cpp_overload_set_value @F1.cpp_overload_set [concrete = constants.%F1.cpp_overload_set.value]
+// CHECK:STDOUT:   %F2.cpp_overload_set.value: %F2.cpp_overload_set.type = cpp_overload_set_value @F2.cpp_overload_set [concrete = constants.%F2.cpp_overload_set.value]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @Call() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %Cpp.ref.loc19: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %F1.ref: %.082 = name_ref F1, imports.%.e7d [concrete = constants.%.e7d]
+// CHECK:STDOUT:   %F1.ref: %F1.cpp_overload_set.type = name_ref F1, imports.%F1.cpp_overload_set.value [concrete = constants.%F1.cpp_overload_set.value]
 // CHECK:STDOUT:   %Cpp.ref.loc27: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %F2.ref: %.152 = name_ref F2, imports.%.172 [concrete = constants.%.172]
+// CHECK:STDOUT:   %F2.ref: %F2.cpp_overload_set.type = name_ref F2, imports.%F2.cpp_overload_set.value [concrete = constants.%F2.cpp_overload_set.value]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
