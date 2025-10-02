@@ -121,45 +121,55 @@ InstNamer::InstNamer(const File* sem_ir, int total_ir_count)
 }
 
 auto InstNamer::GetScopeIdOffset(ScopeIdTypeEnum id_enum) const -> int {
-  int offset = 0;
+  // Map between Id type and a function to get the number of its entities.
+  struct IdEnumGetSizeEntry {
+    ScopeIdTypeEnum id_enum = ScopeIdTypeEnum::None;
+    using GetSizeFunc = size_t (*)(const File*);
+    GetSizeFunc get_size;
+  };
+  constexpr IdEnumGetSizeEntry IdEnumGetSizeArray[] = {
+      {ScopeIdTypeEnum::For<AssociatedConstantId>,
+       [](const File* sem_ir) {
+         return sem_ir->associated_constants().size();
+       }},
+      {ScopeIdTypeEnum::For<ClassId>,
+       [](const File* sem_ir) { return sem_ir->classes().size(); }},
+      {ScopeIdTypeEnum::For<CppOverloadSetId>,
+       [](const File* sem_ir) { return sem_ir->cpp_overload_sets().size(); }},
+      {ScopeIdTypeEnum::For<FunctionId>,
+       [](const File* sem_ir) { return sem_ir->functions().size(); }},
+      {ScopeIdTypeEnum::For<ImplId>,
+       [](const File* sem_ir) { return sem_ir->impls().size(); }},
+      {ScopeIdTypeEnum::For<InterfaceId>,
+       [](const File* sem_ir) { return sem_ir->interfaces().size(); }},
+      {ScopeIdTypeEnum::For<SpecificInterfaceId>,
+       [](const File* sem_ir) { return sem_ir->specific_interfaces().size(); }},
+      {ScopeIdTypeEnum::For<VtableId>,
+       [](const File* sem_ir) { return sem_ir->vtables().size(); }},
+  };
 
-  // For each Id type, add the number of entities *above* its case; for example,
-  // the offset for functions excludes the functions themselves. The fallthrough
+  // For each Id type, add the number of entities *above* it; for example, the
+  // offset for functions excludes the functions themselves. The fallthrough
   // handles summing to get uniqueness; order isn't special.
-  switch (id_enum) {
-    case ScopeIdTypeEnum::None:
-      // `None` will be getting a full count of scopes.
-      offset += sem_ir_->associated_constants().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<AssociatedConstantId>:
-      offset += sem_ir_->classes().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<ClassId>:
-      offset += sem_ir_->cpp_overload_sets().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<CppOverloadSetId>:
-      offset += sem_ir_->functions().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<FunctionId>:
-      offset += sem_ir_->impls().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<ImplId>:
-      offset += sem_ir_->interfaces().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<InterfaceId>:
-      offset += sem_ir_->specific_interfaces().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<SpecificInterfaceId>:
-      offset += sem_ir_->vtables().size();
-      [[fallthrough]];
-    case ScopeIdTypeEnum::For<VtableId>:
-      // All type-specific scopes are offset by `FirstEntityScope`.
-      offset += static_cast<int>(ScopeId::FirstEntityScope);
-      return offset;
 
-    default:
-      CARBON_FATAL("Unexpected ScopeIdTypeEnum: {0}", id_enum);
+  // `FirstEntityScope` is always above.
+  int offset = static_cast<int>(ScopeId::FirstEntityScope);
+
+  // All entities are above *None*.
+  bool found_enum = id_enum == ScopeIdTypeEnum::None;
+
+  for (const auto& id_enum_get_size : IdEnumGetSizeArray) {
+    // We sum the offsets before comparing id_enum to exclude the given id_enum
+    // from the offset.
+    if (found_enum) {
+      offset += id_enum_get_size.get_size(sem_ir_);
+    } else {
+      found_enum = id_enum_get_size.id_enum == id_enum;
+    }
   }
+  CARBON_CHECK(found_enum, "Unexpected ScopeIdTypeEnum: {0}", id_enum);
+
+  return offset;
 }
 
 auto InstNamer::GetScopeName(ScopeId scope) const -> std::string {
