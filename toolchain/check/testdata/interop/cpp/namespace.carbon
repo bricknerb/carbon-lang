@@ -237,8 +237,8 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.1f4: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.6d2: %.1f4 = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.1f4: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.6d2: %.1f4 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -252,7 +252,7 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:     .foo = %.6d2
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.6d2: %.1f4 = cpp_overload_set_value @foo [concrete = constants.%.6d2]
+// CHECK:STDOUT:   %.6d2: %.1f4 = cpp_overload_set_value @<null name> [concrete = constants.%.6d2]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -269,8 +269,8 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.9b0: type = cpp_overload_set_type @foo3 [concrete]
-// CHECK:STDOUT:   %.74a: %.9b0 = cpp_overload_set_value @foo3 [concrete]
+// CHECK:STDOUT:   %.9b0: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.74a: %.9b0 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo1.type: type = fn_type @foo1 [concrete]
 // CHECK:STDOUT:   %foo1: %foo1.type = struct_value () [concrete]
 // CHECK:STDOUT:   %.7f6: type = cpp_overload_set_type @<null name> [concrete]
@@ -293,7 +293,7 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:     .my_namespace2 = %my_namespace2
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.74a: %.9b0 = cpp_overload_set_value @foo3 [concrete = constants.%.74a]
+// CHECK:STDOUT:   %.74a: %.9b0 = cpp_overload_set_value @<null name> [concrete = constants.%.74a]
 // CHECK:STDOUT:   %foo1.decl: %foo1.type = fn_decl @foo1 [concrete = constants.%foo1] {} {}
 // CHECK:STDOUT:   %my_namespace2: <namespace> = namespace [concrete] {
 // CHECK:STDOUT:     .foo2 = %.76b
@@ -334,8 +334,8 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.b35: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.595: %.b35 = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.b35: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.595: %.b35 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -349,7 +349,7 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:     .foo = %.595
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.595: %.b35 = cpp_overload_set_value @foo [concrete = constants.%.595]
+// CHECK:STDOUT:   %.595: %.b35 = cpp_overload_set_value @<null name> [concrete = constants.%.595]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -366,8 +366,8 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %X: type = class_type @X [concrete]
 // CHECK:STDOUT:   %ptr.13d: type = ptr_type %X [concrete]
 // CHECK:STDOUT:   %foo__carbon_thunk.type: type = fn_type @foo__carbon_thunk [concrete]
@@ -383,7 +383,7 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo__carbon_thunk.decl: %foo__carbon_thunk.type = fn_decl @foo__carbon_thunk [concrete = constants.%foo__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -414,8 +414,8 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.6e5: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.0b7: %.6e5 = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.6e5: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.0b7: %.6e5 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -429,7 +429,7 @@ fn Use(y: Cpp.Y) -> i32 {
 // CHECK:STDOUT:     .foo = %.0b7
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.0b7: %.6e5 = cpp_overload_set_value @foo [concrete = constants.%.0b7]
+// CHECK:STDOUT:   %.0b7: %.6e5 = cpp_overload_set_value @<null name> [concrete = constants.%.0b7]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

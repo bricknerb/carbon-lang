@@ -186,8 +186,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -197,7 +197,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -213,8 +213,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.f7d: type = cpp_overload_set_type @base [concrete]
-// CHECK:STDOUT:   %.6f0: %.f7d = cpp_overload_set_value @base [concrete]
+// CHECK:STDOUT:   %.f7d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.6f0: %.f7d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %base.type: type = fn_type @base [concrete]
 // CHECK:STDOUT:   %base: %base.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -224,7 +224,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     .r#base = %.6f0
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.6f0: %.f7d = cpp_overload_set_value @base [concrete = constants.%.6f0]
+// CHECK:STDOUT:   %.6f0: %.f7d = cpp_overload_set_value @<null name> [concrete = constants.%.6f0]
 // CHECK:STDOUT:   %base.decl: %base.type = fn_decl @base [concrete = constants.%base] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -240,8 +240,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -251,7 +251,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -291,8 +291,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -302,7 +302,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -318,8 +318,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @Core.IntLiteral.as.As.impl.Convert [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @Core.IntLiteral.as.As.impl.Convert [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -339,8 +339,8 @@ fn G() -> i32 {
 // CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.414: type = cpp_overload_set_type @Int.as.As.impl.Convert [concrete]
-// CHECK:STDOUT:   %.146: %.414 = cpp_overload_set_value @Int.as.As.impl.Convert [concrete]
+// CHECK:STDOUT:   %.414: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.146: %.414 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %bar.type: type = fn_type @bar [concrete]
 // CHECK:STDOUT:   %bar: %bar.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -351,7 +351,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:     .bar = %.146
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @Core.IntLiteral.as.As.impl.Convert [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %Core.import_ref.99c: @Core.IntLiteral.as.As.impl.%Core.IntLiteral.as.As.impl.Convert.type (%Core.IntLiteral.as.As.impl.Convert.type.565) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.As.impl.%Core.IntLiteral.as.As.impl.Convert (constants.%Core.IntLiteral.as.As.impl.Convert.d2c)]
 // CHECK:STDOUT:   %As.impl_witness_table.5ad = impl_witness_table (%Core.import_ref.99c), @Core.IntLiteral.as.As.impl [concrete]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {
@@ -359,7 +359,7 @@ fn G() -> i32 {
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.146: %.414 = cpp_overload_set_value @Int.as.As.impl.Convert [concrete = constants.%.146]
+// CHECK:STDOUT:   %.146: %.414 = cpp_overload_set_value @<null name> [concrete = constants.%.146]
 // CHECK:STDOUT:   %bar.decl: %bar.type = fn_decl @bar [concrete = constants.%bar] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

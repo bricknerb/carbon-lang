@@ -60,8 +60,8 @@ fn G() -> str {
 // CHECK:STDOUT:   %F.type: type = fn_type @F [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %F: %F.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.fd2: type = cpp_overload_set_type @Consume__carbon_thunk [concrete]
-// CHECK:STDOUT:   %.f17: %.fd2 = cpp_overload_set_value @Consume__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.fd2: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.f17: %.fd2 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %str.ee0: type = class_type @String [concrete]
 // CHECK:STDOUT:   %int_64: Core.IntLiteral = int_value 64 [concrete]
 // CHECK:STDOUT:   %u64: type = class_type @UInt, @UInt(%int_64) [concrete]
@@ -77,8 +77,8 @@ fn G() -> str {
 // CHECK:STDOUT:   %Consume__carbon_thunk: %Consume__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT:   %G.type: type = fn_type @G [concrete]
 // CHECK:STDOUT:   %G: %G.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.a47: type = cpp_overload_set_type @G [concrete]
-// CHECK:STDOUT:   %.5d1: %.a47 = cpp_overload_set_value @G [concrete]
+// CHECK:STDOUT:   %.a47: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.5d1: %.a47 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %Produce__carbon_thunk.type: type = fn_type @Produce__carbon_thunk [concrete]
 // CHECK:STDOUT:   %Produce__carbon_thunk: %Produce__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -89,13 +89,13 @@ fn G() -> str {
 // CHECK:STDOUT:     .Produce = %.5d1
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.f17: %.fd2 = cpp_overload_set_value @Consume__carbon_thunk [concrete = constants.%.f17]
+// CHECK:STDOUT:   %.f17: %.fd2 = cpp_overload_set_value @<null name> [concrete = constants.%.f17]
 // CHECK:STDOUT:   %Consume__carbon_thunk.decl: %Consume__carbon_thunk.type = fn_decl @Consume__carbon_thunk [concrete = constants.%Consume__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.5d1: %.a47 = cpp_overload_set_value @G [concrete = constants.%.5d1]
+// CHECK:STDOUT:   %.5d1: %.a47 = cpp_overload_set_value @<null name> [concrete = constants.%.5d1]
 // CHECK:STDOUT:   %Produce__carbon_thunk.decl: %Produce__carbon_thunk.type = fn_decl @Produce__carbon_thunk [concrete = constants.%Produce__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

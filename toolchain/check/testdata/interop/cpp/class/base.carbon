@@ -582,15 +582,15 @@ class V {
 // CHECK:STDOUT:   %Derived: type = class_type @Derived [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %Base: type = class_type @Base [concrete]
-// CHECK:STDOUT:   %.5b0: type = cpp_overload_set_type @f__carbon_thunk [concrete]
-// CHECK:STDOUT:   %.e54: %.5b0 = cpp_overload_set_value @f__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.5b0: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.e54: %.5b0 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %const: type = const_type %Base [concrete]
 // CHECK:STDOUT:   %ptr.a97: type = ptr_type %const [concrete]
 // CHECK:STDOUT:   %f__carbon_thunk.type: type = fn_type @f__carbon_thunk [concrete]
 // CHECK:STDOUT:   %f__carbon_thunk: %f__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT:   %ptr.fb2: type = ptr_type %Base [concrete]
-// CHECK:STDOUT:   %.7c6: type = cpp_overload_set_type @CallQualified [concrete]
-// CHECK:STDOUT:   %.362: %.7c6 = cpp_overload_set_value @CallQualified [concrete]
+// CHECK:STDOUT:   %.7c6: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.362: %.7c6 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %g__carbon_thunk.type: type = fn_type @g__carbon_thunk [concrete]
 // CHECK:STDOUT:   %g__carbon_thunk: %g__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -603,13 +603,13 @@ class V {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Derived.decl: type = class_decl @Derived [concrete = constants.%Derived] {} {}
 // CHECK:STDOUT:   %Base.decl: type = class_decl @Base [concrete = constants.%Base] {} {}
-// CHECK:STDOUT:   %.e54: %.5b0 = cpp_overload_set_value @f__carbon_thunk [concrete = constants.%.e54]
+// CHECK:STDOUT:   %.e54: %.5b0 = cpp_overload_set_value @<null name> [concrete = constants.%.e54]
 // CHECK:STDOUT:   %f__carbon_thunk.decl: %f__carbon_thunk.type = fn_decl @f__carbon_thunk [concrete = constants.%f__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.362: %.7c6 = cpp_overload_set_value @CallQualified [concrete = constants.%.362]
+// CHECK:STDOUT:   %.362: %.7c6 = cpp_overload_set_value @<null name> [concrete = constants.%.362]
 // CHECK:STDOUT:   %g__carbon_thunk.decl: %g__carbon_thunk.type = fn_decl @g__carbon_thunk [concrete = constants.%g__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

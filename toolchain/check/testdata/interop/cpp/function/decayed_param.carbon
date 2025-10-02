@@ -82,8 +82,8 @@ fn F() {
 // CHECK:STDOUT:   %array_type: type = array_type %int_42, %i32 [concrete]
 // CHECK:STDOUT:   %ptr.830: type = ptr_type %array_type [concrete]
 // CHECK:STDOUT:   %pattern_type.b6e: type = pattern_type %array_type [concrete]
-// CHECK:STDOUT:   %.cdf: type = cpp_overload_set_type @Core.IntLiteral.as.ImplicitAs.impl.Convert [concrete]
-// CHECK:STDOUT:   %.782: %.cdf = cpp_overload_set_value @Core.IntLiteral.as.ImplicitAs.impl.Convert [concrete]
+// CHECK:STDOUT:   %.cdf: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.782: %.cdf = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %int_0.5c6: Core.IntLiteral = int_value 0 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.d14: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
 // CHECK:STDOUT:   %ImplicitAs.Convert.type.1b6: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32) [concrete]
@@ -100,10 +100,10 @@ fn F() {
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %int_0.5c6, %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn [concrete]
 // CHECK:STDOUT:   %int_0.6a9: %i32 = int_value 0 [concrete]
 // CHECK:STDOUT:   %ptr.235: type = ptr_type %i32 [concrete]
-// CHECK:STDOUT:   %.319: type = cpp_overload_set_type @Int.as.ImplicitAs.impl.Convert [concrete]
-// CHECK:STDOUT:   %.a02: %.319 = cpp_overload_set_value @Int.as.ImplicitAs.impl.Convert [concrete]
-// CHECK:STDOUT:   %.001: type = cpp_overload_set_type @Destroy.Op [concrete]
-// CHECK:STDOUT:   %.5ec: %.001 = cpp_overload_set_value @Destroy.Op [concrete]
+// CHECK:STDOUT:   %.319: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a02: %.319 = cpp_overload_set_value @<null name> [concrete]
+// CHECK:STDOUT:   %.001: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.5ec: %.001 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %type_where: type = facet_type <type where .Self impls <CanDestroy>> [concrete]
 // CHECK:STDOUT:   %facet_value: %type_where = facet_value %array_type, () [concrete]
 // CHECK:STDOUT:   %DestroyT.as_type.as.Destroy.impl.Op.type.b6e: type = fn_type @DestroyT.as_type.as.Destroy.impl.Op, @DestroyT.as_type.as.Destroy.impl(%facet_value) [concrete]
@@ -118,11 +118,11 @@ fn F() {
 // CHECK:STDOUT:     .Function = %.5ec
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.782: %.cdf = cpp_overload_set_value @Core.IntLiteral.as.ImplicitAs.impl.Convert [concrete = constants.%.782]
+// CHECK:STDOUT:   %.782: %.cdf = cpp_overload_set_value @<null name> [concrete = constants.%.782]
 // CHECK:STDOUT:   %Core.import_ref.ee7: @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert.type (%Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert (constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0)]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.9e9 = impl_witness_table (%Core.import_ref.ee7), @Core.IntLiteral.as.ImplicitAs.impl [concrete]
-// CHECK:STDOUT:   %.a02: %.319 = cpp_overload_set_value @Int.as.ImplicitAs.impl.Convert [concrete = constants.%.a02]
-// CHECK:STDOUT:   %.5ec: %.001 = cpp_overload_set_value @Destroy.Op [concrete = constants.%.5ec]
+// CHECK:STDOUT:   %.a02: %.319 = cpp_overload_set_value @<null name> [concrete = constants.%.a02]
+// CHECK:STDOUT:   %.5ec: %.001 = cpp_overload_set_value @<null name> [concrete = constants.%.5ec]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: fn @F() {

@@ -90,8 +90,8 @@ var y: Cpp.Xint.r#type = 0;
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %Base: type = class_type @Base [concrete]
 // CHECK:STDOUT:   %A.elem.c3f: type = unbound_element_type %A.0bedf0.1, %i32 [concrete]
-// CHECK:STDOUT:   %.658: type = cpp_overload_set_type @A.f [concrete]
-// CHECK:STDOUT:   %.d46: %.658 = cpp_overload_set_value @A.f [concrete]
+// CHECK:STDOUT:   %.658: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.d46: %.658 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %const.16f: type = const_type %A.0bedf0.1 [concrete]
 // CHECK:STDOUT:   %ptr.703: type = ptr_type %const.16f [concrete]
 // CHECK:STDOUT:   %f__carbon_thunk.type: type = fn_type @f__carbon_thunk [concrete]
@@ -122,7 +122,7 @@ var y: Cpp.Xint.r#type = 0;
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %.d46: %.658 = cpp_overload_set_value @A.f [concrete = constants.%.d46]
+// CHECK:STDOUT:   %.d46: %.658 = cpp_overload_set_value @<null name> [concrete = constants.%.d46]
 // CHECK:STDOUT:   %f__carbon_thunk.decl: %f__carbon_thunk.type = fn_decl @f__carbon_thunk [concrete = constants.%f__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

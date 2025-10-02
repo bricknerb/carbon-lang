@@ -143,8 +143,8 @@ fn F() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.98d: type = cpp_overload_set_type @system_function [concrete]
-// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @system_function [concrete]
+// CHECK:STDOUT:   %.98d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %system_function.type: type = fn_type @system_function [concrete]
 // CHECK:STDOUT:   %system_function: %system_function.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -154,7 +154,7 @@ fn F() {
 // CHECK:STDOUT:     .system_function = %.769
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @system_function [concrete = constants.%.769]
+// CHECK:STDOUT:   %.769: %.98d = cpp_overload_set_value @<null name> [concrete = constants.%.769]
 // CHECK:STDOUT:   %system_function.decl: %system_function.type = fn_decl @system_function [concrete = constants.%system_function] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

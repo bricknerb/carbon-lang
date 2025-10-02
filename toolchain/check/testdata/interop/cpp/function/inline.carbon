@@ -90,8 +90,8 @@ fn MyF() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -101,7 +101,7 @@ fn MyF() {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -117,8 +117,8 @@ fn MyF() {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @foo [concrete]
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete]
+// CHECK:STDOUT:   %.c5d: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %foo.type: type = fn_type @foo [concrete]
 // CHECK:STDOUT:   %foo: %foo.type = struct_value () [concrete]
 // CHECK:STDOUT: }
@@ -128,7 +128,7 @@ fn MyF() {
 // CHECK:STDOUT:     .foo = %.a21
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @foo [concrete = constants.%.a21]
+// CHECK:STDOUT:   %.a21: %.c5d = cpp_overload_set_value @<null name> [concrete = constants.%.a21]
 // CHECK:STDOUT:   %foo.decl: %foo.type = fn_decl @foo [concrete = constants.%foo] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
@@ -151,8 +151,8 @@ fn MyF() {
 // CHECK:STDOUT:   %N: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
-// CHECK:STDOUT:   %.fef: type = cpp_overload_set_type @Int.as.ImplicitAs.impl.Convert [concrete]
-// CHECK:STDOUT:   %.1bd: %.fef = cpp_overload_set_value @Int.as.ImplicitAs.impl.Convert [concrete]
+// CHECK:STDOUT:   %.fef: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.1bd: %.fef = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %WithoutThunk.type: type = fn_type @WithoutThunk [concrete]
 // CHECK:STDOUT:   %WithoutThunk: %WithoutThunk.type = struct_value () [concrete]
@@ -170,8 +170,8 @@ fn MyF() {
 // CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn.a29: <specific function> = specific_function %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0, @Core.IntLiteral.as.ImplicitAs.impl.Convert(%int_32) [concrete]
 // CHECK:STDOUT:   %bound_method.c11: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn.a29 [concrete]
 // CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
-// CHECK:STDOUT:   %.281: type = cpp_overload_set_type @ThunkOnArg [concrete]
-// CHECK:STDOUT:   %.c9b: %.281 = cpp_overload_set_value @ThunkOnArg [concrete]
+// CHECK:STDOUT:   %.281: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.c9b: %.281 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %int_16: Core.IntLiteral = int_value 16 [concrete]
 // CHECK:STDOUT:   %i16: type = class_type @Int, @Int(%int_16) [concrete]
 // CHECK:STDOUT:   %pattern_type.2f8: type = pattern_type %i16 [concrete]
@@ -201,12 +201,12 @@ fn MyF() {
 // CHECK:STDOUT:   %Int.as.Copy.impl.Op.bound: <bound method> = bound_method %int_1.f90, %Int.as.Copy.impl.Op.3dc [concrete]
 // CHECK:STDOUT:   %Int.as.Copy.impl.Op.specific_fn: <specific function> = specific_function %Int.as.Copy.impl.Op.3dc, @Int.as.Copy.impl.Op(%int_16) [concrete]
 // CHECK:STDOUT:   %bound_method.7c2: <bound method> = bound_method %int_1.f90, %Int.as.Copy.impl.Op.specific_fn [concrete]
-// CHECK:STDOUT:   %.3ed: type = cpp_overload_set_type @ThunkOnArg__carbon_thunk [concrete]
-// CHECK:STDOUT:   %.d87: %.3ed = cpp_overload_set_value @ThunkOnArg__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.3ed: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.d87: %.3ed = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ThunkOnReturn__carbon_thunk.type: type = fn_type @ThunkOnReturn__carbon_thunk [concrete]
 // CHECK:STDOUT:   %ThunkOnReturn__carbon_thunk: %ThunkOnReturn__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.a8c: type = cpp_overload_set_type @Copy.Op [concrete]
-// CHECK:STDOUT:   %.db9: %.a8c = cpp_overload_set_value @Copy.Op [concrete]
+// CHECK:STDOUT:   %.a8c: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.db9: %.a8c = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ThunkOnBoth__carbon_thunk.type: type = fn_type @ThunkOnBoth__carbon_thunk [concrete]
 // CHECK:STDOUT:   %ThunkOnBoth__carbon_thunk: %ThunkOnBoth__carbon_thunk.type = struct_value () [concrete]
 // CHECK:STDOUT:   %type_where: type = facet_type <type where .Self impls <CanDestroy>> [concrete]
@@ -223,7 +223,7 @@ fn MyF() {
 // CHECK:STDOUT:     .ThunkOnBoth = %.db9
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.1bd: %.fef = cpp_overload_set_value @Int.as.ImplicitAs.impl.Convert [concrete = constants.%.1bd]
+// CHECK:STDOUT:   %.1bd: %.fef = cpp_overload_set_value @<null name> [concrete = constants.%.1bd]
 // CHECK:STDOUT:   %WithoutThunk.decl: %WithoutThunk.type = fn_decl @WithoutThunk [concrete = constants.%WithoutThunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -231,7 +231,7 @@ fn MyF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import_ref.ee7: @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert.type (%Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert (constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0)]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness_table.9e9 = impl_witness_table (%Core.import_ref.ee7), @Core.IntLiteral.as.ImplicitAs.impl [concrete]
-// CHECK:STDOUT:   %.c9b: %.281 = cpp_overload_set_value @ThunkOnArg [concrete = constants.%.c9b]
+// CHECK:STDOUT:   %.c9b: %.281 = cpp_overload_set_value @<null name> [concrete = constants.%.c9b]
 // CHECK:STDOUT:   %ThunkOnArg__carbon_thunk.decl: %ThunkOnArg__carbon_thunk.type = fn_decl @ThunkOnArg__carbon_thunk [concrete = constants.%ThunkOnArg__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -239,13 +239,13 @@ fn MyF() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import_ref.d0f6: @Int.as.Copy.impl.%Int.as.Copy.impl.Op.type (%Int.as.Copy.impl.Op.type.afd) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Int.as.Copy.impl.%Int.as.Copy.impl.Op (constants.%Int.as.Copy.impl.Op.6cd)]
 // CHECK:STDOUT:   %Copy.impl_witness_table.1ed = impl_witness_table (%Core.import_ref.d0f6), @Int.as.Copy.impl [concrete]
-// CHECK:STDOUT:   %.d87: %.3ed = cpp_overload_set_value @ThunkOnArg__carbon_thunk [concrete = constants.%.d87]
+// CHECK:STDOUT:   %.d87: %.3ed = cpp_overload_set_value @<null name> [concrete = constants.%.d87]
 // CHECK:STDOUT:   %ThunkOnReturn__carbon_thunk.decl: %ThunkOnReturn__carbon_thunk.type = fn_decl @ThunkOnReturn__carbon_thunk [concrete = constants.%ThunkOnReturn__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.db9: %.a8c = cpp_overload_set_value @Copy.Op [concrete = constants.%.db9]
+// CHECK:STDOUT:   %.db9: %.a8c = cpp_overload_set_value @<null name> [concrete = constants.%.db9]
 // CHECK:STDOUT:   %ThunkOnBoth__carbon_thunk.decl: %ThunkOnBoth__carbon_thunk.type = fn_decl @ThunkOnBoth__carbon_thunk [concrete = constants.%ThunkOnBoth__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

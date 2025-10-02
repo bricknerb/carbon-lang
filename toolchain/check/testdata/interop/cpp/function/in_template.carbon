@@ -38,8 +38,8 @@ fn F() {
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %X: type = class_type @X [concrete]
-// CHECK:STDOUT:   %.034: type = cpp_overload_set_type @X.f [concrete]
-// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @X.f [concrete]
+// CHECK:STDOUT:   %.034: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %int_42.20e: Core.IntLiteral = int_value 42 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
@@ -67,7 +67,7 @@ fn F() {
 // CHECK:STDOUT:     import Cpp//...
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %X.decl: type = class_decl @X [concrete = constants.%X] {} {}
-// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @X.f [concrete = constants.%.a8d]
+// CHECK:STDOUT:   %.a8d: %.034 = cpp_overload_set_value @<null name> [concrete = constants.%.a8d]
 // CHECK:STDOUT:   %X.f.decl: %X.f.type = fn_decl @X.f [concrete = constants.%X.f] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {

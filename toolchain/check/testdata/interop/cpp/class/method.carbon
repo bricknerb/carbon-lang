@@ -207,18 +207,18 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   %HasQualifiers: type = class_type @HasQualifiers [concrete]
 // CHECK:STDOUT:   %ptr.ec3: type = ptr_type %HasQualifiers [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
-// CHECK:STDOUT:   %.602: type = cpp_overload_set_type @const_ref_this__carbon_thunk [concrete]
-// CHECK:STDOUT:   %.ce8: %.602 = cpp_overload_set_value @const_ref_this__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.602: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.ce8: %.602 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %const: type = const_type %HasQualifiers [concrete]
 // CHECK:STDOUT:   %ptr.2cb: type = ptr_type %const [concrete]
 // CHECK:STDOUT:   %const_this__carbon_thunk.type: type = fn_type @const_this__carbon_thunk [concrete]
 // CHECK:STDOUT:   %const_this__carbon_thunk: %const_this__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.bf0: type = cpp_overload_set_type @HasQualifiers.plain [concrete]
-// CHECK:STDOUT:   %.667: %.bf0 = cpp_overload_set_value @HasQualifiers.plain [concrete]
+// CHECK:STDOUT:   %.bf0: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.667: %.bf0 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %const_ref_this__carbon_thunk.type: type = fn_type @const_ref_this__carbon_thunk [concrete]
 // CHECK:STDOUT:   %const_ref_this__carbon_thunk: %const_ref_this__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.64b: type = cpp_overload_set_type @HasQualifiers.ref_this [concrete]
-// CHECK:STDOUT:   %.646: %.64b = cpp_overload_set_value @HasQualifiers.ref_this [concrete]
+// CHECK:STDOUT:   %.64b: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.646: %.64b = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %HasQualifiers.plain.type: type = fn_type @HasQualifiers.plain [concrete]
 // CHECK:STDOUT:   %HasQualifiers.plain: %HasQualifiers.plain.type = struct_value () [concrete]
 // CHECK:STDOUT:   %.352: type = cpp_overload_set_type @<null name> [concrete]
@@ -228,19 +228,19 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %.ce8: %.602 = cpp_overload_set_value @const_ref_this__carbon_thunk [concrete = constants.%.ce8]
+// CHECK:STDOUT:   %.ce8: %.602 = cpp_overload_set_value @<null name> [concrete = constants.%.ce8]
 // CHECK:STDOUT:   %const_this__carbon_thunk.decl: %const_this__carbon_thunk.type = fn_decl @const_this__carbon_thunk [concrete = constants.%const_this__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.667: %.bf0 = cpp_overload_set_value @HasQualifiers.plain [concrete = constants.%.667]
+// CHECK:STDOUT:   %.667: %.bf0 = cpp_overload_set_value @<null name> [concrete = constants.%.667]
 // CHECK:STDOUT:   %const_ref_this__carbon_thunk.decl: %const_ref_this__carbon_thunk.type = fn_decl @const_ref_this__carbon_thunk [concrete = constants.%const_ref_this__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.646: %.64b = cpp_overload_set_value @HasQualifiers.ref_this [concrete = constants.%.646]
+// CHECK:STDOUT:   %.646: %.64b = cpp_overload_set_value @<null name> [concrete = constants.%.646]
 // CHECK:STDOUT:   %HasQualifiers.plain.decl: %HasQualifiers.plain.type = fn_decl @HasQualifiers.plain [concrete = constants.%HasQualifiers.plain] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -316,8 +316,8 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
-// CHECK:STDOUT:   %.4ab: type = cpp_overload_set_type @HasQualifiers.F.1 [concrete]
-// CHECK:STDOUT:   %.570: %.4ab = cpp_overload_set_value @HasQualifiers.F.1 [concrete]
+// CHECK:STDOUT:   %.4ab: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.570: %.4ab = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %const: type = const_type %HasQualifiers [concrete]
 // CHECK:STDOUT:   %ptr.2cb: type = ptr_type %const [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk.type: type = fn_type @F__carbon_thunk [concrete]
@@ -337,7 +337,7 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
-// CHECK:STDOUT:   %.570: %.4ab = cpp_overload_set_value @HasQualifiers.F.1 [concrete = constants.%.570]
+// CHECK:STDOUT:   %.570: %.4ab = cpp_overload_set_value @<null name> [concrete = constants.%.570]
 // CHECK:STDOUT:   %F__carbon_thunk.decl: %F__carbon_thunk.type = fn_decl @F__carbon_thunk [concrete = constants.%F__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -414,17 +414,17 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %Another: type = class_type @Another [concrete]
-// CHECK:STDOUT:   %.3e2: type = cpp_overload_set_type @ExplicitObjectParam.G [concrete]
-// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @ExplicitObjectParam.G [concrete]
+// CHECK:STDOUT:   %.3e2: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ptr.7f5: type = ptr_type %ExplicitObjectParam [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk.type: type = fn_type @F__carbon_thunk [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk: %F__carbon_thunk.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.d44: type = cpp_overload_set_type @ExplicitObjectParam.H [concrete]
-// CHECK:STDOUT:   %.151: %.d44 = cpp_overload_set_value @ExplicitObjectParam.H [concrete]
+// CHECK:STDOUT:   %.d44: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.151: %.d44 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ExplicitObjectParam.G.type: type = fn_type @ExplicitObjectParam.G [concrete]
 // CHECK:STDOUT:   %ExplicitObjectParam.G: %ExplicitObjectParam.G.type = struct_value () [concrete]
-// CHECK:STDOUT:   %.9fb: type = cpp_overload_set_type @H__carbon_thunk [concrete]
-// CHECK:STDOUT:   %.34a: %.9fb = cpp_overload_set_value @H__carbon_thunk [concrete]
+// CHECK:STDOUT:   %.9fb: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.34a: %.9fb = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ptr.289: type = ptr_type %Another [concrete]
 // CHECK:STDOUT:   %H__carbon_thunk.type: type = fn_type @H__carbon_thunk [concrete]
 // CHECK:STDOUT:   %H__carbon_thunk: %H__carbon_thunk.type = struct_value () [concrete]
@@ -438,19 +438,19 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %ExplicitObjectParam.decl: type = class_decl @ExplicitObjectParam [concrete = constants.%ExplicitObjectParam] {} {}
 // CHECK:STDOUT:   %Another.decl: type = class_decl @Another [concrete = constants.%Another] {} {}
-// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @ExplicitObjectParam.G [concrete = constants.%.037]
+// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @<null name> [concrete = constants.%.037]
 // CHECK:STDOUT:   %F__carbon_thunk.decl: %F__carbon_thunk.type = fn_decl @F__carbon_thunk [concrete = constants.%F__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.151: %.d44 = cpp_overload_set_value @ExplicitObjectParam.H [concrete = constants.%.151]
+// CHECK:STDOUT:   %.151: %.d44 = cpp_overload_set_value @<null name> [concrete = constants.%.151]
 // CHECK:STDOUT:   %ExplicitObjectParam.G.decl: %ExplicitObjectParam.G.type = fn_decl @ExplicitObjectParam.G [concrete = constants.%ExplicitObjectParam.G] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %.34a: %.9fb = cpp_overload_set_value @H__carbon_thunk [concrete = constants.%.34a]
+// CHECK:STDOUT:   %.34a: %.9fb = cpp_overload_set_value @<null name> [concrete = constants.%.34a]
 // CHECK:STDOUT:   %H__carbon_thunk.decl: %H__carbon_thunk.type = fn_decl @H__carbon_thunk [concrete = constants.%H__carbon_thunk] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
@@ -491,8 +491,8 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
 // CHECK:STDOUT:   %Another: type = class_type @Another [concrete]
-// CHECK:STDOUT:   %.3e2: type = cpp_overload_set_type @ExplicitObjectParam.F.1 [concrete]
-// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @ExplicitObjectParam.F.1 [concrete]
+// CHECK:STDOUT:   %.3e2: type = cpp_overload_set_type @<null name> [concrete]
+// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @<null name> [concrete]
 // CHECK:STDOUT:   %ptr.7f5: type = ptr_type %ExplicitObjectParam [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk.type.eda1ac.1: type = fn_type @F__carbon_thunk.1 [concrete]
 // CHECK:STDOUT:   %F__carbon_thunk.0cd6a8.1: %F__carbon_thunk.type.eda1ac.1 = struct_value () [concrete]
@@ -511,7 +511,7 @@ fn Call(e: Cpp.ExplicitObjectParam, n: i32, a: Cpp.Another) {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %ExplicitObjectParam.decl: type = class_decl @ExplicitObjectParam [concrete = constants.%ExplicitObjectParam] {} {}
 // CHECK:STDOUT:   %Another.decl: type = class_decl @Another [concrete = constants.%Another] {} {}
-// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @ExplicitObjectParam.F.1 [concrete = constants.%.037]
+// CHECK:STDOUT:   %.037: %.3e2 = cpp_overload_set_value @<null name> [concrete = constants.%.037]
 // CHECK:STDOUT:   %F__carbon_thunk.decl.e1b8ec.1: %F__carbon_thunk.type.eda1ac.1 = fn_decl @F__carbon_thunk.1 [concrete = constants.%F__carbon_thunk.0cd6a8.1] {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
