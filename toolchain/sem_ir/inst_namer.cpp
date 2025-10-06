@@ -18,6 +18,7 @@
 #include "toolchain/base/value_ids.h"
 #include "toolchain/lex/tokenized_buffer.h"
 #include "toolchain/parse/tree.h"
+#include "toolchain/sem_ir/cpp_overload_set.h"
 #include "toolchain/sem_ir/entity_with_params_base.h"
 #include "toolchain/sem_ir/function.h"
 #include "toolchain/sem_ir/ids.h"
@@ -570,6 +571,21 @@ auto InstNamer::PushEntity(FunctionId function_id, ScopeId scope_id,
   PushBlockId(scope_id, fn.call_params_id);
 }
 
+auto InstNamer::PushEntity(CppOverloadSetId cpp_overload_set_id,
+                           ScopeId /*scope_id*/, Scope& scope) -> void {
+  const CppOverloadSet& overload_set =
+      sem_ir_->cpp_overload_sets().Get(cpp_overload_set_id);
+  uint64_t fingerprint =
+      fingerprinter_.GetOrCompute(sem_ir_, cpp_overload_set_id);
+
+  auto scope_prefix = GetNameForParentNameScope(overload_set.parent_scope_id);
+  scope.name = globals_.AllocateName(
+      *this, fingerprint,
+      llvm::formatv("{0}{1}{2}.cpp_overload_set", scope_prefix,
+                    scope_prefix.empty() ? "" : ".",
+                    sem_ir_->names().GetIRBaseName(overload_set.name_id)));
+}
+
 auto InstNamer::PushEntity(ImplId impl_id, ScopeId scope_id, Scope& scope)
     -> void {
   const auto& impl = sem_ir_->impls().Get(impl_id);
@@ -878,6 +894,14 @@ auto InstNamer::NamingContext::NameInst() -> void {
     }
     case CARBON_KIND(FunctionType inst): {
       AddEntityNameAndMaybePush(inst.function_id, ".type");
+      return;
+    }
+    case CARBON_KIND(CppOverloadSetValue inst): {
+      AddEntityNameAndMaybePush(inst.overload_set_id, ".value");
+      return;
+    }
+    case CARBON_KIND(CppOverloadSetType inst): {
+      AddEntityNameAndMaybePush(inst.overload_set_id, ".type");
       return;
     }
     case CARBON_KIND(GenericClassType inst): {

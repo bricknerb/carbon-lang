@@ -195,6 +195,8 @@ class InstNamer {
   auto PushEntity(ClassId class_id, ScopeId scope_id, Scope& scope) -> void;
   auto PushEntity(FunctionId function_id, ScopeId scope_id, Scope& scope)
       -> void;
+  auto PushEntity(CppOverloadSetId cpp_overload_set_id, ScopeId scope_id,
+                  Scope& scope) -> void;
   auto PushEntity(ImplId impl_id, ScopeId scope_id, Scope& scope) -> void;
   auto PushEntity(InterfaceId interface_id, ScopeId scope_id, Scope& scope)
       -> void;
