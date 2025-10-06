@@ -473,6 +473,23 @@ auto PerformMemberAccess(Context& context, SemIR::LocId loc_id,
   }
 }
 
+// Returns a type that is never a facet. For facets, this returns the FacetType
+// of that facet. This always gives a TypeId which we can do name lookup with.
+static auto ExtractFacetTypeForFacet(Context& context, SemIR::TypeId type_id)
+    -> SemIR::TypeId {
+  auto facet_inst_id =
+      GetCanonicalFacetOrTypeValue(context, context.types().GetInstId(type_id));
+  auto facet_inst_type_id = context.insts().Get(facet_inst_id).type_id();
+
+  if (facet_inst_type_id == SemIR::TypeType::TypeId) {
+    // `type_id` is not a facet, return it unchanged.
+    return type_id;
+  } else {
+    // Return the type of the facet.
+    return facet_inst_type_id;
+  }
+}
+
 // Common logic for `AccessMemberAction` and `AccessOptionalMemberAction`.
 static auto PerformActionHelper(Context& context, SemIR::LocId loc_id,
                                 SemIR::InstId base_id, SemIR::NameId name_id,
@@ -490,8 +507,16 @@ static auto PerformActionHelper(Context& context, SemIR::LocId loc_id,
     }
   }
 
-  // If the base isn't a scope, it must have a complete type.
+  // Otherwise, handle `x.F` by performing lookup into the type of `x` (where
+  // `x` is `base_id`).
   auto base_type_id = context.insts().Get(base_id).type_id();
+
+  // Require a complete type explicitly. Materializing a temporary will too, but
+  // we can produce a better diagnostic here with context about what operation
+  // is being done (member access) that requires the complete type.
+  //
+  // TODO: ConvertToValueOrRefExpr could take context about the operation being
+  // done to give a better error than "invalid use of" an incomplete type?
   if (!RequireCompleteType(context, base_type_id, SemIR::LocId(base_id), [&] {
         CARBON_DIAGNOSTIC(IncompleteTypeInMemberAccess, Error,
                           "member access into object of incomplete type {0}",
@@ -502,70 +527,79 @@ static auto PerformActionHelper(Context& context, SemIR::LocId loc_id,
     return SemIR::ErrorInst::InstId;
   }
 
-  // Materialize a temporary for the base expression if necessary.
-  base_id = ConvertToValueOrRefExpr(context, base_id);
-  base_type_id = context.insts().Get(base_id).type_id();
-  auto base_type_const_id = context.types().GetConstantId(base_type_id);
-
-  // Find the scope corresponding to the base type.
-  llvm::SmallVector<LookupScope> lookup_scopes;
-  if (!AppendLookupScopesForConstant(context, loc_id, base_type_const_id,
-                                     &lookup_scopes)) {
-    // The base type is not a name scope. Try some fallback options.
-    if (auto struct_type = context.insts().TryGetAs<SemIR::StructType>(
-            context.constant_values().GetInstId(base_type_const_id))) {
-      // TODO: Do we need to optimize this with a lookup table for O(1)?
-      for (auto [i, field] : llvm::enumerate(
-               context.struct_type_fields().Get(struct_type->fields_id))) {
-        if (name_id == field.name_id) {
-          // TODO: Model this as producing a lookup result, and do instance
-          // binding separately. Perhaps a struct type should be a name scope.
-          return GetOrAddInst<SemIR::StructAccess>(
-              context, loc_id,
-              {.type_id =
-                   context.types().GetTypeIdForTypeInstId(field.type_inst_id),
-               .struct_id = base_id,
-               .index = SemIR::ElementIndex(i)});
-        }
-      }
-      if (required) {
-        CARBON_DIAGNOSTIC(QualifiedExprNameNotFound, Error,
-                          "type {0} does not have a member `{1}`", TypeOfInstId,
-                          SemIR::NameId);
-        context.emitter().Emit(loc_id, QualifiedExprNameNotFound, base_id,
-                               name_id);
-        return SemIR::ErrorInst::InstId;
-      } else {
-        return SemIR::InstId::None;
-      }
-    }
-
-    if (base_type_id != SemIR::ErrorInst::TypeId) {
-      CARBON_DIAGNOSTIC(QualifiedExprUnsupported, Error,
-                        "type {0} does not support qualified expressions",
-                        TypeOfInstId);
-      context.emitter().Emit(loc_id, QualifiedExprUnsupported, base_id);
-    }
-    return SemIR::ErrorInst::InstId;
-  }
-
-  // Perform lookup into the base type.
-  auto member_id = LookupMemberNameInScope(
-      context, loc_id, base_id, name_id, base_type_const_id, lookup_scopes,
-      /*lookup_in_type_of_base=*/true, /*required=*/required);
-
   // For name lookup into a facet, never perform instance binding.
   // TODO: According to the design, this should be a "lookup in base" lookup,
   // not a "lookup in type of base" lookup, and the facet itself should have
   // member names that directly name members of the `impl`.
-  if (context.types().IsFacetType(base_type_id)) {
-    return member_id;
+  bool perform_instance_binding =
+      !context.types().Is<SemIR::FacetType>(base_type_id);
+
+  // Materialize a temporary for the base expression if necessary.
+  base_id = ConvertToValueOrRefExpr(context, base_id);
+  base_type_id = context.insts().Get(base_id).type_id();
+
+  {
+    // If `base_type_id` is a facet, we don't know its eventual type yet, but we
+    // don't produce a symbolic instruction to do the name lookup later. We want
+    // to do that lookup into the scope of the facet's FacetType, so we extract
+    // that here.
+    auto lookup_type_id = ExtractFacetTypeForFacet(context, base_type_id);
+    auto lookup_type_const_id = context.types().GetConstantId(lookup_type_id);
+
+    llvm::SmallVector<LookupScope> lookup_scopes;
+    if (AppendLookupScopesForConstant(context, loc_id, lookup_type_const_id,
+                                      &lookup_scopes)) {
+      // Perform lookup into the base type.
+      auto member_id = LookupMemberNameInScope(
+          context, loc_id, base_id, name_id, lookup_type_const_id,
+          lookup_scopes,
+          /*lookup_in_type_of_base=*/true, /*required=*/required);
+
+      if (perform_instance_binding) {
+        // Perform instance binding if we found an instance member.
+        member_id = PerformInstanceBinding(context, loc_id, base_id, member_id);
+      }
+
+      return member_id;
+    }
   }
 
-  // Perform instance binding if we found an instance member.
-  member_id = PerformInstanceBinding(context, loc_id, base_id, member_id);
+  // The base type is not a name scope. Try some fallback options.
+  if (auto struct_type = context.insts().TryGetAs<SemIR::StructType>(
+          context.types().GetInstId(base_type_id))) {
+    // TODO: Do we need to optimize this with a lookup table for O(1)?
+    for (auto [i, field] : llvm::enumerate(
+             context.struct_type_fields().Get(struct_type->fields_id))) {
+      if (name_id == field.name_id) {
+        // TODO: Model this as producing a lookup result, and do instance
+        // binding separately. Perhaps a struct type should be a name scope.
+        return GetOrAddInst<SemIR::StructAccess>(
+            context, loc_id,
+            {.type_id =
+                 context.types().GetTypeIdForTypeInstId(field.type_inst_id),
+             .struct_id = base_id,
+             .index = SemIR::ElementIndex(i)});
+      }
+    }
+    if (required) {
+      CARBON_DIAGNOSTIC(QualifiedExprNameNotFound, Error,
+                        "type {0} does not have a member `{1}`", TypeOfInstId,
+                        SemIR::NameId);
+      context.emitter().Emit(loc_id, QualifiedExprNameNotFound, base_id,
+                             name_id);
+      return SemIR::ErrorInst::InstId;
+    } else {
+      return SemIR::InstId::None;
+    }
+  }
 
-  return member_id;
+  if (base_type_id != SemIR::ErrorInst::TypeId) {
+    CARBON_DIAGNOSTIC(QualifiedExprUnsupported, Error,
+                      "type {0} does not support qualified expressions",
+                      TypeOfInstId);
+    context.emitter().Emit(loc_id, QualifiedExprUnsupported, base_id);
+  }
+  return SemIR::ErrorInst::InstId;
 }
 
 auto PerformAction(Context& context, SemIR::LocId loc_id,
@@ -597,9 +631,9 @@ static auto GetAssociatedValueImpl(Context& context, SemIR::LocId loc_id,
   }
   // That facet value has both the self type we need below and the witness
   // we are going to use to look up the value of the associated member.
-  auto self_type_const_id = TryEvalInst(
-      context, SemIR::FacetAccessType{.type_id = SemIR::TypeType::TypeId,
-                                      .facet_value_inst_id = facet_inst_id});
+  auto self_type_const_id = TryEvalInst<SemIR::FacetAccessType>(
+      context, {.type_id = SemIR::TypeType::TypeId,
+                .facet_value_inst_id = facet_inst_id});
   // TODO: We should be able to lookup constant associated values from runtime
   // facet values by using their FacetType only, but we assume constant values
   // for impl lookup at the moment.
@@ -610,6 +644,11 @@ static auto GetAssociatedValueImpl(Context& context, SemIR::LocId loc_id,
   auto self_type_id =
       context.types().GetTypeIdForTypeConstantId(self_type_const_id);
 
+  // TODO: If `ConvertToValueOfType` returned a `FacetValue`, we already got a
+  // witness for this interface there. We don't need to do both a
+  // ConvertToValueOfType and LookupImplWitness, that is redundant. Since we
+  // want to do LookupImplWitness unconditionally (eg. if `base_id` has exactly
+  // the right FacetType already), can we drop the ConvertToValueOfType step?
   auto lookup_result = LookupImplWitness(
       context, loc_id, context.constant_values().Get(facet_inst_id),
       EvalOrAddInst(context, loc_id,
