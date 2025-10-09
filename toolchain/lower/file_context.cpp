@@ -819,6 +819,15 @@ static auto BuildTypeForInst(FileContext& /*context*/,
   return nullptr;
 }
 
+static auto BuildTypeForInst(FileContext& context,
+                             SemIR::CustomCppLongLongType /*inst*/)
+    -> llvm::Type* {
+  return llvm::Type::getIntNTy(
+      context.llvm_context(),
+      context.clang_ast_unit()->getASTContext().getIntWidth(
+          context.clang_ast_unit()->getASTContext().LongLongTy));
+}
+
 static auto BuildTypeForInst(FileContext& context, SemIR::FloatType inst)
     -> llvm::Type* {
   return llvm::Type::getFloatingPointTy(context.llvm_context(),

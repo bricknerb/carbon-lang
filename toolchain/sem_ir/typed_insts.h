@@ -581,6 +581,21 @@ struct ConvertToValueAction {
   TypeInstId target_type_inst_id;
 };
 
+// A type for C++ `long long`.
+struct CustomCppLongLongType {
+  static constexpr auto Kind =
+      InstKind::CustomCppLongLongType.Define<Parse::NoneNodeId>(
+          {.ir_name = "custom_cpp_long_long_type",
+           .is_type = InstIsType::Always,
+           .constant_kind = InstConstantKind::Always});
+
+  static constexpr auto TypeInstId = MakeSingletonTypeInstId<Kind>();
+  static constexpr auto TypeId =
+      TypeId::ForTypeConstant(ConstantId::ForConcreteConstant(TypeInstId));
+
+  SemIR::TypeId type_id;
+};
+
 // A type whose layout is determined externally. This is used as the object
 // representation of class types imported from C++.
 struct CustomLayoutType {

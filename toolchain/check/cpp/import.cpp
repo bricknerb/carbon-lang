@@ -1084,26 +1084,46 @@ static auto MakeIntType(Context& context, IntId size_id, bool is_signed)
 static auto MapBuiltinIntegerType(Context& context, SemIR::LocId loc_id,
                                   clang::QualType qual_type,
                                   const clang::BuiltinType& type) -> TypeExpr {
+  // llvm::errs() << "A1 " << qual_type.getAsString() << "\n";
   clang::ASTContext& ast_context = context.ast_context();
   unsigned width = ast_context.getIntWidth(qual_type);
   bool is_signed = type.isSignedInteger();
   auto int_n_type = ast_context.getIntTypeForBitwidth(width, is_signed);
   if (ast_context.hasSameType(qual_type, int_n_type)) {
+    // llvm::errs() << "A2\n";
     TypeExpr type_expr =
         MakeIntType(context, context.ints().Add(width), is_signed);
     // Try to make sure integer types of 32 or 64 bits are complete so we can
     // check against them when deciding whether we need to generate a thunk.
     if (width == 32 || width == 64) {
+      // llvm::errs() << "A3\n";
       SemIR::TypeId type_id = type_expr.type_id;
       if (!context.types().IsComplete(type_id)) {
+        // llvm::errs() << "A4\n";
         TryToCompleteType(context, type_id, loc_id);
       }
     }
     return type_expr;
   }
+  // llvm::errs() << "A5\n";
   if (ast_context.hasSameType(qual_type, ast_context.CharTy)) {
+    // llvm::errs() << "A6\n";
     return ExprAsType(context, Parse::NodeId::None,
                       MakeCharTypeLiteral(context, Parse::NodeId::None));
+  }
+  // llvm::errs() << "A7\n";
+  // Special handling for long long: map to a distinct Carbon type convertible
+  // to i64.
+  if (qual_type == context.ast_context().LongLongTy) {
+    // llvm::errs() << "A8\n";
+    // Create a distinct type for long long, convertible to i64.
+    // We'll use a custom type id for C++ long long.
+    // auto longlong_type_id = SemIR::CustomCppLongLongType::TypeInstId;
+    // GetOrAddInst(
+    //     context, SemIR::LocIdAndInst::NoLoc(SemIR::CustomCppLongLongType{
+    //                  .type_id = SemIR::TypeType::TypeId}));
+    //    return ExprAsType(context, Parse::NodeId::None,
+    //                      SemIR::CustomCppLongLongType::TypeInstId);
   }
   return TypeExpr::None;
 }

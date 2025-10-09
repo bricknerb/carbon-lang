@@ -377,6 +377,11 @@ class Stringifier {
     step_stack_->Push(inst.type_inst_id, " as ", inst.type_id);
   }
 
+  auto StringifyInst(InstId /*inst_id*/, CustomCppLongLongType /*inst*/)
+      -> void {
+    *out_ << "<builtin Cpp.long_long>";
+  }
+
   auto StringifyInst(InstId /*inst_id*/, FloatType inst) -> void {
     *out_ << "<builtin ";
     step_stack_->PushString(">");
