@@ -1492,17 +1492,15 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
     return SemIR::InstId::None;
   }
   auto pattern_type_id = GetPatternType(context, type_id);
-  SemIR::InstId return_slot_pattern_id = AddPatternInst(
-      // TODO: Fill in a location for the return type once available.
-      context,
-      SemIR::LocIdAndInst::NoLoc(SemIR::ReturnSlotPattern(
-          {.type_id = pattern_type_id, .type_inst_id = type_inst_id})));
+  SemIR::InstId return_slot_pattern_id =
+      AddPatternInst(context, loc_id,
+                     SemIR::ReturnSlotPattern({.type_id = pattern_type_id,
+                                               .type_inst_id = type_inst_id}));
   SemIR::InstId param_pattern_id = AddPatternInst(
-      // TODO: Fill in a location for the return type once available.
-      context, SemIR::LocIdAndInst::NoLoc(SemIR::OutParamPattern(
-                   {.type_id = pattern_type_id,
-                    .subpattern_id = return_slot_pattern_id,
-                    .index = SemIR::CallParamIndex::None})));
+      context, loc_id,
+      SemIR::OutParamPattern({.type_id = pattern_type_id,
+                              .subpattern_id = return_slot_pattern_id,
+                              .index = SemIR::CallParamIndex::None}));
   return param_pattern_id;
 }
 
