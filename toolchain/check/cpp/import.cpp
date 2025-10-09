@@ -1496,7 +1496,7 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
       clang_decl->getReturnTypeSourceRange().getBegin();
   if (return_type_loc.isInvalid()) {
     // TODO: While `getReturnTypeSourceRange()` should work, it seems broken for
-    // trialing return type. See
+    // trailing return type. See
     // https://github.com/llvm/llvm-project/issues/162649. Until this is fixed,
     // we fallback to `getTypeSpecStartLoc()`.
     return_type_loc = clang_decl->getTypeSpecStartLoc();
