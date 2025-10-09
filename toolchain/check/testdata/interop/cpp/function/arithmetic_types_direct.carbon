@@ -969,7 +969,6 @@ fn F() {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
-// CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %Carbon_foo.type: type = fn_type @Carbon_foo [concrete]
 // CHECK:STDOUT:   %Carbon_foo: %Carbon_foo.type = struct_value () [concrete]
 // CHECK:STDOUT:   %foo_int.cpp_overload_set.type: type = cpp_overload_set_type @foo_int.cpp_overload_set [concrete]
@@ -985,12 +984,9 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %foo_int.cpp_overload_set.value: %foo_int.cpp_overload_set.type = cpp_overload_set_value @foo_int.cpp_overload_set [concrete = constants.%foo_int.cpp_overload_set.value]
 // CHECK:STDOUT:   %foo_int.decl: %foo_int.type = fn_decl @foo_int [concrete = constants.%foo_int] {
-// CHECK:STDOUT:     %return.patt: %pattern_type.7ce = return_slot_pattern [concrete]
-// CHECK:STDOUT:     %return.param_patt: %pattern_type.7ce = out_param_pattern %return.patt, call_param0 [concrete]
+// CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
-// CHECK:STDOUT:     %return.param: ref %i32 = out_param call_param0
-// CHECK:STDOUT:     %return: ref %i32 = return_slot %return.param
 // CHECK:STDOUT:   }
 // CHECK:STDOUT: }
 // CHECK:STDOUT:

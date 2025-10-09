@@ -1492,12 +1492,23 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
     return SemIR::InstId::None;
   }
   auto pattern_type_id = GetPatternType(context, type_id);
+  clang::SourceLocation return_type_loc =
+      clang_decl->getReturnTypeSourceRange().getBegin();
+  if (return_type_loc.isInvalid()) {
+    // TODO: While `getReturnTypeSourceRange()` should work, it seems broken for
+    // trialing return type. See
+    // https://github.com/llvm/llvm-project/issues/162649. Until this is fixed,
+    // we fallback to `getTypeSpecStartLoc()`.
+    return_type_loc = clang_decl->getTypeSpecStartLoc();
+  }
+  SemIR::LocId return_type_loc_id =
+      AddImportIRInst(context.sem_ir(), return_type_loc);
   SemIR::InstId return_slot_pattern_id =
-      AddPatternInst(context, loc_id,
+      AddPatternInst(context, return_type_loc_id,
                      SemIR::ReturnSlotPattern({.type_id = pattern_type_id,
                                                .type_inst_id = type_inst_id}));
   SemIR::InstId param_pattern_id = AddPatternInst(
-      context, loc_id,
+      context, return_type_loc_id,
       SemIR::OutParamPattern({.type_id = pattern_type_id,
                               .subpattern_id = return_slot_pattern_id,
                               .index = SemIR::CallParamIndex::None}));
