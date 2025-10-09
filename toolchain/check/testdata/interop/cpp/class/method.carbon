@@ -47,42 +47,66 @@ fn F(v: Cpp.HasQualifiers, p: Cpp.HasQualifiers*) {
 
 library "[[@TEST_NAME]]";
 
+// CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+8]]:10: in file included here [InCppInclude]
+// CHECK:STDERR: ./object_param_qualifiers.h:10:8: error: 'this' argument to member function 'ref_ref_this' is an lvalue, but function has rvalue ref-qualifier [CppInteropParseError]
+// CHECK:STDERR:    10 |   void ref_ref_this() &&;
+// CHECK:STDERR:       |        ^
+// CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+4]]:10: in file included here [InCppInclude]
+// CHECK:STDERR: ./object_param_qualifiers.h:10:8: note: 'ref_ref_this' declared here [CppInteropParseNote]
+// CHECK:STDERR:    10 |   void ref_ref_this() &&;
+// CHECK:STDERR:       |        ^
 import Cpp library "object_param_qualifiers.h";
 
 fn Value(v: Cpp.HasQualifiers) {
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+5]]:3: error: `addr self` method cannot be invoked on a value [AddrSelfIsNonRef]
+  v.plain();
+
+  // TODO: This should remain invalid once we support `volatile`.
+  v.volatile_this();
+
+  v.ref_this();
+
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+12]]:3: note: in thunk for C++ function used here [InCppThunk]
+  // CHECK:STDERR:   v.ref_ref_this();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-14]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./object_param_qualifiers.h:11:8: error: 'this' argument to member function 'const_ref_ref_this' is an lvalue, but function has rvalue ref-qualifier [CppInteropParseError]
+  // CHECK:STDERR:    11 |   void const_ref_ref_this() const&&;
+  // CHECK:STDERR:       |        ^
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-18]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./object_param_qualifiers.h:11:8: note: 'const_ref_ref_this' declared here [CppInteropParseNote]
+  // CHECK:STDERR:    11 |   void const_ref_ref_this() const&&;
+  // CHECK:STDERR:       |        ^
+  v.ref_ref_this();
+
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+29]]:3: note: in thunk for C++ function used here [InCppThunk]
+  // CHECK:STDERR:   v.const_ref_ref_this();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR:
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-25]]:3: error: `addr self` method cannot be invoked on a value [AddrSelfIsNonRef]
   // CHECK:STDERR:   v.plain();
   // CHECK:STDERR:   ^
   // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
-  v.plain();
-
-  // TODO: This should remain invalid once we support `volatile`.
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+4]]:3: error: semantics TODO: `Unsupported: object parameter type: volatile struct HasQualifiers` [SemanticsTodo]
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-27]]:3: error: semantics TODO: `Unsupported: object parameter type: volatile struct HasQualifiers` [SemanticsTodo]
   // CHECK:STDERR:   v.volatile_this();
   // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~
   // CHECK:STDERR:
-  v.volatile_this();
-
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+8]]:14: error: no matching function for call to 'ref_this' [CppInteropParseError]
-  // CHECK:STDERR:    29 |   v.ref_this();
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-29]]:14: error: no matching function for call to 'ref_this' [CppInteropParseError]
+  // CHECK:STDERR:    20 |   v.ref_this();
   // CHECK:STDERR:       |              ^
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-20]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE-40]]:10: in file included here [InCppInclude]
   // CHECK:STDERR: ./object_param_qualifiers.h:7:8: note: candidate function not viable: expects an lvalue for object argument [CppInteropParseNote]
   // CHECK:STDERR:     7 |   void ref_this() &;
   // CHECK:STDERR:       |        ^
   // CHECK:STDERR:
-  v.ref_this();
-
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+4]]:3: error: semantics TODO: `Unsupported: object parameter type: struct HasQualifiers &&` [SemanticsTodo]
-  // CHECK:STDERR:   v.ref_ref_this();
-  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~
-  // CHECK:STDERR:
-  v.ref_ref_this();
-
-  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+4]]:3: error: semantics TODO: `Unsupported: object parameter type: const struct HasQualifiers &&` [SemanticsTodo]
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+8]]:3: error: cannot implicitly convert expression of type `Cpp.HasQualifiers` to `const Cpp.HasQualifiers` [ConversionFailure]
   // CHECK:STDERR:   v.const_ref_ref_this();
-  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR:   ^
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon:[[@LINE+5]]:3: note: type `Cpp.HasQualifiers` does not implement interface `Core.ImplicitAs(const Cpp.HasQualifiers)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   v.const_ref_ref_this();
+  // CHECK:STDERR:   ^
+  // CHECK:STDERR: fail_bad_object_param_qualifiers_by_value.carbon: note: initializing function parameter [InCallToFunctionParam]
   // CHECK:STDERR:
   v.const_ref_ref_this();
 }
