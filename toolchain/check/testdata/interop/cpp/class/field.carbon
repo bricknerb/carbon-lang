@@ -16,6 +16,7 @@ struct Struct {
   int a;
   int b;
   int* _Nonnull p;
+  int& r;
 };
 
 // --- use_struct_fields.carbon
@@ -24,9 +25,9 @@ library "[[@TEST_NAME]]";
 
 import Cpp library "struct.h";
 
-fn F(s: Cpp.Struct) -> (i32, i32, i32) {
+fn F(s: Cpp.Struct) -> (i32, i32, i32, i32) {
   //@dump-sem-ir-begin
-  return (s.a, s.b, *s.p);
+  return (s.a, s.b, *s.p, *s.r);
   //@dump-sem-ir-end
 }
 
@@ -160,8 +161,6 @@ struct UnsupportedMembers {
   volatile int is_volatile;
   // Nullable pointers are not supported.
   int *is_nullable;
-  // References are not supported.
-  int &is_reference;
   // But this should be fine.
   int integer;
 };
@@ -202,21 +201,11 @@ fn Test(m: Cpp.UnsupportedMembers*) {
   // CHECK:STDERR:        ^
   let a: i32 = m->is_volatile;
 
-  // CHECK:STDERR: fail_use_unsupported_members.carbon:[[@LINE+8]]:17: note: in `Cpp` name lookup for `is_nullable` [InCppNameLookup]
+  // CHECK:STDERR: fail_use_unsupported_members.carbon:[[@LINE+4]]:17: note: in `Cpp` name lookup for `is_nullable` [InCppNameLookup]
   // CHECK:STDERR:   let b: i32 = *m->is_nullable;
   // CHECK:STDERR:                 ^~~~~~~~~~~~~~
   // CHECK:STDERR:
-  // CHECK:STDERR: fail_use_unsupported_members.carbon:[[@LINE-17]]:10: in file included here [InCppInclude]
-  // CHECK:STDERR: ./unsupported_members.h:8:8: error: semantics TODO: `Unsupported: field declaration has unhandled type or kind` [SemanticsTodo]
-  // CHECK:STDERR:   int &is_reference;
-  // CHECK:STDERR:        ^
   let b: i32 = *m->is_nullable;
-
-  // CHECK:STDERR: fail_use_unsupported_members.carbon:[[@LINE+4]]:16: note: in `Cpp` name lookup for `is_reference` [InCppNameLookup]
-  // CHECK:STDERR:   let c: i32 = m->is_reference;
-  // CHECK:STDERR:                ^~~~~~~~~~~~~~~
-  // CHECK:STDERR:
-  let c: i32 = m->is_reference;
 }
 
 // CHECK:STDOUT: --- use_struct_fields.carbon
@@ -226,7 +215,7 @@ fn Test(m: Cpp.UnsupportedMembers*) {
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
 // CHECK:STDOUT:   %N: Core.IntLiteral = bind_symbolic_name N, 0 [symbolic]
 // CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
-// CHECK:STDOUT:   %tuple.type.189: type = tuple_type (%i32, %i32, %i32) [concrete]
+// CHECK:STDOUT:   %tuple.type.7ea: type = tuple_type (%i32, %i32, %i32, %i32) [concrete]
 // CHECK:STDOUT:   %Struct.elem.86b: type = unbound_element_type %Struct, %i32 [concrete]
 // CHECK:STDOUT:   %ptr.235: type = ptr_type %i32 [concrete]
 // CHECK:STDOUT:   %Struct.elem.765: type = unbound_element_type %Struct, %ptr.235 [concrete]
@@ -247,7 +236,7 @@ fn Test(m: Cpp.UnsupportedMembers*) {
 // CHECK:STDOUT:   %Copy.impl_witness_table.1ed = impl_witness_table (%Core.import_ref.d0f6), @Int.as.Copy.impl [concrete]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: fn @F(%s.param: %Struct) -> %return.param: %tuple.type.189 {
+// CHECK:STDOUT: fn @F(%s.param: %Struct) -> %return.param: %tuple.type.7ea {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   %s.ref.loc8_11: %Struct = name_ref s, %s
 // CHECK:STDOUT:   %a.ref: %Struct.elem.86b = name_ref a, @Struct.%.1 [concrete = @Struct.%.1]
@@ -262,21 +251,26 @@ fn Test(m: Cpp.UnsupportedMembers*) {
 // CHECK:STDOUT:   %.loc8_23.1: ref %ptr.235 = class_element_access %s.ref.loc8_22, element2
 // CHECK:STDOUT:   %.loc8_23.2: %ptr.235 = bind_value %.loc8_23.1
 // CHECK:STDOUT:   %.loc8_21.1: ref %i32 = deref %.loc8_23.2
-// CHECK:STDOUT:   %.loc8_25.1: %tuple.type.189 = tuple_literal (%.loc8_12.2, %.loc8_17.2, %.loc8_21.1)
+// CHECK:STDOUT:   %s.ref.loc8_28: %Struct = name_ref s, %s
+// CHECK:STDOUT:   %r.ref: %Struct.elem.765 = name_ref r, @Struct.%.4 [concrete = @Struct.%.4]
+// CHECK:STDOUT:   %.loc8_29.1: ref %ptr.235 = class_element_access %s.ref.loc8_28, element3
+// CHECK:STDOUT:   %.loc8_29.2: %ptr.235 = bind_value %.loc8_29.1
+// CHECK:STDOUT:   %.loc8_27.1: ref %i32 = deref %.loc8_29.2
+// CHECK:STDOUT:   %.loc8_31.1: %tuple.type.7ea = tuple_literal (%.loc8_12.2, %.loc8_17.2, %.loc8_21.1, %.loc8_27.1)
 // CHECK:STDOUT:   %impl.elem0.loc8_12: %.7fa = impl_witness_access constants.%Copy.impl_witness.a32, element0 [concrete = constants.%Int.as.Copy.impl.Op.f59]
 // CHECK:STDOUT:   %bound_method.loc8_12.1: <bound method> = bound_method %.loc8_12.2, %impl.elem0.loc8_12
 // CHECK:STDOUT:   %specific_fn.loc8_12: <specific function> = specific_function %impl.elem0.loc8_12, @Int.as.Copy.impl.Op(constants.%int_32) [concrete = constants.%Int.as.Copy.impl.Op.specific_fn]
 // CHECK:STDOUT:   %bound_method.loc8_12.2: <bound method> = bound_method %.loc8_12.2, %specific_fn.loc8_12
 // CHECK:STDOUT:   %Int.as.Copy.impl.Op.call.loc8_12: init %i32 = call %bound_method.loc8_12.2(%.loc8_12.2)
 // CHECK:STDOUT:   %tuple.elem0: ref %i32 = tuple_access %return, element0
-// CHECK:STDOUT:   %.loc8_25.2: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_12 to %tuple.elem0
+// CHECK:STDOUT:   %.loc8_31.2: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_12 to %tuple.elem0
 // CHECK:STDOUT:   %impl.elem0.loc8_17: %.7fa = impl_witness_access constants.%Copy.impl_witness.a32, element0 [concrete = constants.%Int.as.Copy.impl.Op.f59]
 // CHECK:STDOUT:   %bound_method.loc8_17.1: <bound method> = bound_method %.loc8_17.2, %impl.elem0.loc8_17
 // CHECK:STDOUT:   %specific_fn.loc8_17: <specific function> = specific_function %impl.elem0.loc8_17, @Int.as.Copy.impl.Op(constants.%int_32) [concrete = constants.%Int.as.Copy.impl.Op.specific_fn]
 // CHECK:STDOUT:   %bound_method.loc8_17.2: <bound method> = bound_method %.loc8_17.2, %specific_fn.loc8_17
 // CHECK:STDOUT:   %Int.as.Copy.impl.Op.call.loc8_17: init %i32 = call %bound_method.loc8_17.2(%.loc8_17.2)
 // CHECK:STDOUT:   %tuple.elem1: ref %i32 = tuple_access %return, element1
-// CHECK:STDOUT:   %.loc8_25.3: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_17 to %tuple.elem1
+// CHECK:STDOUT:   %.loc8_31.3: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_17 to %tuple.elem1
 // CHECK:STDOUT:   %.loc8_21.2: %i32 = bind_value %.loc8_21.1
 // CHECK:STDOUT:   %impl.elem0.loc8_21: %.7fa = impl_witness_access constants.%Copy.impl_witness.a32, element0 [concrete = constants.%Int.as.Copy.impl.Op.f59]
 // CHECK:STDOUT:   %bound_method.loc8_21.1: <bound method> = bound_method %.loc8_21.2, %impl.elem0.loc8_21
@@ -284,10 +278,18 @@ fn Test(m: Cpp.UnsupportedMembers*) {
 // CHECK:STDOUT:   %bound_method.loc8_21.2: <bound method> = bound_method %.loc8_21.2, %specific_fn.loc8_21
 // CHECK:STDOUT:   %Int.as.Copy.impl.Op.call.loc8_21: init %i32 = call %bound_method.loc8_21.2(%.loc8_21.2)
 // CHECK:STDOUT:   %tuple.elem2: ref %i32 = tuple_access %return, element2
-// CHECK:STDOUT:   %.loc8_25.4: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_21 to %tuple.elem2
-// CHECK:STDOUT:   %.loc8_25.5: init %tuple.type.189 = tuple_init (%.loc8_25.2, %.loc8_25.3, %.loc8_25.4) to %return
-// CHECK:STDOUT:   %.loc8_26: init %tuple.type.189 = converted %.loc8_25.1, %.loc8_25.5
-// CHECK:STDOUT:   return %.loc8_26 to %return
+// CHECK:STDOUT:   %.loc8_31.4: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_21 to %tuple.elem2
+// CHECK:STDOUT:   %.loc8_27.2: %i32 = bind_value %.loc8_27.1
+// CHECK:STDOUT:   %impl.elem0.loc8_27: %.7fa = impl_witness_access constants.%Copy.impl_witness.a32, element0 [concrete = constants.%Int.as.Copy.impl.Op.f59]
+// CHECK:STDOUT:   %bound_method.loc8_27.1: <bound method> = bound_method %.loc8_27.2, %impl.elem0.loc8_27
+// CHECK:STDOUT:   %specific_fn.loc8_27: <specific function> = specific_function %impl.elem0.loc8_27, @Int.as.Copy.impl.Op(constants.%int_32) [concrete = constants.%Int.as.Copy.impl.Op.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc8_27.2: <bound method> = bound_method %.loc8_27.2, %specific_fn.loc8_27
+// CHECK:STDOUT:   %Int.as.Copy.impl.Op.call.loc8_27: init %i32 = call %bound_method.loc8_27.2(%.loc8_27.2)
+// CHECK:STDOUT:   %tuple.elem3: ref %i32 = tuple_access %return, element3
+// CHECK:STDOUT:   %.loc8_31.5: init %i32 = initialize_from %Int.as.Copy.impl.Op.call.loc8_27 to %tuple.elem3
+// CHECK:STDOUT:   %.loc8_31.6: init %tuple.type.7ea = tuple_init (%.loc8_31.2, %.loc8_31.3, %.loc8_31.4, %.loc8_31.5) to %return
+// CHECK:STDOUT:   %.loc8_32: init %tuple.type.7ea = converted %.loc8_31.1, %.loc8_31.6
+// CHECK:STDOUT:   return %.loc8_32 to %return
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: --- use_union_fields.carbon

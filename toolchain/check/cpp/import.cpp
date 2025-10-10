@@ -1243,6 +1243,23 @@ static auto MapPointerType(Context& context, clang::QualType type,
           .type_id = pointer_type_id};
 }
 
+// Maps a C++ reference type to a Carbon type.
+// We map `T&` to `T*`, and `T&&` to `T`.
+// TODO: Revisit this and decide what we really want to do here.
+static auto MapReferenceType(Context& context, clang::QualType type,
+                             TypeExpr referenced_type_expr) -> TypeExpr {
+  CARBON_CHECK(type->isReferenceType());
+
+  if (!type->isLValueReferenceType()) {
+    return referenced_type_expr;
+  }
+
+  SemIR::TypeId pointer_type_id =
+      GetPointerType(context, referenced_type_expr.inst_id);
+  return {.inst_id = context.types().GetInstId(pointer_type_id),
+          .type_id = pointer_type_id};
+}
+
 // Maps a C++ type to a Carbon type. `type` should not be canonicalized because
 // we check for pointer nullability and nullability will be lost by
 // canonicalization.
@@ -1256,6 +1273,8 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
       type = type.getUnqualifiedType();
     } else if (type->isPointerType()) {
       type = type->getPointeeType();
+    } else if (type->isReferenceType()) {
+      type = type.getNonReferenceType();
     } else {
       break;
     }
@@ -1274,6 +1293,8 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
       mapped = MapQualifiedType(context, wrapper, mapped);
     } else if (wrapper->isPointerType()) {
       mapped = MapPointerType(context, wrapper, mapped);
+    } else if (wrapper->isReferenceType()) {
+      mapped = MapReferenceType(context, wrapper, mapped);
     } else {
       CARBON_FATAL("Unexpected wrapper type {0}", wrapper.getAsString());
     }
@@ -1373,11 +1394,7 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
     // TODO: The presence of qualifiers here is probably a Clang bug.
     clang::QualType param_type = orig_param_type.getUnqualifiedType();
 
-    // We map `T&` parameters to `addr param: T*`, and `T&&` parameters to
-    // `param: T`.
-    // TODO: Revisit this and decide what we really want to do here.
     bool is_ref_param = param_type->isLValueReferenceType();
-    param_type = param_type.getNonReferenceType();
 
     // Mark the start of a region of insts, needed for the type expression
     // created later with the call of `EndSubpatternAsExpr()`.
@@ -1393,10 +1410,6 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
       context.TODO(loc_id, llvm::formatv("Unsupported: parameter type: {0}",
                                          orig_param_type.getAsString()));
       return SemIR::InstBlockId::None;
-    }
-
-    if (is_ref_param) {
-      type_id = GetPointerType(context, orig_type_inst_id);
     }
 
     llvm::StringRef param_name = param->getName();
@@ -1425,6 +1438,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
                        .subpattern_id = pattern_id,
                        .index = SemIR::CallParamIndex::None})});
     if (is_ref_param) {
+      // We map `T&` parameters to `addr param: T*`.
+      // TODO: Revisit this and decide what we really want to do here.
       pattern_id = AddPatternInst(
           context, {param_loc_id,
                     SemIR::AddrPattern(
@@ -1446,21 +1461,12 @@ static auto GetReturnTypeExpr(Context& context, SemIR::LocId loc_id,
                               clang::FunctionDecl* clang_decl) -> TypeExpr {
   clang::QualType orig_ret_type = clang_decl->getReturnType();
   if (!orig_ret_type->isVoidType()) {
-    // We map `T&` return type to `addr param: T*`, and `T&&` parameters to
-    // `param: T`.
-    // TODO: Revisit this and decide what we really want to do here.
-    clang::QualType ret_type = orig_ret_type.getNonReferenceType();
-
-    auto [orig_type_inst_id, type_id] = MapType(context, loc_id, ret_type);
+    auto [orig_type_inst_id, type_id] = MapType(context, loc_id, orig_ret_type);
     if (!orig_type_inst_id.has_value()) {
       context.TODO(loc_id, llvm::formatv("Unsupported: return type: {0}",
                                          orig_ret_type.getAsString()));
       return {.inst_id = SemIR::ErrorInst::TypeInstId,
               .type_id = SemIR::ErrorInst::TypeId};
-    }
-
-    if (orig_ret_type->isLValueReferenceType()) {
-      type_id = GetPointerType(context, orig_type_inst_id);
     }
 
     return {orig_type_inst_id, type_id};
