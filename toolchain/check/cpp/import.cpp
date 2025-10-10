@@ -1244,8 +1244,7 @@ static auto MapPointerType(Context& context, clang::QualType type,
 }
 
 // Maps a C++ reference type to a Carbon type.
-// We map `T&` parameters to `addr param: T*`, and `T&&` parameters to
-// `param: T`.
+// We map `T&` to `T*`, and `T&&` to `T`.
 // TODO: Revisit this and decide what we really want to do here.
 static auto MapReferenceType(Context& context, clang::QualType type,
                              TypeExpr referenced_type_expr) -> TypeExpr {
@@ -1438,6 +1437,8 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
              .subpattern_id = pattern_id,
              .index = SemIR::CallParamIndex::None})));
     if (is_ref_param) {
+      // We map `T&` parameters to `addr param: T*`.
+      // TODO: Revisit this and decide what we really want to do here.
       pattern_id = AddPatternInst(
           context,
           // TODO: Fill in a location once available.
