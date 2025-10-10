@@ -53,10 +53,13 @@ library "[[@TEST_NAME]]";
 import Cpp library "int_param.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_int_param_overflow_max.carbon:[[@LINE+5]]:11: error: integer value 2147483648 too large for type `i32` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_int_param_overflow_max.carbon:[[@LINE+8]]:11: error: integer value 2147483648 too large for type `i32` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(0x8000_0000);
   // CHECK:STDERR:           ^~~~~~~~~~~
-  // CHECK:STDERR: fail_import_int_param_overflow_max.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_int_param_overflow_max.carbon:[[@LINE-6]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./int_param.h:2:14: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: auto foo(int a) -> void;
+  // CHECK:STDERR:              ^
   // CHECK:STDERR:
   Cpp.foo(0x8000_0000);
 }
@@ -80,10 +83,13 @@ library "[[@TEST_NAME]]";
 import Cpp library "int_param.h";
 
 fn F() {
-  // CHECK:STDERR: fail_import_int_param_overflow_min.carbon:[[@LINE+5]]:11: error: integer value -2147483649 too large for type `i32` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_int_param_overflow_min.carbon:[[@LINE+8]]:11: error: integer value -2147483649 too large for type `i32` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(-0x8000_0001);
   // CHECK:STDERR:           ^~~~~~~~~~~~
-  // CHECK:STDERR: fail_import_int_param_overflow_min.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_int_param_overflow_min.carbon:[[@LINE-6]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./int_param.h:2:14: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: auto foo(int a) -> void;
+  // CHECK:STDERR:              ^
   // CHECK:STDERR:
   Cpp.foo(-0x8000_0001);
 }
@@ -157,19 +163,25 @@ import Cpp library "unsigned_int_param.h";
 fn F() {
   Cpp.foo(0);
 
-  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE+5]]:11: error: negative integer value -1 converted to unsigned type `u32` [NegativeIntInUnsignedType]
+  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE+8]]:11: error: negative integer value -1 converted to unsigned type `u32` [NegativeIntInUnsignedType]
   // CHECK:STDERR:   Cpp.foo(-1);
   // CHECK:STDERR:           ^~
-  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE-8]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./unsigned_int_param.h:2:23: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: auto foo(unsigned int a) -> void;
+  // CHECK:STDERR:                       ^
   // CHECK:STDERR:
   Cpp.foo(-1);
 
   Cpp.foo(0x0_FFFF_FFFF);
 
-  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE+5]]:11: error: integer value 4294967296 too large for type `u32` [IntTooLargeForType]
+  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE+8]]:11: error: integer value 4294967296 too large for type `u32` [IntTooLargeForType]
   // CHECK:STDERR:   Cpp.foo(0x1_0000_0000);
   // CHECK:STDERR:           ^~~~~~~~~~~~~
-  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_import_unsigned_int_param_overflow.carbon:[[@LINE-20]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./unsigned_int_param.h:2:23: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: auto foo(unsigned int a) -> void;
+  // CHECK:STDERR:                       ^
   // CHECK:STDERR:
   Cpp.foo(0x1_0000_0000);
 }

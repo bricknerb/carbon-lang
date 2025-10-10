@@ -199,18 +199,21 @@ fn F() {
   // TODO: The diagnostic here is wrong; we're internally using `addr` but this
   // is not `addr self`.
   let s: Cpp.S = {};
-  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE+5]]:24: error: `addr self` method cannot be invoked on a value [AddrSelfIsNonRef]
+  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE+8]]:24: error: `addr self` method cannot be invoked on a value [AddrSelfIsNonRef]
   // CHECK:STDERR:   Cpp.TakesConstLValue(s);
   // CHECK:STDERR:                        ^
-  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE-12]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./param_const_lvalue_ref.h:5:31: note: initializing function parameter [InCallToFunctionParam]
+  // CHECK:STDERR: auto TakesConstLValue(const S&) -> void;
+  // CHECK:STDERR:                               ^
   // CHECK:STDERR:
   Cpp.TakesConstLValue(s);
 
   var t: Cpp.T;
   // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE+8]]:25: error: no matching function for call to 'TakesConstLValue' [CppInteropParseError]
-  // CHECK:STDERR:    29 |   Cpp.TakesConstLValue(t);
+  // CHECK:STDERR:    32 |   Cpp.TakesConstLValue(t);
   // CHECK:STDERR:       |                         ^
-  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE-20]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: fail_param_const_lvalue_ref.carbon:[[@LINE-23]]:10: in file included here [InCppInclude]
   // CHECK:STDERR: ./param_const_lvalue_ref.h:5:6: note: candidate function not viable: no known conversion from 'T' to 'const S' for 1st argument [CppInteropParseNote]
   // CHECK:STDERR:     5 | auto TakesConstLValue(const S&) -> void;
   // CHECK:STDERR:       |      ^                ~~~~~~~~
@@ -826,32 +829,32 @@ fn F() {
 // CHECK:STDOUT:   %.loc12_19.5: ref %S = converted %.loc12_19.1, %.loc12_19.4
 // CHECK:STDOUT:   %.loc12_19.6: %S = bind_value %.loc12_19.5
 // CHECK:STDOUT:   %s: %S = bind_name s, %.loc12_19.6
-// CHECK:STDOUT:   %Cpp.ref.loc18: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %TakesConstLValue.ref.loc18: %TakesConstLValue.cpp_overload_set.type = name_ref TakesConstLValue, imports.%TakesConstLValue.cpp_overload_set.value [concrete = constants.%TakesConstLValue.cpp_overload_set.value]
+// CHECK:STDOUT:   %Cpp.ref.loc21: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %TakesConstLValue.ref.loc21: %TakesConstLValue.cpp_overload_set.type = name_ref TakesConstLValue, imports.%TakesConstLValue.cpp_overload_set.value [concrete = constants.%TakesConstLValue.cpp_overload_set.value]
 // CHECK:STDOUT:   %s.ref: %S = name_ref s, %s
-// CHECK:STDOUT:   %.loc18_24.1: ref %S = temporary_storage
-// CHECK:STDOUT:   %addr.loc18: %ptr.5c7 = addr_of %.loc18_24.1
-// CHECK:STDOUT:   %.loc18_24.2: %ptr.ff5 = as_compatible %addr.loc18
-// CHECK:STDOUT:   %.loc18_24.3: %ptr.ff5 = converted %addr.loc18, %.loc18_24.2
-// CHECK:STDOUT:   %TakesConstLValue__carbon_thunk.call: init %empty_tuple.type = call imports.%TakesConstLValue__carbon_thunk.decl(%.loc18_24.3)
+// CHECK:STDOUT:   %.loc21_24.1: ref %S = temporary_storage
+// CHECK:STDOUT:   %addr.loc21: %ptr.5c7 = addr_of %.loc21_24.1
+// CHECK:STDOUT:   %.loc21_24.2: %ptr.ff5 = as_compatible %addr.loc21
+// CHECK:STDOUT:   %.loc21_24.3: %ptr.ff5 = converted %addr.loc21, %.loc21_24.2
+// CHECK:STDOUT:   %TakesConstLValue__carbon_thunk.call: init %empty_tuple.type = call imports.%TakesConstLValue__carbon_thunk.decl(%.loc21_24.3)
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %t.patt: %pattern_type.e6b = binding_pattern t [concrete]
 // CHECK:STDOUT:     %t.var_patt: %pattern_type.e6b = var_pattern %t.patt [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %t.var: ref %T = var %t.var_patt
-// CHECK:STDOUT:   %.loc20: type = splice_block %T.ref [concrete = constants.%T] {
-// CHECK:STDOUT:     %Cpp.ref.loc20: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %.loc23: type = splice_block %T.ref [concrete = constants.%T] {
+// CHECK:STDOUT:     %Cpp.ref.loc23: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:     %T.ref: type = name_ref T, imports.%T.decl [concrete = constants.%T]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %t: ref %T = bind_name t, %t.var
-// CHECK:STDOUT:   %Cpp.ref.loc29: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:   %TakesConstLValue.ref.loc29: %TakesConstLValue.cpp_overload_set.type = name_ref TakesConstLValue, imports.%TakesConstLValue.cpp_overload_set.value [concrete = constants.%TakesConstLValue.cpp_overload_set.value]
+// CHECK:STDOUT:   %Cpp.ref.loc32: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %TakesConstLValue.ref.loc32: %TakesConstLValue.cpp_overload_set.type = name_ref TakesConstLValue, imports.%TakesConstLValue.cpp_overload_set.value [concrete = constants.%TakesConstLValue.cpp_overload_set.value]
 // CHECK:STDOUT:   %t.ref: ref %T = name_ref t, %t
-// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc20: <bound method> = bound_method %t.var, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.2f0
+// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc23: <bound method> = bound_method %t.var, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.2f0
 // CHECK:STDOUT:   <elided>
-// CHECK:STDOUT:   %bound_method.loc20: <bound method> = bound_method %t.var, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.1
-// CHECK:STDOUT:   %addr.loc20: %ptr.b04 = addr_of %t.var
-// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc20: init %empty_tuple.type = call %bound_method.loc20(%addr.loc20)
+// CHECK:STDOUT:   %bound_method.loc23: <bound method> = bound_method %t.var, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.1
+// CHECK:STDOUT:   %addr.loc23: %ptr.b04 = addr_of %t.var
+// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc23: init %empty_tuple.type = call %bound_method.loc23(%addr.loc23)
 // CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc12: <bound method> = bound_method %.loc12_19.4, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.016
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %bound_method.loc12: <bound method> = bound_method %.loc12_19.4, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.2
