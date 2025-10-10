@@ -1492,17 +1492,29 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
     return SemIR::InstId::None;
   }
   auto pattern_type_id = GetPatternType(context, type_id);
+  clang::SourceLocation return_type_loc =
+      clang_decl->getReturnTypeSourceRange().getBegin();
+  if (return_type_loc.isInvalid()) {
+    // TODO: While `getReturnTypeSourceRange()` should work, it seems broken for
+    // trailing return type. See
+    // https://github.com/llvm/llvm-project/issues/162649. Until this is fixed,
+    // we fallback to `getTypeSpecStartLoc()`.
+    return_type_loc = clang_decl->getTypeSpecStartLoc();
+  }
+  SemIR::ImportIRInstId return_type_import_ir_inst_id =
+      AddImportIRInst(context.sem_ir(), return_type_loc);
   SemIR::InstId return_slot_pattern_id = AddPatternInst(
-      // TODO: Fill in a location for the return type once available.
-      context,
-      SemIR::LocIdAndInst::NoLoc(SemIR::ReturnSlotPattern(
-          {.type_id = pattern_type_id, .type_inst_id = type_inst_id})));
+      context, MakeImportedLocIdAndInst(
+                   context, return_type_import_ir_inst_id,
+                   SemIR::ReturnSlotPattern({.type_id = pattern_type_id,
+                                             .type_inst_id = type_inst_id})));
   SemIR::InstId param_pattern_id = AddPatternInst(
-      // TODO: Fill in a location for the return type once available.
-      context, SemIR::LocIdAndInst::NoLoc(SemIR::OutParamPattern(
-                   {.type_id = pattern_type_id,
-                    .subpattern_id = return_slot_pattern_id,
-                    .index = SemIR::CallParamIndex::None})));
+      context,
+      MakeImportedLocIdAndInst(
+          context, return_type_import_ir_inst_id,
+          SemIR::OutParamPattern({.type_id = pattern_type_id,
+                                  .subpattern_id = return_slot_pattern_id,
+                                  .index = SemIR::CallParamIndex::None})));
   return param_pattern_id;
 }
 
