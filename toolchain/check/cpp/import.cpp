@@ -1501,17 +1501,20 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
     // we fallback to `getTypeSpecStartLoc()`.
     return_type_loc = clang_decl->getTypeSpecStartLoc();
   }
-  SemIR::LocId return_type_loc_id =
+  SemIR::ImportIRInstId return_type_import_ir_inst_id =
       AddImportIRInst(context.sem_ir(), return_type_loc);
-  SemIR::InstId return_slot_pattern_id =
-      AddPatternInst(context, return_type_loc_id,
-                     SemIR::ReturnSlotPattern({.type_id = pattern_type_id,
-                                               .type_inst_id = type_inst_id}));
+  SemIR::InstId return_slot_pattern_id = AddPatternInst(
+      context, MakeImportedLocIdAndInst(
+                   context, return_type_import_ir_inst_id,
+                   SemIR::ReturnSlotPattern({.type_id = pattern_type_id,
+                                             .type_inst_id = type_inst_id})));
   SemIR::InstId param_pattern_id = AddPatternInst(
-      context, return_type_loc_id,
-      SemIR::OutParamPattern({.type_id = pattern_type_id,
-                              .subpattern_id = return_slot_pattern_id,
-                              .index = SemIR::CallParamIndex::None}));
+      context,
+      MakeImportedLocIdAndInst(
+          context, return_type_import_ir_inst_id,
+          SemIR::OutParamPattern({.type_id = pattern_type_id,
+                                  .subpattern_id = return_slot_pattern_id,
+                                  .index = SemIR::CallParamIndex::None})));
   return param_pattern_id;
 }
 
