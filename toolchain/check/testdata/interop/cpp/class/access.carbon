@@ -529,6 +529,204 @@ class D {
   }
 }
 
+// --- overload_set_base_class.h
+
+#include "overload_set.h"
+
+class PublicDerived : public C {};
+class ProtectedDerived : protected C {};
+class PrivateDerived : private C {};
+
+// --- import_overload_set_public_base_class_call_public.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+fn F() {
+  //@dump-sem-ir-begin
+  Cpp.PublicDerived.foo();
+  //@dump-sem-ir-end
+}
+
+// --- fail_import_overload_set_public_base_class_call_non_public.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+fn F() {
+  // CHECK:STDERR: fail_import_overload_set_public_base_class_call_non_public.carbon:[[@LINE+5]]:3: error: cannot access protected member `foo` of type `Cpp.PublicDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.PublicDerived.foo(1);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_public_base_class_call_non_public.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.PublicDerived.foo(1);
+  // CHECK:STDERR: fail_import_overload_set_public_base_class_call_non_public.carbon:[[@LINE+5]]:3: error: cannot access private member `foo` of type `Cpp.PublicDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.PublicDerived.foo(1, 2);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_public_base_class_call_non_public.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.PublicDerived.foo(1, 2);
+}
+
+// --- import_overload_set_public_base_class_derived_call_non_private.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+class Derived {
+  extend base: Cpp.PublicDerived;
+
+  fn F() {
+    //@dump-sem-ir-begin
+    foo();
+    foo(1);
+    //@dump-sem-ir-end
+  }
+}
+
+// --- fail_import_overload_set_public_base_class_derived_call_private.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+class Derived {
+  extend base: Cpp.PublicDerived;
+
+  fn F() {
+    // CHECK:STDERR: fail_import_overload_set_public_base_class_derived_call_private.carbon:[[@LINE+5]]:5: error: cannot access private member `foo` of type `Cpp.PublicDerived` [ClassInvalidMemberAccess]
+    // CHECK:STDERR:     foo(1, 2);
+    // CHECK:STDERR:     ^~~~~~~~~
+    // CHECK:STDERR: fail_import_overload_set_public_base_class_derived_call_private.carbon: note: declared here [ClassMemberDeclaration]
+    // CHECK:STDERR:
+    foo(1, 2);
+  }
+}
+
+// --- fail_import_overload_set_protected_base_class.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+fn F() {
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon:[[@LINE+5]]:3: error: cannot access protected member `foo` of type `Cpp.ProtectedDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.ProtectedDerived.foo();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.ProtectedDerived.foo();
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon:[[@LINE+5]]:3: error: cannot access protected member `foo` of type `Cpp.ProtectedDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.ProtectedDerived.foo(1);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.ProtectedDerived.foo(1);
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon:[[@LINE+5]]:3: error: cannot access protected member `foo` of type `Cpp.ProtectedDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.ProtectedDerived.foo(1, 2);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_protected_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.ProtectedDerived.foo(1, 2);
+}
+
+// --- import_overload_set_protected_base_class_derived_call_non_private.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+class Derived {
+  extend base: Cpp.ProtectedDerived;
+
+  fn F() {
+    //@dump-sem-ir-begin
+    foo();
+    foo(1);
+    //@dump-sem-ir-end
+  }
+}
+
+// --- fail_import_overload_set_protected_base_class_derived_call_private.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+class Derived {
+  extend base: Cpp.ProtectedDerived;
+
+  fn F() {
+    // CHECK:STDERR: fail_import_overload_set_protected_base_class_derived_call_private.carbon:[[@LINE+5]]:5: error: cannot access private member `foo` of type `Cpp.ProtectedDerived` [ClassInvalidMemberAccess]
+    // CHECK:STDERR:     foo(1, 2);
+    // CHECK:STDERR:     ^~~~~~~~~
+    // CHECK:STDERR: fail_import_overload_set_protected_base_class_derived_call_private.carbon: note: declared here [ClassMemberDeclaration]
+    // CHECK:STDERR:
+    foo(1, 2);
+  }
+}
+
+// --- fail_import_overload_set_private_base_class.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+fn F() {
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon:[[@LINE+5]]:3: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.PrivateDerived.foo();
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.PrivateDerived.foo();
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon:[[@LINE+5]]:3: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.PrivateDerived.foo(1);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.PrivateDerived.foo(1);
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon:[[@LINE+5]]:3: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+  // CHECK:STDERR:   Cpp.PrivateDerived.foo(1, 2);
+  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR: fail_import_overload_set_private_base_class.carbon: note: declared here [ClassMemberDeclaration]
+  // CHECK:STDERR:
+  Cpp.PrivateDerived.foo(1, 2);
+}
+
+// --- fail_import_overload_set_private_base_class_derived.carbon
+
+library "[[@TEST_NAME]]";
+
+import Cpp library "overload_set_base_class.h";
+
+class Derived {
+  extend base: Cpp.PrivateDerived;
+
+  fn F() {
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon:[[@LINE+5]]:5: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+    // CHECK:STDERR:     foo();
+    // CHECK:STDERR:     ^~~~~
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon: note: declared here [ClassMemberDeclaration]
+    // CHECK:STDERR:
+    foo();
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon:[[@LINE+5]]:5: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+    // CHECK:STDERR:     foo(1);
+    // CHECK:STDERR:     ^~~~~~
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon: note: declared here [ClassMemberDeclaration]
+    // CHECK:STDERR:
+    foo(1);
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon:[[@LINE+5]]:5: error: cannot access private member `foo` of type `Cpp.PrivateDerived` [ClassInvalidMemberAccess]
+    // CHECK:STDERR:     foo(1, 2);
+    // CHECK:STDERR:     ^~~~~~~~~
+    // CHECK:STDERR: fail_import_overload_set_private_base_class_derived.carbon: note: declared here [ClassMemberDeclaration]
+    // CHECK:STDERR:
+    foo(1, 2);
+  }
+}
+
 // ============================================================================
 // Base class
 // ============================================================================
@@ -968,6 +1166,180 @@ fn F() {
 // CHECK:STDOUT:   %bound_method: <bound method> = bound_method %.loc8_11.3, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn
 // CHECK:STDOUT:   %addr.loc8_11.2: %ptr.d9e = addr_of %.loc8_11.3
 // CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call: init %empty_tuple.type = call %bound_method(%addr.loc8_11.2)
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_overload_set_public_base_class_call_public.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %PublicDerived: type = class_type @PublicDerived [concrete]
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.type: type = cpp_overload_set_type @PublicDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.value: %PublicDerived.foo.cpp_overload_set.type = cpp_overload_set_value @PublicDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %C.foo.type: type = fn_type @C.foo [concrete]
+// CHECK:STDOUT:   %C.foo: %C.foo.type = struct_value () [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .PublicDerived = %PublicDerived.decl
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %PublicDerived.decl: type = class_decl @PublicDerived [concrete = constants.%PublicDerived] {} {}
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.value: %PublicDerived.foo.cpp_overload_set.type = cpp_overload_set_value @PublicDerived.foo.cpp_overload_set [concrete = constants.%PublicDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.decl: %C.foo.type = fn_decl @C.foo [concrete = constants.%C.foo] {} {}
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %Cpp.ref: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:   %PublicDerived.ref: type = name_ref PublicDerived, imports.%PublicDerived.decl [concrete = constants.%PublicDerived]
+// CHECK:STDOUT:   %foo.ref: %PublicDerived.foo.cpp_overload_set.type = name_ref foo, imports.%PublicDerived.foo.cpp_overload_set.value [concrete = constants.%PublicDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.call: init %empty_tuple.type = call imports.%C.foo.decl()
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_overload_set_public_base_class_derived_call_non_private.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %Derived: type = class_type @Derived [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.type: type = cpp_overload_set_type @PublicDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.value: %PublicDerived.foo.cpp_overload_set.type = cpp_overload_set_value @PublicDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %C.foo.type.54cd32.1: type = fn_type @C.foo.1 [concrete]
+// CHECK:STDOUT:   %C.foo.25ba20.1: %C.foo.type.54cd32.1 = struct_value () [concrete]
+// CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
+// CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
+// CHECK:STDOUT:   %C.foo.type.54cd32.2: type = fn_type @C.foo.2 [concrete]
+// CHECK:STDOUT:   %C.foo.25ba20.2: %C.foo.type.54cd32.2 = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.type.d14: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
+// CHECK:STDOUT:   %ImplicitAs.Convert.type.1b6: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %To: Core.IntLiteral = bind_symbolic_name To, 0 [symbolic]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340: type = fn_type @Core.IntLiteral.as.ImplicitAs.impl.Convert, @Core.IntLiteral.as.ImplicitAs.impl(%To) [symbolic]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0: %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340 = struct_value () [symbolic]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness.204: <witness> = impl_witness imports.%ImplicitAs.impl_witness_table.9e9, @Core.IntLiteral.as.ImplicitAs.impl(%int_32) [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.584: type = fn_type @Core.IntLiteral.as.ImplicitAs.impl.Convert, @Core.IntLiteral.as.ImplicitAs.impl(%int_32) [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0: %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.584 = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.facet: %ImplicitAs.type.d14 = facet_value Core.IntLiteral, (%ImplicitAs.impl_witness.204) [concrete]
+// CHECK:STDOUT:   %.1df: type = fn_type_with_self_type %ImplicitAs.Convert.type.1b6, %ImplicitAs.facet [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.bound: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0 [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn: <specific function> = specific_function %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0, @Core.IntLiteral.as.ImplicitAs.impl.Convert(%int_32) [concrete]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn [concrete]
+// CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %PublicDerived.foo.cpp_overload_set.value: %PublicDerived.foo.cpp_overload_set.type = cpp_overload_set_value @PublicDerived.foo.cpp_overload_set [concrete = constants.%PublicDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.decl.10458f.1: %C.foo.type.54cd32.1 = fn_decl @C.foo.1 [concrete = constants.%C.foo.25ba20.1] {} {}
+// CHECK:STDOUT:   %C.foo.decl.10458f.2: %C.foo.type.54cd32.2 = fn_decl @C.foo.2 [concrete = constants.%C.foo.25ba20.2] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.ee7: @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert.type (%Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert (constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0)]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.9e9 = impl_witness_table (%Core.import_ref.ee7), @Core.IntLiteral.as.ImplicitAs.impl [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @Derived {
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%Derived
+// CHECK:STDOUT:   .Cpp = <poisoned>
+// CHECK:STDOUT:   .base = %.loc7
+// CHECK:STDOUT:   .F = %Derived.F.decl
+// CHECK:STDOUT:   .foo = <poisoned>
+// CHECK:STDOUT:   extend %PublicDerived.ref
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @Derived.F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %foo.ref.loc11: %PublicDerived.foo.cpp_overload_set.type = name_ref foo, imports.%PublicDerived.foo.cpp_overload_set.value [concrete = constants.%PublicDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.call.loc11: init %empty_tuple.type = call imports.%C.foo.decl.10458f.1()
+// CHECK:STDOUT:   %foo.ref.loc12: %PublicDerived.foo.cpp_overload_set.type = name_ref foo, imports.%PublicDerived.foo.cpp_overload_set.value [concrete = constants.%PublicDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
+// CHECK:STDOUT:   %impl.elem0: %.1df = impl_witness_access constants.%ImplicitAs.impl_witness.204, element0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0]
+// CHECK:STDOUT:   %bound_method.loc12_9.1: <bound method> = bound_method %int_1, %impl.elem0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.bound]
+// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Core.IntLiteral.as.ImplicitAs.impl.Convert(constants.%int_32) [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc12_9.2: <bound method> = bound_method %int_1, %specific_fn [concrete = constants.%bound_method]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.call: init %i32 = call %bound_method.loc12_9.2(%int_1) [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc12_9.1: %i32 = value_of_initializer %Core.IntLiteral.as.ImplicitAs.impl.Convert.call [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc12_9.2: %i32 = converted %int_1, %.loc12_9.1 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %C.foo.call.loc12: init %empty_tuple.type = call imports.%C.foo.decl.10458f.2(%.loc12_9.2)
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: --- import_overload_set_protected_base_class_derived_call_non_private.carbon
+// CHECK:STDOUT:
+// CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %Derived: type = class_type @Derived [concrete]
+// CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
+// CHECK:STDOUT:   %ProtectedDerived.foo.cpp_overload_set.type: type = cpp_overload_set_type @ProtectedDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %ProtectedDerived.foo.cpp_overload_set.value: %ProtectedDerived.foo.cpp_overload_set.type = cpp_overload_set_value @ProtectedDerived.foo.cpp_overload_set [concrete]
+// CHECK:STDOUT:   %C.foo.type.54cd32.1: type = fn_type @C.foo.1 [concrete]
+// CHECK:STDOUT:   %C.foo.25ba20.1: %C.foo.type.54cd32.1 = struct_value () [concrete]
+// CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
+// CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
+// CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
+// CHECK:STDOUT:   %C.foo.type.54cd32.2: type = fn_type @C.foo.2 [concrete]
+// CHECK:STDOUT:   %C.foo.25ba20.2: %C.foo.type.54cd32.2 = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.type.d14: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
+// CHECK:STDOUT:   %ImplicitAs.Convert.type.1b6: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32) [concrete]
+// CHECK:STDOUT:   %To: Core.IntLiteral = bind_symbolic_name To, 0 [symbolic]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340: type = fn_type @Core.IntLiteral.as.ImplicitAs.impl.Convert, @Core.IntLiteral.as.ImplicitAs.impl(%To) [symbolic]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0: %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340 = struct_value () [symbolic]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness.204: <witness> = impl_witness imports.%ImplicitAs.impl_witness_table.9e9, @Core.IntLiteral.as.ImplicitAs.impl(%int_32) [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.584: type = fn_type @Core.IntLiteral.as.ImplicitAs.impl.Convert, @Core.IntLiteral.as.ImplicitAs.impl(%int_32) [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0: %Core.IntLiteral.as.ImplicitAs.impl.Convert.type.584 = struct_value () [concrete]
+// CHECK:STDOUT:   %ImplicitAs.facet: %ImplicitAs.type.d14 = facet_value Core.IntLiteral, (%ImplicitAs.impl_witness.204) [concrete]
+// CHECK:STDOUT:   %.1df: type = fn_type_with_self_type %ImplicitAs.Convert.type.1b6, %ImplicitAs.facet [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.bound: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0 [concrete]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn: <specific function> = specific_function %Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0, @Core.IntLiteral.as.ImplicitAs.impl.Convert(%int_32) [concrete]
+// CHECK:STDOUT:   %bound_method: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn [concrete]
+// CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %ProtectedDerived.foo.cpp_overload_set.value: %ProtectedDerived.foo.cpp_overload_set.type = cpp_overload_set_value @ProtectedDerived.foo.cpp_overload_set [concrete = constants.%ProtectedDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.decl.10458f.1: %C.foo.type.54cd32.1 = fn_decl @C.foo.1 [concrete = constants.%C.foo.25ba20.1] {} {}
+// CHECK:STDOUT:   %C.foo.decl.10458f.2: %C.foo.type.54cd32.2 = fn_decl @C.foo.2 [concrete = constants.%C.foo.25ba20.2] {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   } {
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %Core.import_ref.ee7: @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert.type (%Core.IntLiteral.as.ImplicitAs.impl.Convert.type.340) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.ImplicitAs.impl.%Core.IntLiteral.as.ImplicitAs.impl.Convert (constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.1c0)]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.9e9 = impl_witness_table (%Core.import_ref.ee7), @Core.IntLiteral.as.ImplicitAs.impl [concrete]
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: class @Derived {
+// CHECK:STDOUT:   <elided>
+// CHECK:STDOUT:   complete_type_witness = %complete_type
+// CHECK:STDOUT:
+// CHECK:STDOUT: !members:
+// CHECK:STDOUT:   .Self = constants.%Derived
+// CHECK:STDOUT:   .Cpp = <poisoned>
+// CHECK:STDOUT:   .base = %.loc7
+// CHECK:STDOUT:   .F = %Derived.F.decl
+// CHECK:STDOUT:   .foo = <poisoned>
+// CHECK:STDOUT:   extend %ProtectedDerived.ref
+// CHECK:STDOUT: }
+// CHECK:STDOUT:
+// CHECK:STDOUT: fn @Derived.F() {
+// CHECK:STDOUT: !entry:
+// CHECK:STDOUT:   %foo.ref.loc11: %ProtectedDerived.foo.cpp_overload_set.type = name_ref foo, imports.%ProtectedDerived.foo.cpp_overload_set.value [concrete = constants.%ProtectedDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %C.foo.call.loc11: init %empty_tuple.type = call imports.%C.foo.decl.10458f.1()
+// CHECK:STDOUT:   %foo.ref.loc12: %ProtectedDerived.foo.cpp_overload_set.type = name_ref foo, imports.%ProtectedDerived.foo.cpp_overload_set.value [concrete = constants.%ProtectedDerived.foo.cpp_overload_set.value]
+// CHECK:STDOUT:   %int_1: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
+// CHECK:STDOUT:   %impl.elem0: %.1df = impl_witness_access constants.%ImplicitAs.impl_witness.204, element0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.0f0]
+// CHECK:STDOUT:   %bound_method.loc12_9.1: <bound method> = bound_method %int_1, %impl.elem0 [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.bound]
+// CHECK:STDOUT:   %specific_fn: <specific function> = specific_function %impl.elem0, @Core.IntLiteral.as.ImplicitAs.impl.Convert(constants.%int_32) [concrete = constants.%Core.IntLiteral.as.ImplicitAs.impl.Convert.specific_fn]
+// CHECK:STDOUT:   %bound_method.loc12_9.2: <bound method> = bound_method %int_1, %specific_fn [concrete = constants.%bound_method]
+// CHECK:STDOUT:   %Core.IntLiteral.as.ImplicitAs.impl.Convert.call: init %i32 = call %bound_method.loc12_9.2(%int_1) [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc12_9.1: %i32 = value_of_initializer %Core.IntLiteral.as.ImplicitAs.impl.Convert.call [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc12_9.2: %i32 = converted %int_1, %.loc12_9.1 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %C.foo.call.loc12: init %empty_tuple.type = call imports.%C.foo.decl.10458f.2(%.loc12_9.2)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
