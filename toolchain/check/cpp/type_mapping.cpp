@@ -174,6 +174,9 @@ static auto MapNonWrapperType(Context& context, SemIR::InstId inst_id,
     case SemIR::FloatLiteralType::Kind: {
       return context.ast_context().DoubleTy;
     }
+    case SemIR::CustomCppLongLongType::Kind: {
+      return context.ast_context().LongLongTy;
+    }
     default: {
       return clang::QualType();
     }

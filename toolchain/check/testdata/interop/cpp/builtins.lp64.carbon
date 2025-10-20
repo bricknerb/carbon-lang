@@ -35,14 +35,21 @@ import Cpp inline "";
 
 fn F() {
   //@dump-sem-ir-begin
-  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+7]]:23: error: semantics TODO: `Unsupported: builtin type: long long` [SemanticsTodo]
+  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+7]]:39: error: cannot implicitly convert expression of type `i64` to `<builtin Cpp.long_long>` [ConversionFailure]
   // CHECK:STDERR:   let cpp_long_long : Cpp.long_long = 1 as i64;
-  // CHECK:STDERR:                       ^~~~~~~~~~~~~
-  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+4]]:23: note: in `Cpp` name lookup for `long_long` [InCppNameLookup]
+  // CHECK:STDERR:                                       ^~~~~~~~
+  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+4]]:39: note: type `i64` does not implement interface `Core.ImplicitAs(<builtin Cpp.long_long>)` [MissingImplInMemberAccessNote]
   // CHECK:STDERR:   let cpp_long_long : Cpp.long_long = 1 as i64;
-  // CHECK:STDERR:                       ^~~~~~~~~~~~~
+  // CHECK:STDERR:                                       ^~~~~~~~
   // CHECK:STDERR:
   let cpp_long_long : Cpp.long_long = 1 as i64;
+  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+7]]:31: error: cannot implicitly convert expression of type `<builtin Cpp.long_long>` to `i64` [ConversionFailure]
+  // CHECK:STDERR:   let carbon_long_long: i64 = cpp_long_long;
+  // CHECK:STDERR:                               ^~~~~~~~~~~~~
+  // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+4]]:31: note: type `<builtin Cpp.long_long>` does not implement interface `Core.ImplicitAs(i64)` [MissingImplInMemberAccessNote]
+  // CHECK:STDERR:   let carbon_long_long: i64 = cpp_long_long;
+  // CHECK:STDERR:                               ^~~~~~~~~~~~~
+  // CHECK:STDERR:
   let carbon_long_long: i64 = cpp_long_long;
 
   // CHECK:STDERR: fail_todo_unsupported_types.carbon:[[@LINE+7]]:32: error: semantics TODO: `Unsupported: builtin type: unsigned long long` [SemanticsTodo]
@@ -171,6 +178,7 @@ fn F() {
 // CHECK:STDOUT: --- fail_todo_unsupported_types.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
+// CHECK:STDOUT:   %pattern_type.fb7: type = pattern_type custom_cpp_long_long_type [concrete]
 // CHECK:STDOUT:   %int_1.5b8: Core.IntLiteral = int_value 1 [concrete]
 // CHECK:STDOUT:   %int_64: Core.IntLiteral = int_value 64 [concrete]
 // CHECK:STDOUT:   %i64: type = class_type @Int, @Int(%int_64) [concrete]
@@ -207,6 +215,11 @@ fn F() {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
+// CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
+// CHECK:STDOUT:     .long_long = custom_cpp_long_long_type
+// CHECK:STDOUT:     .unsigned_long_long = <error>
+// CHECK:STDOUT:     import Cpp//...
+// CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Core.import_ref.99c: @Core.IntLiteral.as.As.impl.dc4.%Core.IntLiteral.as.As.impl.Convert.type (%Core.IntLiteral.as.As.impl.Convert.type.565) = import_ref Core//prelude/parts/int, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.As.impl.dc4.%Core.IntLiteral.as.As.impl.Convert (constants.%Core.IntLiteral.as.As.impl.Convert.d2c)]
 // CHECK:STDOUT:   %As.impl_witness_table.5ad = impl_witness_table (%Core.import_ref.99c), @Core.IntLiteral.as.As.impl.dc4 [concrete]
 // CHECK:STDOUT:   %Core.import_ref.611: @Core.IntLiteral.as.As.impl.cc4.%Core.IntLiteral.as.As.impl.Convert.type (%Core.IntLiteral.as.As.impl.Convert.type.972) = import_ref Core//prelude/parts/uint, loc{{\d+_\d+}}, loaded [symbolic = @Core.IntLiteral.as.As.impl.cc4.%Core.IntLiteral.as.As.impl.Convert (constants.%Core.IntLiteral.as.As.impl.Convert.276)]
@@ -216,7 +229,7 @@ fn F() {
 // CHECK:STDOUT: fn @F() {
 // CHECK:STDOUT: !entry:
 // CHECK:STDOUT:   name_binding_decl {
-// CHECK:STDOUT:     %cpp_long_long.patt: <error> = binding_pattern cpp_long_long [concrete]
+// CHECK:STDOUT:     %cpp_long_long.patt: %pattern_type.fb7 = binding_pattern cpp_long_long [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %int_1.loc15: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_64.loc15: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
@@ -228,39 +241,45 @@ fn F() {
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.call.loc15: init %i64 = call %bound_method.loc15_41.2(%int_1.loc15) [concrete = constants.%int_1.41a]
 // CHECK:STDOUT:   %.loc15_41.1: %i64 = value_of_initializer %Core.IntLiteral.as.As.impl.Convert.call.loc15 [concrete = constants.%int_1.41a]
 // CHECK:STDOUT:   %.loc15_41.2: %i64 = converted %int_1.loc15, %.loc15_41.1 [concrete = constants.%int_1.41a]
-// CHECK:STDOUT:   <elided>
-// CHECK:STDOUT:   %cpp_long_long: <error> = bind_name cpp_long_long, <error> [concrete = <error>]
+// CHECK:STDOUT:   %.loc15_26: type = splice_block %long_long.ref [concrete = custom_cpp_long_long_type] {
+// CHECK:STDOUT:     %Cpp.ref.loc15: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
+// CHECK:STDOUT:     <elided>
+// CHECK:STDOUT:     %long_long.ref: type = name_ref long_long, custom_cpp_long_long_type [concrete = custom_cpp_long_long_type]
+// CHECK:STDOUT:   }
+// CHECK:STDOUT:   %.loc15_41.3: custom_cpp_long_long_type = converted %.loc15_41.2, <error> [concrete = <error>]
+// CHECK:STDOUT:   %cpp_long_long: custom_cpp_long_long_type = bind_name cpp_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %carbon_long_long.patt: %pattern_type.95b = binding_pattern carbon_long_long [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %cpp_long_long.ref: <error> = name_ref cpp_long_long, %cpp_long_long [concrete = <error>]
-// CHECK:STDOUT:   %.loc16: type = splice_block %i64.loc16 [concrete = constants.%i64] {
-// CHECK:STDOUT:     %int_64.loc16: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:     %i64.loc16: type = class_type @Int, @Int(constants.%int_64) [concrete = constants.%i64]
+// CHECK:STDOUT:   %cpp_long_long.ref: custom_cpp_long_long_type = name_ref cpp_long_long, %cpp_long_long [concrete = <error>]
+// CHECK:STDOUT:   %.loc23_25: type = splice_block %i64.loc23 [concrete = constants.%i64] {
+// CHECK:STDOUT:     %int_64.loc23: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
+// CHECK:STDOUT:     %i64.loc23: type = class_type @Int, @Int(constants.%int_64) [concrete = constants.%i64]
 // CHECK:STDOUT:   }
+// CHECK:STDOUT:   %.loc23_31: %i64 = converted %cpp_long_long.ref, <error> [concrete = <error>]
 // CHECK:STDOUT:   %carbon_long_long: %i64 = bind_name carbon_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %cpp_unsigned_long_long.patt: <error> = binding_pattern cpp_unsigned_long_long [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %int_1.loc25: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
-// CHECK:STDOUT:   %int_64.loc25: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:   %u64.loc25: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
-// CHECK:STDOUT:   %impl.elem0.loc25: %.e88 = impl_witness_access constants.%As.impl_witness.feb, element0 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.467]
-// CHECK:STDOUT:   %bound_method.loc25_59.1: <bound method> = bound_method %int_1.loc25, %impl.elem0.loc25 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.bound.fec]
-// CHECK:STDOUT:   %specific_fn.loc25: <specific function> = specific_function %impl.elem0.loc25, @Core.IntLiteral.as.As.impl.Convert.2(constants.%int_64) [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.specific_fn.6f5]
-// CHECK:STDOUT:   %bound_method.loc25_59.2: <bound method> = bound_method %int_1.loc25, %specific_fn.loc25 [concrete = constants.%bound_method.290]
-// CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.call.loc25: init %u64 = call %bound_method.loc25_59.2(%int_1.loc25) [concrete = constants.%int_1.f23]
-// CHECK:STDOUT:   %.loc25_59.1: %u64 = value_of_initializer %Core.IntLiteral.as.As.impl.Convert.call.loc25 [concrete = constants.%int_1.f23]
-// CHECK:STDOUT:   %.loc25_59.2: %u64 = converted %int_1.loc25, %.loc25_59.1 [concrete = constants.%int_1.f23]
+// CHECK:STDOUT:   %int_1.loc32: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
+// CHECK:STDOUT:   %int_64.loc32: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
+// CHECK:STDOUT:   %u64.loc32: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
+// CHECK:STDOUT:   %impl.elem0.loc32: %.e88 = impl_witness_access constants.%As.impl_witness.feb, element0 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.467]
+// CHECK:STDOUT:   %bound_method.loc32_59.1: <bound method> = bound_method %int_1.loc32, %impl.elem0.loc32 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.bound.fec]
+// CHECK:STDOUT:   %specific_fn.loc32: <specific function> = specific_function %impl.elem0.loc32, @Core.IntLiteral.as.As.impl.Convert.2(constants.%int_64) [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.specific_fn.6f5]
+// CHECK:STDOUT:   %bound_method.loc32_59.2: <bound method> = bound_method %int_1.loc32, %specific_fn.loc32 [concrete = constants.%bound_method.290]
+// CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.call.loc32: init %u64 = call %bound_method.loc32_59.2(%int_1.loc32) [concrete = constants.%int_1.f23]
+// CHECK:STDOUT:   %.loc32_59.1: %u64 = value_of_initializer %Core.IntLiteral.as.As.impl.Convert.call.loc32 [concrete = constants.%int_1.f23]
+// CHECK:STDOUT:   %.loc32_59.2: %u64 = converted %int_1.loc32, %.loc32_59.1 [concrete = constants.%int_1.f23]
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %cpp_unsigned_long_long: <error> = bind_name cpp_unsigned_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %carbon_unsigned_long_long.patt: %pattern_type.157 = binding_pattern carbon_unsigned_long_long [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %cpp_unsigned_long_long.ref: <error> = name_ref cpp_unsigned_long_long, %cpp_unsigned_long_long [concrete = <error>]
-// CHECK:STDOUT:   %.loc26: type = splice_block %u64.loc26 [concrete = constants.%u64] {
-// CHECK:STDOUT:     %int_64.loc26: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
-// CHECK:STDOUT:     %u64.loc26: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
+// CHECK:STDOUT:   %.loc33: type = splice_block %u64.loc33 [concrete = constants.%u64] {
+// CHECK:STDOUT:     %int_64.loc33: Core.IntLiteral = int_value 64 [concrete = constants.%int_64]
+// CHECK:STDOUT:     %u64.loc33: type = class_type @UInt, @UInt(constants.%int_64) [concrete = constants.%u64]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %carbon_unsigned_long_long: %u64 = bind_name carbon_unsigned_long_long, <error> [concrete = <error>]
 // CHECK:STDOUT:   <elided>

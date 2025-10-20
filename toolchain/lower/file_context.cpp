@@ -846,6 +846,15 @@ static auto BuildTypeForInst(FileContext& context, SemIR::IntType inst)
       context.sem_ir().ints().Get(width->int_id).getZExtValue());
 }
 
+static auto BuildTypeForInst(FileContext& context,
+                             SemIR::CustomCppLongLongType /*inst*/)
+    -> llvm::Type* {
+  return llvm::Type::getIntNTy(
+      context.llvm_context(),
+      context.clang_ast_unit()->getASTContext().getIntWidth(
+          context.clang_ast_unit()->getASTContext().LongLongTy));
+}
+
 static auto BuildTypeForInst(FileContext& context, SemIR::PointerType /*inst*/)
     -> llvm::Type* {
   return llvm::PointerType::get(context.llvm_context(), /*AddressSpace=*/0);

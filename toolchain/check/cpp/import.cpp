@@ -1107,6 +1107,18 @@ static auto MapBuiltinIntegerType(Context& context, SemIR::LocId loc_id,
     return ExprAsType(context, Parse::NodeId::None,
                       MakeCharTypeLiteral(context, Parse::NodeId::None));
   }
+
+  // Special handling for long long: map to a distinct Carbon type convertible
+  // to i64.
+  if (ast_context.hasSameType(qual_type, ast_context.LongLongTy)) {
+    // Create a distinct type for long long, convertible to i64.
+    // We'll use a custom type id for C++ long long.
+    GetOrAddInst(context,
+                 SemIR::LocIdAndInst::NoLoc(SemIR::CustomCppLongLongType{
+                     .type_id = SemIR::TypeType::TypeId}));
+    return ExprAsType(context, Parse::NodeId::None,
+                      SemIR::CustomCppLongLongType::TypeInstId);
+  }
   return TypeExpr::None;
 }
 
