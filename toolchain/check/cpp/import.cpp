@@ -4,6 +4,7 @@
 
 #include "toolchain/check/cpp/import.h"
 
+#include <algorithm>
 #include <memory>
 #include <optional>
 #include <string>
@@ -34,6 +35,7 @@
 #include "toolchain/check/context.h"
 #include "toolchain/check/control_flow.h"
 #include "toolchain/check/convert.h"
+#include "toolchain/check/cpp/access.h"
 #include "toolchain/check/cpp/custom_type_mapping.h"
 #include "toolchain/check/cpp/thunk.h"
 #include "toolchain/check/diagnostic_helpers.h"
@@ -2014,33 +2016,18 @@ auto ImportCppFunctionDecl(Context& context, SemIR::LocId loc_id,
       SemIR::ClangDeclKey::ForFunctionDecl(clang_decl, num_params));
 }
 
-// Maps `clang::AccessSpecifier` to `SemIR::AccessKind`.
-static auto MapAccess(clang::AccessSpecifier access_specifier)
-    -> SemIR::AccessKind {
-  switch (access_specifier) {
-    case clang::AS_public:
-    case clang::AS_none:
-      return SemIR::AccessKind::Public;
-    case clang::AS_protected:
-      return SemIR::AccessKind::Protected;
-    case clang::AS_private:
-      return SemIR::AccessKind::Private;
-  }
-}
-
 // Imports a Clang declaration into Carbon and adds that name into the
 // `NameScope`.
 static auto ImportNameDeclIntoScope(Context& context, SemIR::LocId loc_id,
                                     SemIR::NameScopeId scope_id,
                                     SemIR::NameId name_id,
                                     SemIR::ClangDeclKey key,
-                                    clang::AccessSpecifier access)
+                                    SemIR::AccessKind access_kind)
     -> SemIR::ScopeLookupResult {
   SemIR::InstId inst_id = ImportDeclAndDependencies(context, loc_id, key);
   if (!inst_id.has_value()) {
     return SemIR::ScopeLookupResult::MakeNotFound();
   }
-  SemIR::AccessKind access_kind = MapAccess(access);
   AddNameToScope(context, scope_id, name_id, access_kind, inst_id);
   return SemIR::ScopeLookupResult::MakeWrappedLookupResult(inst_id,
                                                            access_kind);
@@ -2130,16 +2117,14 @@ auto ImportCppOverloadSet(
 // after overload resolution.
 static auto GetOverloadSetAccess(const clang::UnresolvedSet<4>& overload_set)
     -> SemIR::AccessKind {
-  clang::AccessSpecifier access = overload_set.begin().getAccess();
-  for (auto it = overload_set.begin() + 1; it != overload_set.end(); ++it) {
-    CARBON_CHECK(
-        (it.getAccess() == clang::AS_none) == (access == clang::AS_none),
-        "Unexpected mixture of members and non-members");
-    if (it.getAccess() < access) {
-      access = it->getAccess();
+  SemIR::AccessKind access_kind = SemIR::AccessKind::Private;
+  for (clang::DeclAccessPair overload : overload_set.pairs()) {
+    access_kind = std::min(access_kind, MapCppAccess(overload));
+    if (access_kind == SemIR::AccessKind::Public) {
+      break;
     }
   }
-  return MapAccess(access);
+  return access_kind;
 }
 
 // Imports an overload set from Clang to Carbon and adds the name into the
@@ -2260,7 +2245,7 @@ auto ImportNameFromCpp(Context& context, SemIR::LocId loc_id,
   }
   auto key = SemIR::ClangDeclKey::ForNonFunctionDecl(lookup->getFoundDecl());
   return ImportNameDeclIntoScope(context, loc_id, scope_id, name_id, key,
-                                 lookup->begin().getAccess());
+                                 MapCppAccess(lookup->begin().getPair()));
 }
 
 auto ImportClassDefinitionForClangDecl(Context& context, SemIR::LocId loc_id,
