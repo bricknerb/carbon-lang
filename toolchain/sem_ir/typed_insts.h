@@ -287,8 +287,9 @@ struct BindSymbolicName {
   InstId value_id;
 };
 
-// A value binding. Used when an expression contains a reference and we want a
-// value.
+// A value acquisition. Used when an expression contains a reference and we want
+// a value.
+// TODO: Rename to AcquireValue
 struct BindValue {
   static constexpr auto Kind =
       InstKind::BindValue.Define<Parse::NodeId>({.ir_name = "bind_value"});
