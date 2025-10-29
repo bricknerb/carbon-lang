@@ -1227,6 +1227,13 @@ static auto MapQualifiedType(Context& context, clang::QualType type,
   return type_expr;
 }
 
+// Returns true if the type has the `_Nonnull` attribute.
+static auto IsClangTypeNonNull(clang::QualType type) -> bool {
+  auto nullability = type->getNullability();
+  return nullability.has_value() &&
+         *nullability == clang::NullabilityKind::NonNull;
+}
+
 // Returns the type `Core.Optional(T)`, where  `T` is described by
 // `inner_type_inst_id`.
 static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
@@ -1236,25 +1243,26 @@ static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
   return ExprAsType(context, loc_id, call_id);
 }
 
-// Maps a C++ pointer type to a Carbon pointer type.
+// Maps a C++ pointer type to a Carbon pointer type. If the pointer is wrapped
+// with a qualified type, maps it as well to keep nullable pointer qualifiers
+// inside the mapped optional type.
 static auto MapPointerType(Context& context, SemIR::LocId loc_id,
-                           clang::QualType type, TypeExpr pointee_type_expr)
-    -> TypeExpr {
+                           clang::QualType type, clang::QualType qualified_type,
+                           TypeExpr pointee_type_expr) -> TypeExpr {
   CARBON_CHECK(type->isPointerType());
 
-  bool optional = false;
-  if (auto nullability = type->getNullability();
-      !nullability.has_value() ||
-      *nullability != clang::NullabilityKind::NonNull) {
-    // If the type was produced by C++ template substitution, then we assume it
-    // was deduced from a Carbon pointer type, so it's non-null.
-    if (!type->getAs<clang::SubstTemplateTypeParmType>()) {
-      optional = true;
-    }
-  }
+  bool optional =
+      !IsClangTypeNonNull(type) &&
+      // If the type was produced by C++ template substitution, then we assume
+      // it was deduced from a Carbon pointer type, so it's non-null.
+      !type->getAs<clang::SubstTemplateTypeParmType>();
 
   TypeExpr pointer_type_expr = TypeExpr::ForUnsugared(
       context, GetPointerType(context, pointee_type_expr.inst_id));
+  if (!qualified_type.isNull()) {
+    pointer_type_expr =
+        MapQualifiedType(context, qualified_type, pointer_type_expr);
+  }
   if (optional) {
     pointer_type_expr =
         MakeOptionalType(context, loc_id, pointer_type_expr.inst_id);
@@ -1287,6 +1295,11 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
     clang::QualType orig_type = type;
     if (type.hasQualifiers()) {
       type = type.getUnqualifiedType();
+      // Preserve non-nullability.
+      if (IsClangTypeNonNull(orig_type) && !IsClangTypeNonNull(type)) {
+        type = context.ast_context().getAttributedType(
+            clang::NullabilityKind::NonNull, type, type);
+      }
     } else if (type->isPointerType()) {
       type = type->getPointeeType();
     } else if (type->isReferenceType()) {
@@ -1299,16 +1312,29 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
 
   auto mapped = MapNonWrapperType(context, loc_id, type);
 
-  for (auto wrapper : llvm::reverse(wrapper_types)) {
+  for (auto wrapper_iter = wrapper_types.rbegin();
+       wrapper_iter != wrapper_types.rend(); ++wrapper_iter) {
     if (!mapped.inst_id.has_value() ||
         mapped.type_id == SemIR::ErrorInst::TypeId) {
       break;
     }
 
+    clang::QualType wrapper = *wrapper_iter;
     if (wrapper.hasQualifiers()) {
       mapped = MapQualifiedType(context, wrapper, mapped);
     } else if (wrapper->isPointerType()) {
-      mapped = MapPointerType(context, loc_id, wrapper, mapped);
+      // For pointer types, we need to pass the wrapping qualifier type, if it
+      // exists.
+      clang::QualType qualified_type;
+      if (wrapper_iter + 1 != wrapper_types.rend()) {
+        clang::QualType next_wrapper = *(wrapper_iter + 1);
+        if (next_wrapper.hasQualifiers()) {
+          qualified_type = next_wrapper;
+          ++wrapper_iter;
+        }
+      }
+
+      mapped = MapPointerType(context, loc_id, wrapper, qualified_type, mapped);
     } else if (wrapper->isReferenceType()) {
       mapped = MapReferenceType(context, wrapper, mapped);
     } else {
@@ -1456,13 +1482,14 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
     clang::QualType orig_param_type = function_type->getParamType(
         clang_decl.hasCXXExplicitFunctionObjectParameter() + i);
 
-    // The parameter type is decayed but hasn't necessarily had its qualifiers
-    // removed.
-    // TODO: The presence of qualifiers here is probably a Clang bug.
-    // TODO: For const non nullable pointers (`C* _Nonnull const`), this removes
-    // both the const and the non-nullable attribute. We should probably
-    // preserve the non-nullable attribute.
-    clang::QualType param_type = orig_param_type.getUnqualifiedType();
+    clang::QualType param_type = orig_param_type;
+    // Pointer type should keep its qualifiers.
+    if (!param_type->isPointerType()) {
+      // The parameter type is decayed but hasn't necessarily had its qualifiers
+      // removed.
+      // TODO: The presence of qualifiers here is probably a Clang bug.
+      param_type = orig_param_type.getUnqualifiedType();
+    }
 
     // Mark the start of a region of insts, needed for the type expression
     // created later with the call of `EndSubpatternAsExpr()`.
