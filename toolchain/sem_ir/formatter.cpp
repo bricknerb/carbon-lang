@@ -1253,7 +1253,7 @@ auto Formatter::FormatCallRhs(Call inst) -> void {
 auto Formatter::FormatImportCppDeclRhs() -> void {
   out_ << " ";
   OpenBrace();
-  for (ImportCpp import_cpp : sem_ir_->import_cpps().values()) {
+  for (ImportCpp import_cpp : sem_ir_->import_cpps()) {
     Indent();
     out_ << "import Cpp ";
     if (import_cpp.library_id.has_value()) {
