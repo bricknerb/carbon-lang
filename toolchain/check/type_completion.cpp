@@ -145,8 +145,7 @@ class TypeCompleter {
   auto BuildInfoForInst(SemIR::TypeId /*type_id*/,
                         SemIR::CppVoidType /*inst*/) const
       -> SemIR::CompleteTypeInfo {
-    // TODO: `CppVoidType` should be always-incomplete.
-    return {.value_repr = MakeEmptyValueRepr()};
+    CARBON_FATAL("`CppVoidType` is always-incomplete");
   }
 
   auto BuildInfoForInst(SemIR::TypeId type_id,
@@ -321,6 +320,15 @@ auto TypeCompleter::AddNestedIncompleteTypes(SemIR::Inst type_inst) -> bool {
     case CARBON_KIND(SemIR::ConstType inst): {
       Push(context_->types().GetTypeIdForTypeInstId(inst.inner_id));
       break;
+    }
+    case SemIR::CppVoidType::Kind: {
+      if (diagnoser_) {
+        CARBON_DIAGNOSTIC(
+            CppVoidIncomplete, Note,
+            "`Cpp.void` is incomplete; did you mean `Cpp.void*`?");
+        diagnoser_().Note(SemIR::LocId::None, CppVoidIncomplete).Emit();
+      }
+      return false;
     }
     case CARBON_KIND(SemIR::CustomLayoutType inst): {
       for (auto field : context_->struct_type_fields().Get(inst.fields_id)) {
