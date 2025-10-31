@@ -167,7 +167,19 @@ auto HandleParseNode(Context& context, Parse::RequireDeclId node_id) -> bool {
   }
 
   auto identified_facet_type_id =
-      RequireIdentifiedFacetType(context, *constraint_facet_type);
+      RequireIdentifiedFacetType(context, *constraint_facet_type, [&] {
+        CARBON_DIAGNOSTIC(
+            RequireImplsUnidentifiedFacetType, Error,
+            "facet type {0} cannot be identified in `require` declaration",
+            InstIdAsType);
+        return context.emitter().Build(constraint_node_id,
+                                       RequireImplsUnidentifiedFacetType,
+                                       constraint_inst_id);
+      });
+  if (!identified_facet_type_id.has_value()) {
+    // The constraint can't be used.
+    return true;
+  }
   const auto& identified =
       context.identified_facet_types().Get(identified_facet_type_id);
 

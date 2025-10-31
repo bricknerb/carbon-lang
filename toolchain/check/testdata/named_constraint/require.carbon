@@ -29,7 +29,7 @@ fn F(T:! Z) {
   // CHECK:STDERR:   ^~~~
   // CHECK:STDERR:
   T.YY();
-  // CHECK:STDERR: fail_todo_extend.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `type` into type implementing `Y` [ConversionFailureFacetToFacet]
+  // CHECK:STDERR: fail_todo_extend.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `Z` into type implementing `Y` [ConversionFailureFacetToFacet]
   // CHECK:STDERR:   T.(Y.YY)();
   // CHECK:STDERR:   ^~~~~~~~
   // CHECK:STDERR:
@@ -50,7 +50,7 @@ constraint Z {
 //@dump-sem-ir-end
 
 fn F(T:! Z) {
-  // CHECK:STDERR: fail_todo_implicit_self_impls.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `type` into type implementing `Y` [ConversionFailureFacetToFacet]
+  // CHECK:STDERR: fail_todo_implicit_self_impls.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `Z` into type implementing `Y` [ConversionFailureFacetToFacet]
   // CHECK:STDERR:   T.(Y.YY)();
   // CHECK:STDERR:   ^~~~~~~~
   // CHECK:STDERR:
@@ -71,7 +71,7 @@ constraint Z {
 //@dump-sem-ir-end
 
 fn F(T:! Z) {
-  // CHECK:STDERR: fail_todo_explicit_self_impls.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `type` into type implementing `Y` [ConversionFailureFacetToFacet]
+  // CHECK:STDERR: fail_todo_explicit_self_impls.carbon:[[@LINE+4]]:3: error: cannot convert type `T` that implements `Z` into type implementing `Y` [ConversionFailureFacetToFacet]
   // CHECK:STDERR:   T.(Y.YY)();
   // CHECK:STDERR:   ^~~~~~~~
   // CHECK:STDERR:
@@ -144,24 +144,36 @@ constraint Z {
 }
 //@dump-sem-ir-end
 
-// --- todo_fail_require_impls_incomplete_constraint.carbon
+// --- fail_require_impls_incomplete_constraint.carbon
 library "[[@TEST_NAME]]";
 
 constraint Y;
 
 //@dump-sem-ir-begin
 constraint Z {
-  // TODO: This should fail since `Y` cannot be identified.
+  // CHECK:STDERR: fail_require_impls_incomplete_constraint.carbon:[[@LINE+7]]:17: error: facet type `Y` cannot be identified in `require` declaration [RequireImplsUnidentifiedFacetType]
+  // CHECK:STDERR:   require impls Y;
+  // CHECK:STDERR:                 ^
+  // CHECK:STDERR: fail_require_impls_incomplete_constraint.carbon:[[@LINE-7]]:1: note: constraint was forward declared here [NamedConstraintForwardDeclaredHere]
+  // CHECK:STDERR: constraint Y;
+  // CHECK:STDERR: ^~~~~~~~~~~~~
+  // CHECK:STDERR:
   require impls Y;
 }
 //@dump-sem-ir-end
 
-// --- todo_fail_require_impls_incomplete_self.carbon
+// --- fail_require_impls_incomplete_self.carbon
 library "[[@TEST_NAME]]";
 
 //@dump-sem-ir-begin
 constraint Z {
-  // TODO: This should fail since `Z` cannot be identified.
+  // CHECK:STDERR: fail_require_impls_incomplete_self.carbon:[[@LINE+7]]:17: error: facet type `Z` cannot be identified in `require` declaration [RequireImplsUnidentifiedFacetType]
+  // CHECK:STDERR:   require impls Z;
+  // CHECK:STDERR:                 ^
+  // CHECK:STDERR: fail_require_impls_incomplete_self.carbon:[[@LINE-4]]:1: note: constraint is currently being defined [NamedConstraintIncompleteWithinDefinition]
+  // CHECK:STDERR: constraint Z {
+  // CHECK:STDERR: ^~~~~~~~~~~~~~
+  // CHECK:STDERR:
   require impls Z;
 }
 //@dump-sem-ir-end
@@ -171,10 +183,12 @@ library "[[@TEST_NAME]]";
 
 //@dump-sem-ir-begin
 constraint Z(T:! type) {
-  // TODO: This should fail since `Z` cannot be identified.
-  // CHECK:STDERR: fail_require_impls_incomplete_self_specific.carbon:[[@LINE+4]]:3: error: no `Self` reference found in `require` declaration; `Self` must appear in the self-type or as a generic parameter for each `interface` or `constraint` [RequireImplsMissingSelf]
+  // CHECK:STDERR: fail_require_impls_incomplete_self_specific.carbon:[[@LINE+7]]:19: error: facet type `Z(Self)` cannot be identified in `require` declaration [RequireImplsUnidentifiedFacetType]
   // CHECK:STDERR:   require T impls Z(Self);
-  // CHECK:STDERR:   ^~~~~~~~~~~~~~~~~~~~~~~~
+  // CHECK:STDERR:                   ^~~~~~~
+  // CHECK:STDERR: fail_require_impls_incomplete_self_specific.carbon:[[@LINE-4]]:1: note: constraint is currently being defined [NamedConstraintIncompleteWithinDefinition]
+  // CHECK:STDERR: constraint Z(T:! type) {
+  // CHECK:STDERR: ^~~~~~~~~~~~~~~~~~~~~~~~
   // CHECK:STDERR:
   require T impls Z(Self);
 }
@@ -286,19 +300,19 @@ constraint Z {
 // CHECK:STDOUT: --- fail_todo_extend.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
@@ -308,19 +322,19 @@ constraint Z {
 // CHECK:STDOUT: --- fail_todo_implicit_self_impls.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
@@ -330,19 +344,19 @@ constraint Z {
 // CHECK:STDOUT: --- fail_todo_explicit_self_impls.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
@@ -352,19 +366,19 @@ constraint Z {
 // CHECK:STDOUT: --- explicit_self_specific_impls.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
@@ -375,63 +389,63 @@ constraint Z {
 // CHECK:STDOUT: --- require_impls_where.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
 // CHECK:STDOUT:   .Y = <poisoned>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- todo_fail_require_impls_incomplete_constraint.carbon
+// CHECK:STDOUT: --- fail_require_impls_incomplete_constraint.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
 // CHECK:STDOUT:   .Y = <poisoned>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- todo_fail_require_impls_incomplete_self.carbon
+// CHECK:STDOUT: --- fail_require_impls_incomplete_self.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
@@ -441,20 +455,21 @@ constraint Z {
 // CHECK:STDOUT: --- fail_require_impls_incomplete_self_specific.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
 // CHECK:STDOUT:   %T: type = symbolic_binding T, 0 [symbolic]
 // CHECK:STDOUT:   %pattern_type: type = pattern_type type [concrete]
-// CHECK:STDOUT:   %Z.type: type = generic_named_constaint_type @Z [concrete]
-// CHECK:STDOUT:   %empty_struct: %Z.type = struct_value () [concrete]
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 1 [symbolic]
+// CHECK:STDOUT:   %Z.type.82a: type = generic_named_constaint_type @Z [concrete]
+// CHECK:STDOUT:   %empty_struct: %Z.type.82a = struct_value () [concrete]
+// CHECK:STDOUT:   %Z.type.b8d23b.1: type = facet_type <@Z, @Z(%T)> [symbolic]
+// CHECK:STDOUT:   %Self: %Z.type.b8d23b.1 = symbolic_binding Self, 1 [symbolic]
 // CHECK:STDOUT:   %Self.binding.as_type: type = symbolic_binding_type Self, 1, %Self [symbolic]
+// CHECK:STDOUT:   %Z.type.b8d23b.2: type = facet_type <@Z, @Z(%Self.binding.as_type)> [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: %Z.type = constraint_decl @Z [concrete = constants.%empty_struct] {
+// CHECK:STDOUT:   %Z.decl: %Z.type.82a = constraint_decl @Z [concrete = constants.%empty_struct] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
@@ -466,11 +481,13 @@ constraint Z {
 // CHECK:STDOUT:   %T.loc4_14.1: type = symbolic_binding T, 0 [symbolic = %T.loc4_14.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %Self.loc4_24.2: %type = symbolic_binding Self, 1 [symbolic = %Self.loc4_24.2 (constants.%Self)]
+// CHECK:STDOUT:   %type.loc4: type = facet_type <type> [symbolic = %type.loc4 (constants.%Z.type.b8d23b.1)]
+// CHECK:STDOUT:   %Self.loc4_24.2: @Z.%type.loc4 (%Z.type.b8d23b.1) = symbolic_binding Self, 1 [symbolic = %Self.loc4_24.2 (constants.%Self)]
 // CHECK:STDOUT:   %Self.binding.as_type: type = symbolic_binding_type Self, 1, %Self.loc4_24.2 [symbolic = %Self.binding.as_type (constants.%Self.binding.as_type)]
+// CHECK:STDOUT:   %type.loc12: type = facet_type <type> [symbolic = %type.loc12 (constants.%Z.type.b8d23b.2)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   constraint {
-// CHECK:STDOUT:     %Self.loc4_24.1: %type = symbolic_binding Self, 1 [symbolic = %Self.loc4_24.2 (constants.%Self)]
+// CHECK:STDOUT:     %Self.loc4_24.1: @Z.%type.loc4 (%Z.type.b8d23b.1) = symbolic_binding Self, 1 [symbolic = %Self.loc4_24.2 (constants.%Self)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   !members:
 // CHECK:STDOUT:     .Self = %Self.loc4_24.1
@@ -491,12 +508,12 @@ constraint Z {
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %Y.type: type = facet_type <@Y> [concrete]
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
 // CHECK:STDOUT:   %T: type = symbolic_binding T, 0 [symbolic]
 // CHECK:STDOUT:   %pattern_type: type = pattern_type type [concrete]
-// CHECK:STDOUT:   %Z.type: type = generic_named_constaint_type @Z [concrete]
-// CHECK:STDOUT:   %empty_struct: %Z.type = struct_value () [concrete]
-// CHECK:STDOUT:   %Self.aa1: %type = symbolic_binding Self, 1 [symbolic]
+// CHECK:STDOUT:   %Z.type.82a: type = generic_named_constaint_type @Z [concrete]
+// CHECK:STDOUT:   %empty_struct: %Z.type.82a = struct_value () [concrete]
+// CHECK:STDOUT:   %Z.type.b8d: type = facet_type <@Z, @Z(%T)> [symbolic]
+// CHECK:STDOUT:   %Self.aa1: %Z.type.b8d = symbolic_binding Self, 1 [symbolic]
 // CHECK:STDOUT:   %.Self.a96: %Y.type = symbolic_binding .Self [symbolic_self]
 // CHECK:STDOUT:   %Y.lookup_impl_witness: <witness> = lookup_impl_witness %.Self.a96, @Y [symbolic_self]
 // CHECK:STDOUT:   %impl.elem0: type = impl_witness_access %Y.lookup_impl_witness, element0 [symbolic_self]
@@ -508,7 +525,7 @@ constraint Z {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: %Z.type = constraint_decl @Z [concrete = constants.%empty_struct] {
+// CHECK:STDOUT:   %Z.decl: %Z.type.82a = constraint_decl @Z [concrete = constants.%empty_struct] {
 // CHECK:STDOUT:     %T.patt: %pattern_type = symbolic_binding_pattern T, 0 [concrete]
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
@@ -520,12 +537,13 @@ constraint Z {
 // CHECK:STDOUT:   %T.loc8_14.1: type = symbolic_binding T, 0 [symbolic = %T.loc8_14.1 (constants.%T)]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !definition:
-// CHECK:STDOUT:   %Self.loc8_24.2: %type = symbolic_binding Self, 1 [symbolic = %Self.loc8_24.2 (constants.%Self.aa1)]
+// CHECK:STDOUT:   %type: type = facet_type <type> [symbolic = %type (constants.%Z.type.b8d)]
+// CHECK:STDOUT:   %Self.loc8_24.2: @Z.%type (%Z.type.b8d) = symbolic_binding Self, 1 [symbolic = %Self.loc8_24.2 (constants.%Self.aa1)]
 // CHECK:STDOUT:   %Self.binding.as_type: type = symbolic_binding_type Self, 1, %Self.loc8_24.2 [symbolic = %Self.binding.as_type (constants.%Self.binding.as_type)]
 // CHECK:STDOUT:   %Y_where.type: type = facet_type <@Y where constants.%impl.elem0 = %Self.binding.as_type> [symbolic = %Y_where.type (constants.%Y_where.type)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   constraint {
-// CHECK:STDOUT:     %Self.loc8_24.1: %type = symbolic_binding Self, 1 [symbolic = %Self.loc8_24.2 (constants.%Self.aa1)]
+// CHECK:STDOUT:     %Self.loc8_24.1: @Z.%type (%Z.type.b8d) = symbolic_binding Self, 1 [symbolic = %Self.loc8_24.2 (constants.%Self.aa1)]
 // CHECK:STDOUT:
 // CHECK:STDOUT:   !members:
 // CHECK:STDOUT:     .Self = %Self.loc8_24.1
@@ -541,19 +559,19 @@ constraint Z {
 // CHECK:STDOUT: --- require_self_in_requirement.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
-// CHECK:STDOUT:   %type: type = facet_type <type> [concrete]
-// CHECK:STDOUT:   %Self.861: %type = symbolic_binding Self, 0 [symbolic]
+// CHECK:STDOUT:   %Z.type: type = facet_type <@Z> [concrete]
+// CHECK:STDOUT:   %Self.861: %Z.type = symbolic_binding Self, 0 [symbolic]
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: imports {
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: file {
-// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%type] {} {}
+// CHECK:STDOUT:   %Z.decl: type = constraint_decl @Z [concrete = constants.%Z.type] {} {}
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: constraint @Z {
-// CHECK:STDOUT:   %Self: %type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
+// CHECK:STDOUT:   %Self: %Z.type = symbolic_binding Self, 0 [symbolic = constants.%Self.861]
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = %Self
