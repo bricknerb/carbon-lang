@@ -1243,32 +1243,13 @@ static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
   return ExprAsType(context, loc_id, call_id);
 }
 
-// Maps a C++ pointer type to a Carbon pointer type. If the pointer is wrapped
-// with a qualified type, maps it as well to keep qualifiers on the pointer.
-// We need to do it here because we wrap nullable pointers with an optional type
-// and the qualifiers need to be set to the pointer and not the optional type.
-static auto MapPointerType(Context& context, SemIR::LocId loc_id,
-                           clang::QualType type, clang::QualType qualified_type,
+// Maps a C++ pointer type to a Carbon pointer type.
+static auto MapPointerType(Context& context, clang::QualType type,
                            TypeExpr pointee_type_expr) -> TypeExpr {
   CARBON_CHECK(type->isPointerType());
 
-  bool optional =
-      !IsClangTypeNonNull(type) &&
-      // If the type was produced by C++ template substitution, then we assume
-      // it was deduced from a Carbon pointer type, so it's non-null.
-      !type->getAs<clang::SubstTemplateTypeParmType>();
-
-  TypeExpr pointer_type_expr = TypeExpr::ForUnsugared(
+  return TypeExpr::ForUnsugared(
       context, GetPointerType(context, pointee_type_expr.inst_id));
-  if (!qualified_type.isNull()) {
-    pointer_type_expr =
-        MapQualifiedType(context, qualified_type, pointer_type_expr);
-  }
-  if (optional) {
-    pointer_type_expr =
-        MakeOptionalType(context, loc_id, pointer_type_expr.inst_id);
-  }
-  return pointer_type_expr;
 }
 
 // Maps a C++ reference type to a Carbon type. We map all references to
@@ -1283,6 +1264,15 @@ static auto MapReferenceType(Context& context, clang::QualType type,
   pointer_type_id =
       GetConstType(context, context.types().GetInstId(pointer_type_id));
   return TypeExpr::ForUnsugared(context, pointer_type_id);
+}
+
+static auto IsNullablePointerType(clang::QualType type) -> bool {
+  CARBON_CHECK(type->isPointerType());
+  return !IsClangTypeNonNull(type) &&
+         // If the type was produced by C++ template
+         // substitution, then we assume it was deduced from a
+         // Carbon pointer type, so it's non-null.
+         !type->getAs<clang::SubstTemplateTypeParmType>();
 }
 
 // Maps a C++ type to a Carbon type. `type` should not be canonicalized because
@@ -1313,34 +1303,32 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
 
   auto mapped = MapNonWrapperType(context, loc_id, type);
 
-  for (auto wrapper_iter = wrapper_types.rbegin();
-       wrapper_iter != wrapper_types.rend(); ++wrapper_iter) {
+  bool nullable_pointer = false;
+  for (auto wrapper : llvm::reverse(wrapper_types)) {
     if (!mapped.inst_id.has_value() ||
         mapped.type_id == SemIR::ErrorInst::TypeId) {
       break;
     }
 
-    clang::QualType wrapper = *wrapper_iter;
     if (wrapper.hasQualifiers()) {
       mapped = MapQualifiedType(context, wrapper, mapped);
-    } else if (wrapper->isPointerType()) {
-      // For pointer types, we need to pass the wrapping qualifier type, if it
-      // exists.
-      clang::QualType qualified_type;
-      if (wrapper_iter + 1 != wrapper_types.rend()) {
-        clang::QualType next_wrapper = *(wrapper_iter + 1);
-        if (next_wrapper.hasQualifiers()) {
-          qualified_type = next_wrapper;
-          ++wrapper_iter;
-        }
-      }
-
-      mapped = MapPointerType(context, loc_id, wrapper, qualified_type, mapped);
-    } else if (wrapper->isReferenceType()) {
-      mapped = MapReferenceType(context, wrapper, mapped);
     } else {
-      CARBON_FATAL("Unexpected wrapper type {0}", wrapper.getAsString());
+      if (nullable_pointer) {
+        mapped = MakeOptionalType(context, loc_id, mapped.inst_id);
+        nullable_pointer = false;
+      }
+      if (wrapper->isPointerType()) {
+        nullable_pointer = IsNullablePointerType(wrapper);
+        mapped = MapPointerType(context, wrapper, mapped);
+      } else if (wrapper->isReferenceType()) {
+        mapped = MapReferenceType(context, wrapper, mapped);
+      } else {
+        CARBON_FATAL("Unexpected wrapper type {0}", wrapper.getAsString());
+      }
     }
+  }
+  if (nullable_pointer) {
+    mapped = MakeOptionalType(context, loc_id, mapped.inst_id);
   }
 
   return mapped;
