@@ -323,9 +323,8 @@ auto TypeCompleter::AddNestedIncompleteTypes(SemIR::Inst type_inst) -> bool {
     }
     case SemIR::CppVoidType::Kind: {
       if (diagnoser_) {
-        CARBON_DIAGNOSTIC(
-            CppVoidIncomplete, Note,
-            "`Cpp.void` is incomplete; did you mean `Cpp.void*`?");
+        CARBON_DIAGNOSTIC(CppVoidIncomplete, Note,
+                          "`Cpp.void` is always-incomplete");
         diagnoser_().Note(SemIR::LocId::None, CppVoidIncomplete).Emit();
       }
       return false;
