@@ -1244,8 +1244,9 @@ static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
 }
 
 // Maps a C++ pointer type to a Carbon pointer type. If the pointer is wrapped
-// with a qualified type, maps it as well to keep nullable pointer qualifiers
-// inside the mapped optional type.
+// with a qualified type, maps it as well to keep qualifiers on the pointer.
+// We need to do it here because we wrap nullable pointers with an optional type
+// and the qualifiers need to be set to the pointer and not the optional type.
 static auto MapPointerType(Context& context, SemIR::LocId loc_id,
                            clang::QualType type, clang::QualType qualified_type,
                            TypeExpr pointee_type_expr) -> TypeExpr {
