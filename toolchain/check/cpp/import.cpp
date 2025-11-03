@@ -1235,13 +1235,10 @@ static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
   return ExprAsType(context, loc_id, call_id);
 }
 
-// Maps a C++ pointer type to a Carbon pointer type. If the pointer is wrapped
-// with a qualified type, maps it as well to keep qualifiers on the pointer.
-// We need to do it here because we wrap nullable pointers with an optional type
-// and the qualifiers need to be set to the pointer and not the optional type.
+// Maps a C++ pointer type to a Carbon pointer type.
 static auto MapPointerType(Context& context, SemIR::LocId loc_id,
-                           clang::QualType type, clang::QualType qualified_type,
-                           TypeExpr pointee_type_expr) -> TypeExpr {
+                           clang::QualType type, TypeExpr pointee_type_expr)
+    -> TypeExpr {
   CARBON_CHECK(type->isPointerType());
 
   bool optional =
@@ -1252,10 +1249,6 @@ static auto MapPointerType(Context& context, SemIR::LocId loc_id,
 
   TypeExpr pointer_type_expr = TypeExpr::ForUnsugared(
       context, GetPointerType(context, pointee_type_expr.inst_id));
-  if (!qualified_type.isNull()) {
-    pointer_type_expr =
-        MapQualifiedType(context, qualified_type, pointer_type_expr);
-  }
   if (optional) {
     pointer_type_expr =
         MakeOptionalType(context, loc_id, pointer_type_expr.inst_id);
@@ -1305,29 +1298,16 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
 
   auto mapped = MapNonWrapperType(context, loc_id, type);
 
-  for (auto wrapper_iter = wrapper_types.rbegin();
-       wrapper_iter != wrapper_types.rend(); ++wrapper_iter) {
+  for (auto wrapper : llvm::reverse(wrapper_types)) {
     if (!mapped.inst_id.has_value() ||
         mapped.type_id == SemIR::ErrorInst::TypeId) {
       break;
     }
 
-    clang::QualType wrapper = *wrapper_iter;
     if (wrapper.hasQualifiers()) {
       mapped = MapQualifiedType(context, wrapper, mapped);
     } else if (wrapper->isPointerType()) {
-      // For pointer types, we need to pass the wrapping qualifier type, if it
-      // exists.
-      clang::QualType qualified_type;
-      if (wrapper_iter + 1 != wrapper_types.rend()) {
-        clang::QualType next_wrapper = *(wrapper_iter + 1);
-        if (next_wrapper.hasQualifiers()) {
-          qualified_type = next_wrapper;
-          ++wrapper_iter;
-        }
-      }
-
-      mapped = MapPointerType(context, loc_id, wrapper, qualified_type, mapped);
+      mapped = MapPointerType(context, loc_id, wrapper, mapped);
     } else if (wrapper->isReferenceType()) {
       mapped = MapReferenceType(context, wrapper, mapped);
     } else {
