@@ -11,20 +11,20 @@
 // TIP:   bazel run //toolchain/testing:file_test -- --dump_output --file_tests=toolchain/check/testdata/interop/cpp/function/pointer.carbon
 
 // ============================================================================
-// Pointer as a parameter type
+// Non-nullable pointer as a parameter type
 // ============================================================================
 
-// --- pointer_param.h
+// --- non_nullable_pointer_param.h
 
 struct S {};
 
 auto foo(S* _Nonnull) -> void;
 
-// --- import_pointer_param.carbon
+// --- import_non_nullable_pointer_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "pointer_param.h";
+import Cpp library "non_nullable_pointer_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -33,32 +33,32 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- fail_import_pointer_param_using_const_value.carbon
+// --- fail_import_non_nullable_pointer_param_using_const_value.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "pointer_param.h";
+import Cpp library "non_nullable_pointer_param.h";
 
 fn G() -> const Cpp.S;
 
 fn F() {
   var s: const Cpp.S = G();
-  // CHECK:STDERR: fail_import_pointer_param_using_const_value.carbon:[[@LINE+8]]:13: error: no matching function for call to 'foo' [CppInteropParseError]
+  // CHECK:STDERR: fail_import_non_nullable_pointer_param_using_const_value.carbon:[[@LINE+8]]:13: error: no matching function for call to 'foo' [CppInteropParseError]
   // CHECK:STDERR:    18 |   Cpp.foo(&s);
   // CHECK:STDERR:       |             ^
-  // CHECK:STDERR: fail_import_pointer_param_using_const_value.carbon:[[@LINE-9]]:10: in file included here [InCppInclude]
-  // CHECK:STDERR: ./pointer_param.h:4:6: note: candidate function not viable: 1st argument ('const S * _Nonnull') would lose const qualifier [CppInteropParseNote]
+  // CHECK:STDERR: fail_import_non_nullable_pointer_param_using_const_value.carbon:[[@LINE-9]]:10: in file included here [InCppInclude]
+  // CHECK:STDERR: ./non_nullable_pointer_param.h:4:6: note: candidate function not viable: 1st argument ('const S * _Nonnull') would lose const qualifier [CppInteropParseNote]
   // CHECK:STDERR:     4 | auto foo(S* _Nonnull) -> void;
   // CHECK:STDERR:       |      ^   ~~~~~~~~~~~
   // CHECK:STDERR:
   Cpp.foo(&s);
 }
 
-// --- import_pointer_param_using_const_pointer.carbon
+// --- import_non_nullable_pointer_param_using_const_pointer.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "pointer_param.h";
+import Cpp library "non_nullable_pointer_param.h";
 
 fn G() -> const (Cpp.S*);
 
@@ -70,20 +70,20 @@ fn F() {
 }
 
 // ============================================================================
-// Double pointer as a parameter type
+// Double non-nullable pointer as a parameter type
 // ============================================================================
 
-// --- double_pointer_param.h
+// --- double_non_nullable_pointer_param.h
 
 struct S {};
 
 auto foo(S* _Nonnull * _Nonnull) -> void;
 
-// --- import_double_pointer_param.carbon
+// --- import_double_non_nullable_pointer_param.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "double_pointer_param.h";
+import Cpp library "double_non_nullable_pointer_param.h";
 
 fn F() {
   //@dump-sem-ir-begin
@@ -94,20 +94,20 @@ fn F() {
 }
 
 // ============================================================================
-// Pointer to const as a parameter type
+// Non-nullable pointer to const as a parameter type
 // ============================================================================
 
-// --- pointer_to_const_param.h
+// --- non_nullable_pointer_to_const_param.h
 
 struct S {};
 
 auto foo(const S* _Nonnull) -> void;
 
-// --- import_pointer_to_const_param_using_const.carbon
+// --- import_non_nullable_pointer_to_const_param_using_const.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "pointer_to_const_param.h";
+import Cpp library "non_nullable_pointer_to_const_param.h";
 
 fn G() -> const Cpp.S;
 
@@ -118,9 +118,9 @@ fn F() {
   //@dump-sem-ir-end
 }
 
-// --- import_pointer_to_const_param_using_non_const.carbon
+// --- import_non_nullable_pointer_to_const_param_using_non_const.carbon
 
-import Cpp library "pointer_to_const_param.h";
+import Cpp library "non_nullable_pointer_to_const_param.h";
 
 fn G() -> Cpp.S;
 
@@ -135,7 +135,7 @@ fn F() {
 // Const non-nullable pointer as a parameter type
 // ============================================================================
 
-// --- const_pointer_param.h
+// --- const_non_nullable_pointer_param.h
 
 struct S {};
 
@@ -145,7 +145,7 @@ auto foo(S* _Nonnull const) -> void;
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_pointer_param.h";
+import Cpp library "const_non_nullable_pointer_param.h";
 
 fn G() -> const (Cpp.S*);
 
@@ -160,7 +160,7 @@ fn F() {
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_pointer_param.h";
+import Cpp library "const_non_nullable_pointer_param.h";
 
 fn G() -> Cpp.S*;
 
@@ -223,20 +223,20 @@ fn F() {
 }
 
 // ============================================================================
-// Pointer as a return value
+// Non-nullable pointer as a return value
 // ============================================================================
 
-// --- pointer_return.h
+// --- non_nullable_pointer_return.h
 
 struct S {};
 
 auto foo() -> S* _Nonnull;
 
-// --- import_pointer_return.carbon
+// --- import_non_nullable_pointer_return.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "pointer_return.h";
+import Cpp library "non_nullable_pointer_return.h";
 
 fn IngestDoublePointer(s: Cpp.S*);
 
@@ -248,10 +248,10 @@ fn F() {
 }
 
 // ============================================================================
-// Double pointer as a return value
+// Double non-nullable pointer as a return value
 // ============================================================================
 
-// --- double_pointer_return.h
+// --- double_non_nullable_pointer_return.h
 
 struct S {};
 
@@ -261,7 +261,7 @@ auto foo() -> S* _Nonnull * _Nonnull;
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "double_pointer_return.h";
+import Cpp library "double_non_nullable_pointer_return.h";
 
 fn IngestDoublePointer(s: Cpp.S**);
 
@@ -273,20 +273,20 @@ fn F() {
 }
 
 // ============================================================================
-// Const pointer as a return value
+// Const non-nullable pointer as a return value
 // ============================================================================
 
-// --- const_pointer_return.h
+// --- const_non_nullable_pointer_return.h
 
 struct S {};
 
 auto foo() -> const S* _Nonnull;
 
-// --- import_const_pointer_return.carbon
+// --- import_const_non_nullable_pointer_return.carbon
 
 library "[[@TEST_NAME]]";
 
-import Cpp library "const_pointer_return.h";
+import Cpp library "const_non_nullable_pointer_return.h";
 
 fn IngestConstPointer(s: const Cpp.S*);
 
@@ -415,7 +415,7 @@ fn F() {
   let a: Cpp.S* = Cpp.Indirect({} as Cpp.S);
 }
 
-// CHECK:STDOUT: --- import_pointer_param.carbon
+// CHECK:STDOUT: --- import_non_nullable_pointer_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -478,7 +478,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_pointer_param_using_const_pointer.carbon
+// CHECK:STDOUT: --- import_non_nullable_pointer_param_using_const_pointer.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -546,7 +546,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_double_pointer_param.carbon
+// CHECK:STDOUT: --- import_double_non_nullable_pointer_param.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -651,7 +651,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_pointer_to_const_param_using_const.carbon
+// CHECK:STDOUT: --- import_non_nullable_pointer_to_const_param_using_const.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -716,7 +716,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_pointer_to_const_param_using_non_const.carbon
+// CHECK:STDOUT: --- import_non_nullable_pointer_to_const_param_using_non_const.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -1139,7 +1139,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_pointer_return.carbon
+// CHECK:STDOUT: --- import_non_nullable_pointer_return.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
@@ -1228,7 +1228,7 @@ fn F() {
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: --- import_const_pointer_return.carbon
+// CHECK:STDOUT: --- import_const_non_nullable_pointer_return.carbon
 // CHECK:STDOUT:
 // CHECK:STDOUT: constants {
 // CHECK:STDOUT:   %empty_tuple.type: type = tuple_type () [concrete]
