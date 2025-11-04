@@ -1226,6 +1226,19 @@ static auto IsClangTypeNonNull(clang::QualType type) -> bool {
          *nullability == clang::NullabilityKind::NonNull;
 }
 
+// Like `clang::QualType::getUnqualifiedType()`, retrieves the unqualified
+// variant of the given type, but preserves `_Nonnull`.
+static auto ClangGetUnqualifiedTypePreserveNonNull(
+    Context& context, clang::QualType original_type) -> clang::QualType {
+  clang::QualType type = original_type.getUnqualifiedType();
+  // Preserve non-nullability.
+  if (IsClangTypeNonNull(original_type) && !IsClangTypeNonNull(type)) {
+    type = context.ast_context().getAttributedType(
+        clang::NullabilityKind::NonNull, type, type);
+  }
+  return type;
+}
+
 // Returns the type `Core.Optional(T)`, where  `T` is described by
 // `inner_type_inst_id`.
 static auto MakeOptionalType(Context& context, SemIR::LocId loc_id,
@@ -1280,12 +1293,7 @@ static auto MapType(Context& context, SemIR::LocId loc_id, clang::QualType type)
   while (true) {
     clang::QualType orig_type = type;
     if (type.hasQualifiers()) {
-      type = type.getUnqualifiedType();
-      // Preserve non-nullability.
-      if (IsClangTypeNonNull(orig_type) && !IsClangTypeNonNull(type)) {
-        type = context.ast_context().getAttributedType(
-            clang::NullabilityKind::NonNull, type, type);
-      }
+      type = ClangGetUnqualifiedTypePreserveNonNull(context, type);
     } else if (type->isPointerType()) {
       type = type->getPointeeType();
     } else if (type->isReferenceType()) {
@@ -1455,14 +1463,11 @@ static auto MakeParamPatternsBlockId(Context& context, SemIR::LocId loc_id,
     clang::QualType orig_param_type = function_type->getParamType(
         clang_decl.hasCXXExplicitFunctionObjectParameter() + i);
 
-    clang::QualType param_type = orig_param_type;
-    // Pointer type should keep its qualifiers.
-    if (!param_type->isPointerType()) {
-      // The parameter type is decayed but hasn't necessarily had its qualifiers
-      // removed.
-      // TODO: The presence of qualifiers here is probably a Clang bug.
-      param_type = orig_param_type.getUnqualifiedType();
-    }
+    // The parameter type is decayed but hasn't necessarily had its qualifiers
+    // removed.
+    // TODO: The presence of qualifiers here is probably a Clang bug.
+    clang::QualType param_type =
+        ClangGetUnqualifiedTypePreserveNonNull(context, orig_param_type);
 
     // Mark the start of a region of insts, needed for the type expression
     // created later with the call of `EndSubpatternAsExpr()`.
