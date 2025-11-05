@@ -1687,7 +1687,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .F = %Derived.F.decl
 // CHECK:STDOUT:   .instance_data = <poisoned>
@@ -1819,7 +1818,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .F = %Derived.F.decl
 // CHECK:STDOUT:   .instance_fn = <poisoned>
@@ -1862,7 +1860,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .F = %Derived.F.decl
 // CHECK:STDOUT:   .static_fn = <poisoned>
@@ -2088,7 +2085,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%D
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .D = <poisoned>
 // CHECK:STDOUT:   .MakePublic = %D.MakePublic.decl
@@ -2346,7 +2342,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .F = %Derived.F.decl
 // CHECK:STDOUT:   .Overload = <poisoned>
@@ -2468,7 +2463,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .F = %Derived.F.decl
 // CHECK:STDOUT:   .Overload = <poisoned>
@@ -2581,7 +2575,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .CallStatic = %Derived.CallStatic.decl
 // CHECK:STDOUT:   .CallInstance = %Derived.CallInstance.decl
@@ -2678,7 +2671,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .CallStatic = %Derived.CallStatic.decl
 // CHECK:STDOUT:   .CallInstance = %Derived.CallInstance.decl
@@ -2759,7 +2751,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .CallStatic = %Derived.CallStatic.decl
 // CHECK:STDOUT:   .CallInstance = %Derived.CallInstance.decl
@@ -2876,7 +2867,6 @@ fn Call(var instance: Cpp.PublicPrivate) {
 // CHECK:STDOUT:
 // CHECK:STDOUT: !members:
 // CHECK:STDOUT:   .Self = constants.%Derived
-// CHECK:STDOUT:   .Cpp = <poisoned>
 // CHECK:STDOUT:   .base = %.loc7
 // CHECK:STDOUT:   .CallStatic = %Derived.CallStatic.decl
 // CHECK:STDOUT:   .CallInstance = %Derived.CallInstance.decl
