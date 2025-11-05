@@ -23,7 +23,8 @@ fn Convert(o: Core.Optional(i32*)) -> Core.Optional(i32) {
 // CHECK:STDOUT: ; ModuleID = 'optional.carbon'
 // CHECK:STDOUT: source_filename = "optional.carbon"
 // CHECK:STDOUT:
-// CHECK:STDOUT: define void @_CConvert.Main(ptr sret({ i32, i1 }) %return, ptr %o) !dbg !4 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define void @_CConvert.Main(ptr sret({ i32, i1 }) %return, ptr %o) #0 !dbg !4 {
 // CHECK:STDOUT: entry:
 // CHECK:STDOUT:   %.loc18_20.1.temp = alloca { i32, i1 }, align 8, !dbg !7
 // CHECK:STDOUT:   %Optional.HasValue.call = call i1 @_CHasValue.Optional.Core.217efae529e578bc(ptr %o), !dbg !8
@@ -41,47 +42,55 @@ fn Convert(o: Core.Optional(i32*)) -> Core.Optional(i32) {
 // CHECK:STDOUT:   ret void, !dbg !13
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr i1 @_CHasValue.Optional.Core.217efae529e578bc(ptr %self) !dbg !14 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr i1 @_CHasValue.Optional.Core.217efae529e578bc(ptr %self) #0 !dbg !14 {
 // CHECK:STDOUT:   %1 = load ptr, ptr %self, align 8, !dbg !16
 // CHECK:STDOUT:   %2 = icmp eq ptr %1, null, !dbg !16
 // CHECK:STDOUT:   ret i1 %2, !dbg !17
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr ptr @_CGet.Optional.Core.217efae529e578bc(ptr %self) !dbg !18 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr ptr @_CGet.Optional.Core.217efae529e578bc(ptr %self) #0 !dbg !18 {
 // CHECK:STDOUT:   %1 = call ptr @"_CGet.4f0b5cc38af595d2:OptionalStorage.Core.b88d1103f417c6d4"(ptr %self), !dbg !19
 // CHECK:STDOUT:   ret ptr %1, !dbg !20
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
 // CHECK:STDOUT: ; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
-// CHECK:STDOUT: declare void @llvm.lifetime.start.p0(ptr captures(none)) #0
+// CHECK:STDOUT: declare void @llvm.lifetime.start.p0(ptr captures(none)) #1
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr void @"_CConvert.8d16edc1dfe20a7c:ImplicitAs.Core.f16306f3d30b9711"(ptr sret({ i32, i1 }) %return, i32 %self) !dbg !21 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr void @"_CConvert.8d16edc1dfe20a7c:ImplicitAs.Core.f16306f3d30b9711"(ptr sret({ i32, i1 }) %return, i32 %self) #0 !dbg !21 {
 // CHECK:STDOUT:   call void @_CSome.Optional.Core.f16306f3d30b9711(ptr %return, i32 %self), !dbg !22
 // CHECK:STDOUT:   ret void, !dbg !23
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr void @_CNone.Optional.Core.f16306f3d30b9711(ptr sret({ i32, i1 }) %return) !dbg !24 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr void @_CNone.Optional.Core.f16306f3d30b9711(ptr sret({ i32, i1 }) %return) #0 !dbg !24 {
 // CHECK:STDOUT:   call void @"_CNone.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr %return), !dbg !25
 // CHECK:STDOUT:   ret void, !dbg !26
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr ptr @"_CGet.4f0b5cc38af595d2:OptionalStorage.Core.b88d1103f417c6d4"(ptr %value) !dbg !27 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr ptr @"_CGet.4f0b5cc38af595d2:OptionalStorage.Core.b88d1103f417c6d4"(ptr %value) #0 !dbg !27 {
 // CHECK:STDOUT:   %1 = load ptr, ptr %value, align 8, !dbg !28
 // CHECK:STDOUT:   ret ptr %1, !dbg !29
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr void @_CSome.Optional.Core.f16306f3d30b9711(ptr sret({ i32, i1 }) %return, i32 %value) !dbg !30 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr void @_CSome.Optional.Core.f16306f3d30b9711(ptr sret({ i32, i1 }) %return, i32 %value) #0 !dbg !30 {
 // CHECK:STDOUT:   call void @"_CSome.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr %return, i32 %value), !dbg !31
 // CHECK:STDOUT:   ret void, !dbg !32
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr void @"_CNone.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr sret({ i32, i1 }) %return) !dbg !33 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr void @"_CNone.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr sret({ i32, i1 }) %return) #0 !dbg !33 {
 // CHECK:STDOUT:   %has_value = getelementptr inbounds nuw { i32, i1 }, ptr %return, i32 0, i32 1, !dbg !34
 // CHECK:STDOUT:   store i8 0, ptr %has_value, align 1, !dbg !34
 // CHECK:STDOUT:   ret void, !dbg !35
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: define linkonce_odr void @"_CSome.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr sret({ i32, i1 }) %return, i32 %self) !dbg !36 {
+// CHECK:STDOUT: ; Function Attrs: nounwind
+// CHECK:STDOUT: define linkonce_odr void @"_CSome.225258f1a45e9386:OptionalStorage.Core.5450dc8e8b8e0899"(ptr sret({ i32, i1 }) %return, i32 %self) #0 !dbg !36 {
 // CHECK:STDOUT:   %value = getelementptr inbounds nuw { i32, i1 }, ptr %return, i32 0, i32 0, !dbg !37
 // CHECK:STDOUT:   store i32 %self, ptr %value, align 4, !dbg !37
 // CHECK:STDOUT:   %has_value = getelementptr inbounds nuw { i32, i1 }, ptr %return, i32 0, i32 1, !dbg !38
@@ -89,7 +98,8 @@ fn Convert(o: Core.Optional(i32*)) -> Core.Optional(i32) {
 // CHECK:STDOUT:   ret void, !dbg !39
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
-// CHECK:STDOUT: attributes #0 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
+// CHECK:STDOUT: attributes #0 = { nounwind }
+// CHECK:STDOUT: attributes #1 = { nocallback nofree nosync nounwind willreturn memory(argmem: readwrite) }
 // CHECK:STDOUT:
 // CHECK:STDOUT: !llvm.module.flags = !{!0, !1}
 // CHECK:STDOUT: !llvm.dbg.cu = !{!2}
