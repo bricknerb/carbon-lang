@@ -130,6 +130,7 @@ auto HandleParseNode(Context& context,
   StartGenericDefinition(context, constraint_info.generic_id);
 
   context.inst_block_stack().Push();
+  context.require_impls_stack().PushArray();
 
   // Declare and introduce `Self`. We model `Self` as a symbolic binding whose
   // type is the named constraint, excluding any other interfaces mentioned by
@@ -156,13 +157,19 @@ auto HandleParseNode(Context& context,
           .Pop<Parse::NodeKind::NamedConstraintDefinitionStart>();
   context.inst_block_stack().Pop();
 
+  auto require_impls_block_id = context.require_impls_blocks().Add(
+      context.require_impls_stack().PeekArray());
+  context.require_impls_stack().PopArray();
+
   auto& constraint_info = context.named_constraints().Get(named_constraint_id);
-  constraint_info.complete = true;
+  if (!constraint_info.complete) {
+    constraint_info.require_impls_block_id = require_impls_block_id;
+    // TODO: Do something with `alias` statements in the body of the
+    // constraint.
+    constraint_info.complete = true;
+  }
 
   FinishGenericDefinition(context, constraint_info.generic_id);
-
-  // TODO: Do something with `require` and `alias` statements in the body of the
-  // constraint.
 
   // The decl_name_stack and scopes are popped by `ProcessNodeIds`.
   return true;
