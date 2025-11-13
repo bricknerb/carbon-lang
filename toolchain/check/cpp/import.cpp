@@ -1575,6 +1575,9 @@ static auto GetReturnPattern(Context& context, SemIR::LocId loc_id,
     // void.
     return SemIR::InstId::None;
   }
+  if (type_inst_id == SemIR::ErrorInst::TypeInstId) {
+    return SemIR::ErrorInst::InstId;
+  }
   auto pattern_type_id = GetPatternType(context, type_id);
   clang::SourceLocation return_type_loc =
       clang_decl->getReturnTypeSourceRange().getBegin();
