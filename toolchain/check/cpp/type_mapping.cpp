@@ -100,6 +100,32 @@ static auto LookupCppType(
                    : clang::QualType();
 }
 
+// Maps a numeric Carbon class type of a specific width to a C++ type. Returns a
+// null `QualType` if the type is not supported.
+static auto TryMapSignedIntType(Context& context, SemIR::ClassType class_type,
+                                int bit_width) -> clang::QualType {
+  SemIR::Class& class_info = context.classes().Get(class_type.class_id);
+  clang::ASTContext& ast_context = context.ast_context();
+  if (context.name_scopes().IsInCorePackageRoot(class_info.scope_id)) {
+    return ast_context.getIntTypeForBitwidth(bit_width, true);
+  }
+  auto name_ident = context.names().GetAsStringIfIdentifier(class_info.name_id);
+  if (!name_ident) {
+    return clang::QualType();
+  }
+
+  // We assume the type is in `Core.CppCompat`.
+  clang::QualType qual_type = llvm::StringSwitch<clang::QualType>(*name_ident)
+                                  .Case("Long32", ast_context.LongTy)
+                                  .Default(clang::QualType());
+  if (qual_type.isNull() ||
+      ast_context.getIntWidth(qual_type) != static_cast<unsigned>(bit_width)) {
+    return clang::QualType();
+  }
+
+  return qual_type;
+}
+
 // Maps a Carbon class type to a C++ type. Returns a null `QualType` if the
 // type is not supported.
 static auto TryMapClassType(Context& context, SemIR::ClassType class_type)
@@ -139,7 +165,7 @@ static auto TryMapClassType(Context& context, SemIR::ClassType class_type)
               bit_width, clang::FloatModeKind::NoFloat);
         }
         case SemIR::NumericTypeLiteralInfo::Int: {
-          return context.ast_context().getIntTypeForBitwidth(bit_width, true);
+          return TryMapSignedIntType(context, class_type, bit_width);
         }
         case SemIR::NumericTypeLiteralInfo::UInt: {
           return context.ast_context().getIntTypeForBitwidth(bit_width, false);

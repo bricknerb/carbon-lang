@@ -1104,6 +1104,11 @@ static auto MapBuiltinIntegerType(Context& context, SemIR::LocId loc_id,
     return ExprAsType(context, Parse::NodeId::None,
                       MakeCharTypeLiteral(context, Parse::NodeId::None));
   }
+  if (ast_context.hasSameType(qual_type, ast_context.LongTy) && width == 32) {
+    return ExprAsType(context, Parse::NodeId::None,
+                      LookupNameInCore(context, Parse::NodeId::None,
+                                       {"CppCompat", "Long32"}));
+  }
   return TypeExpr::None;
 }
 
