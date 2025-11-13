@@ -12,27 +12,27 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 -   [Philosophy and goals](#philosophy-and-goals)
 -   [Overview](#overview)
--   [C++ Interoperability Model: Introduction and Principles](#c-interoperability-model-introduction-and-principles)
-    -   [The "Successor Language" Mandate](#the-successor-language-mandate)
-    -   [The `Cpp` Associated Type: The Interop Trigger](#the-cpp-associated-type-the-interop-trigger)
+-   [C++ interoperability model: introduction and principles](#c-interoperability-model-introduction-and-principles)
+    -   [The "successor language" mandate](#the-successor-language-mandate)
+    -   [The `Cpp` associated type: the interop trigger](#the-cpp-associated-type-the-interop-trigger)
 -   [Importing C++ APIs into Carbon](#importing-c-apis-into-carbon)
-    -   [Importing C++ Libraries (Header-Based)](#importing-c-libraries-header-based)
-    -   [TODO: Importing C++ Code (Inline)](#todo-importing-c-code-inline)
-    -   [Accessing Built-in C++ Entities (File-less)](#accessing-built-in-c-entities-file-less)
-    -   [The `Cpp` Namespace](#the-cpp-namespace)
-    -   [TODO: Importing C++ Macros](#todo-importing-c-macros)
--   [Calling C++ Code from Carbon](#calling-c-code-from-carbon)
-    -   [Function Call Syntax and Semantics](#function-call-syntax-and-semantics)
-    -   [TODO: Overload Resolution](#todo-overload-resolution)
+    -   [Importing C++ libraries (header-based)](#importing-c-libraries-header-based)
+    -   [TODO: Importing C++ code (inline)](#todo-importing-c-code-inline)
+    -   [Accessing built-in C++ entities (file-less)](#accessing-built-in-c-entities-file-less)
+    -   [The `Cpp` namespace](#the-cpp-namespace)
+    -   [TODO: Importing C++ macros](#todo-importing-c-macros)
+-   [Calling C++ code from Carbon](#calling-c-code-from-carbon)
+    -   [Function call syntax and semantics](#function-call-syntax-and-semantics)
+    -   [TODO: Overload resolution](#todo-overload-resolution)
     -   [TODO: Thunks](#todo-thunks)
     -   [TODO: Constructors](#todo-constructors)
-    -   [TODO: Struct Literals](#todo-struct-literals)
--   [TODO: Accessing C++ Classes, Structs, and Members](#todo-accessing-c-classes-structs-and-members)
--   [TODO: Accessing Global Variables](#todo-accessing-global-variables)
--   [TODO: Bi-directional Type Mapping: Primitives and Core Types](#todo-bi-directional-type-mapping-primitives-and-core-types)
--   [TODO: Advanced Type Mapping: Pointers, References, and `const`](#todo-advanced-type-mapping-pointers-references-and-const)
--   [TODO: Bi-directional Type Mapping: Standard Library Types](#todo-bi-directional-type-mapping-standard-library-types)
--   [TODO: The Operator Interoperability Model](#todo-the-operator-interoperability-model)
+    -   [TODO: Struct literals](#todo-struct-literals)
+-   [TODO: Accessing C++ classes, structs, and members](#todo-accessing-c-classes-structs-and-members)
+-   [TODO: Accessing global variables](#todo-accessing-global-variables)
+-   [TODO: Bi-directional type mapping: primitives and core types](#todo-bi-directional-type-mapping-primitives-and-core-types)
+-   [TODO: Advanced type mapping: pointers, references, and `const`](#todo-advanced-type-mapping-pointers-references-and-const)
+-   [TODO: Bi-directional type mapping: standard library types](#todo-bi-directional-type-mapping-standard-library-types)
+-   [TODO: The operator interoperability model](#todo-the-operator-interoperability-model)
 
 <!-- tocstop -->
 
@@ -71,9 +71,9 @@ fidelity. This includes preserving the nominal distinctions between C++ types
 like `long` and `long long`, or `T*` and `T&`, which is critical for correct
 overload resolution and template instantiation.
 
-## C++ Interoperability Model: Introduction and Principles
+## C++ interoperability model: introduction and principles
 
-### The "Successor Language" Mandate
+### The "successor language" mandate
 
 The design of Carbon's C++ interoperability is governed by its foundational
 goal: [to be a successor language](/README.md), not merely a language with a
@@ -92,7 +92,7 @@ therefore, operate at the semantic analysis (SemIR) level, not just at the
 linking (ABI) level. This document specifies the design of this semantic
 contract.
 
-### The `Cpp` Associated Type: The Interop Trigger
+### The `Cpp` associated type: the interop trigger
 
 A core mechanism in this design is the `Cpp` associated type. This concept
 defines the "trigger" that activates C++-specific semantic rules within the
@@ -125,7 +125,7 @@ implementation simplicity.
 
 ## Importing C++ APIs into Carbon
 
-### Importing C++ Libraries (Header-Based)
+### Importing C++ libraries (header-based)
 
 The primary mechanism for importing existing, user-defined C++ code is through
 header file inclusion. The Carbon toolchain must be able to parse and analyze
@@ -165,9 +165,9 @@ This model allows Carbon to leverage Clang's mature and correct implementation
 of C++'s complex parsing and semantic rules, including template instantiation,
 without having to reimplement them.
 
-### TODO: Importing C++ Code (Inline)
+### TODO: Importing C++ code (inline)
 
-### Accessing Built-in C++ Entities (File-less)
+### Accessing built-in C++ entities (file-less)
 
 Some C++ entities, particularly built-in primitive types, are not defined in any
 header file. They are "intrinsic" to the C++ compiler. These entities are
@@ -181,7 +181,7 @@ ensures that types like `long` or `float` are available seamlessly within the
 explicitly import them. This approach provides a clean, file-less way to access
 the foundational types required for C++ interoperability.
 
-### The `Cpp` Namespace
+### The `Cpp` namespace
 
 A critical design choice for managing C++ imports is the mandatory use of a
 containing namespace, `Cpp`. All imported C++ entities—functions, classes,
@@ -207,11 +207,11 @@ The `Cpp.` prefix makes the _origin_ of every symbol explicit and unambiguous.
 It ensures that C++ entities cannot collide with Carbon code, thereby "learning
 from" one of C++'s most significant legacy design issues.
 
-### TODO: Importing C++ Macros
+### TODO: Importing C++ macros
 
-## Calling C++ Code from Carbon
+## Calling C++ code from Carbon
 
-### Function Call Syntax and Semantics
+### Function call syntax and semantics
 
 Once imported, C++ functions are invoked using standard Carbon function call
 syntax, prefixed with the `Cpp` namespace. The Carbon compiler is responsible
@@ -237,22 +237,22 @@ fn Run() {
 }
 ```
 
-### TODO: Overload Resolution
+### TODO: Overload resolution
 
 ### TODO: Thunks
 
 ### TODO: Constructors
 
-### TODO: Struct Literals
+### TODO: Struct literals
 
-## TODO: Accessing C++ Classes, Structs, and Members
+## TODO: Accessing C++ classes, structs, and members
 
-## TODO: Accessing Global Variables
+## TODO: Accessing global variables
 
-## TODO: Bi-directional Type Mapping: Primitives and Core Types
+## TODO: Bi-directional type mapping: primitives and core types
 
-## TODO: Advanced Type Mapping: Pointers, References, and `const`
+## TODO: Advanced type mapping: pointers, references, and `const`
 
-## TODO: Bi-directional Type Mapping: Standard Library Types
+## TODO: Bi-directional type mapping: standard library types
 
-## TODO: The Operator Interoperability Model
+## TODO: The operator interoperability model
