@@ -14,17 +14,16 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -   [Overview](#overview)
 -   [C++ interoperability model: introduction and principles](#c-interoperability-model-introduction-and-principles)
     -   [The "successor language" mandate](#the-successor-language-mandate)
-    -   [The `Cpp` associated type: the interop trigger](#the-cpp-associated-type-the-interop-trigger)
+    -   [The C++ interop type](#the-c-interop-type)
 -   [Importing C++ APIs into Carbon](#importing-c-apis-into-carbon)
     -   [Importing C++ libraries (header-based)](#importing-c-libraries-header-based)
     -   [TODO: Importing C++ code (inline)](#todo-importing-c-code-inline)
     -   [Accessing built-in C++ entities (file-less)](#accessing-built-in-c-entities-file-less)
-    -   [The `Cpp` namespace](#the-cpp-namespace)
+    -   [The `Cpp` package](#the-cpp-package)
     -   [TODO: Importing C++ macros](#todo-importing-c-macros)
 -   [Calling C++ code from Carbon](#calling-c-code-from-carbon)
     -   [Function call syntax and semantics](#function-call-syntax-and-semantics)
     -   [TODO: Overload resolution](#todo-overload-resolution)
-    -   [TODO: Thunks](#todo-thunks)
     -   [TODO: Constructors](#todo-constructors)
     -   [TODO: Struct literals](#todo-struct-literals)
 -   [TODO: Accessing C++ classes, structs, and members](#todo-accessing-c-classes-structs-and-members)
@@ -57,19 +56,17 @@ a foreign function interface (FFI), but a seamless, high-fidelity integration
 that supports advanced C++ features, from templates to class hierarchies.
 
 C++ APIs are imported into Carbon using an `import Cpp` directive, which makes
-C++ declarations available within a dedicated `Cpp` namespace in Carbon. This
+C++ declarations available within a dedicated `Cpp` package in Carbon. This
 prevents name collisions and makes the origin of symbols explicit. Carbon code
 can then call C++ functions, instantiate C++ classes, and use C++ types, while
-respecting C++'s semantics, including its complex overload resolution rules.
+respecting C++'s semantics, including its complex overload resolution rules and
+preserving the nominal distinctions between C++ types like `long` and
+`long long`, or `T*` and `T&`, which is critical for correct overload resolution
+and template instantiation.
 
 Similarly, Carbon APIs can be designed to be callable from C++. The
 interoperability layer is designed to be zero-cost, avoiding unnecessary
-allocations or copies when calling between the two languages This is achieved
-through a deep semantic co-design, where the Carbon compiler embeds a C++
-compiler frontend (Clang) to understand and map C++ constructs with high
-fidelity. This includes preserving the nominal distinctions between C++ types
-like `long` and `long long`, or `T*` and `T&`, which is critical for correct
-overload resolution and template instantiation.
+allocations or copies when calling between the two languages.
 
 ## C++ interoperability model: introduction and principles
 
@@ -88,48 +85,46 @@ semantics. It requires that C++ is not treated as a "foreign" entity. Instead,
 Carbon's semantic model must be _co-designed_ to understand, map, and interact
 with C++'s semantic constructs—including templates, class hierarchies, and
 complex overload resolution—with high fidelity. The interoperability layer must,
-therefore, operate at the semantic analysis (SemIR) level, not just at the
-linking (ABI) level. This document specifies the design of this semantic
-contract.
+therefore, operate at the semantic analysis level, not just at the linking (ABI)
+level. This document specifies the design of this semantic contract.
 
-### The `Cpp` associated type: the interop trigger
+### The C++ interop type
 
-A core mechanism in this design is the `Cpp` associated type. This concept
-defines the "trigger" that activates C++-specific semantic rules within the
-Carbon compiler. Any operation involving a type that is designated as a `Cpp`
-associated type will invoke the specialized interoperability logic, such as the
-operator model detailed in
-[The Operator Interoperability Model Section](#todo-the-operator-interoperability-model).
+A core mechanism in this design is the C++ interop type. This concept defines
+the "trigger" that activates C++-specific semantic rules within the Carbon
+compiler. Any operation involving a type that is designated as a C++ interop
+type could invoke the specialized interoperability logic, such as C++ overload
+resolution or operator overload resolution that involves both Carbon and C++
+operator overloads..
 
-A type is considered a `Cpp` associated type if its definition involves an
-imported C++ type in any of the following ways:
+A type is considered a C++ interop type if its definition involves an imported
+C++ type in any of the following ways:
 
-1.  The C++ type itself (for example, `Cpp.Widget`).
-2.  A pointer to a C++ type (for example, `Cpp.Widget*`).
-3.  A Carbon generic type parameterized with a C++ type (for example,
+1.  A C++ imported type (for example, `Cpp.Widget`).
+2.  A pointer to a C++ interop type (for example, `Cpp.Widget*`).
+3.  A Carbon generic type parameterized with a C++ interop type (for example,
     `MyCarbonVector(Cpp.Widget)`).
-4.  A Carbon struct or class containing a C++ type as a member (for example,
-    `MyCarbonStruct { x: Cpp.Widget }`).
+4.  A Carbon struct or class containing a C++ interop type as a member (for
+    example, `MyCarbonStruct { x: Cpp.Widget }`).
 
 This "pervasive" model of C++-awareness is a fundamental design choice. The C++
 semantics are not confined to a specific `unsafe` or `extern "C++"` block; they
-"infect" any Carbon type that composes them. For example, when the Carbon
-compiler instantiates a _Carbon_ generic type like `MyCarbonVector(Cpp.Widget)`,
-its type system must be aware that the `Cpp.Widget` parameter carries
-C++-specific rules. This mandates that Carbon's own generic system, struct
-layout logic, and operator lookup must query the type system for the presence of
-a `Cpp` associated type. If present, the compiler must branch to a different,
-more complex logic path (for example, C++-aware overload resolution). This
-design prioritizes the goal of a "seamless" and "intuitive" user experience over
-implementation simplicity.
+affect any Carbon type that composes them. For example, when the Carbon compiler
+instantiates a _Carbon_ generic type like `MyCarbonVector(Cpp.Widget)`, its type
+system must be aware that the `Cpp.Widget` parameter carries C++-specific rules.
+This mandates that Carbon's own generic system, struct layout logic, overload
+resolution and operator lookup must query the type system for the presence of a
+C++ interop type. If present, Carbon must consider C++ rules when operating over
+C++ interop types. This design prioritizes the goal of a "seamless" and
+"intuitive" user experience.
 
 ## Importing C++ APIs into Carbon
 
 ### Importing C++ libraries (header-based)
 
 The primary mechanism for importing existing, user-defined C++ code is through
-header file inclusion. The Carbon toolchain must be able to parse and analyze
-C++ header files to make their declarations available within Carbon.
+header file inclusion. Carbon must be able to parse and analyze C++ header files
+to make their declarations available within Carbon.
 
 **Syntax:** The syntax for this operation is `import Cpp library "header_name"`.
 This syntax is used for both C-style standard libraries and C++ headers:
@@ -148,64 +143,26 @@ This syntax is used for both C-style standard libraries and C++ headers:
     ```
     This import makes user-defined declarations and definitions available.
 
-**Mechanism:** This file-based import model implies a co-compilation strategy.
-The Carbon toolchain must embed a full C++ compiler front-end (specifically,
-Clang). When the Carbon compiler encounters an `import Cpp library` directive,
-it does not attempt to parse the C++ header itself. Instead, it must:
-
-1.  Invoke the embedded Clang library to parse, preprocess, and perform semantic
-    analysis on the specified header file.
-2.  Request that Clang build an Abstract Syntax Tree (AST) of the public
-    declarations within that header.
-3.  Perform a complex "AST-to-SemIR" translation on demand, "bridging" the C++
-    declarations from Clang's AST into Carbon's own semantic representation
-    (SemIR).
-
-This model allows Carbon to leverage Clang's mature and correct implementation
-of C++'s complex parsing and semantic rules, including template instantiation,
-without having to reimplement them.
-
 ### TODO: Importing C++ code (inline)
 
 ### Accessing built-in C++ entities (file-less)
 
 Some C++ entities, particularly built-in primitive types, are not defined in any
-header file. They are "intrinsic" to the C++ compiler. These entities are
+header file. They are "intrinsic" to the C++ language. These entities are
 available in Carbon without an explicit `import` declaration.
 
-**Mechanism:** When a built-in C++ entity is accessed in Carbon code, the
-compiler checks if the necessary C++ Abstract Syntax Tree (AST) has been
-generated. If not, an AST is generated on-demand. This on-demand generation
-ensures that types like `long` or `float` are available seamlessly within the
-`Cpp` namespace when they are first used, without requiring developers to
-explicitly import them. This approach provides a clean, file-less way to access
-the foundational types required for C++ interoperability.
-
-### The `Cpp` namespace
+### The `Cpp` package
 
 A critical design choice for managing C++ imports is the mandatory use of a
-containing namespace, `Cpp`. All imported C++ entities—functions, classes,
-types, and operators—are accessed by way of this prefix.
+containing package, `Cpp`. All imported C++ named entities (functions, types,
+namespaces) are contained in the `Cpp` package.
 
 -   **Functions:** `Cpp.putchar(...)`
 -   **Classes/Types:** `Cpp.Circle`, `Cpp.Point`
 -   **Constructors:** `Cpp.Circle.Circle()`
 
-**Rationale:** This prefix acts as a "firewall" and is essential for adhering to
-Carbon's core design principles of
-[Namespace cleanliness](/docs/project/principles/namespace_cleanliness.md) and
-[Low context-sensitivity](/docs/project/principles/low_context_sensitivity.md).
-
-C++ codebases, particularly older ones, are often "polluted" with
-global-namespace functions and, most problematically, thousands of un-namespaced
-preprocessor macros (for example, in standard platform headers). A "naive"
-import that dumps these symbols into the Carbon global namespace would be
-disastrous, leading to rampant name collisions and high context-sensitivity (for
-example, "Does `Foo` refer to Carbon's `Foo` or an imported C++ `Foo`?").
-
 The `Cpp.` prefix makes the _origin_ of every symbol explicit and unambiguous.
-It ensures that C++ entities cannot collide with Carbon code, thereby "learning
-from" one of C++'s most significant legacy design issues.
+It ensures that C++ entities cannot collide with Carbon code.
 
 ### TODO: Importing C++ macros
 
@@ -214,8 +171,8 @@ from" one of C++'s most significant legacy design issues.
 ### Function call syntax and semantics
 
 Once imported, C++ functions are invoked using standard Carbon function call
-syntax, prefixed with the `Cpp` namespace. The Carbon compiler is responsible
-for mapping the Carbon arguments to the types expected by the C++ function's
+syntax, prefixed with the `Cpp` name. The Carbon compiler is responsible for
+mapping the Carbon arguments to the types expected by the C++ function's
 signature.
 
 This often requires explicit casting on the Carbon side, using the `as` keyword,
@@ -238,8 +195,6 @@ fn Run() {
 ```
 
 ### TODO: Overload resolution
-
-### TODO: Thunks
 
 ### TODO: Constructors
 
