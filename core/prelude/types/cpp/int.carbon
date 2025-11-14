@@ -23,13 +23,13 @@ class CppCompat.Long32 {
 // TODO: ImplicitAs from Long32 to IntLiteral.
 
 // TODO: ImplicitAs from Int(N) to Long32 if N < 32.
-impl Int(32) as ImplicitAs(CppCompat.Long32) {
+impl i32 as ImplicitAs(CppCompat.Long32) {
   fn Convert[self: Self]() -> CppCompat.Long32 = "int.convert_checked";
 }
 
 // TODO: ImplicitAs from Long32 to Int(N) if N > 32.
-final impl CppCompat.Long32 as ImplicitAs(Int(32)) {
-  fn Convert[self: Self]() -> Int(32) = "int.convert";
+final impl CppCompat.Long32 as ImplicitAs(i32) {
+  fn Convert[self: Self]() -> i32 = "int.convert";
 }
 
 // TODO: As from Long32 to Int(N) if N < 32.
