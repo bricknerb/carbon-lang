@@ -277,8 +277,8 @@ fn F() {
 // CHECK:STDOUT:   %PassLong.ref.loc19: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
 // CHECK:STDOUT:   %cpp_long.ref.loc19: %Cpp.long = name_ref cpp_long, %cpp_long
 // CHECK:STDOUT:   %.loc19_62.1: ref %LongResult = temporary_storage
-// CHECK:STDOUT:   %addr.loc19_62.1: %ptr.305 = addr_of %.loc19_62.1
-// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc19: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc19, %addr.loc19_62.1)
+// CHECK:STDOUT:   %addr.loc19: %ptr.305 = addr_of %.loc19_62.1
+// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc19: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc19, %addr.loc19)
 // CHECK:STDOUT:   %.loc19_62.2: init %LongResult = in_place_init %PassLong__carbon_thunk.call.loc19, %.loc19_62.1
 // CHECK:STDOUT:   %.loc19_27: type = splice_block %LongResult.ref.loc19 [concrete = constants.%LongResult] {
 // CHECK:STDOUT:     %Cpp.ref.loc19_24: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
@@ -304,8 +304,8 @@ fn F() {
 // CHECK:STDOUT:   %PassLong.ref.loc22: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
 // CHECK:STDOUT:   %cpp_long.ref.loc22: %Cpp.long = name_ref cpp_long, %cpp_long
 // CHECK:STDOUT:   %.loc22_74.1: ref %LongResult = temporary_storage
-// CHECK:STDOUT:   %addr.loc22_74.1: %ptr.305 = addr_of %.loc22_74.1
-// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc22: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc22, %addr.loc22_74.1)
+// CHECK:STDOUT:   %addr.loc22: %ptr.305 = addr_of %.loc22_74.1
+// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc22: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc22, %addr.loc22)
 // CHECK:STDOUT:   %.loc22_74.2: init %LongResult = in_place_init %PassLong__carbon_thunk.call.loc22, %.loc22_74.1
 // CHECK:STDOUT:   %.loc22_39: type = splice_block %LongResult.ref.loc22 [concrete = constants.%LongResult] {
 // CHECK:STDOUT:     %Cpp.ref.loc22_36: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
@@ -335,8 +335,8 @@ fn F() {
 // CHECK:STDOUT:   %PassLong.ref.loc25: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
 // CHECK:STDOUT:   %carbon_i32.ref: %i32 = name_ref carbon_i32, %carbon_i32
 // CHECK:STDOUT:   %.loc25_65.1: ref %IntResult = temporary_storage
-// CHECK:STDOUT:   %addr.loc25_65.1: %ptr.3cb = addr_of %.loc25_65.1
-// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc25: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.2(%carbon_i32.ref, %addr.loc25_65.1)
+// CHECK:STDOUT:   %addr.loc25: %ptr.3cb = addr_of %.loc25_65.1
+// CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc25: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.2(%carbon_i32.ref, %addr.loc25)
 // CHECK:STDOUT:   %.loc25_65.2: init %IntResult = in_place_init %PassLong__carbon_thunk.call.loc25, %.loc25_65.1
 // CHECK:STDOUT:   %.loc25_29: type = splice_block %IntResult.ref [concrete = constants.%IntResult] {
 // CHECK:STDOUT:     %Cpp.ref.loc25_26: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
@@ -376,18 +376,15 @@ fn F() {
 // CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc25: <bound method> = bound_method %.loc25_65.3, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.515
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %bound_method.loc25: <bound method> = bound_method %.loc25_65.3, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.1
-// CHECK:STDOUT:   %addr.loc25_65.2: %ptr.3cb = addr_of %.loc25_65.3
-// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc25: init %empty_tuple.type = call %bound_method.loc25(%addr.loc25_65.2)
+// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc25: init %empty_tuple.type = call %bound_method.loc25(%.loc25_65.3)
 // CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc22: <bound method> = bound_method %.loc22_74.3, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.418
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %bound_method.loc22: <bound method> = bound_method %.loc22_74.3, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.2
-// CHECK:STDOUT:   %addr.loc22_74.2: %ptr.305 = addr_of %.loc22_74.3
-// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc22: init %empty_tuple.type = call %bound_method.loc22(%addr.loc22_74.2)
+// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc22: init %empty_tuple.type = call %bound_method.loc22(%.loc22_74.3)
 // CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.bound.loc19: <bound method> = bound_method %.loc19_62.3, constants.%DestroyT.binding.as_type.as.Destroy.impl.Op.418
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT:   %bound_method.loc19: <bound method> = bound_method %.loc19_62.3, %DestroyT.binding.as_type.as.Destroy.impl.Op.specific_fn.3
-// CHECK:STDOUT:   %addr.loc19_62.2: %ptr.305 = addr_of %.loc19_62.3
-// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc19: init %empty_tuple.type = call %bound_method.loc19(%addr.loc19_62.2)
+// CHECK:STDOUT:   %DestroyT.binding.as_type.as.Destroy.impl.Op.call.loc19: init %empty_tuple.type = call %bound_method.loc19(%.loc19_62.3)
 // CHECK:STDOUT:   <elided>
 // CHECK:STDOUT: }
 // CHECK:STDOUT:
