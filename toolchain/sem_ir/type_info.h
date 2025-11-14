@@ -208,10 +208,9 @@ struct NumericTypeLiteralInfo {
   static const NumericTypeLiteralInfo Invalid;
 
   // Returns the numeric type literal that would evaluate to this class type, if
-  // any. `parent_scope_name_id` is the name ID of the `Core` namespace in which
-  // the type is defined or None if it's defined immediately under `Core`.
-  static auto ForType(const File& file, NameId parent_scope_name_id,
-                      ClassType class_type) -> NumericTypeLiteralInfo;
+  // any.
+  static auto ForType(const File& file, ClassType class_type)
+      -> NumericTypeLiteralInfo;
 
   // Prints the numeric type literal that corresponds to this type.
   auto PrintLiteral(const File& file, llvm::raw_ostream& out) const -> void;
@@ -229,6 +228,7 @@ struct NumericTypeLiteralInfo {
 };
 
 // Information about a literal that corresponds to a type.
+// TODO: Rename to `RecognizedTypeInfo` (Cpp types are not type literals).
 struct TypeLiteralInfo {
   enum Kind : char {
     None,
@@ -236,8 +236,9 @@ struct TypeLiteralInfo {
     Numeric,
     // `char` / `Core.Char`.
     Char,
+    // `Core.CppCompat.Long32` which is `Cpp.long` when `long` is 32 bits.
+    CppLong32,
     // `Cpp.nullptr_t` / `Core.CppCompat.NullptrT`.
-    // TODO: This isn't a type literal.
     CppNullptrT,
     // `str` / `Core.String`.
     // TODO: Rename `Core.String` to `Core.Str`.

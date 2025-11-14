@@ -76,55 +76,46 @@ auto InitRepr::ForType(const File& file, TypeId type_id) -> InitRepr {
   }
 }
 
-auto NumericTypeLiteralInfo::ForType(const File& file,
-                                     NameId parent_scope_name_id,
-                                     ClassType class_type)
+auto NumericTypeLiteralInfo::ForType(const File& file, ClassType class_type)
     -> NumericTypeLiteralInfo {
-  // The class's name must be the name corresponding to a type literal.
+  // Quickly rule out any class that's not a specific.
+  if (!class_type.specific_id.has_value()) {
+    return NumericTypeLiteralInfo::Invalid;
+  }
+
+  // The class must be declared in the `Core` package.
   const auto& class_info = file.classes().Get(class_type.class_id);
+  if (!file.name_scopes().IsInCorePackageRoot(class_info.scope_id)) {
+    return NumericTypeLiteralInfo::Invalid;
+  }
+
+  // The class's name must be the name corresponding to a type literal.
   auto name_ident = file.names().GetAsStringIfIdentifier(class_info.name_id);
   if (!name_ident) {
     return NumericTypeLiteralInfo::Invalid;
   }
-
-  if (!parent_scope_name_id.has_value()) {
-    // Quickly rule out any class that's not a specific.
-    if (!class_type.specific_id.has_value()) {
-      return NumericTypeLiteralInfo::Invalid;
-    }
-    Kind kind = llvm::StringSwitch<Kind>(*name_ident)
-                    .Case("Int", Int)
-                    .Case("UInt", UInt)
-                    .Case("Float", Float)
-                    .Default(None);
-    if (kind == None) {
-      return NumericTypeLiteralInfo::Invalid;
-    }
-
-    // There must be exactly one argument.
-    const auto& specific = file.specifics().Get(class_type.specific_id);
-    auto args = file.inst_blocks().Get(specific.args_id);
-    if (args.size() != 1) {
-      return NumericTypeLiteralInfo::Invalid;
-    }
-
-    // And the argument must be an integer value.
-    auto width_arg = file.insts().TryGetAs<IntValue>(args[0]);
-    if (!width_arg) {
-      return NumericTypeLiteralInfo::Invalid;
-    }
-    return {.kind = kind, .bit_width_id = width_arg->int_id};
+  Kind kind = llvm::StringSwitch<Kind>(*name_ident)
+                  .Case("Int", Int)
+                  .Case("UInt", UInt)
+                  .Case("Float", Float)
+                  .Default(None);
+  if (kind == None) {
+    return NumericTypeLiteralInfo::Invalid;
   }
 
-  auto parent_name_ident =
-      file.names().GetAsStringIfIdentifier(parent_scope_name_id);
-  if (parent_name_ident == "CppCompat") {
-    return llvm::StringSwitch<NumericTypeLiteralInfo>(*name_ident)
-        .Case("Long32", {Int, IntId::MakeRaw(32)})
-        .Default(NumericTypeLiteralInfo::Invalid);
+  // There must be exactly one argument.
+  const auto& specific = file.specifics().Get(class_type.specific_id);
+  auto args = file.inst_blocks().Get(specific.args_id);
+  if (args.size() != 1) {
+    return NumericTypeLiteralInfo::Invalid;
   }
 
-  return NumericTypeLiteralInfo::Invalid;
+  // And the argument must be an integer value.
+  auto width_arg = file.insts().TryGetAs<IntValue>(args[0]);
+  if (!width_arg) {
+    return NumericTypeLiteralInfo::Invalid;
+  }
+  return {.kind = kind, .bit_width_id = width_arg->int_id};
 }
 
 auto NumericTypeLiteralInfo::PrintLiteral(const File& file,
@@ -144,6 +135,14 @@ auto NumericTypeLiteralInfo::GetLiteralAsString(const File& file) const
 
 auto TypeLiteralInfo::ForType(const File& file, ClassType class_type)
     -> TypeLiteralInfo {
+  if (class_type.specific_id.has_value()) {
+    auto numeric = NumericTypeLiteralInfo::ForType(file, class_type);
+    if (numeric.is_valid()) {
+      return {.kind = Numeric, .numeric = numeric};
+    }
+    return {.kind = None};
+  }
+
   // The class must be declared in the `Core` package. We check for up to one
   // level of enclosing namespace.
   const auto& class_info = file.classes().Get(class_type.class_id);
@@ -157,16 +156,6 @@ auto TypeLiteralInfo::ForType(const File& file, ClassType class_type)
     if (!parent_scope_name_id.has_value()) {
       return {.kind = None};
     }
-  }
-
-  auto numeric =
-      NumericTypeLiteralInfo::ForType(file, parent_scope_name_id, class_type);
-  if (numeric.is_valid()) {
-    return {.kind = Numeric, .numeric = numeric};
-  }
-  // Quickly rule out any class that's a specific.
-  if (class_type.specific_id.has_value()) {
-    return {.kind = None};
   }
 
   // The class's name must be the name corresponding to a type literal.
@@ -187,6 +176,7 @@ auto TypeLiteralInfo::ForType(const File& file, ClassType class_type)
       file.names().GetAsStringIfIdentifier(parent_scope_name_id);
   if (parent_name_ident == "CppCompat") {
     Kind kind = llvm::StringSwitch<Kind>(*name_ident)
+                    .Case("Long32", CppLong32)
                     .Case("NullptrT", CppNullptrT)
                     .Default(None);
     return {.kind = kind};
@@ -205,6 +195,17 @@ auto TypeLiteralInfo::PrintLiteral(const File& file,
       break;
     case Char:
       out << "char";
+      break;
+    case CppLong32:
+      if (file.clang_ast_unit()) {
+        const clang::ASTContext& ast_context =
+            file.clang_ast_unit()->getASTContext();
+        if (ast_context.getIntWidth(ast_context.LongTy) == 32) {
+          out << "Cpp.long";
+          break;
+        }
+      }
+      out << "Core.CppCompat.Long32";
       break;
     case CppNullptrT:
       out << "Cpp.nullptr_t";

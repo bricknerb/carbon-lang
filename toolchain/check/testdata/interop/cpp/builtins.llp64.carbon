@@ -89,35 +89,35 @@ fn F() {
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.specific_fn.83e: <specific function> = specific_function %Core.IntLiteral.as.As.impl.Convert.108, @Core.IntLiteral.as.As.impl.Convert.1(%int_64) [concrete]
 // CHECK:STDOUT:   %bound_method.c84: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.As.impl.Convert.specific_fn.83e [concrete]
 // CHECK:STDOUT:   %int_1.41a: %i64 = int_value 1 [concrete]
-// CHECK:STDOUT:   %i32.b30: type = class_type @Long32 [concrete]
+// CHECK:STDOUT:   %Cpp.long: type = class_type @Long32 [concrete]
 // CHECK:STDOUT:   %int_32: Core.IntLiteral = int_value 32 [concrete]
-// CHECK:STDOUT:   %i32.560: type = class_type @Int, @Int(%int_32) [concrete]
-// CHECK:STDOUT:   %pattern_type.68c: type = pattern_type %i32.b30 [concrete]
-// CHECK:STDOUT:   %As.type.dbd: type = facet_type <@As, @As(%i32.560)> [concrete]
-// CHECK:STDOUT:   %As.Convert.type.99b: type = fn_type @As.Convert, @As(%i32.560) [concrete]
+// CHECK:STDOUT:   %i32: type = class_type @Int, @Int(%int_32) [concrete]
+// CHECK:STDOUT:   %pattern_type.68c: type = pattern_type %Cpp.long [concrete]
+// CHECK:STDOUT:   %As.type.dbd: type = facet_type <@As, @As(%i32)> [concrete]
+// CHECK:STDOUT:   %As.Convert.type.99b: type = fn_type @As.Convert, @As(%i32) [concrete]
 // CHECK:STDOUT:   %As.impl_witness.bf0: <witness> = impl_witness imports.%As.impl_witness_table.251, @Core.IntLiteral.as.As.impl.863(%int_32) [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.type.11b: type = fn_type @Core.IntLiteral.as.As.impl.Convert.1, @Core.IntLiteral.as.As.impl.863(%int_32) [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.035: %Core.IntLiteral.as.As.impl.Convert.type.11b = struct_value () [concrete]
 // CHECK:STDOUT:   %As.facet.1f3: %As.type.dbd = facet_value Core.IntLiteral, (%As.impl_witness.bf0) [concrete]
 // CHECK:STDOUT:   %.edb: type = fn_type_with_self_type %As.Convert.type.99b, %As.facet.1f3 [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.bound.17b: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.As.impl.Convert.035 [concrete]
-// CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32.560 [concrete]
+// CHECK:STDOUT:   %pattern_type.7ce: type = pattern_type %i32 [concrete]
 // CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.specific_fn.d03: <specific function> = specific_function %Core.IntLiteral.as.As.impl.Convert.035, @Core.IntLiteral.as.As.impl.Convert.1(%int_32) [concrete]
 // CHECK:STDOUT:   %bound_method.6b2: <bound method> = bound_method %int_1.5b8, %Core.IntLiteral.as.As.impl.Convert.specific_fn.d03 [concrete]
-// CHECK:STDOUT:   %int_1.5d2: %i32.560 = int_value 1 [concrete]
+// CHECK:STDOUT:   %int_1.5d2: %i32 = int_value 1 [concrete]
 // CHECK:STDOUT:   %ImplicitAs.type.cc7: type = generic_interface_type @ImplicitAs [concrete]
 // CHECK:STDOUT:   %ImplicitAs.generic: %ImplicitAs.type.cc7 = struct_value () [concrete]
-// CHECK:STDOUT:   %ImplicitAs.type.c65: type = facet_type <@ImplicitAs, @ImplicitAs(%i32.b30)> [concrete]
-// CHECK:STDOUT:   %ImplicitAs.Convert.type.4c2: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32.b30) [concrete]
-// CHECK:STDOUT:   %ImplicitAs.type.d14: type = facet_type <@ImplicitAs, @ImplicitAs(%i32.560)> [concrete]
-// CHECK:STDOUT:   %ImplicitAs.Convert.type.1b6: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32.560) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.type.c65: type = facet_type <@ImplicitAs, @ImplicitAs(%Cpp.long)> [concrete]
+// CHECK:STDOUT:   %ImplicitAs.Convert.type.4c2: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%Cpp.long) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.type.d14: type = facet_type <@ImplicitAs, @ImplicitAs(%i32)> [concrete]
+// CHECK:STDOUT:   %ImplicitAs.Convert.type.1b6: type = fn_type @ImplicitAs.Convert, @ImplicitAs(%i32) [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.9db: <witness> = impl_witness imports.%ImplicitAs.impl_witness_table.bd5 [concrete]
-// CHECK:STDOUT:   %ImplicitAs.facet.687: %ImplicitAs.type.c65 = facet_value %i32.560, (%ImplicitAs.impl_witness.9db) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.facet.687: %ImplicitAs.type.c65 = facet_value %i32, (%ImplicitAs.impl_witness.9db) [concrete]
 // CHECK:STDOUT:   %.1bd: type = fn_type_with_self_type %ImplicitAs.Convert.type.4c2, %ImplicitAs.facet.687 [concrete]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.type.320: type = fn_type @i32.as.ImplicitAs.impl.Convert.1 [concrete]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.d1e: %i32.as.ImplicitAs.impl.Convert.type.320 = struct_value () [concrete]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.bound: <bound method> = bound_method %int_1.5d2, %i32.as.ImplicitAs.impl.Convert.d1e [concrete]
-// CHECK:STDOUT:   %int_1.5a4: %i32.b30 = int_value 1 [concrete]
+// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.type: type = fn_type @i32.as.ImplicitAs.impl.Convert [concrete]
+// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert: %i32.as.ImplicitAs.impl.Convert.type = struct_value () [concrete]
+// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.bound: <bound method> = bound_method %int_1.5d2, %i32.as.ImplicitAs.impl.Convert [concrete]
+// CHECK:STDOUT:   %int_1.5a4: %Cpp.long = int_value 1 [concrete]
 // CHECK:STDOUT:   %LongResult: type = class_type @LongResult [concrete]
 // CHECK:STDOUT:   %pattern_type.cd9: type = pattern_type %LongResult [concrete]
 // CHECK:STDOUT:   %PassLong.cpp_overload_set.type: type = cpp_overload_set_type @PassLong.cpp_overload_set [concrete]
@@ -126,10 +126,10 @@ fn F() {
 // CHECK:STDOUT:   %PassLong__carbon_thunk.type.9d9430.1: type = fn_type @PassLong__carbon_thunk.1 [concrete]
 // CHECK:STDOUT:   %PassLong__carbon_thunk.58a8f3.1: %PassLong__carbon_thunk.type.9d9430.1 = struct_value () [concrete]
 // CHECK:STDOUT:   %ImplicitAs.impl_witness.c39: <witness> = impl_witness imports.%ImplicitAs.impl_witness_table.90c [concrete]
-// CHECK:STDOUT:   %ImplicitAs.facet.a39: %ImplicitAs.type.d14 = facet_value %i32.b30, (%ImplicitAs.impl_witness.c39) [concrete]
+// CHECK:STDOUT:   %ImplicitAs.facet.a39: %ImplicitAs.type.d14 = facet_value %Cpp.long, (%ImplicitAs.impl_witness.c39) [concrete]
 // CHECK:STDOUT:   %.261: type = fn_type_with_self_type %ImplicitAs.Convert.type.1b6, %ImplicitAs.facet.a39 [concrete]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.type.395: type = fn_type @i32.as.ImplicitAs.impl.Convert.2 [concrete]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.e43: %i32.as.ImplicitAs.impl.Convert.type.395 = struct_value () [concrete]
+// CHECK:STDOUT:   %Cpp.long.as.ImplicitAs.impl.Convert.type: type = fn_type @Cpp.long.as.ImplicitAs.impl.Convert [concrete]
+// CHECK:STDOUT:   %Cpp.long.as.ImplicitAs.impl.Convert: %Cpp.long.as.ImplicitAs.impl.Convert.type = struct_value () [concrete]
 // CHECK:STDOUT:   %IntResult: type = class_type @IntResult [concrete]
 // CHECK:STDOUT:   %pattern_type.454: type = pattern_type %IntResult [concrete]
 // CHECK:STDOUT:   %ptr.3cb: type = ptr_type %IntResult [concrete]
@@ -175,7 +175,7 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp: <namespace> = namespace file.%Cpp.import_cpp, [concrete] {
 // CHECK:STDOUT:     .long_long = @F.%i64.1
-// CHECK:STDOUT:     .long = constants.%i32.b30
+// CHECK:STDOUT:     .long = constants.%Cpp.long
 // CHECK:STDOUT:     .LongResult = %LongResult.decl
 // CHECK:STDOUT:     .PassLong = %PassLong.cpp_overload_set.value
 // CHECK:STDOUT:     .IntResult = %IntResult.decl
@@ -192,10 +192,10 @@ fn F() {
 // CHECK:STDOUT:     import Core//prelude
 // CHECK:STDOUT:     import Core//prelude/...
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Core.Long32: type = import_ref Core//prelude/types/cpp/int, Long32, loaded [concrete = constants.%i32.b30]
+// CHECK:STDOUT:   %Core.Long32: type = import_ref Core//prelude/types/cpp/int, Long32, loaded [concrete = constants.%Cpp.long]
 // CHECK:STDOUT:   %Core.ImplicitAs: %ImplicitAs.type.cc7 = import_ref Core//prelude/operators/as, ImplicitAs, loaded [concrete = constants.%ImplicitAs.generic]
-// CHECK:STDOUT:   %Core.import_ref.e63: %i32.as.ImplicitAs.impl.Convert.type.320 = import_ref Core//prelude/types/cpp/int, loc{{\d+_\d+}}, loaded [concrete = constants.%i32.as.ImplicitAs.impl.Convert.d1e]
-// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.bd5 = impl_witness_table (%Core.import_ref.e63), @i32.as.ImplicitAs.impl.dea [concrete]
+// CHECK:STDOUT:   %Core.import_ref.e63: %i32.as.ImplicitAs.impl.Convert.type = import_ref Core//prelude/types/cpp/int, loc{{\d+_\d+}}, loaded [concrete = constants.%i32.as.ImplicitAs.impl.Convert]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.bd5 = impl_witness_table (%Core.import_ref.e63), @i32.as.ImplicitAs.impl [concrete]
 // CHECK:STDOUT:   %LongResult.decl: type = class_decl @LongResult [concrete = constants.%LongResult] {} {}
 // CHECK:STDOUT:   %PassLong.cpp_overload_set.value: %PassLong.cpp_overload_set.type = cpp_overload_set_value @PassLong.cpp_overload_set [concrete = constants.%PassLong.cpp_overload_set.value]
 // CHECK:STDOUT:   %PassLong__carbon_thunk.decl.d16229.1: %PassLong__carbon_thunk.type.9d9430.1 = fn_decl @PassLong__carbon_thunk.1 [concrete = constants.%PassLong__carbon_thunk.58a8f3.1] {
@@ -203,8 +203,8 @@ fn F() {
 // CHECK:STDOUT:   } {
 // CHECK:STDOUT:     <elided>
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %Core.import_ref.1a1: %i32.as.ImplicitAs.impl.Convert.type.395 = import_ref Core//prelude/types/cpp/int, loc{{\d+_\d+}}, loaded [concrete = constants.%i32.as.ImplicitAs.impl.Convert.e43]
-// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.90c = impl_witness_table (%Core.import_ref.1a1), @i32.as.ImplicitAs.impl.bf8 [concrete]
+// CHECK:STDOUT:   %Core.import_ref.1a1: %Cpp.long.as.ImplicitAs.impl.Convert.type = import_ref Core//prelude/types/cpp/int, loc{{\d+_\d+}}, loaded [concrete = constants.%Cpp.long.as.ImplicitAs.impl.Convert]
+// CHECK:STDOUT:   %ImplicitAs.impl_witness_table.90c = impl_witness_table (%Core.import_ref.1a1), @Cpp.long.as.ImplicitAs.impl [concrete]
 // CHECK:STDOUT:   %IntResult.decl: type = class_decl @IntResult [concrete = constants.%IntResult] {} {}
 // CHECK:STDOUT:   %PassLong__carbon_thunk.decl.d16229.2: %PassLong__carbon_thunk.type.9d9430.2 = fn_decl @PassLong__carbon_thunk.2 [concrete = constants.%PassLong__carbon_thunk.58a8f3.2] {
 // CHECK:STDOUT:     <elided>
@@ -252,30 +252,30 @@ fn F() {
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %int_1.loc18: Core.IntLiteral = int_value 1 [concrete = constants.%int_1.5b8]
 // CHECK:STDOUT:   %int_32.loc18: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
-// CHECK:STDOUT:   %i32.loc18: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32.560]
+// CHECK:STDOUT:   %i32.loc18: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   %impl.elem0.loc18_30.1: %.edb = impl_witness_access constants.%As.impl_witness.bf0, element0 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.035]
 // CHECK:STDOUT:   %bound_method.loc18_30.1: <bound method> = bound_method %int_1.loc18, %impl.elem0.loc18_30.1 [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.bound.17b]
 // CHECK:STDOUT:   %specific_fn.loc18: <specific function> = specific_function %impl.elem0.loc18_30.1, @Core.IntLiteral.as.As.impl.Convert.1(constants.%int_32) [concrete = constants.%Core.IntLiteral.as.As.impl.Convert.specific_fn.d03]
 // CHECK:STDOUT:   %bound_method.loc18_30.2: <bound method> = bound_method %int_1.loc18, %specific_fn.loc18 [concrete = constants.%bound_method.6b2]
-// CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.call.loc18: init %i32.560 = call %bound_method.loc18_30.2(%int_1.loc18) [concrete = constants.%int_1.5d2]
-// CHECK:STDOUT:   %.loc18_30.1: %i32.560 = value_of_initializer %Core.IntLiteral.as.As.impl.Convert.call.loc18 [concrete = constants.%int_1.5d2]
-// CHECK:STDOUT:   %.loc18_30.2: %i32.560 = converted %int_1.loc18, %.loc18_30.1 [concrete = constants.%int_1.5d2]
-// CHECK:STDOUT:   %.loc18_20: type = splice_block %long.ref [concrete = constants.%i32.b30] {
+// CHECK:STDOUT:   %Core.IntLiteral.as.As.impl.Convert.call.loc18: init %i32 = call %bound_method.loc18_30.2(%int_1.loc18) [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc18_30.1: %i32 = value_of_initializer %Core.IntLiteral.as.As.impl.Convert.call.loc18 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc18_30.2: %i32 = converted %int_1.loc18, %.loc18_30.1 [concrete = constants.%int_1.5d2]
+// CHECK:STDOUT:   %.loc18_20: type = splice_block %long.ref [concrete = constants.%Cpp.long] {
 // CHECK:STDOUT:     %Cpp.ref.loc18: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
-// CHECK:STDOUT:     %long.ref: type = name_ref long, constants.%i32.b30 [concrete = constants.%i32.b30]
+// CHECK:STDOUT:     %long.ref: type = name_ref long, constants.%Cpp.long [concrete = constants.%Cpp.long]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %impl.elem0.loc18_30.2: %.1bd = impl_witness_access constants.%ImplicitAs.impl_witness.9db, element0 [concrete = constants.%i32.as.ImplicitAs.impl.Convert.d1e]
+// CHECK:STDOUT:   %impl.elem0.loc18_30.2: %.1bd = impl_witness_access constants.%ImplicitAs.impl_witness.9db, element0 [concrete = constants.%i32.as.ImplicitAs.impl.Convert]
 // CHECK:STDOUT:   %bound_method.loc18_30.3: <bound method> = bound_method %.loc18_30.2, %impl.elem0.loc18_30.2 [concrete = constants.%i32.as.ImplicitAs.impl.Convert.bound]
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.call.loc18: init %i32.b30 = call %bound_method.loc18_30.3(%.loc18_30.2) [concrete = constants.%int_1.5a4]
-// CHECK:STDOUT:   %.loc18_30.3: %i32.b30 = value_of_initializer %i32.as.ImplicitAs.impl.Convert.call.loc18 [concrete = constants.%int_1.5a4]
-// CHECK:STDOUT:   %.loc18_30.4: %i32.b30 = converted %.loc18_30.2, %.loc18_30.3 [concrete = constants.%int_1.5a4]
-// CHECK:STDOUT:   %cpp_long: %i32.b30 = value_binding cpp_long, %.loc18_30.4
+// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.call: init %Cpp.long = call %bound_method.loc18_30.3(%.loc18_30.2) [concrete = constants.%int_1.5a4]
+// CHECK:STDOUT:   %.loc18_30.3: %Cpp.long = value_of_initializer %i32.as.ImplicitAs.impl.Convert.call [concrete = constants.%int_1.5a4]
+// CHECK:STDOUT:   %.loc18_30.4: %Cpp.long = converted %.loc18_30.2, %.loc18_30.3 [concrete = constants.%int_1.5a4]
+// CHECK:STDOUT:   %cpp_long: %Cpp.long = value_binding cpp_long, %.loc18_30.4
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %cpp_long_result.patt: %pattern_type.cd9 = value_binding_pattern cpp_long_result [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.ref.loc19_41: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %PassLong.ref.loc19: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
-// CHECK:STDOUT:   %cpp_long.ref.loc19: %i32.b30 = name_ref cpp_long, %cpp_long
+// CHECK:STDOUT:   %cpp_long.ref.loc19: %Cpp.long = name_ref cpp_long, %cpp_long
 // CHECK:STDOUT:   %.loc19_62.1: ref %LongResult = temporary_storage
 // CHECK:STDOUT:   %addr.loc19_62.1: %ptr.305 = addr_of %.loc19_62.1
 // CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc19: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc19, %addr.loc19_62.1)
@@ -290,19 +290,19 @@ fn F() {
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %cpp_compat_long.patt: %pattern_type.68c = value_binding_pattern cpp_compat_long [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %cpp_long.ref.loc21: %i32.b30 = name_ref cpp_long, %cpp_long
-// CHECK:STDOUT:   %.loc21: type = splice_block %Long32.ref [concrete = constants.%i32.b30] {
+// CHECK:STDOUT:   %cpp_long.ref.loc21: %Cpp.long = name_ref cpp_long, %cpp_long
+// CHECK:STDOUT:   %.loc21: type = splice_block %Long32.ref [concrete = constants.%Cpp.long] {
 // CHECK:STDOUT:     %Core.ref: <namespace> = name_ref Core, imports.%Core [concrete = imports.%Core]
 // CHECK:STDOUT:     %CppCompat.ref: <namespace> = name_ref CppCompat, imports.%CppCompat.c59 [concrete = imports.%CppCompat.c59]
-// CHECK:STDOUT:     %Long32.ref: type = name_ref Long32, imports.%Core.Long32 [concrete = constants.%i32.b30]
+// CHECK:STDOUT:     %Long32.ref: type = name_ref Long32, imports.%Core.Long32 [concrete = constants.%Cpp.long]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %cpp_compat_long: %i32.b30 = value_binding cpp_compat_long, %cpp_long.ref.loc21
+// CHECK:STDOUT:   %cpp_compat_long: %Cpp.long = value_binding cpp_compat_long, %cpp_long.ref.loc21
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %cpp_compat_long_long_result.patt: %pattern_type.cd9 = value_binding_pattern cpp_compat_long_long_result [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.ref.loc22_53: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %PassLong.ref.loc22: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
-// CHECK:STDOUT:   %cpp_long.ref.loc22: %i32.b30 = name_ref cpp_long, %cpp_long
+// CHECK:STDOUT:   %cpp_long.ref.loc22: %Cpp.long = name_ref cpp_long, %cpp_long
 // CHECK:STDOUT:   %.loc22_74.1: ref %LongResult = temporary_storage
 // CHECK:STDOUT:   %addr.loc22_74.1: %ptr.305 = addr_of %.loc22_74.1
 // CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc22: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.1(%cpp_long.ref.loc22, %addr.loc22_74.1)
@@ -317,23 +317,23 @@ fn F() {
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %carbon_i32.patt: %pattern_type.7ce = value_binding_pattern carbon_i32 [concrete]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %cpp_long.ref.loc24: %i32.b30 = name_ref cpp_long, %cpp_long
-// CHECK:STDOUT:   %.loc24_19: type = splice_block %i32.loc24 [concrete = constants.%i32.560] {
+// CHECK:STDOUT:   %cpp_long.ref.loc24: %Cpp.long = name_ref cpp_long, %cpp_long
+// CHECK:STDOUT:   %.loc24_19: type = splice_block %i32.loc24 [concrete = constants.%i32] {
 // CHECK:STDOUT:     %int_32.loc24: Core.IntLiteral = int_value 32 [concrete = constants.%int_32]
-// CHECK:STDOUT:     %i32.loc24: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32.560]
+// CHECK:STDOUT:     %i32.loc24: type = class_type @Int, @Int(constants.%int_32) [concrete = constants.%i32]
 // CHECK:STDOUT:   }
-// CHECK:STDOUT:   %impl.elem0.loc24: %.261 = impl_witness_access constants.%ImplicitAs.impl_witness.c39, element0 [concrete = constants.%i32.as.ImplicitAs.impl.Convert.e43]
+// CHECK:STDOUT:   %impl.elem0.loc24: %.261 = impl_witness_access constants.%ImplicitAs.impl_witness.c39, element0 [concrete = constants.%Cpp.long.as.ImplicitAs.impl.Convert]
 // CHECK:STDOUT:   %bound_method.loc24: <bound method> = bound_method %cpp_long.ref.loc24, %impl.elem0.loc24
-// CHECK:STDOUT:   %i32.as.ImplicitAs.impl.Convert.call.loc24: init %i32.560 = call %bound_method.loc24(%cpp_long.ref.loc24)
-// CHECK:STDOUT:   %.loc24_25.1: %i32.560 = value_of_initializer %i32.as.ImplicitAs.impl.Convert.call.loc24
-// CHECK:STDOUT:   %.loc24_25.2: %i32.560 = converted %cpp_long.ref.loc24, %.loc24_25.1
-// CHECK:STDOUT:   %carbon_i32: %i32.560 = value_binding carbon_i32, %.loc24_25.2
+// CHECK:STDOUT:   %Cpp.long.as.ImplicitAs.impl.Convert.call: init %i32 = call %bound_method.loc24(%cpp_long.ref.loc24)
+// CHECK:STDOUT:   %.loc24_25.1: %i32 = value_of_initializer %Cpp.long.as.ImplicitAs.impl.Convert.call
+// CHECK:STDOUT:   %.loc24_25.2: %i32 = converted %cpp_long.ref.loc24, %.loc24_25.1
+// CHECK:STDOUT:   %carbon_i32: %i32 = value_binding carbon_i32, %.loc24_25.2
 // CHECK:STDOUT:   name_binding_decl {
 // CHECK:STDOUT:     %carbon_i32_result.patt: %pattern_type.454 = value_binding_pattern carbon_i32_result [concrete]
 // CHECK:STDOUT:   }
 // CHECK:STDOUT:   %Cpp.ref.loc25_42: <namespace> = name_ref Cpp, imports.%Cpp [concrete = imports.%Cpp]
 // CHECK:STDOUT:   %PassLong.ref.loc25: %PassLong.cpp_overload_set.type = name_ref PassLong, imports.%PassLong.cpp_overload_set.value [concrete = constants.%PassLong.cpp_overload_set.value]
-// CHECK:STDOUT:   %carbon_i32.ref: %i32.560 = name_ref carbon_i32, %carbon_i32
+// CHECK:STDOUT:   %carbon_i32.ref: %i32 = name_ref carbon_i32, %carbon_i32
 // CHECK:STDOUT:   %.loc25_65.1: ref %IntResult = temporary_storage
 // CHECK:STDOUT:   %addr.loc25_65.1: %ptr.3cb = addr_of %.loc25_65.1
 // CHECK:STDOUT:   %PassLong__carbon_thunk.call.loc25: init %empty_tuple.type = call imports.%PassLong__carbon_thunk.decl.d16229.2(%carbon_i32.ref, %addr.loc25_65.1)
