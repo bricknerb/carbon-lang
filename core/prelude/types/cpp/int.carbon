@@ -10,11 +10,9 @@ import library "prelude/types/int_literal";
 
 namespace CppCompat;
 
-private fn CppCompat.MakeInt(size: IntLiteral()) -> type = "int.make_type_signed";
-
 // TODO: Add ULong32, LongLong64, ULongLong64.
 class CppCompat.Long32 {
-  adapt MakeInt(32);
+  adapt i32;
 }
 
 // TODO: Copy.
